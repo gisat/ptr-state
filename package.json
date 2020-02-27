@@ -1,6 +1,6 @@
 {
   "name": "@gisatcz/ptr-state",
-  "version": "1.0.0-pre-alpha",
+  "version": "1.0.1-pre-alpha",
   "description": "Panther FE state",
   "keywords": [
     "panther",
@@ -22,7 +22,7 @@
     "query-string": "6.11.0",
     "lodash": "4.17.15",
     "moment": "2.24.0",
-    "redux": "4.0.5",
+    "redux": "4.0.1",
     "redux-thunk": "2.3.0",
     "redux-logger": "3.0.6",
     "reselect": "4.0.0",
