@@ -7,6 +7,8 @@ import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-reac
 import {Link, NavLink, withRouter} from "react-router-dom";
 import {Redirect, Route, Switch, matchPath} from "react-router";
 
+import connects from "./components/connects";
+
 import {commonActionTypesDefinitions} from "./constants/ActionTypes";
 import Action from "./state/Action";
 import Select from "./state/Select";
@@ -176,6 +178,8 @@ export {
     Route,
     Switch,
     matchPath,
+
+    connects,
 
     commonActionTypesDefinitions,
     Action,
