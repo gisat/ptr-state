@@ -1,6 +1,6 @@
 {
   "name": "@gisatcz/ptr-state",
-  "version": "1.0.1-pre-alpha",
+  "version": "1.0.2-pre-alpha",
   "description": "Panther FE state",
   "keywords": [
     "panther",
@@ -17,6 +17,7 @@
   "dependencies": {
     "@gisatcz/ptr-core": "1.0.0-alpha",
     "@gisatcz/ptr-utils": "1.0.5",
+    "@manaflair/redux-batch": "1.0.0",
     "isomorphic-fetch": "2.2.1",
     "path": "0.12.7",
     "query-string": "6.11.0",

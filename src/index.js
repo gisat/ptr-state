@@ -1,3 +1,8 @@
+import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
+import {reduxBatch} from '@manaflair/redux-batch';
+
 import {commonActionTypesDefinitions} from "./constants/ActionTypes";
 import Action from "./state/Action";
 import Select from "./state/Select";
@@ -143,6 +148,15 @@ const windowsActions = Action.windows;
 const windowsSelectors = Select.windows;
 
 export {
+    createStore,
+    combineReducers,
+    applyMiddleware,
+    compose,
+
+    thunk,
+    logger,
+    reduxBatch,
+
     commonActionTypesDefinitions,
     Action,
     Select,
