@@ -2,6 +2,10 @@ import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import {reduxBatch} from '@manaflair/redux-batch';
+import {connect, Provider} from 'react-redux';
+import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
+import {Link, NavLink, withRouter} from "react-router-dom";
+import {Redirect, Route, Switch, matchPath} from "react-router";
 
 import {commonActionTypesDefinitions} from "./constants/ActionTypes";
 import Action from "./state/Action";
@@ -156,6 +160,22 @@ export {
     thunk,
     logger,
     reduxBatch,
+
+    connect,
+    Provider,
+
+    connectRouter,
+    ConnectedRouter,
+    routerMiddleware,
+
+    Link,
+    NavLink,
+    withRouter,
+
+    Redirect,
+    Route,
+    Switch,
+    matchPath,
 
     commonActionTypesDefinitions,
     Action,
