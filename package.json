@@ -1,18 +1,18 @@
 {
   "name": "@gisatcz/ptr-state",
-  "version": "1.0.4-pre-alpha",
+  "version": "1.0.6-alpha",
   "description": "Panther FE state",
   "keywords": [
     "panther",
     "gisat"
   ],
-  "homepage": "https://github.com/gisat/ptr-utils",
+  "homepage": "https://github.com/gisat/ptr-state",
   "main": "src/index.js",
   "module": "dist/index.js",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gisat/ptr-utils"
+    "url": "https://github.com/gisat/ptr-state"
   },
   "dependencies": {
     "@gisatcz/ptr-core": "1.0.0-alpha",

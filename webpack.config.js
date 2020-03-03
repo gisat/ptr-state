@@ -30,6 +30,7 @@ module.exports = {
     externals: {
         "@gisatcz/ptr-utils": "@gisatcz/ptr-utils",
         "@gisatcz/ptr-core": "@gisatcz/ptr-core",
+        "@manaflair/redux-batch": "@manaflair/redux-batch",
         "connected-react-router": "connected-react-router",
         "lodash": "lodash",
         "path": "path",
@@ -39,6 +40,8 @@ module.exports = {
         "react": "react",
         "react-dom": "react-dom",
         "react-redux": "react-redux",
+        "react-router": "react-router",
+        "react-router-dom": "react-router-dom",
         "redux": "redux",
         "redux-thunk": "redux-thunk",
         "redux-logger": "redux-logger",
