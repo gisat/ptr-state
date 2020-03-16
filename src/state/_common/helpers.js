@@ -1,5 +1,4 @@
-import Select from "../Select";
-import _, {isObject} from "lodash";
+import _ from "lodash";
 
 function getIndex(indexes, filter, order) {
 	if (indexes){
@@ -55,7 +54,7 @@ function itemFitFilter(filter, item) {
 				// "column2": {
 				// 	"like": "hleda se podobnost, castecny vyskyt"
 				// },
-				if(isObject(value) && value['like']) {
+				if(_.isObject(value) && value['like']) {
 					//now we dont deal like filter, refrest indexes
 					return true;
 				}
@@ -63,14 +62,14 @@ function itemFitFilter(filter, item) {
 				// "column3": {
 				// 	"in": ["existuje", "v", "poli", "prvku"]
 				// },
-				if(isObject(value) && value['in']) {
+				if(_.isObject(value) && value['in']) {
 					return value.in.includes(item.data[key]);
 				}
 
 				// "column4": {
 				// 	"notin": ["neexistuje", "v", "poli", "prvku"]
 				// }
-				if(isObject(value) && value['notin']) {
+				if(_.isObject(value) && value['notin']) {
 					return !value.notin.includes(item.data[key]);
 				}
 			}

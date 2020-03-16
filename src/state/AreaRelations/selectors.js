@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
-import _, {isEmpty, cloneDeep} from 'lodash';
+import _ from 'lodash';
 import common from "../_common/selectors";
 
 const getSubstate = (state) => state.areaRelations;

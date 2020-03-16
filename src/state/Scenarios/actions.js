@@ -1,4 +1,6 @@
-import Action from '../Action';
+import SpatialRelationsAction from '../SpatialRelations/actions';
+import SpatialDataSourcesAction from '../SpatialDataSources/actions';
+import MapsAction from '../Maps/actions';
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../Select';
 
@@ -217,7 +219,7 @@ function scenariosLoadedForActiveCase(){
 		if (activeCase){
 			let updatedCase = {...activeCase, data: {...activeCase.data, scenariosLoaded: true}};
 			dispatch(updateCases([updatedCase]));
-			dispatch(Action.maps.updateWithScenarios());
+			dispatch(MapsAction.updateWithScenarios());
 		}
 	};
 }
@@ -688,11 +690,11 @@ function processMatlabProcessRequestResults(results, dispatch) {
 						_.each(resultData['spatial_relations'], (relation) => {
 							dataSourcesIds.push(relation.data.data_source_id);
 						});
-						dispatch(Action.spatialRelations.loadRelationsReceive(resultData['spatial_relations']));
+						dispatch(SpatialRelationsAction.loadRelationsReceive(resultData['spatial_relations']));
 						dispatch(apiProcessingScenarioFileSuccess(resultData.data.scenario_id));
 					}
 				});
-				dispatch(Action.spatialDataSources.loadFiltered({'id': dataSourcesIds}));
+				dispatch(SpatialDataSourcesAction.loadFiltered({'id': dataSourcesIds}));
 			} else {
 				return running;
 			}
@@ -870,14 +872,14 @@ function apiCreateRelationsForScenarioProcessResults(results) {
 			}).then((relationResults) => relationResults.json())
 				.then((relationResults) => {
 					if (relationResults.data.spatial){
-						// todo why there are data apart of key, while in Action.spatialRelations.load response are not?
+						// todo why there are data apart of key, while in SpatialRelationsAction.load response are not?
 						let dataSourcesIds = _.compact(
 							_.map(relationResults.data.spatial, (spatialRelation) => {
 								return spatialRelation.data.data_source_id;
 							})
 						);
-						dispatch(Action.spatialRelations.loadRelationsReceive(relationResults.data.spatial));
-						dispatch(Action.spatialDataSources.loadFiltered({'id': dataSourcesIds}));
+						dispatch(SpatialRelationsAction.loadRelationsReceive(relationResults.data.spatial));
+						dispatch(SpatialDataSourcesAction.loadFiltered({'id': dataSourcesIds}));
 
 						dispatch(apiProcessingScenarioFilesSuccess(scenarioKeys));
 					} else {

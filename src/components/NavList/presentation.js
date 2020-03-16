@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import {NavLink, withRouter} from "react-router-dom";
 import {matchPath} from "react-router";
 
-import isArray from 'lodash/isArray';
-import isObject from 'lodash/isObject';
+import _ from 'lodash';
 
 import './navlist.scss';
 
@@ -74,11 +73,11 @@ class NavList extends React.PureComponent {
 		}
 	}
 	getDescendants(structure, parentProps) {
-		if(isArray(structure)) {
+		if(_.isArray(structure)) {
 			return structure.map((item) => this.getDescendant(item));
 		}
 
-		if(isObject(structure)) {
+		if(_.isObject(structure)) {
 			return [this.getDescendant(structure)];
 		}
 	}

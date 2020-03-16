@@ -3,7 +3,7 @@ import Select from '../Select';
 import common from "../_common/actions";
 import _ from "lodash";
 import commonSelectors from "../_common/selectors";
-import Action from "../Action";
+import SpatialDataSourcesAction from "../SpatialDataSources/actions";
 
 
 // ============ creators ===========
@@ -24,7 +24,7 @@ function ensureIndexedAndEnsureDependencies(filter, order, start, length, compon
                 /* Ensure spatial data sources */
                 // TODO component id?
                 if (uniqueDataSourcesKeys) {
-                    dispatch(Action.spatialDataSources.useKeys(uniqueDataSourcesKeys, componentId)).then(() => {
+                    dispatch(SpatialDataSourcesAction.useKeys(uniqueDataSourcesKeys, componentId)).then(() => {
                         // TODO load data for vector data sources
                     });
                 }

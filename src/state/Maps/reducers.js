@@ -1,7 +1,6 @@
 import ActionTypes from '../../constants/ActionTypes';
 import _ from 'lodash';
 import {stateManagement} from '@gisatcz/ptr-utils';
-import {isNumber} from 'lodash';
 
 const INITIAL_VIEW = {
 	center: {
@@ -289,7 +288,7 @@ const addLayer = (state, mapKey, layerState, index) => {
 		mapState = {...mapState, data: {...mapState.data, layers: []}}
 	}
 	const newState = setMap(state, {...mapState, data: {...mapState.data, layers: [...mapState.data.layers, layerState]}})
-	if (isNumber(index)) {
+	if (_.isNumber(index)) {
 		// setLayerIndex
 		return setLayerIndex(newState, mapKey, layerState.key, index)
 	} else {

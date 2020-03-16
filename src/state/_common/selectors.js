@@ -1,8 +1,7 @@
 import {createSelector} from "reselect";
 import createCachedSelector from "re-reselect";
-import _, {pickBy} from "lodash";
+import _ from "lodash";
 import commonHelpers from './helpers';
-import Select from "../Select";
 
 const activeScopeKey = state => state.scopes.activeKey;
 const activeThemeKey = state => state.themes.activeKey;
@@ -27,7 +26,7 @@ const getAllNotRemovedAsObject = (getSubstate) => {
 	return createSelector(
 		[getAllByKey(getSubstate)],
 		byKey => {
-			return pickBy(byKey, (item) => !item.hasOwnProperty('removed'));
+			return _.pickBy(byKey, (item) => !item.hasOwnProperty('removed'));
 		}
 	);
 };

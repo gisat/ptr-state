@@ -12,10 +12,23 @@ import SpatialDataSourcesSelectors from '../SpatialDataSources/selectors';
 import AttributeDataSelectors from '../AttributeData/selectors';
 import AttributeDataSourcesSelectors from '../AttributeDataSources/selectors';
 import AppSelectors from '../App/selectors';
-import {mapConstants} from '@gisatcz/ptr-core';
+// import {mapConstants} from '@gisatcz/ptr-core';
 import StylesSelectors from "../Styles/selectors";
 import SelectionsSelectors from "../Selections/selectors";
-import Select from "../Select";
+import AppSelect from "../App/selectors";
+
+const defaultMapView = {
+	center: {
+		lat: 50.099577,
+		lon: 14.425960
+	},
+	boxRange: 10000000,
+	tilt: 0,
+	roll: 0,
+	heading: 0
+};
+
+const mapConstants = {defaultMapView};
 
 let getBackgroundLayerCache = new CacheFifo(10);
 let getLayersCache = new CacheFifo(10);
@@ -603,9 +616,9 @@ const getLayers = (state, layersState) => {
 							// TODO quick solution for geoinv
 							let currentApp = AppSelectors.getKey(state);
 							if (currentApp === 'tacrGeoinvaze') {
-								const apiGeoserverWMSProtocol = Select.app.getLocalConfiguration(state, 'apiGeoserverWMSProtocol');
-								const apiGeoserverWMSHost = Select.app.getLocalConfiguration(state, 'apiGeoserverWMSHost');
-								const apiGeoserverWMSPath = Select.app.getLocalConfiguration(state, 'apiGeoserverWMSPath');
+								const apiGeoserverWMSProtocol = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSProtocol');
+								const apiGeoserverWMSHost = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSHost');
+								const apiGeoserverWMSPath = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSPath');
 
 								if (dataSource && dataSource.data && dataSource.data.layerName && (dataSource.data.type === "vector" || dataSource.data.type === "raster")) {
 									mapLayers.push({

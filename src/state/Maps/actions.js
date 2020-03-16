@@ -6,7 +6,19 @@ import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 import {utils} from '@gisatcz/ptr-utils'
 import {map as mapUtils, layerTree} from '@gisatcz/ptr-utils';
-import Action from "../Action";
+
+import LayerTemplatesAction from "../LayerTemplates/actions";
+import AreasAction from "../Areas/actions";
+import SelectionsAction from "../Selections/actions";
+import SpatialRelationsAction from "../SpatialRelations/actions";
+import AreaRelationsAction from "../AreaRelations/actions";
+import SpatialDataSourcesAction from "../SpatialDataSources/actions";
+import SpatialDataAction from "../SpatialData/actions";
+import AttributesAction from "../Attributes/actions";
+import AttributeRelationsAction from "../AttributeRelations/actions";
+import AttributeDataSourcesAction from "../AttributeDataSources/actions";
+import AttributeDataAction from "../AttributeData/actions";
+import StylesAction from "../Styles/actions";
 
 const {actionGeneralError} = commonActions;
 
@@ -366,7 +378,7 @@ const addLayer = (mapKey, layer, index, useActiveMetadataKeys) => {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			dispatch(actionAddLayer(mapKey, layer, index));
-			dispatch(Action.maps.deprecated_use(mapKey, useActiveMetadataKeys));
+			dispatch(deprecated_use(mapKey, useActiveMetadataKeys));
 		}
 	};
 };
@@ -480,10 +492,10 @@ const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 					}
 				}
 			};
-			dispatch(Action.selections.add([defaultSelection]));
-			dispatch(Action.selections.setActiveKey(selectionKey));
+			dispatch(SelectionsAction.add([defaultSelection]));
+			dispatch(SelectionsAction.setActiveKey(selectionKey));
 		} else {
-			dispatch(Action.selections.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
+			dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
 		}
 
 		// set selection in map store
@@ -668,7 +680,7 @@ const setMapBackgroundLayer = (mapKey, backgroundLayer) => {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			dispatch(actionSetMapBackgroundLayer(mapKey, backgroundLayer));
-			dispatch(Action.maps.deprecated_use(mapKey));
+			dispatch(deprecated_use(mapKey));
 		}
 	};
 };
@@ -686,7 +698,7 @@ const setMapLayers = (mapKey, layers) => {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			dispatch(actionSetMapLayers(mapKey, layers));
-			dispatch(Action.maps.use(mapKey));
+			dispatch(use(mapKey));
 		}
 	};
 };
@@ -727,10 +739,10 @@ function use(mapKey, backgroundLayer, layers) {
 				let filter = {...layer.metadataModifiers};
 				if (layer.layerTemplateKey) {
 					filter.layerTemplateKey = layer.layerTemplateKey;
-					dispatch(Action.layerTemplates.useKeys([layer.layerTemplateKey], componentId));
+					dispatch(LayerTemplatesAction.useKeys([layer.layerTemplateKey], componentId));
 				} else if (layer.areaTreeLevelKey) {
 					filter.areaTreeLevelKey = layer.areaTreeLevelKey;
-					dispatch(Action.areas.areaTreeLevels.useKeys([layer.areaTreeLevelKey], componentId));
+					dispatch(AreasAction.areaTreeLevels.useKeys([layer.areaTreeLevelKey], componentId));
 				}
 
 				let filterByActive = layer.filterByActive || null;
@@ -741,10 +753,10 @@ function use(mapKey, backgroundLayer, layers) {
 				if (layer.layerTemplateKey || layer.areaTreeLevelKey || mergedFilter.layerTemplateKey) {
 					let action, select;
 					if (layer.layerTemplateKey || mergedFilter.layerTemplateKey) {
-						action = Action.spatialRelations;
+						action = SpatialRelationsAction;
 						select = Select.spatialRelations;
 					} else if (layer.areaTreeLevelKey) {
-						action = Action.areaRelations;
+						action = AreaRelationsAction;
 						select = Select.areaRelations;
 					}
 					dispatch(action.useIndexedRegister(componentId, filterByActive, filter, null, 1, 1000));
@@ -760,7 +772,7 @@ function use(mapKey, backgroundLayer, layers) {
 							});
 							const spatialDataSourcesKeys = _.uniq(spatialFilters.map(filter => filter.spatialDataSourceKey));
 							
-							dispatch(Action.spatialDataSources.useKeys(spatialDataSourcesKeys, componentId)).then(() => {
+							dispatch(SpatialDataSourcesAction.useKeys(spatialDataSourcesKeys, componentId)).then(() => {
 								const dataSources = Select.spatialDataSources.getByKeys(getState(), spatialDataSourcesKeys);
 								if (dataSources) {
 									dataSources.forEach(dataSource => {
@@ -768,7 +780,7 @@ function use(mapKey, backgroundLayer, layers) {
 										// TODO load raster data?
 										if (dataSource && dataSource.data && dataSource.data.type === 'vector') {
 											const spatialFilter = _.find(spatialFilters, {spatialDataSourceKey: dataSource.key});
-											dispatch(Action.spatialData.useIndexed(null, spatialFilter, null, 1, 1, componentId));
+											dispatch(SpatialDataAction.useIndexed(null, spatialFilter, null, 1, 1, componentId));
 										}
 									});
 								}
@@ -782,7 +794,7 @@ function use(mapKey, backgroundLayer, layers) {
 				// TODO layer.attributeKey case?
 				// TODO handle "key: in {}" case in filters
 				if (layer.attributeKeys) {
-					dispatch(Action.attributes.useKeys(layer.attributeKeys, componentId));
+					dispatch(AttributesAction.useKeys(layer.attributeKeys, componentId));
 
 					let attributeFilter = {
 						...layer.attributeMetadataModifiers,
@@ -800,8 +812,8 @@ function use(mapKey, backgroundLayer, layers) {
 					let attributeFilterByActive = layer.attributeFilterByActive || null;
 					let mergedAttributeFilter = commonHelpers.mergeFilters(activeKeys, attributeFilterByActive, attributeFilter);
 
-					dispatch(Action.attributeRelations.useIndexedRegister( componentId, attributeFilterByActive, attributeFilter, null, 1, 2000));
-					dispatch(Action.attributeRelations.ensureIndexed(mergedAttributeFilter, null, 1, 2000)).then(() => {
+					dispatch(AttributeRelationsAction.useIndexedRegister( componentId, attributeFilterByActive, attributeFilter, null, 1, 2000));
+					dispatch(AttributeRelationsAction.ensureIndexed(mergedAttributeFilter, null, 1, 2000)).then(() => {
 						/* Ensure data sources */
 						const relations = Select.attributeRelations.getIndexed(getState(), attributeFilterByActive, attributeFilter, null, 1, 2000);
 						if (relations && relations.length) {
@@ -811,7 +823,7 @@ function use(mapKey, backgroundLayer, layers) {
 							}});
 							const dataSourcesKeys = filters.map(filter => filter.attributeDataSourceKey);
 
-							dispatch(Action.attributeDataSources.useKeys(dataSourcesKeys, componentId)).then(() => {
+							dispatch(AttributeDataSourcesAction.useKeys(dataSourcesKeys, componentId)).then(() => {
 								const dataSources = Select.attributeDataSources.getByKeys(getState(), dataSourcesKeys);
 								if (dataSources) {
 
@@ -827,7 +839,7 @@ function use(mapKey, backgroundLayer, layers) {
 										},
 										fidColumnName: relations[0].data.fidColumnName
 									};
-									dispatch(Action.attributeData.useIndexed(null, filter, null, 1, 1, componentId));
+									dispatch(AttributeDataAction.useIndexed(null, filter, null, 1, 1, componentId));
 
 								}
 							});
@@ -837,7 +849,7 @@ function use(mapKey, backgroundLayer, layers) {
 				}
 
 				if (layer.styleKey) {
-					dispatch(Action.styles.useKeys([layer.styleKey],componentId));
+					dispatch(StylesAction.useKeys([layer.styleKey],componentId));
 				}
 			});
 		}
@@ -889,7 +901,7 @@ function goToPlace(placeString) {
  * DEPRECATED CREATORS
  * ================================================== */
 
-const deprecated_use = (mapKey, useActiveMetadataKeys) => {
+function deprecated_use(mapKey, useActiveMetadataKeys) {
 	return (dispatch, getState) => {
 		let state = getState();
 		let layers = Select.maps.getLayersStateByMapKey_deprecated(state, mapKey, useActiveMetadataKeys);
@@ -926,13 +938,13 @@ const deprecated_use = (mapKey, useActiveMetadataKeys) => {
 				}
 
 
-				dispatch(Action.spatialRelations.useIndexedRegister( componentId, spatialRelationsFilterByActive, spatialRelationsFilter, null, 1, 1000));
-				dispatch(Action.spatialRelations.ensureIndexed(spatialRelationsFilter, null, 1, 1000))
+				dispatch(SpatialRelationsAction.useIndexedRegister( componentId, spatialRelationsFilterByActive, spatialRelationsFilter, null, 1, 1000));
+				dispatch(SpatialRelationsAction.ensureIndexed(spatialRelationsFilter, null, 1, 1000))
 					.then(() => {
 						let spatialDataSourcesKeys = Select.spatialRelations.getDataSourceKeysFiltered(getState(), spatialRelationsFilter);
 						if (spatialDataSourcesKeys && spatialDataSourcesKeys.length) {
 
-							dispatch(Action.spatialDataSources.useKeys([spatialDataSourcesKeys[0]], componentId)).then(() => {
+							dispatch(SpatialDataSourcesAction.useKeys([spatialDataSourcesKeys[0]], componentId)).then(() => {
 								let dataSource = Select.spatialDataSources.getByKeys(getState(), spatialDataSourcesKeys);
 								//datasource is only one
 								//if vector dataSource, then load attribute data
@@ -947,12 +959,12 @@ const deprecated_use = (mapKey, useActiveMetadataKeys) => {
 									const spatialData = Select.spatialDataSources.vector.getBatchByFilterOrder(getState(), spatialFilter, null);
 									//if data already loaded, skip loading
 									if(!spatialData) {
-										dispatch(Action.spatialDataSources.vector.loadLayerData(spatialFilter, componentId));
+										dispatch(SpatialDataSourcesAction.vector.loadLayerData(spatialFilter, componentId));
 									}
 									const attributeFilter = _.cloneDeep(filters.mergedFilter);
 
-									dispatch(Action.attributeRelations.useIndexedRegister( componentId, filters.filterByActive, attributeFilter, null, 1, 1000));
-									dispatch(Action.attributeRelations.ensureIndexedSpecific(attributeFilter, null, 1, 1000, componentId));
+									dispatch(AttributeRelationsAction.useIndexedRegister( componentId, filters.filterByActive, attributeFilter, null, 1, 1000));
+									dispatch(AttributeRelationsAction.ensureIndexedSpecific(attributeFilter, null, 1, 1000, componentId));
 								}
 
 							});

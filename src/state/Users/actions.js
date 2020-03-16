@@ -8,8 +8,9 @@ import request from "../_common/request";
 import common from '../_common/actions';
 import Select from "../Select";
 
-
-import Action from '../Action';
+import ScopesAction from '../Scopes/actions';
+import PlacesAction from '../Places/actions';
+import PeriodsAction from '../Periods/actions';
 
 const TTL = 5;
 
@@ -31,9 +32,9 @@ function onLogin() {
 		dispatch(common.actionDataSetOutdated());
 		dispatch(apiLoadCurrentUser());
 
-		dispatch(Action.scopes.refreshUses());
-		dispatch(Action.places.refreshUses());
-		dispatch(Action.periods.refreshUses());
+		dispatch(ScopesAction.refreshUses());
+		dispatch(PlacesAction.refreshUses());
+		dispatch(PeriodsAction.refreshUses());
 		dispatch(refreshUses());
 	}
 }
@@ -43,9 +44,9 @@ function onLogout() {
 		dispatch(actionLogout());
 		dispatch(setActiveKey(null));
 
-		dispatch(Action.scopes.refreshUses());
-		dispatch(Action.places.refreshUses());
-		dispatch(Action.periods.refreshUses());
+		dispatch(ScopesAction.refreshUses());
+		dispatch(PlacesAction.refreshUses());
+		dispatch(PeriodsAction.refreshUses());
 		dispatch(refreshUses());
 	}
 }

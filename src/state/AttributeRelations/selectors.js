@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import _, {isEmpty} from 'lodash';
+import _ from 'lodash';
 import common from "../_common/selectors";
 import createCachedSelector from "re-reselect";
 
@@ -199,7 +199,7 @@ const getDataSourcesFromFilteredRelations = createCachedSelector(
 const getDataSourceKeyFiltered = createSelector(
 	[getFiltered],
 	(filteredRelations) => {
-		if(filteredRelations && !isEmpty(filteredRelations)) {
+		if(filteredRelations && !_.isEmpty(filteredRelations)) {
 			//relation is only for one data, so return first
 			return filteredRelations[0].dataSourceKey;
 		} else {

@@ -1,5 +1,5 @@
 import Select from '../../state/Select';
-import Action from "../Action";
+import AttributeRelationsAction from "../AttributeRelations/actions";
 import commonActions from "../_common/actions";
 import ActionTypes from "../../constants/ActionTypes";
 
@@ -11,8 +11,8 @@ const use = (chartKey, useActiveMetadataKeys) => {
 		let componentId = 'chart-' + chartKey;
 
 		if (chart) {
-			dispatch(Action.attributeRelations.useIndexedRegister( componentId, chart.filterByActive, chart.mergedFilter, null, 1, 1000));
-			dispatch(Action.attributeRelations.ensureIndexedSpecific(chart.mergedFilter, null, 1, 1000, componentId));
+			dispatch(AttributeRelationsAction.attributeRelations.useIndexedRegister( componentId, chart.filterByActive, chart.mergedFilter, null, 1, 1000));
+			dispatch(AttributeRelationsAction.attributeRelations.ensureIndexedSpecific(chart.mergedFilter, null, 1, 1000, componentId));
 		}
 	}
 };
