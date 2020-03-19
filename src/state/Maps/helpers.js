@@ -118,7 +118,7 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 			features = mergeFeaturesWithAttributes(layerKey, features, attributeDataSources, fidColumnName);
 		}
 
-		if (selections && layerOptions.selected) {
+		if (selections && layerOptions && layerOptions.selected) {
 			let populatedSelections = {};
 			_.forIn(layerOptions.selected, (value, key) => {
 				let selection = selections[key];
