@@ -11,8 +11,8 @@ const use = (chartKey, useActiveMetadataKeys) => {
 		let componentId = 'chart-' + chartKey;
 
 		if (chart) {
-			dispatch(AttributeRelationsAction.attributeRelations.useIndexedRegister( componentId, chart.filterByActive, chart.mergedFilter, null, 1, 1000));
-			dispatch(AttributeRelationsAction.attributeRelations.ensureIndexedSpecific(chart.mergedFilter, null, 1, 1000, componentId));
+			dispatch(AttributeRelationsAction.useIndexedRegister( componentId, chart.filterByActive, chart.mergedFilter, null, 1, 1000));
+			dispatch(AttributeRelationsAction.ensureIndexedSpecific(chart.mergedFilter, null, 1, 1000, componentId));
 		}
 	}
 };
