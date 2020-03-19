@@ -1,6 +1,6 @@
 {
   "name": "@gisatcz/ptr-state",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Panther FE state",
   "keywords": [
     "panther",
@@ -20,8 +20,8 @@
     "url": "https://github.com/gisat/ptr-state"
   },
   "dependencies": {
-    "@gisatcz/ptr-core": "1.1.2-alpha",
-    "@gisatcz/ptr-utils": "1.1.1",
+    "@gisatcz/ptr-core": "1.2.0",
+    "@gisatcz/ptr-utils": "1.2.0",
     "@manaflair/redux-batch": "1.0.0",
     "connected-react-router": "6.2.2",
     "isomorphic-fetch": "2.2.1",
