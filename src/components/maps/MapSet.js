@@ -6,7 +6,7 @@ import {utils} from '@gisatcz/ptr-utils'
 const mapStateToProps = (state, ownProps) => {
 	if (ownProps.stateMapSetKey) {
 		return {
-			activeMapKey: Select.maps.getMapSetActiveMapKey(state),
+			activeMapKey: Select.maps.getMapSetActiveMapKey(state, ownProps.stateMapSetKey),
 			activeMapView: Select.maps.getMapSetActiveMapView(state, ownProps.stateMapSetKey),
 			maps: Select.maps.getMapSetMapKeys(state, ownProps.stateMapSetKey),
 			view: Select.maps.getMapSetView(state, ownProps.stateMapSetKey)
@@ -28,9 +28,9 @@ const mapDispatchToPropsFactory = () => {
 				updateView: (update) => {
 					dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
 				},
-				// resetHeading: () => {
-				// 	dispatch(Action.maps.resetSetViewHeading(ownProps.stateMapSetKey));
-				// }
+				resetHeading: (mapKey) => {
+					dispatch(Action.maps.resetViewHeading(mapKey));
+				}
 			}
 		} else {
 			let setKey = ownProps.setKey || componentId;
