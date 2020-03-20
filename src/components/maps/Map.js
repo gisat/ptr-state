@@ -42,7 +42,7 @@ const mapDispatchToPropsFactory = () => {
                 },
 
                 resetHeading: () => {
-                    // todo
+                    dispatch(Action.maps.resetViewHeading(ownProps.stateMapKey));
                 },
 
                 onClick: (view) => {
