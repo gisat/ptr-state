@@ -47,7 +47,7 @@ export default function request (localConfig, apiPath, method, query, payload, t
 		},
 		error => {
 			if (ttl - 1) {
-				request(apiPath, method, query, payload, ttl - 1);
+				request(localConfig, apiPath, method, query, payload, ttl - 1);
 			} else {
 				throw error;
 			}
