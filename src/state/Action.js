@@ -14,7 +14,7 @@ import Charts from './Charts/actions';
 import Components from './Components/actions';
 import LayerPeriods from "./LayerPeriods/actions";
 import LayerTemplates from './LayerTemplates/actions';
-import LayersTrees from './LayersTrees/actions';
+import LayerTrees from './LayerTrees/actions';
 import Maps from './Maps/actions';
 import Periods from './Periods/actions';
 import Places from './Places/actions';
@@ -48,7 +48,7 @@ export default {
 	components: Components,
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
-	layersTrees: LayersTrees,
+	layerTrees: LayerTrees,
 	maps: Maps,
 	periods: Periods,
 	places: Places,
