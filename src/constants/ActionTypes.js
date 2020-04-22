@@ -1,6 +1,6 @@
 import {utils} from '@gisatcz/ptr-utils'
 
-export const commonActionTypesDefinitions = {
+export default utils.deepKeyMirror({
 
 	INITIALIZE: 'INITIALIZE',
 
@@ -1081,7 +1081,6 @@ export const commonActionTypesDefinitions = {
 	LPISCHECK_UPDATE_CASE: 'LPISCHECK_UPDATE_CASE',
 	LPISCHECK_CASES_SET_ACTIVE: 'LPISCHECK_CASES_SET_ACTIVE',
 	LPIS_CHECK_CASES_SEARCH_PARAM_CHANGE: 'LPIS_CHECK_CASES_SEARCH_PARAM_CHANGE',
-};
+});
 
-export default utils.deepKeyMirror(commonActionTypesDefinitions);
 
