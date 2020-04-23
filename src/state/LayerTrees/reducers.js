@@ -9,33 +9,33 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-		case ActionTypes.LAYERSTREES.ADD:
+		case ActionTypes.LAYER_TREES.ADD:
 			return common.add(state, action);
-		case ActionTypes.LAYERSTREES.ADD_UNRECEIVED:
+		case ActionTypes.LAYER_TREES.ADD_UNRECEIVED:
 			return common.addUnreceivedKeys(state, action);
-		case ActionTypes.LAYERSTREES.DELETE:
+		case ActionTypes.LAYER_TREES.DELETE:
 			return common.remove(state, action);
-		case ActionTypes.LAYERSTREES.EDITED.REMOVE:
+		case ActionTypes.LAYER_TREES.EDITED.REMOVE:
 			return common.removeEdited(state, action);
-		case ActionTypes.LAYERSTREES.EDITED.REMOVE_PROPERTY:
+		case ActionTypes.LAYER_TREES.EDITED.REMOVE_PROPERTY:
 			return common.removeEditedProperty(state, action);
-		case ActionTypes.LAYERSTREES.EDITED.UPDATE:
+		case ActionTypes.LAYER_TREES.EDITED.UPDATE:
 			return common.updateEdited(state, action);
-		case ActionTypes.LAYERSTREES.INDEX.ADD:
+		case ActionTypes.LAYER_TREES.INDEX.ADD:
 			return common.addIndex(state, action);
-		case ActionTypes.LAYERSTREES.INDEX.CLEAR_ALL:
+		case ActionTypes.LAYER_TREES.INDEX.CLEAR_ALL:
 			return common.clearIndexes(state, action);
-		case ActionTypes.LAYERSTREES.INDEX.CLEAR_INDEX:
+		case ActionTypes.LAYER_TREES.INDEX.CLEAR_INDEX:
 			return common.clearIndex(state, action);
-		case ActionTypes.LAYERSTREES.MARK_DELETED:
+		case ActionTypes.LAYER_TREES.MARK_DELETED:
 			return common.markDeleted(state, action);
-		case ActionTypes.LAYERSTREES.USE.INDEXED.CLEAR:
+		case ActionTypes.LAYER_TREES.USE.INDEXED.CLEAR:
 			return common.useIndexedClear(state, action);
-		case ActionTypes.LAYERSTREES.USE.INDEXED.REGISTER:
+		case ActionTypes.LAYER_TREES.USE.INDEXED.REGISTER:
 			return common.registerUseIndexed(state, action);
-		case ActionTypes.LAYERSTREES.USE.KEYS.REGISTER:
+		case ActionTypes.LAYER_TREES.USE.KEYS.REGISTER:
 			return common.useKeysRegister(state, action);
-		case ActionTypes.LAYERSTREES.USE.KEYS.CLEAR:
+		case ActionTypes.LAYER_TREES.USE.KEYS.CLEAR:
 			return common.useKeysClear(state, action);
 
 		case ActionTypes.COMMON.DATA.SET_OUTDATED:

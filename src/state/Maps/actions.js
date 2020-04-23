@@ -112,7 +112,7 @@ const addLayersToMaps = (layerTreesFilter, mapKeys, useActiveMetadataKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
 		// getIndexed
-		const layerTreesData = Select.layersTrees.getByFilterOrder(state, layerTreesFilter, null);
+		const layerTreesData = Select.layerTrees.getByFilterOrder(state, layerTreesFilter, null);
 		
 		if(layerTreesData) {
 			//BE should return only one record, but could be bore fore scopeKey and applicationKey. 
