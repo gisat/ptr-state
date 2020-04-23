@@ -425,7 +425,7 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 		if (total != null){
 			const indexPage = commonSelectors.getIndexPage(getSubstate)(state, filter, order, start, length) ?? {};
 			const pages = _.chunk(Object.values(indexPage), PAGE_SIZE);
-			const promises = pages.map(page => {
+			const promises = pages.map((page, i) => {
 				const loadedKeys = page.filter(v => v != null);
 				if (loadedKeys.length === page.length) {
 					return; // page is already loaded
@@ -433,7 +433,7 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 
 				const completeFilter = loadedKeys.length ? {...filter, key: {notin: loadedKeys}} : filter;
 
-				return dispatch(loadIndexedPage(dataType, completeFilter, order, start + i, changedOn, actionTypes, categoryPath))
+				return dispatch(loadIndexedPage(dataType, completeFilter, order, start + (i * PAGE_SIZE), changedOn, actionTypes, categoryPath))
 					.catch((err) => {
 						if (err.message === 'Index outdated'){
 							dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
