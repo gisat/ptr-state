@@ -422,32 +422,26 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 		let total = commonSelectors.getIndexTotal(getSubstate)(state, filter, order);
 		let changedOn = commonSelectors.getIndexChangedOn(getSubstate)(state, filter, order);
 
-		if (total || total === 0){
-			let promises = [];
-			let indexPage = commonSelectors.getIndexPage(getSubstate)(state, filter, order, start, length);
-			let amount = indexPage ? Object.keys(indexPage).length : 0;
-			for (let i = 0; i < amount; i += PAGE_SIZE){
-				let loadedKeys = [], requestNeeded = false;
-				for (let j = 0; j < PAGE_SIZE && (start+i+j) <= total; j++){
-					if (indexPage[start + i + j]){
-						loadedKeys.push(indexPage[start + i + j]);
-					} else {
-						requestNeeded = true;
-					}
+		if (total != null){
+			const indexPage = commonSelectors.getIndexPage(getSubstate)(state, filter, order, start, length) ?? {};
+			const pages = _.chunk(Object.values(indexPage), PAGE_SIZE);
+			const promises = pages.map(page => {
+				const loadedKeys = page.filter(v => v != null);
+				if (loadedKeys.length === page.length) {
+					return; // page is already loaded
 				}
-				if (requestNeeded){
-					let completeFilter = loadedKeys.length ? {...filter, key: {notin: loadedKeys}} : filter;
 
-					let promise = dispatch(loadIndexedPage(dataType, completeFilter, order, start + i, changedOn, actionTypes, categoryPath))
-							.catch((err) => {
-								if (err.message === 'Index outdated'){
-									dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
-								}
-							});
-					promises.push(promise);
-				}
-			}
-			return promises.length ? Promise.all(promises) : Promise.resolve();
+				const completeFilter = loadedKeys.length ? {...filter, key: {notin: loadedKeys}} : filter;
+
+				return dispatch(loadIndexedPage(dataType, completeFilter, order, start + i, changedOn, actionTypes, categoryPath))
+					.catch((err) => {
+						if (err.message === 'Index outdated'){
+							dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
+						}
+					});
+			})
+
+			return Promise.all(promises);
 		} else {
 			// we don't have index
 			return dispatch(loadIndexedPage(dataType, filter, order, start, changedOn, actionTypes, categoryPath)).then((response) => {
