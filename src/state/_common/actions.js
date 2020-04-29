@@ -9,7 +9,8 @@ import Select from "../Select";
 import ActionTypes from "../../constants/ActionTypes";
 
 import Action from '../Action';
-import {utils} from '@gisatcz/ptr-utils'
+import {utils} from '@gisatcz/ptr-utils';
+import {configDefaults} from "@gisatcz/ptr-core";
 
 const DEFAULT_CATEGORY_PATH = 'metadata';
 
@@ -357,7 +358,7 @@ function create(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEG
 function loadAll(dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize;
+		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = getAPIPath(categoryPath, dataType);
 		let payload = {
 			limit: PAGE_SIZE
@@ -398,7 +399,7 @@ function loadAll(dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
 function ensureKeys(getSubstate, dataType, actionTypes, keys, categoryPath = DEFAULT_CATEGORY_PATH){
 	return (dispatch, getState) => {
 		const state = getState();
-		const PAGE_SIZE = Select.app.getLocalConfiguration(state, 'requestPageSize');
+		const PAGE_SIZE = Select.app.getLocalConfiguration(state, 'requestPageSize') || configDefaults.requestPageSize;
 
 		let keysToLoad = commonSelectors.getKeysToLoad(getSubstate)(state, keys);
 		let promises = [];
@@ -418,7 +419,7 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 	return (dispatch, getState) => {
 		const state = getState();
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
-		const PAGE_SIZE = localConfig.requestPageSize;
+		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		let total = commonSelectors.getIndexTotal(getSubstate)(state, filter, order);
 		let changedOn = commonSelectors.getIndexChangedOn(getSubstate)(state, filter, order);
 
@@ -505,7 +506,7 @@ function loadKeysPage(dataType, actionTypes, keys, categoryPath = DEFAULT_CATEGO
 function loadIndexedPage(dataType, filter, order, start, changedOn, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize;
+		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = getAPIPath(categoryPath, dataType);
 
 		let payload = {
@@ -563,7 +564,7 @@ function loadIndexedBatch(dataType, filter, order, actionTypes, categoryPath = D
 function loadFiltered(dataType, actionTypes, filter, categoryPath = DEFAULT_CATEGORY_PATH) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize;
+		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = getAPIPath(categoryPath, dataType);
 		const payload = {
 			filter: filter,
