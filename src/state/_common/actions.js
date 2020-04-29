@@ -424,7 +424,9 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 		let changedOn = commonSelectors.getIndexChangedOn(getSubstate)(state, filter, order);
 
 		if (total != null){
-			const indexPage = commonSelectors.getIndexPage(getSubstate)(state, filter, order, start, length) ?? {};
+			// we have existing index, we only load what we don't have
+
+			const indexPage = commonSelectors.getIndexPage(getSubstate)(state, filter, order, start, length) || {};
 			const pages = _.chunk(Object.values(indexPage), PAGE_SIZE);
 			const promises = pages.map((page, i) => {
 				const loadedKeys = page.filter(v => v != null);
@@ -440,11 +442,13 @@ function ensureIndexed(getSubstate, dataType, filter, order, start, length, acti
 							dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
 						}
 					});
-			})
+			});
 
 			return Promise.all(promises);
+
 		} else {
-			// we don't have index
+			// we don't have index, we need to load everything
+
 			return dispatch(loadIndexedPage(dataType, filter, order, start, changedOn, actionTypes, categoryPath)).then((response) => {
 				// check success to make sure it's our error from BE and not anything broken in render chain
 				if (response && response.message && response.success === false){
