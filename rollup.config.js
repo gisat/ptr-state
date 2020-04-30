@@ -71,6 +71,7 @@ export default {
     'react-router-dom',
     'react-router',
     '@gisatcz/ptr-utils',
+    '@gisatcz/ptr-core',
     'path',
     'moment',
     'reselect',
