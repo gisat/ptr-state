@@ -3,7 +3,7 @@ import _ from "lodash";
 function getIndex(indexes, filter, order) {
 	if (indexes){
 		// TODO re-reselect?
-		let index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
+		const index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
 		return index ? index : null;
 	} else {
 		return null;
@@ -12,14 +12,13 @@ function getIndex(indexes, filter, order) {
 
 // TODO Test
 function getUniqueIndexes(indexes) {
-	let uniqueIndexes = [];
-	indexes.forEach(index => {
-		let duplicity = _.find(uniqueIndexes, (i) => {return isCorrespondingIndex(index, i.filter, i.order) });
-		if (!duplicity) {
-			uniqueIndexes.push(index);
+	return indexes.reduce((uniqueIndexes, index) => {
+		if (_.find(uniqueIndexes, (i) => isCorrespondingIndex(index, i.filter, i.order))) {
+			return uniqueIndexes;
 		}
-	});
-	return uniqueIndexes;
+
+		return [...uniqueIndexes, index];
+	}, []);
 }
 
 function isCorrespondingIndex(index, filter, order) {
@@ -34,13 +33,7 @@ function itemFitFilter(filter, item) {
 
 	const entries = Object.entries(filter);
 
-	return entries.every((entry) => {
-		
-			// for (const [key, value] of entries) {
-				
-			// }
-			const [key, value] = entry;
-
+	return entries.every(([key, value]) => {
 			const itemHasFilterKey = item.data && item.data.hasOwnProperty(key);
 			const itemHasFilterLinkKey = item.data && item.data.hasOwnProperty(`${key}Key`) ;
 			if(itemHasFilterKey) {
