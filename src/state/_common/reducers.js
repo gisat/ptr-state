@@ -252,10 +252,7 @@ export default {
 	},
 
 	removeEditedActive: (state) => {
-		let newData = null;
-		if (state.editedByKey){
-			newData = _.omit(state.editedByKey, state.activeKey);
-		}
+		let newData = state.editedByKey ? _.omit(state.editedByKey, state.activeKey) : null;
 		return {...state, editedByKey: newData}
 	},
 
