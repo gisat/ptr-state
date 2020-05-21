@@ -67,7 +67,7 @@ function modelsFromIndex(models, index) {
 		}
 	}
 
-	return indexedModels.length ? indexedModels : null;
+	return nonEmptyArray(indexedModels);
 }
 
 function modelsFromIndex2(models, index) {
@@ -89,7 +89,7 @@ function modelsFromIndex2(models, index) {
 		}
 	}
 
-	return indexedModels.length ? indexedModels : null;
+	return nonEmptyArray(indexedModels);
 }
 
 const getAllForActiveScope = (getSubstate) => {
@@ -144,7 +144,7 @@ const getActiveModels = (getSubstate) => {
 					}
 				});
 			}
-			return activeModels.length ? activeModels : null;
+			return nonEmptyArray(activeModels);
 		}
 	)
 };
@@ -283,7 +283,7 @@ const getByKeys = (getSubstate) => {
 					}
 				});
 
-				return data.length ? data : null;
+				return nonEmptyArray(data);
 			} else {
 				return null;
 			}

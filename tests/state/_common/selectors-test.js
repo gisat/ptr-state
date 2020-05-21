@@ -28,21 +28,98 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	it('getActiveModels', function () {
-		const state = {
-			sub: {
-				byKey: {
-					k1: {n: 1},
-					k2: {n: 2},
-					k3: {n: 3, removed: true},
+	describe('getActiveModels', function () {
+		const tests = [
+			{
+				name: 'none with null active keys',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+						activeKeys: null,
+					},
 				},
-				activeKeys: ['k1', 'k3'],
+				expectedResult: null,
 			},
-		};
+			{
+				name: 'none with empty active keys',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+						activeKeys: [],
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'none with empty models',
+				state: {
+					sub: {
+						byKey: {},
+						activeKeys: ['k3'],
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'none',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+						activeKeys: ['k3'],
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'one',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+						activeKeys: ['k1', 'k3'],
+					},
+				},
+				expectedResult: [{n: 1}],
+			},
+			{
+				name: 'two',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+						activeKeys: ['k1', 'k2', 'k3'],
+					},
+				},
+				expectedResult: [{n: 1}, {n: 2}],
+			},
+		];
 
-		assert.deepStrictEqual(selectors.getActiveModels(getSubState)(state), [
-			{n: 1},
-		]);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getActiveModels(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
 	it('getActiveKey', function () {
@@ -60,183 +137,561 @@ describe('state/_common/selectors', function () {
 		]);
 	});
 
-	it('getAll', function () {
-		const state = {
-			sub: {byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3, removed: true}}},
-		};
-
-		assert.deepStrictEqual(selectors.getAll(getSubState)(state), [
-			{n: 1},
-			{n: 2},
-		]);
-	});
-
-	it('getAllActiveKeys', function () {
-		const state = {
-			scopes: {activeKey: 'scopesKey'},
-			cases: {activeKey: 'casesKey'},
-			scenarios: {activeKey: 'scenariosKey'},
-			places: {activeKey: 'placesKey', activeKeys: ['p1', 'p2']},
-			periods: {activeKey: 'periodsKey', activeKeys: ['ps1', 'ps2']},
-			attributes: {activeKey: 'attributesKey'},
-			layerTemplates: {activeKey: 'layerTemplatesKey'},
-			areaTreeLevelKeys: {activeKey: 'areaTreeLevelKey'},
-			specific: {apps: {activeKey: 'appsKey'}},
-			app: {key: 'appKey'},
-		};
-
-		assert.deepStrictEqual(selectors.getAllActiveKeys(state), {
-			activeApplicationKey: 'appsKey',
-			activeAreaTreeLevelKey: 'areaTreeLevelKey',
-			activeAttributeKey: 'attributesKey',
-			activeCaseKey: 'casesKey',
-			activeLayerTemplateKey: 'layerTemplatesKey',
-			activePeriodKey: 'periodsKey',
-			activePeriodKeys: ['ps1', 'ps2'],
-			activePlaceKey: 'placesKey',
-			activePlaceKeys: ['p1', 'p2'],
-			activeScenarioKey: 'scenariosKey',
-			activeScopeKey: 'scopesKey',
-		});
-	});
-
-	it('getAllAsObject', function () {
-		const state = {
-			sub: {byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3, removed: true}}},
-		};
-
-		assert.deepStrictEqual(selectors.getAllAsObject(getSubState)(state), {
-			k1: {n: 1},
-			k2: {n: 2},
-		});
-	});
-
-	it('getAllForActiveScope', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}},
-				indexes: [
-					{filter: 'fil', order: 'desc'},
-					{
-						filter: {scopeKey: 'scopeK'},
-						order: 'asc',
-						count: 4,
-						index: [null, 'k1', 'k2', 'k3'],
+	describe('getAll', function () {
+		const tests = [
+			{
+				name: 'null',
+				state: {
+					sub: {
+						byKey: null,
 					},
-				],
+				},
+				expectedResult: [],
 			},
-			scopes: {
-				activeKey: 'scopeK',
+			{
+				name: 'empty',
+				state: {
+					sub: {
+						byKey: {},
+					},
+				},
+				expectedResult: [],
 			},
-		};
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+					},
+				},
+				expectedResult: [{n: 1}, {n: 2}],
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getAll(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getAllActiveKeys', function () {
+		const tests = [
+			{
+				name: 'none specified',
+				state: {},
+				expectedResult: {
+					activeAreaTreeLevelKey: undefined,
+					activeAttributeKey: undefined,
+					activeCaseKey: undefined,
+					activeLayerTemplateKey: undefined,
+					activePeriodKey: undefined,
+					activePeriodKeys: undefined,
+					activePlaceKey: undefined,
+					activePlaceKeys: undefined,
+					activeScenarioKey: undefined,
+					activeScopeKey: undefined,
+				},
+			},
+			{
+				name: 'all specified',
+				state: {
+					scopes: {activeKey: 'scopesKey'},
+					cases: {activeKey: 'casesKey'},
+					scenarios: {activeKey: 'scenariosKey'},
+					places: {activeKey: 'placesKey', activeKeys: ['p1', 'p2']},
+					periods: {
+						activeKey: 'periodsKey',
+						activeKeys: ['ps1', 'ps2'],
+					},
+					attributes: {activeKey: 'attributesKey'},
+					layerTemplates: {activeKey: 'layerTemplatesKey'},
+					areaTreeLevelKeys: {activeKey: 'areaTreeLevelKey'},
+					specific: {apps: {activeKey: 'appsKey'}},
+					app: {key: 'appKey'},
+				},
+				expectedResult: {
+					activeApplicationKey: 'appsKey',
+					activeAreaTreeLevelKey: 'areaTreeLevelKey',
+					activeAttributeKey: 'attributesKey',
+					activeCaseKey: 'casesKey',
+					activeLayerTemplateKey: 'layerTemplatesKey',
+					activePeriodKey: 'periodsKey',
+					activePeriodKeys: ['ps1', 'ps2'],
+					activePlaceKey: 'placesKey',
+					activePlaceKeys: ['p1', 'p2'],
+					activeScenarioKey: 'scenariosKey',
+					activeScopeKey: 'scopesKey',
+				},
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getAllActiveKeys(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getAllAsObject', function () {
+		const tests = [
+			{
+				name: 'null',
+				state: {
+					sub: {
+						byKey: {},
+					},
+				},
+				expectedResult: {},
+			},
+			{
+				name: 'empty',
+				state: {
+					sub: {
+						byKey: {},
+					},
+				},
+				expectedResult: {},
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {
+							k1: {n: 1},
+							k2: {n: 2},
+							k3: {n: 3, removed: true},
+						},
+					},
+				},
+				expectedResult: {
+					k1: {n: 1},
+					k2: {n: 2},
+				},
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getAllAsObject(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getAllForActiveScope', function () {
+		const tests = [
+			{
+				name: 'empty models',
+				state: {
+					sub: {},
+					scopes: {
+						activeKey: 'scopeK',
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'empty indexes',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [],
+					},
+					scopes: {
+						activeKey: 'scopeK',
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'no active skope key',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
+					},
+					scopes: {},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
+					},
+					scopes: {
+						activeKey: 'scopeK',
+					},
+				},
+				expectedResult: [{n: 1}, {n: 2}, {key: 'k3'}, null],
+			},
+		];
 		const order = 'asc';
 
-		assert.deepStrictEqual(
-			selectors.getAllForActiveScope(getSubState)(state, order),
-			[{n: 1}, {n: 2}, {key: 'k3'}, null]
-		);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getAllForActiveScope(getSubState)(
+						test.state,
+						order
+					),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
-	it('getByFilterOrder', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}},
-				indexes: [
-					{filter: 'fil', order: 'desc'},
-					{
-						filter: {scopeKey: 'scopeK'},
-						order: 'asc',
-						count: 4,
-						index: [null, 'k1', 'k2', 'k3'],
+	describe('getByFilterOrder', function () {
+		const tests = [
+			{
+				name: 'empty models',
+				state: {
+					sub: {
+						byKey: {},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
 					},
-				],
+				},
+				expectedResult: [{key: 'k1'}, {key: 'k2'}, {key: 'k3'}, null],
 			},
-		};
+			{
+				name: 'empty indexes',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [],
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
+					},
+				},
+				expectedResult: [{n: 1}, {n: 2}, {key: 'k3'}, null],
+			},
+		];
 		const filter = {scopeKey: 'scopeK'};
 		const order = 'asc';
 
-		assert.deepStrictEqual(
-			selectors.getByFilterOrder(getSubState)(state, filter, order),
-			[{n: 1}, {n: 2}, {key: 'k3'}, null]
-		);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getByFilterOrder(getSubState)(
+						test.state,
+						filter,
+						order
+					),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
 	describe('getBatchByFilterOrder', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}},
-				indexes: [
-					{filter: 'fil', order: 'desc'},
-					{
-						filter: {scopeKey: 'scopeK'},
-						order: 'asc',
-						count: 4,
-						index: [null, 'k1', 'k2', 'k3'],
+		const tests = [
+			{
+				name: 'empty models',
+				state: {
+					sub: {
+						byKey: {},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
 					},
-				],
+				},
+				expectedResult: [null, null, null, null],
 			},
-		};
+			{
+				name: 'empty indexes',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [],
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+						indexes: [
+							{filter: 'fil', order: 'desc'},
+							{
+								filter: {scopeKey: 'scopeK'},
+								order: 'asc',
+								count: 4,
+								index: [null, 'k1', 'k2', 'k3'],
+							},
+						],
+					},
+				},
+				expectedResult: [null, {n: 1}, {n: 2}, null],
+			},
+		];
 		const filter = {scopeKey: 'scopeK'};
 		const order = 'asc';
 
-		assert.deepStrictEqual(
-			selectors.getBatchByFilterOrder(getSubState)(state, filter, order),
-			[null, {n: 1}, {n: 2}, null]
-		);
-	});
-
-	it('getByKey', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}},
-			},
-		};
-
-		assert.deepStrictEqual(selectors.getByKey(getSubState)(state, 'k1'), {
-			n: 1,
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getBatchByFilterOrder(getSubState)(
+						test.state,
+						filter,
+						order
+					),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
-	it('getByKeysAsObject', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
-			},
-		};
-
-		assert.deepStrictEqual(
-			selectors.getByKeysAsObject(getSubState)(state, ['k1', 'k2']),
+	describe('getByKey', function () {
+		const tests = [
 			{
-				k1: {n: 1},
-				k2: {n: 2},
-			}
-		);
+				name: 'none',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+					},
+				},
+				key: 'k3',
+				expectedResult: null,
+			},
+			{
+				name: 'null key',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+					},
+				},
+				key: null,
+				expectedResult: undefined,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}},
+					},
+				},
+				key: 'k1',
+				expectedResult: {
+					n: 1,
+				},
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getByKey(getSubState)(test.state, test.key),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
-	it('getByKeys', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+	describe('getByKeysAsObject', function () {
+		const tests = [
+			{
+				name: 'null keys',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: null,
+				expectedResult: null,
 			},
-		};
+			{
+				name: 'none',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: ['k5', 'k6'],
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: ['k1', 'k2'],
+				expectedResult: {
+					k1: {n: 1},
+					k2: {n: 2},
+				},
+			},
+		];
 
-		assert.deepStrictEqual(
-			selectors.getByKeys(getSubState)(state, ['k1', 'k2']),
-			[{n: 1}, {n: 2}]
-		);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getByKeysAsObject(getSubState)(
+						test.state,
+						test.keys
+					),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getByKeys', function () {
+		const tests = [
+			{
+				name: 'null keys',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: null,
+				expectedResult: null,
+			},
+			{
+				name: 'empty keys',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: [],
+				expectedResult: null,
+			},
+			{
+				name: 'none',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: ['k5', 'k6'],
+				expectedResult: null,
+			},
+			{
+				name: 'empty',
+				state: {
+					sub: {},
+				},
+				keys: ['k1', 'k2'],
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
+					},
+				},
+				keys: ['k1', 'k2'],
+				expectedResult: [{n: 1}, {n: 2}],
+			},
+		];
+
+		tests.forEach((test) => {
+			assert.deepStrictEqual(
+				selectors.getByKeys(getSubState)(test.state, test.keys),
+				test.expectedResult
+			);
+		});
 	});
 
 	describe('getDataByKey', function () {
-		const state = {
-			sub: {
-				byKey: {k1: {n: 1, data: 'data'}, k2: {n: 2}},
+		const tests = [
+			{
+				name: 'none',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1, data: 'data'}, k2: {n: 2}},
+					},
+				},
+				key: 'k5',
+				expectedResult: null,
 			},
-		};
+			{
+				name: 'some',
+				state: {
+					sub: {
+						byKey: {k1: {n: 1, data: 'data'}, k2: {n: 2}},
+					},
+				},
+				key: 'k1',
+				expectedResult: 'data',
+			},
+		];
 
-		assert.strictEqual(
-			selectors.getDataByKey(getSubState)(state, 'k1'),
-			'data'
-		);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.strictEqual(
+					selectors.getDataByKey(getSubState)(test.state, test.key),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
 	describe('getDeletePermissionByKey', function () {
@@ -355,101 +810,289 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	it('getEditedActive', function () {
-		const state = {
-			sub: {
-				activeKey: 'k1',
-				editedByKey: {k1: 'val1', k2: 'val2'},
+	describe('getEditedActive', function () {
+		const tests = [
+			{
+				name: 'none',
+				state: {
+					sub: {
+						activeKey: 'k5',
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				expectedResult: null,
 			},
-		};
-
-		assert.strictEqual(
-			selectors.getEditedActive(getSubState)(state),
-			'val1'
-		);
-	});
-
-	it('getEditedAll', function () {
-		const state = {
-			sub: {
-				activeKey: 'k1',
-				editedByKey: {k1: 'val1', k2: 'val2'},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						activeKey: 'k1',
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				expectedResult: 'val1',
 			},
-		};
-
-		assert.deepStrictEqual(selectors.getEditedAll(getSubState)(state), [
-			'val1',
-			'val2',
-		]);
-	});
-
-	it('getEditedAllAsObject', function () {
-		const state = {
-			sub: {
-				editedByKey: {prop: 'val'},
-			},
-		};
-
-		assert.deepStrictEqual(
-			selectors.getEditedAllAsObject(getSubState)(state),
-			{prop: 'val'}
-		);
-	});
-
-	it('getEditedByKey', function () {
-		const state = {
-			sub: {
-				editedByKey: {k1: 'val1', k2: 'val2'},
-			},
-		};
-
-		assert.strictEqual(
-			selectors.getEditedByKey(getSubState)(state, 'k2'),
-			'val2'
-		);
-	});
-
-	it('getEditedDataByKey', function () {
-		const state = {
-			sub: {
-				editedByKey: {k1: 'val1', k2: {data: 'datk2'}},
-			},
-		};
-
-		assert.strictEqual(
-			selectors.getEditedDataByKey(getSubState)(state, 'k2'),
-			'datk2'
-		);
-	});
-
-	it('getEditedKeys', function () {
-		const state = {
-			sub: {
-				editedByKey: {k1: {key: 'ke1'}, k2: {key: 'ke2'}},
-			},
-		};
-
-		assert.deepStrictEqual(selectors.getEditedKeys(getSubState)(state), [
-			'ke1',
-			'ke2',
-		]);
-	});
-
-	it('getIndex', function () {
-		const indexes = [
-			{filter: 'fil2', order: 'desc'},
-			{filter: 'fil', order: 'desc'},
-			{filter: 'fil', order: 'asc'},
-			{filter: 'fil2', order: 'asc'},
 		];
-		const filter = 'fil';
-		const order = 'asc';
-		const state = {sub: {indexes}};
 
-		assert.deepStrictEqual(
-			selectors.getIndex(getSubState)(state, filter, order),
-			{filter: 'fil', order: 'asc'}
-		);
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.strictEqual(
+					selectors.getEditedActive(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getEditedAll', function () {
+		const tests = [
+			{
+				name: 'null',
+				state: {
+					sub: {
+						editedByKey: null,
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'empty',
+				state: {
+					sub: {
+						editedByKey: {},
+					},
+				},
+				expectedResult: [],
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				expectedResult: ['val1', 'val2'],
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getEditedAll(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getEditedAllAsObject', function () {
+		const tests = [
+			{
+				name: 'null',
+				state: {
+					sub: {
+						editedByKey: null,
+					},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						editedByKey: {prop: 'val'},
+					},
+				},
+				expectedResult: {prop: 'val'},
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getEditedAllAsObject(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getEditedByKey', function () {
+		const tests = [
+			{
+				name: 'null key',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				key: null,
+				expectedResult: null,
+			},
+			{
+				name: 'none',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				key: 'k5',
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: 'val2'},
+					},
+				},
+				key: 'k2',
+				expectedResult: 'val2',
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.strictEqual(
+					selectors.getEditedByKey(getSubState)(test.state, test.key),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getEditedDataByKey', function () {
+		const tests = [
+			{
+				name: 'none',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: {data: 'datk2'}},
+					},
+				},
+				key: 'k5',
+				expectedResult: null,
+			},
+			{
+				name: 'no data',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: {data: 'datk2'}},
+					},
+				},
+				key: 'k1',
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						editedByKey: {k1: 'val1', k2: {data: 'datk2'}},
+					},
+				},
+				key: 'k2',
+				expectedResult: 'datk2',
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.strictEqual(
+					selectors.getEditedDataByKey(getSubState)(
+						test.state,
+						test.key
+					),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getEditedKeys', function () {
+		const tests = [
+			{
+				name: 'null',
+				state: {
+					sub: {editedByKey: null},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'empty',
+				state: {
+					sub: {editedByKey: {}},
+				},
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						editedByKey: {k1: {key: 'ke1'}, k2: {key: 'ke2'}},
+					},
+				},
+				expectedResult: ['ke1', 'ke2'],
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getEditedKeys(getSubState)(test.state),
+					test.expectedResult
+				);
+			});
+		});
+	});
+
+	describe('getIndex', function () {
+		const tests = [
+			{
+				name: 'none',
+				state: {
+					sub: {
+						indexes: [
+							{filter: 'fil2', order: 'desc'},
+							{filter: 'fil', order: 'desc'},
+							{filter: 'fil', order: 'asc'},
+							{filter: 'fil2', order: 'asc'},
+						],
+					},
+				},
+				filter: 'fil-not-present',
+				order: 'asc',
+				expectedResult: null,
+			},
+			{
+				name: 'some',
+				state: {
+					sub: {
+						indexes: [
+							{filter: 'fil2', order: 'desc'},
+							{filter: 'fil', order: 'desc'},
+							{filter: 'fil', order: 'asc'},
+							{filter: 'fil2', order: 'asc'},
+						],
+					},
+				},
+				filter: 'fil',
+				order: 'asc',
+				expectedResult: {filter: 'fil', order: 'asc'},
+			},
+		];
+
+		tests.forEach((test) => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getIndex(getSubState)(
+						test.state,
+						test.filter,
+						test.order
+					),
+					test.expectedResult
+				);
+			});
+		});
 	});
 
 	it('getIndexed', function () {
