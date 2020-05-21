@@ -2,8 +2,9 @@ import {assert} from 'chai';
 import selectors from '../../../src/state/_common/selectors';
 
 describe('state/_common/selectors', function () {
+	const getSubState = (state) => state.sub;
+
 	describe('getActive', function () {
-		const getSubState = (state) => state.sub;
 		const createState = (activeKey) => ({
 			sub: {
 				byKey: {
@@ -28,7 +29,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getActiveModels', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {
@@ -46,14 +46,12 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getActiveKey', function () {
-		const getSubState = (state) => state.sub;
 		const state = {sub: {activeKey: 'k'}};
 
 		assert.strictEqual(selectors.getActiveKey(getSubState)(state), 'k');
 	});
 
 	it('getActiveKeys', function () {
-		const getSubState = (state) => state.sub;
 		const state = {sub: {activeKeys: ['k1', 'k2']}};
 
 		assert.deepStrictEqual(selectors.getActiveKeys(getSubState)(state), [
@@ -63,7 +61,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getAll', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3, removed: true}}},
 		};
@@ -104,7 +101,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getAllAsObject', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3, removed: true}}},
 		};
@@ -116,7 +112,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getAllForActiveScope', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}},
@@ -143,7 +138,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getByFilterOrder', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}},
@@ -168,7 +162,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	describe('getBatchByFilterOrder', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}},
@@ -193,7 +186,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getByKey', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}},
@@ -206,7 +198,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getByKeysAsObject', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
@@ -223,7 +214,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getByKeys', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1}, k2: {n: 2}, k3: {n: 3}},
@@ -237,7 +227,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	describe('getDataByKey', function () {
-		const getSubState = (state) => state.sub;
 		const state = {
 			sub: {
 				byKey: {k1: {n: 1, data: 'data'}, k2: {n: 2}},
@@ -294,8 +283,6 @@ describe('state/_common/selectors', function () {
 				expectedResult: false,
 			},
 		];
-
-		const getSubState = (state) => state.sub;
 
 		tests.forEach((test) => {
 			it(test.name, function () {
@@ -355,8 +342,6 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		const getSubState = (state) => state.sub;
-
 		tests.forEach((test) => {
 			it(test.name, function () {
 				assert.strictEqual(
@@ -377,7 +362,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {k1: 'val1', k2: 'val2'},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.strictEqual(
 			selectors.getEditedActive(getSubState)(state),
@@ -392,7 +376,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {k1: 'val1', k2: 'val2'},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.deepStrictEqual(selectors.getEditedAll(getSubState)(state), [
 			'val1',
@@ -406,7 +389,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {prop: 'val'},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.deepStrictEqual(
 			selectors.getEditedAllAsObject(getSubState)(state),
@@ -420,7 +402,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {k1: 'val1', k2: 'val2'},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.strictEqual(
 			selectors.getEditedByKey(getSubState)(state, 'k2'),
@@ -434,7 +415,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {k1: 'val1', k2: {data: 'datk2'}},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.strictEqual(
 			selectors.getEditedDataByKey(getSubState)(state, 'k2'),
@@ -448,7 +428,6 @@ describe('state/_common/selectors', function () {
 				editedByKey: {k1: {key: 'ke1'}, k2: {key: 'ke2'}},
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		assert.deepStrictEqual(selectors.getEditedKeys(getSubState)(state), [
 			'ke1',
@@ -457,7 +436,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	it('getIndex', function () {
-		const getSubState = (state) => state.sub;
 		const indexes = [
 			{filter: 'fil2', order: 'desc'},
 			{filter: 'fil', order: 'desc'},
@@ -503,7 +481,6 @@ describe('state/_common/selectors', function () {
 		const order = 'asc';
 		const start = 3;
 		const length = 2;
-		const getSubState = (state) => state.sub;
 
 		const expectedResult = [{key: 'fourth'}, {key: 'fifth'}];
 
@@ -530,7 +507,6 @@ describe('state/_common/selectors', function () {
 	});
 
 	describe('getIndexChangedOn', function () {
-		const getSubState = (state) => state.sub;
 		const indexes = [
 			{filter: 'fil2', order: 'desc'},
 			{filter: 'fil', order: 'desc', changedOn: '2020-01-01'},
@@ -580,7 +556,6 @@ describe('state/_common/selectors', function () {
 		const order = 'asc';
 		const start = 3;
 		const length = 2;
-		const getSubState = (state) => state.sub;
 
 		const expectedResult = {3: 'fourth', 4: 'fifth'};
 
@@ -612,7 +587,6 @@ describe('state/_common/selectors', function () {
 		};
 		const filter = 'fil';
 		const order = 'asc';
-		const getSubState = (state) => state.sub;
 
 		assert.strictEqual(
 			selectors.getIndexTotal(getSubState)(state, filter, order),
@@ -636,7 +610,6 @@ describe('state/_common/selectors', function () {
 				sameProp: 'that',
 			},
 		};
-		const getSubState = (state) => state.sub;
 
 		const expectedResult = [
 			{filter: {sameProp: 'that'}, order: 'desc'},
@@ -719,8 +692,6 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		const getSubState = (state) => state.sub;
-
 		tests.forEach((test) => {
 			assert.deepStrictEqual(
 				selectors.getKeysToLoad(getSubState)(test.state, test.keys),
@@ -780,7 +751,6 @@ describe('state/_common/selectors', function () {
 				},
 			},
 		};
-		const getSubState = (state) => state.sub;
 		const filter = {scopeKey: 'scopesKey'};
 		const order = 'asc';
 
@@ -818,7 +788,6 @@ describe('state/_common/selectors', function () {
 			},
 		};
 
-		const getSubState = (state) => state.sub;
 		const expectedResult = [
 			{
 				filter: {
@@ -843,7 +812,6 @@ describe('state/_common/selectors', function () {
 				},
 			},
 		};
-		const getSubState = (state) => state.sub;
 		const expectedResult = ['k1', 'k2', 'k3', 'k4'];
 
 		assert.deepStrictEqual(
@@ -871,7 +839,6 @@ describe('state/_common/selectors', function () {
 				},
 			},
 		};
-		const getSubState = (state) => state.sub;
 		const filter = {scopeKey: 'scopesKey'};
 		const order = 'asc';
 
