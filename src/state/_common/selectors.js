@@ -47,38 +47,65 @@ const getAll = (getSubstate) => {
 	);
 };
 
+function modelsFromIndex(models, index) {
+	if (!index || !index.index) {
+		return null;
+	}
+
+	const indexedModels = [];
+	for (let i = 1; i <= index.count; i++){
+		const modelKey = index.index[i];
+		if (modelKey){
+			const indexedModel = models[modelKey];
+			if (indexedModel){
+				indexedModels.push(indexedModel);
+			} else {
+				indexedModels.push({key: modelKey});
+			}
+		} else {
+			indexedModels.push(null);
+		}
+	}
+
+	return nonEmptyArray(indexedModels);
+}
+
+function modelsFromIndex2(models, index) {
+	if (!index || !index.index) {
+		return null;
+	}
+
+	const indexedModels = [];
+	for (const [key, value] of Object.entries(index.index)) {
+		if (value) {
+			const indexedModel = models[value];
+			if (indexedModel) {
+				indexedModels.push(indexedModel);
+			} else {
+				indexedModels.push(null);
+			}
+		} else {
+			indexedModels.push(null);
+		}
+	}
+
+	return nonEmptyArray(indexedModels);
+}
 
 const getAllForActiveScope = (getSubstate) => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getIndexes(getSubstate), activeScopeKey, (state, order) => order],
 		(models, indexes, activeScopeKey, order) => {
 			if (models && indexes && activeScopeKey) {
-				let filter = {
+				const filter = {
 					scopeKey: activeScopeKey
 				};
-				let index = commonHelpers.getIndex(indexes, filter, order);
-				if (index && index.index) {
-					let indexedModels = [];
-					for (let i = 1; i <= index.count; i++){
-						let modelKey = index.index[i];
-						if (modelKey){
-							let indexedModel = models[modelKey];
-							if (indexedModel){
-								indexedModels.push(indexedModel);
-							} else {
-								indexedModels.push({key: modelKey});
-							}
-						} else {
-							indexedModels.push(null);
-						}
-					}
-					return indexedModels.length ? indexedModels : null;
-				} else {
-					return null;
-				}
-			} else {
-				return null;
+				const index = commonHelpers.getIndex(indexes, filter, order);
+
+				return modelsFromIndex(models, index);
 			}
+
+			return null;
 		}
 	);
 };
@@ -117,7 +144,7 @@ const getActiveModels = (getSubstate) => {
 					}
 				});
 			}
-			return activeModels.length ? activeModels : null;
+			return nonEmptyArray(activeModels);
 		}
 	)
 };
@@ -132,29 +159,11 @@ const getByFilterOrder = (getSubstate) => {
 		],
 		(models, indexes, filter, order) => {
 			if (models && indexes) {
-				let index = commonHelpers.getIndex(indexes, filter, order);
-				if (index && index.index) {
-					let indexedModels = [];
-					for (let i = 1; i <= index.count; i++){
-						let modelKey = index.index[i];
-						if (modelKey){
-							let indexedModel = models[modelKey];
-							if (indexedModel){
-								indexedModels.push(indexedModel);
-							} else {
-								indexedModels.push({key: modelKey});
-							}
-						} else {
-							indexedModels.push(null);
-						}
-					}
-					return indexedModels.length ? indexedModels : null;
-				} else {
-					return null;
-				}
-			} else {
-				return null;
+				const index = commonHelpers.getIndex(indexes, filter, order);
+
+				return modelsFromIndex(models, index);
 			}
+			return null;
 		}
 	);
 };
@@ -169,28 +178,11 @@ const getBatchByFilterOrder = (getSubstate) => {
 		],
 		(models, indexes, filter, order) => {
 			if (models && indexes) {
-				let index = commonHelpers.getIndex(indexes, filter, order);
-				if (index && index.index) {
-					let indexedModels = [];
-					for (const [key, value] of Object.entries(index.index)) {
-						if (value) {
-							let indexedModel = models[value];
-							if (indexedModel) {
-								indexedModels.push(indexedModel);
-							} else {
-								indexedModels.push(null);
-							}
-						} else {
-							indexedModels.push(null);
-						}
-					}
-					return indexedModels.length ? indexedModels : null;
-				} else {
-					return null;
-				}
-			} else {
-				return null;
+				const index = commonHelpers.getIndex(indexes, filter, order);
+				return modelsFromIndex2(models, index);
 			}
+
+			return null;
 		}
 	);
 };
@@ -291,7 +283,7 @@ const getByKeys = (getSubstate) => {
 					}
 				});
 
-				return data.length ? data : null;
+				return nonEmptyArray(data);
 			} else {
 				return null;
 			}
@@ -492,6 +484,15 @@ const getIndexesByFilteredItem = (getSubstate) => {
 };
 
 /**
+ * @param {Array} array
+ *
+ * @returns {Array|null} Non empty array or null.
+ */
+function nonEmptyArray(array) {
+	return array.length ? array : null;
+}
+
+/**
  * Compare keys with loaded models and return which keys need to be loaded
  */
 const getKeysToLoad = (getSubstate) => {
@@ -503,13 +504,7 @@ const getKeysToLoad = (getSubstate) => {
 				if (!models){
 					return keys;
 				} else {
-					let toLoad = [];
-					keys.forEach(key => {
-						if (!models[key] || models[key].outdated){
-							toLoad.push(key);
-						}
-					});
-					return toLoad.length ? toLoad : null;
+					return nonEmptyArray(keys.filter(key => !models[key] || models[key].outdated));
 				}
 			} else {
 				return null;
@@ -740,33 +735,42 @@ const getUsesWithActiveDependency = (getSubstate) => {
 
 const getStateToSave = (getSubstate) => {
 	return (state) => {
-		let selectedState = {};
-		if (getSubstate(state).activeKey) {
-			selectedState.activeKey = getSubstate(state).activeKey;
-		} else if (getSubstate(state).activeKeys) {
-			selectedState.activeKeys = getSubstate(state).activeKeys;
+		const activeKey = getSubstate(state).activeKey;
+		if (activeKey) {
+			return {activeKey};
 		}
 
-		return selectedState
+		const activeKeys = getSubstate(state).activeKeys;
+		if (activeKeys) {
+			return {activeKeys};
+		}
+
+		return {}
 	}
 };
 
+function isInterval(interval) {
+	return interval && interval.start && interval.length;
+}
+
+function intervalsOverlap(earlier, later) {
+	return later.start <= (earlier.start + earlier.length);
+}
+
 const _mergeIntervals = (intervals) => {
-	//sort intervals
-	let sortedIntervals = _.sortBy(intervals, ['start', 'length']);
+	const validIntervals = intervals.filter(isInterval)
+	const sortedIntervals = _.sortBy(validIntervals, ['start', 'length']);
+	if (sortedIntervals.length === 0) {
+		return null;
+	}
+
 	//merge intervals
-	return sortedIntervals.reduce((mergedIntervals, interval) => {
-		if (!interval || !interval.start || !interval.length) {
-			// invalid interval
-			return mergedIntervals;
-		} else if (!mergedIntervals) {
-			//first pass, just return first interval
-			return [interval];
-		} else {
-			let last = mergedIntervals.pop();
-			if (interval.start <= (last.start + last.length)) {
+	return _.tail(sortedIntervals)
+		.reduce((mergedIntervals, interval) => {
+			const last = mergedIntervals.pop();
+			if (intervalsOverlap(last, interval)) {
 				//merge last & current
-				let end = Math.max((last.start + last.length), (interval.start + interval.length));
+				const end = Math.max((last.start + last.length), (interval.start + interval.length));
 				return [...mergedIntervals, {
 					start: last.start,
 					length: (end - last.start)
@@ -775,8 +779,7 @@ const _mergeIntervals = (intervals) => {
 				//add both
 				return [...mergedIntervals, last, interval];
 			}
-		}
-	}, null);
+	}, [_.head(sortedIntervals)]);
 };
 
 export default {
