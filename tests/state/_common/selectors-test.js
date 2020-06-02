@@ -1215,7 +1215,7 @@ describe('state/_common/selectors', function () {
 	});
 
 	// getIndexPage selector returns object on which getIndexedPage accesses `length` property?
-	it.skip('getIndexedPage', function () {});
+	// it.skip('getIndexedPage', function () {});
 
 	it('getIndexTotal', function () {
 		const state = {
