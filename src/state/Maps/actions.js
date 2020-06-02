@@ -322,7 +322,16 @@ const removeMap = (mapKey) => {
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
-			return dispatch(actionRemoveMap(mapKey));
+			const mapSets = Select.maps.getMapSets(state);
+			if (mapSets) {
+				_.each(mapSets, mapSet => {
+					const mapSetMapKey = _.includes(mapSet.maps, mapKey);
+					if (mapSetMapKey) {
+						dispatch(removeMapKeyFromSet(mapSet.key, mapKey));
+					}
+				});
+			}
+			dispatch(actionRemoveMap(mapKey));
 		}
 	};
 };
