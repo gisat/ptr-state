@@ -55,6 +55,8 @@ const lodashExternal = [
   'lodash/uniqBy',
   'lodash/intersection',
   'lodash/isEmpty',
+  'lodash/head',
+  'lodash/tail',
 ]
 
 export default {

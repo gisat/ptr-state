@@ -210,7 +210,15 @@ const removeMapKeyFromSet = (setKey, mapKey) => {
 		} else {
 			//check map exist
 			if (setByKey.maps && setByKey.maps.includes(mapKey)) {
-				return dispatch(actionRemoveMapKeyFromSet(setKey, mapKey));
+				const activeMapKey = Select.maps.getMapSetActiveMapKey(state, setKey);
+				dispatch(actionRemoveMapKeyFromSet(setKey, mapKey));
+
+				if (activeMapKey === mapKey) {
+					const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
+					if (mapSetMapKeys) {
+						dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
+					}
+				}
 			} else {
 				return dispatch(actionGeneralError(`Set ${setKey} do not contains map ${mapKey}.`));
 			}
@@ -314,7 +322,16 @@ const removeMap = (mapKey) => {
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
-			return dispatch(actionRemoveMap(mapKey));
+			const mapSets = Select.maps.getMapSets(state);
+			if (mapSets) {
+				_.each(mapSets, mapSet => {
+					const mapSetMapKey = _.includes(mapSet.maps, mapKey);
+					if (mapSetMapKey) {
+						dispatch(removeMapKeyFromSet(mapSet.key, mapKey));
+					}
+				});
+			}
+			dispatch(actionRemoveMap(mapKey));
 		}
 	};
 };
