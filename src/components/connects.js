@@ -4,6 +4,7 @@ import GoToPlace from "./maps/GoToPlace";
 import Map from "./maps/Map";
 import MapControls from "./maps/MapControls";
 import MapSet from "./maps/MapSet";
+import MapWrapper from "./maps/MapWrapper";
 import NavList from "./NavList";
 import Screens from "./Screens";
 import User from "./User";
@@ -16,6 +17,7 @@ export default {
     Map,
     MapControls,
     MapSet,
+    MapWrapper,
     NavList,
     Screens,
     User,

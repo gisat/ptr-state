@@ -30,6 +30,9 @@ const mapDispatchToPropsFactory = () => {
 				},
 				resetHeading: (mapKey) => {
 					dispatch(Action.maps.resetViewHeading(mapKey));
+				},
+				onMapRemove: (mapKey) => {
+					dispatch(Action.maps.removeMapKeyFromSet(ownProps.stateMapSetKey, mapKey));
 				}
 			}
 		} else {
