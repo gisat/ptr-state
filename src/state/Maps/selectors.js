@@ -576,6 +576,16 @@ const getMapBackgroundLayer = (state, mapKey) => {
 	return getBackgroundLayer(state, layerState);
 };
 
+/**
+ * Returns object that is input for Layer from @gisatcz/ptr-maps.
+ * @param {Object} state App state
+ * @param {Object} layerState 
+ * @param {Object} dataSourcesByLayerKey 
+ * @param {Object} attributeDataSourcesByLayerKey 
+ * @param {Object} stylesByLayerKey 
+ * @param {Object} selections 
+ * @param {Object} layerTemplatesByLayerKey 
+ */
 const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey) => {
 	let layerKey = layerState.key;
 	let dataSources = dataSourcesByLayerKey[layerKey];
@@ -588,7 +598,7 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
 			const dataSource = dataSourceWithFidColumn && dataSourceWithFidColumn.dataSource;
 			const fidColumnName = dataSourceWithFidColumn && dataSourceWithFidColumn.fidColumnName;
 
-			// TODO quick solution for geoinv
+			// TODO remove - quick solution for geoinv
 			let currentApp = AppSelectors.getKey(state);
 			if (currentApp === 'tacrGeoinvaze') {
 				const apiGeoserverWMSProtocol = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSProtocol');
@@ -619,6 +629,11 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
 }
 
 // TODO caching is experimental
+/**
+ * Returns Array of objects that is input for Layer from @gisatcz/ptr-maps.
+ * @param {Object} state App state
+ * @param {Array} layersState 
+ */
 const getLayers = (state, layersState) => {	
 	// TODO valid approach to stringify parameter?
 	let layersWithFilter = mapHelpers.getLayersWithFilter(state, JSON.stringify(layersState));

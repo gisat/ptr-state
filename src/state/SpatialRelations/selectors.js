@@ -139,10 +139,10 @@ const getDataSourceKeysFiltered = createSelector(
 );
 
 /**
- * Filter spatialRelationsData by layerTemplateKey
+ * Filter spatialRelationsData by layerTemplateKeys.
  *
  * @param state {Object}
- * @param layerTemplateKeys {Array | null} Collection of layerTemplateKeys data.
+ * @param layerTemplateKeys {Array | null} Array of layerTemplateKeys.
  */
 const getDataSourceRelationsByLayerTemplateKeys = createSelector(
 	[getAllData, (state, layerTemplateKeys) => layerTemplateKeys],
