@@ -395,7 +395,7 @@ const addLayer = (mapKey, layer, index, useActiveMetadataKeys) => {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			dispatch(actionAddLayer(mapKey, layer, index));
-			dispatch(deprecated_use(mapKey, useActiveMetadataKeys));
+			dispatch(use(mapKey, useActiveMetadataKeys));
 		}
 	};
 };
