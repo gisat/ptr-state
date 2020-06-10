@@ -31,7 +31,7 @@ const getFilteredTemplatesGroupedByLayerKey = createCachedSelector(
 			return null;
 		}
 	}
-)((state, layerState) => JSON.stringify(layerState));
+)((state, layersState) => layersState.map(l => l.filter && l.filter.layerTemplateKey).join(','));
 
 export default {
 	getActiveKey,
