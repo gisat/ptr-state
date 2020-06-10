@@ -5,6 +5,8 @@ import common from "../_common/selectors";
 
 const getSubstate = (state) => state.spatialRelations;
 const getAll = common.getAll(getSubstate);
+const getByKey = common.getByKey(getSubstate);
+const getByKeys = common.getByKeys(getSubstate);
 
 /**
  * @return {Array|null}
@@ -136,6 +138,24 @@ const getDataSourceKeysFiltered = createSelector(
 	}
 );
 
+/**
+ * Filter spatialRelationsData by layerTemplateKey
+ *
+ * @param state {Object}
+ * @param layerTemplateKeys {Array | null} Collection of layerTemplateKeys data.
+ */
+const getDataSourceRelationsByLayerTemplateKeys = createSelector(
+	[getAllData, (state, layerTemplateKeys) => layerTemplateKeys],
+	(allData, layerTemplateKeys) => {
+		if (allData && !_.isEmpty(allData) && layerTemplateKeys && !_.isEmpty(layerTemplateKeys)) {
+			const filtered = allData.filter(i => layerTemplateKeys.includes(i.layerTemplateKey));
+			return !_.isEmpty(filtered) ? filtered : null;
+		} else {
+			return null;
+		}
+	}
+);
+
 // TODO wtf?
 /**
  * Collect and prepare data relations grouped by layer key
@@ -217,7 +237,8 @@ const getDataSourceRelationsForLayerKey = createSelector(
 
 export default {
 	getSubstate,
-
+	getByKey,
+	getByKeys,
 	getAllData,
 	getFilteredData,
 	getFilteredDataSourceKeysGroupedByLayerKey,
@@ -227,6 +248,7 @@ export default {
 	getDataSourceKeysFiltered,
 	getDataSourceKeysGroupedByLayerKey,
 	getDataSourceRelationsGroupedByLayerKey: getFilteredDataGroupedByLayerKey,
+	getDataSourceRelationsByLayerTemplateKeys,
 	getDataSourceRelationsForLayerKey,
 	getFilteredDataGroupedByLayerKey
 };

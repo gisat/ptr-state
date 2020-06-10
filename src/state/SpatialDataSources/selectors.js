@@ -11,6 +11,7 @@ import SpatialData from "../SpatialData/selectors";
 const getSubstate = (state) => state.spatialDataSources;
 const getAllAsObject = common.getAllAsObject(getSubstate);
 const getByKeys = common.getByKeys(getSubstate);
+const getByKey = common.getByKey(getSubstate);
 
 const getFilteredSourcesGroupedByLayerKey = createCachedSelector(
 	[
@@ -125,6 +126,7 @@ const getFilteredData = createSelector(
 export default {
 	getSubstate,
 
+	getByKey,
 	getByKeys,
 	getFilteredSourcesGroupedByLayerKey,
 

@@ -98,7 +98,7 @@ const getLayersWithFilter = createCachedSelector(
 	}
 )((state, layersState) => layersState);
 
-const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections) => {
+const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate) => {
 	const layerOptions = layerState && layerState.options;
 	let dataSourceData = dataSource.data;
 
@@ -159,7 +159,11 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 
 	return {
 		key: layerKey + '_' + index,
+		nameDisplay: layerTemplate.data.nameDisplay,
+		nameInternal: layerTemplate.data.nameInternal,
+		description: layerTemplate.data.description,
 		layerKey: layerKey,
+		layerTemplateKey: layerState.layerTemplateKey,
 		opacity: (layerState && layerState.opacity) || 1,
 		type,
 		options
