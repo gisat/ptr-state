@@ -577,6 +577,8 @@ const getMapBackgroundLayer = (state, mapKey) => {
 };
 
 /**
+ * Use this function for getting layer deffinition if layer is defined in state.
+ * Check if dataSources for layerKey are loaded and defined otherwise return null.
  * Returns object that is input for Layer from @gisatcz/ptr-maps.
  * @param {Object} state App state
  * @param {Object} layerState 

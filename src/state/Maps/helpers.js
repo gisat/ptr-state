@@ -99,6 +99,7 @@ const getLayersWithFilter = createCachedSelector(
 )((state, layersState) => layersState);
 
 /**
+ * Create layer deffinition on the base of mandatory parameters.
  * Returns object that is input for Layer from @gisatcz/ptr-maps.
  * @param {string} layerKey 
  * @param {Object} dataSource 
