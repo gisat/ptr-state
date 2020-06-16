@@ -353,6 +353,7 @@ const getBackgroundLayerStateByMapKey = createCachedSelector(
 /**
  * @param state {Object}
  * @param mapKey {string}
+ * @return {Object} Merged layer state from mapState and mapSetState with metadataModifiers and filterByActive.
  */
 const getLayersStateByMapKey = createCachedSelector(
 	[
@@ -581,12 +582,12 @@ const getMapBackgroundLayer = (state, mapKey) => {
  * Check if dataSources for layerKey are loaded and defined otherwise return null.
  * Returns object that is input for Layer from @gisatcz/ptr-maps.
  * @param {Object} state App state
- * @param {Object} layerState 
- * @param {Object} dataSourcesByLayerKey 
- * @param {Object} attributeDataSourcesByLayerKey 
- * @param {Object} stylesByLayerKey 
- * @param {Object} selections 
- * @param {Object} layerTemplatesByLayerKey 
+ * @param {Object} layerState Merged layer state from mapState and mapSetState with metadataModifiers and filterByActive.
+ * @param {Object} dataSourcesByLayerKey dataSources related to layerState.key
+ * @param {Object} attributeDataSourcesByLayerKey attributeDataSources related to layerState.key
+ * @param {Object} stylesByLayerKey styles related to layerState.key
+ * @param {Object} selections selections related to layerState.key
+ * @param {Object} layerTemplatesByLayerKey layerTemplates related to layerState.key
  */
 const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey) => {
 	let layerKey = layerState.key;
