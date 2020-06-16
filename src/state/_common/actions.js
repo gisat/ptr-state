@@ -114,6 +114,12 @@ const updateEdited = (getSubstate, actionTypes) => {
 	}
 };
 
+const removePropertyFromEdited = (actionTypes) => {
+	return (modelKey, key) => {
+		return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
+	}
+}
+
 const deleteItem = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) => {
 	return (item) => {
 		return (dispatch, getState) => {
@@ -927,6 +933,7 @@ export default {
 	receiveIndexed,
 	receiveKeys,
 	refreshUses,
+	removePropertyFromEdited,
 	request: requestWrapper,
 	saveEdited,
 	updateSubstateFromView,
