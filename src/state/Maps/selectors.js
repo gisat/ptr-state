@@ -8,6 +8,7 @@ import {CacheFifo} from '@gisatcz/ptr-utils';
 import mapHelpers from './helpers';
 
 import commonSelectors from "../_common/selectors";
+import LayerTemplatesSelectors from '../LayerTemplates/selectors';
 import SpatialDataSourcesSelectors from '../SpatialDataSources/selectors';
 import AttributeDataSelectors from '../AttributeData/selectors';
 import AttributeDataSourcesSelectors from '../AttributeDataSources/selectors';
@@ -352,6 +353,7 @@ const getBackgroundLayerStateByMapKey = createCachedSelector(
 /**
  * @param state {Object}
  * @param mapKey {string}
+ * @return {Object} Merged layer state from mapState and mapSetState with metadataModifiers and filterByActive.
  */
 const getLayersStateByMapKey = createCachedSelector(
 	[
@@ -575,95 +577,120 @@ const getMapBackgroundLayer = (state, mapKey) => {
 	return getBackgroundLayer(state, layerState);
 };
 
+/**
+ * Use this function for getting layer deffinition if layer is defined in state.
+ * Check if dataSources for layerKey are loaded and defined otherwise return null.
+ * Returns object that is input for Layer from @gisatcz/ptr-maps.
+ * @param {Object} state App state
+ * @param {Object} layerState Merged layer state from mapState and mapSetState with metadataModifiers and filterByActive.
+ * @param {Object} dataSourcesByLayerKey dataSources related to layerState.key
+ * @param {Object} attributeDataSourcesByLayerKey attributeDataSources related to layerState.key
+ * @param {Object} stylesByLayerKey styles related to layerState.key
+ * @param {Object} selections selections related to layerState.key
+ * @param {Object} layerTemplatesByLayerKey layerTemplates related to layerState.key
+ */
+const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey) => {
+	let layerKey = layerState.key;
+	let dataSources = dataSourcesByLayerKey[layerKey];
+	let attributeDataSources = attributeDataSourcesByLayerKey && attributeDataSourcesByLayerKey[layerKey];
+	let style = stylesByLayerKey && stylesByLayerKey[layerKey];
+	let layerTemplate = layerTemplatesByLayerKey && layerTemplatesByLayerKey[layerKey];
+	let layer = null;
+	if (dataSources && dataSources.length) {
+		dataSources.forEach((dataSourceWithFidColumn, index) => {
+			const dataSource = dataSourceWithFidColumn && dataSourceWithFidColumn.dataSource;
+			const fidColumnName = dataSourceWithFidColumn && dataSourceWithFidColumn.fidColumnName;
+
+			// TODO remove - quick solution for geoinv
+			let currentApp = AppSelectors.getKey(state);
+			if (currentApp === 'tacrGeoinvaze') {
+				const apiGeoserverWMSProtocol = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSProtocol');
+				const apiGeoserverWMSHost = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSHost');
+				const apiGeoserverWMSPath = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSPath');
+
+				if (dataSource && dataSource.data && dataSource.data.layerName && (dataSource.data.type === "vector" || dataSource.data.type === "raster")) {
+					layer = {
+						key: layerKey + '_' + dataSource.key,
+						layerKey: layerKey,
+						type: "wms",
+						options: {
+							url: apiGeoserverWMSProtocol + "://" + path.join(apiGeoserverWMSHost, apiGeoserverWMSPath),
+							params: {
+								layers: dataSource.data.layerName
+							}
+						}
+					};
+				} else {
+					layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index);
+				}
+			} else {
+				layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate);
+			}
+		});
+	}
+	return layer;
+}
 
 // TODO caching is experimental
-const getLayers = (state, layersState) => {
+/**
+ * Returns Array of objects that is input for Layer from @gisatcz/ptr-maps.
+ * @param {Object} state App state
+ * @param {Array} layersState 
+ */
+const getLayers = (state, layersState) => {	
 	// TODO valid approach to stringify parameter?
 	let layersWithFilter = mapHelpers.getLayersWithFilter(state, JSON.stringify(layersState));
 
 	if (layersWithFilter && layersWithFilter.length) {
 		let dataSourcesByLayerKey = SpatialDataSourcesSelectors.getFilteredSourcesGroupedByLayerKey(state, layersWithFilter);
+		let layerTemplatesByLayerKey = LayerTemplatesSelectors.getFilteredTemplatesGroupedByLayerKey(state, layersWithFilter);
 		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState);
 		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState);
 		let selections = SelectionsSelectors.getAllAsObject(state);
-		
-		if (dataSourcesByLayerKey && !_.isEmpty(dataSourcesByLayerKey)) {
-			let mapLayers = [];
 
-			let cacheKey = JSON.stringify(layersWithFilter);
-			let cache = getLayersCache.findByKey(cacheKey);
-			
-			if (cache
-				&& cache.layersWithFilter === layersWithFilter
-				&& cache.dataSourcesByLayerKey === dataSourcesByLayerKey
-				&& cache.stylesByLayerKey === stylesByLayerKey
-				&& cache.attributeDataSourcesByLayerKey === attributeDataSourcesByLayerKey
-				&& cache.selections === selections
-			) {
-				return cache.mapLayers;
-			} else {
-				layersState.forEach((layerState) => {
-					let layerKey = layerState.key;
-					let dataSources = dataSourcesByLayerKey[layerKey];
-					let attributeDataSources = attributeDataSourcesByLayerKey && attributeDataSourcesByLayerKey[layerKey];
-					let style = stylesByLayerKey && stylesByLayerKey[layerKey];
-
-					if (dataSources && dataSources.length) {
-						dataSources.forEach((dataSourceWithFidColumn, index) => {
-							const dataSource = dataSourceWithFidColumn && dataSourceWithFidColumn.dataSource;
-							const fidColumnName = dataSourceWithFidColumn && dataSourceWithFidColumn.fidColumnName;
-
-							// TODO quick solution for geoinv
-							let currentApp = AppSelectors.getKey(state);
-							if (currentApp === 'tacrGeoinvaze') {
-								const apiGeoserverWMSProtocol = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSProtocol');
-								const apiGeoserverWMSHost = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSHost');
-								const apiGeoserverWMSPath = AppSelect.getLocalConfiguration(state, 'apiGeoserverWMSPath');
-
-								if (dataSource && dataSource.data && dataSource.data.layerName && (dataSource.data.type === "vector" || dataSource.data.type === "raster")) {
-									mapLayers.push({
-										key: layerKey + '_' + dataSource.key,
-										layerKey: layerKey,
-										type: "wms",
-										options: {
-											url: apiGeoserverWMSProtocol + "://" + path.join(apiGeoserverWMSHost, apiGeoserverWMSPath),
-											params: {
-												layers: dataSource.data.layerName
-											}
-										}
-									});
-								} else {
-									mapLayers.push(mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index));
-								}
-							}
-
-
-							else {
-								mapLayers.push(mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections));
-							}
-						});
-					}
-				});
-
-				getLayersCache.addOrUpdate({
-					cacheKey,
-					layersWithFilter,
-					dataSourcesByLayerKey,
-					attributeDataSourcesByLayerKey,
-					mapLayers,
-					stylesByLayerKey,
-					selections
-				});
-
-				return mapLayers;
-			}
+		let cacheKey = JSON.stringify(layersWithFilter);
+		let cache = getLayersCache.findByKey(cacheKey);
+		if (cache
+			&& cache.layersWithFilter === layersWithFilter
+			&& cache.dataSourcesByLayerKey === dataSourcesByLayerKey
+			&& cache.layerTemplatesByLayerKey === layerTemplatesByLayerKey
+			&& cache.stylesByLayerKey === stylesByLayerKey
+			&& cache.attributeDataSourcesByLayerKey === attributeDataSourcesByLayerKey
+			&& cache.selections === selections
+		) {
+			return cache.mapLayers;
 		} else {
-			return null;
-		}
+			const mapLayers = [];
+			layersState.forEach((layerState) => {
+				
+				//from definition
+				if (layerState.layerTemplateKey && dataSourcesByLayerKey && !_.isEmpty(dataSourcesByLayerKey)) {
+					const layer = getLayerFromState(state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey);
+					if(layer) {
+						mapLayers.push(layer);
+					}
+				} else if(layerState.type) {
+					mapLayers.push(layerState);
+				}
+			});
+
+			getLayersCache.addOrUpdate({
+				cacheKey,
+				layersWithFilter,
+				dataSourcesByLayerKey,
+				layerTemplatesByLayerKey,
+				attributeDataSourcesByLayerKey,
+				mapLayers,
+				stylesByLayerKey,
+				selections
+			});
+
+			return mapLayers;
+		};
 	} else {
 		return null;
 	}
-};
+}
 
 // TODO cache?
 /**

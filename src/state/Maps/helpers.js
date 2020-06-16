@@ -98,7 +98,20 @@ const getLayersWithFilter = createCachedSelector(
 	}
 )((state, layersState) => layersState);
 
-const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections) => {
+/**
+ * Create layer deffinition on the base of mandatory parameters.
+ * Returns object that is input for Layer from @gisatcz/ptr-maps.
+ * @param {string} layerKey 
+ * @param {Object} dataSource 
+ * @param {?string} fidColumnName Requided for vector layers
+ * @param {Number} index Layer order in dataSources
+ * @param {Object} layerState 
+ * @param {?Object} style 
+ * @param {Array} attributeDataSources 
+ * @param {Object} selections 
+ * @param {Object} layerTemplate 
+ */
+const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate) => {
 	const layerOptions = layerState && layerState.options;
 	let dataSourceData = dataSource.data;
 
@@ -159,6 +172,9 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 
 	return {
 		key: layerKey + '_' + index,
+		nameDisplay: layerTemplate.data.nameDisplay,
+		nameInternal: layerTemplate.data.nameInternal,
+		description: layerTemplate.data.description,
 		layerKey: layerKey,
 		opacity: (layerState && layerState.opacity) || 1,
 		type,
