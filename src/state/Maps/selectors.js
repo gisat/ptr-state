@@ -662,15 +662,20 @@ const getLayers = (state, layersState) => {
 		} else {
 			const mapLayers = [];
 			layersState.forEach((layerState) => {
-				
-				//from definition
 				if (layerState.layerTemplateKey && dataSourcesByLayerKey && !_.isEmpty(dataSourcesByLayerKey)) {
 					const layer = getLayerFromState(state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey);
 					if(layer) {
 						mapLayers.push(layer);
 					}
 				} else if(layerState.type) {
-					mapLayers.push(layerState);
+					const layer = layerState.options?.selected ? {
+						...layerState,
+						options: {
+							...layerState.options,
+							selected: mapHelpers.prepareSelection(selections, layerState.options.selected)
+						}
+					} : layerState;
+					mapLayers.push(layer);
 				}
 			});
 

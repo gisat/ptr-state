@@ -489,7 +489,7 @@ const setLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 	}
 };
 
-
+// TODO refactor - where to decide if selections are enabled
 const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
