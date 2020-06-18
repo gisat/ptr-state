@@ -639,13 +639,14 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
  */
 const getLayers = (state, layersState) => {	
 	// TODO valid approach to stringify parameter?
-	let layersWithFilter = mapHelpers.getLayersWithFilter(state, JSON.stringify(layersState));
+	const layersStateAsString = JSON.stringify(mapHelpers.getLayersStateWithoutFeatures(layersState));
+	let layersWithFilter = mapHelpers.getLayersWithFilter(state, layersStateAsString);
 
 	if (layersWithFilter && layersWithFilter.length) {
 		let dataSourcesByLayerKey = SpatialDataSourcesSelectors.getFilteredSourcesGroupedByLayerKey(state, layersWithFilter);
 		let layerTemplatesByLayerKey = LayerTemplatesSelectors.getFilteredTemplatesGroupedByLayerKey(state, layersWithFilter);
-		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState);
-		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState);
+		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState, layersStateAsString);
+		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState, layersStateAsString);
 		let selections = SelectionsSelectors.getAllAsObject(state);
 
 		let cacheKey = JSON.stringify(layersWithFilter);

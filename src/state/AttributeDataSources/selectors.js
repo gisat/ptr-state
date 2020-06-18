@@ -98,7 +98,7 @@ const getFilteredDataSourcesGroupedByLayerKey = createCachedSelector(
 		}
 	}
 )(
-	(state, layersWithFilter, layersState) => {return JSON.stringify(layersState)}
+	(state, layersWithFilter, layersState, layersStateAsString) => layersStateAsString
 );
 
 

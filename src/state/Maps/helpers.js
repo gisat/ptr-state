@@ -224,9 +224,29 @@ function mergeFeaturesWithAttributes(layerKey, features, attributeDataSources, f
 	return Object.values(finalFeaturesObject);
 }
 
+function getLayersStateWithoutFeatures(layersState) {
+	let withoutFeatures = [];
+	_.each(layersState, layerState => {
+		if (layerState?.options?.features) {
+			withoutFeatures.push({
+				...layerState,
+				options: {
+					...layerState.options,
+					features: null
+				}
+			});
+		} else {
+			withoutFeatures.push(layersState);
+		}
+	});
+
+	return withoutFeatures;
+}
+
 export default {
 	getBackgroundLayersWithFilter,
 	getLayersWithFilter,
+	getLayersStateWithoutFeatures,
 	prepareLayerByDataSourceType,
 	prepareSelection
 }
