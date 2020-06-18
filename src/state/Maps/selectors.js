@@ -471,6 +471,31 @@ const getView = createSelector(
 
 /**
  * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewLimits = createSelector(
+	[
+		getMapByKey,
+		getMapSetByMapKey
+	],
+	(map, set) => {
+		if (map) {
+			if (set) {
+				let mapViewLimits = map.data?.viewLimits;
+				let mapSetViewLimits = set.data?.viewLimits;
+				let viewLimits = mapUtils.mergeViews(mapSetViewLimits, mapViewLimits);
+				return !_.isEmpty(viewLimits) ? viewLimits : null;
+			} else {
+				return map.data?.viewLimits;
+			}
+		} else {
+			return null;
+		}
+	}
+);
+
+/**
+ * @param state {Object}
  * @param setKey {string}
  */
 const getMapSetView = createSelector(
@@ -484,6 +509,19 @@ const getMapSetView = createSelector(
 		} else {
 			return null;
 		}
+	}
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetViewLimits = createSelector(
+	[
+		getMapSetByKey
+	],
+	(set) => {
+		return set?.data?.viewLimits || null;
 	}
 );
 
@@ -1115,12 +1153,14 @@ export default {
 	getMapSetLayersStateBySetKey,
 	getMapSetMapKeys,
 	getMapSetView,
+	getMapSetViewLimits,
 	getMapSets,
 	getMapSetsAsObject,
 
 	getSubstate,
 
 	getView,
+	getViewLimits,
 
 	// Deprecated
 	getAllLayersStateByMapKey_deprecated,

@@ -9,6 +9,7 @@ const mapStateToProps = (state, ownProps) => {
             backgroundLayer: Select.maps.getMapBackgroundLayer(state, ownProps.stateMapKey),
             layers: Select.maps.getMapLayers(state, ownProps.stateMapKey),
             view: Select.maps.getView(state, ownProps.stateMapKey),
+            viewLimits: Select.maps.getViewLimits(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
