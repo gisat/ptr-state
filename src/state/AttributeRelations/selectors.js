@@ -93,7 +93,7 @@ const getFilteredDataSourceKeysWithFidColumnGroupedByLayerKey = createCachedSele
 		}
 	}
 )(
-	(state, layersWithFilter, layersState) => {return JSON.stringify(layersState)}
+	(state, layersWithFilter, layersState, layersStateAsString) => layersStateAsString
 );
 
 // DEPRECATED ---------------------

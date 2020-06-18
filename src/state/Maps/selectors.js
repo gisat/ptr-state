@@ -471,6 +471,31 @@ const getView = createSelector(
 
 /**
  * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewLimits = createSelector(
+	[
+		getMapByKey,
+		getMapSetByMapKey
+	],
+	(map, set) => {
+		if (map) {
+			if (set) {
+				let mapViewLimits = map.data?.viewLimits;
+				let mapSetViewLimits = set.data?.viewLimits;
+				let viewLimits = mapUtils.mergeViews(mapSetViewLimits, mapViewLimits);
+				return !_.isEmpty(viewLimits) ? viewLimits : null;
+			} else {
+				return map.data?.viewLimits;
+			}
+		} else {
+			return null;
+		}
+	}
+);
+
+/**
+ * @param state {Object}
  * @param setKey {string}
  */
 const getMapSetView = createSelector(
@@ -484,6 +509,19 @@ const getMapSetView = createSelector(
 		} else {
 			return null;
 		}
+	}
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetViewLimits = createSelector(
+	[
+		getMapSetByKey
+	],
+	(set) => {
+		return set?.data?.viewLimits || null;
 	}
 );
 
@@ -639,13 +677,14 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
  */
 const getLayers = (state, layersState) => {	
 	// TODO valid approach to stringify parameter?
-	let layersWithFilter = mapHelpers.getLayersWithFilter(state, JSON.stringify(layersState));
+	const layersStateAsString = JSON.stringify(mapHelpers.getLayersStateWithoutFeatures(layersState));
+	let layersWithFilter = mapHelpers.getLayersWithFilter(state, layersStateAsString);
 
 	if (layersWithFilter && layersWithFilter.length) {
 		let dataSourcesByLayerKey = SpatialDataSourcesSelectors.getFilteredSourcesGroupedByLayerKey(state, layersWithFilter);
 		let layerTemplatesByLayerKey = LayerTemplatesSelectors.getFilteredTemplatesGroupedByLayerKey(state, layersWithFilter);
-		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState);
-		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState);
+		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState, layersStateAsString);
+		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState, layersStateAsString);
 		let selections = SelectionsSelectors.getAllAsObject(state);
 
 		let cacheKey = JSON.stringify(layersWithFilter);
@@ -662,15 +701,20 @@ const getLayers = (state, layersState) => {
 		} else {
 			const mapLayers = [];
 			layersState.forEach((layerState) => {
-				
-				//from definition
 				if (layerState.layerTemplateKey && dataSourcesByLayerKey && !_.isEmpty(dataSourcesByLayerKey)) {
 					const layer = getLayerFromState(state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey);
 					if(layer) {
 						mapLayers.push(layer);
 					}
 				} else if(layerState.type) {
-					mapLayers.push(layerState);
+					const layer = layerState.options?.selected ? {
+						...layerState,
+						options: {
+							...layerState.options,
+							selected: mapHelpers.prepareSelection(selections, layerState.options.selected)
+						}
+					} : layerState;
+					mapLayers.push(layer);
 				}
 			});
 
@@ -1109,12 +1153,14 @@ export default {
 	getMapSetLayersStateBySetKey,
 	getMapSetMapKeys,
 	getMapSetView,
+	getMapSetViewLimits,
 	getMapSets,
 	getMapSetsAsObject,
 
 	getSubstate,
 
 	getView,
+	getViewLimits,
 
 	// Deprecated
 	getAllLayersStateByMapKey_deprecated,

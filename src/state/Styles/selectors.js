@@ -27,7 +27,7 @@ const getGroupedByLayerKey = createCachedSelector(
 			return null;
 		}
 	}
-)((state, layerState) => JSON.stringify(layerState));
+)((state, layerState, layersStateAsString) => layersStateAsString);
 
 export default {
 	getAll,

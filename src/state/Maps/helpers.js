@@ -131,29 +131,8 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 			features = mergeFeaturesWithAttributes(layerKey, features, attributeDataSources, fidColumnName);
 		}
 
-		if (selections && layerOptions && layerOptions.selected) {
-			let populatedSelections = {};
-			_.forIn(layerOptions.selected, (value, key) => {
-				let selection = selections[key];
-
-				// TODO other selection types
-				if (selection && selection.data && selection.data.featureKeysFilter) {
-					// TODO style?
-					populatedSelections[key] = {
-						style: {
-							rules: [
-								{
-									styles: [{
-										fill: selection.data.colour
-									}]
-								}
-							]
-						},
-						keys: selection.data.featureKeysFilter.keys
-					}
-				}
-			});
-			selected = populatedSelections;
+		if (selections && layerOptions?.selected) {
+			selected = prepareSelection(selections, layerOptions.selected);
 		}
 		
 		
@@ -181,6 +160,31 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 		options
 	};
 };
+
+function prepareSelection(selections, layerSelections) {
+	let populatedSelections = {};
+	_.forIn(layerSelections, (value, key) => {
+		let selection = selections[key];
+
+		// TODO other selection types
+		if (selection && selection.data && selection.data.featureKeysFilter) {
+			// TODO get form style instead directly from selection colors?
+			populatedSelections[key] = {
+				style: {
+					outlineColor: selection.data.color,
+					outlineWidth: 2
+				},
+				hoveredStyle: {
+					outlineColor: selection.data.hoveredColor,
+					outlineWidth: 2
+				},
+				keys: selection.data.featureKeysFilter.keys
+			}
+		}
+	});
+
+	return populatedSelections;
+}
 
 function mergeFeaturesWithAttributes(layerKey, features, attributeDataSources, fidColumnName) {
 	let cacheKey = JSON.stringify(layerKey);
@@ -220,8 +224,29 @@ function mergeFeaturesWithAttributes(layerKey, features, attributeDataSources, f
 	return Object.values(finalFeaturesObject);
 }
 
+function getLayersStateWithoutFeatures(layersState) {
+	let withoutFeatures = [];
+	_.each(layersState, layerState => {
+		if (layerState?.options?.features) {
+			withoutFeatures.push({
+				...layerState,
+				options: {
+					...layerState.options,
+					features: null
+				}
+			});
+		} else {
+			withoutFeatures.push(layersState);
+		}
+	});
+
+	return withoutFeatures;
+}
+
 export default {
 	getBackgroundLayersWithFilter,
 	getLayersWithFilter,
-	prepareLayerByDataSourceType
+	getLayersStateWithoutFeatures,
+	prepareLayerByDataSourceType,
+	prepareSelection
 }

@@ -489,7 +489,7 @@ const setLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 	}
 };
 
-
+// TODO refactor - where to decide if selections are enabled
 const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -515,19 +515,20 @@ const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 			dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
 		}
 
+		// TODO it shouldn't be needed since this only clear and set again empty selection object
 		// set selection in map store
-		if (mapLayer) {
-			dispatch(actionClearSelectionInAllLayers(mapKey, selectionKey));
-			dispatch(actionSetMapLayerSelection(mapKey, layerKey, selectionKey));
-		}
-
-		// TODO
-		else {
-			let set = Select.maps.getMapSetByMapKey(state, mapKey);
-			if (set) {
-
-			}
-		}
+		// if (mapLayer) {
+		// 	dispatch(actionClearSelectionInAllLayers(mapKey, selectionKey));
+		// 	dispatch(actionSetMapLayerSelection(mapKey, layerKey, selectionKey));
+		// }
+		//
+		// // TODO
+		// else {
+		// 	let set = Select.maps.getMapSetByMapKey(state, mapKey);
+		// 	if (set) {
+		//
+		// 	}
+		// }
 	}
 };
 
