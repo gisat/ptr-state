@@ -236,7 +236,7 @@ function getLayersStateWithoutFeatures(layersState) {
 				}
 			});
 		} else {
-			withoutFeatures.push(layersState);
+			withoutFeatures.push(layerState);
 		}
 	});
 
