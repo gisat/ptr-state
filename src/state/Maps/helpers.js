@@ -110,8 +110,9 @@ const getLayersWithFilter = createCachedSelector(
  * @param {Array} attributeDataSources 
  * @param {Object} selections 
  * @param {Object} layerTemplate 
+ * @param {Object} period 
  */
-const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate) => {
+const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate, period) => {
 	const layerOptions = layerState && layerState.options;
 	let dataSourceData = dataSource.data;
 
@@ -147,6 +148,10 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 		if (style && style.data && style.data.source === 'definition') {
 			options.style = style.data.definition;
 		}
+	}
+
+	if(period) {
+		options.period = period;
 	}
 
 	return {
