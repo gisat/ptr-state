@@ -88,7 +88,7 @@ const getLayersWithFilter = createCachedSelector(
 			return _.map(layersState, (layer) => {
 				return {
 					key: layer.key,
-					filter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'metedataModifiers'),
+					filter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'metadataModifiers'),
 					attributeFilter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'attributeMetadataModifiers')
 				}
 			});
