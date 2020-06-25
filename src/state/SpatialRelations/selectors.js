@@ -136,7 +136,6 @@ const getFilteredDataGroupedByLayerKey = createSelector(
 						const filter = cloneDeep(layer.filter);
 						//TODO
 						//sapatial data should not be filtered by period and attributeKey
-						delete filter.periodKey;
 						delete filter.attributeKey;
 						let filteredRelations = _.filter(relations, filter);
 						if (!_.isEmpty(filteredRelations)) {
