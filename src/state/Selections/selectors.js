@@ -1,6 +1,6 @@
 import _ from "lodash";
 import common from "../_common/selectors";
-import StyleSelectors from "../styles/selectors";
+import StyleSelectors from "../Styles/selectors";
 import {createSelector} from "reselect";
 
 const getSubstate = state => state.selections;
