@@ -74,6 +74,35 @@ const getFilteredDataSourceKeysGroupedByLayerKey = createCachedSelector(
 	(state, layers) => JSON.stringify(layers)
 );
 
+/**
+ * @returns {Object}
+ */
+const getFilteredDataGroupedByLayerTemplateKey = createCachedSelector(
+	[
+		getAll,
+		(state, layers) => layers
+	],
+	(relations, layers) => {
+		if (relations && relations.length) {
+			let filteredGroupedByLayerKey = {};
+
+			_.forEach(layers, (layer) => {
+				let filteredRelations = _.filter(relations, {'data': layer.filter});
+				const layerTemplateKey = layer.filter.layerTemplateKey;
+				if (layerTemplateKey && filteredRelations.length) {
+					filteredGroupedByLayerKey[layerTemplateKey] = filteredRelations;
+				}
+			});
+			return !_.isEmpty(filteredGroupedByLayerKey) ? filteredGroupedByLayerKey : null;
+
+		} else {
+			return null;
+		}
+	}
+)(
+	(state, layersState) => layersState.map(l => l.filter && l.filter.layerTemplateKey).join(',')
+);
+
 /********************************
  DEPRECATED
  ********************************/
@@ -98,21 +127,21 @@ const getFilteredDataGroupedByLayerKey = createSelector(
 		if (layers && !_.isEmpty(layers)) {
 			let groupedRelations = {};
 			layers.forEach(layer => {
-				if (layer.data && layer.data.key) {
+				const layerKey = layer.key || (layer.data && layer.data.key);
+				if (layerKey) {
 					if (relations && relations.length) {
 						const filter = cloneDeep(layer.filter);
 						//TODO
 						//sapatial data should not be filtered by period and attributeKey
-						delete filter.periodKey;
 						delete filter.attributeKey;
 						let filteredRelations = _.filter(relations, filter);
 						if (!_.isEmpty(filteredRelations)) {
-							groupedRelations[layer.data.key] = filteredRelations;
+							groupedRelations[layerKey] = filteredRelations;
 						} else {
-							groupedRelations[layer.data.key] = [null];
+							groupedRelations[layerKey] = [null];
 						}
 					} else {
-						groupedRelations[layer.data.key] = [null];
+						groupedRelations[layerKey] = [null];
 					}
 				}
 			});
@@ -242,6 +271,7 @@ export default {
 	getAllData,
 	getFilteredData,
 	getFilteredDataSourceKeysGroupedByLayerKey,
+	getFilteredDataGroupedByLayerTemplateKey,
 
 
 	// Deprecated

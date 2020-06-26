@@ -88,7 +88,7 @@ const getLayersWithFilter = createCachedSelector(
 			return _.map(layersState, (layer) => {
 				return {
 					key: layer.key,
-					filter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'metedataModifiers'),
+					filter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'metadataModifiers'),
 					attributeFilter: getMergedFilterFromLayerStateAndActiveMetadataKeys(layer, activeMetadataKeys, 'attributeMetadataModifiers')
 				}
 			});
@@ -110,8 +110,9 @@ const getLayersWithFilter = createCachedSelector(
  * @param {Array} attributeDataSources 
  * @param {Object} selections 
  * @param {Object} layerTemplate 
+ * @param {Object} period 
  */
-const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate) => {
+const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate, period) => {
 	const layerOptions = layerState && layerState.options;
 	let dataSourceData = dataSource.data;
 
@@ -147,6 +148,10 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 		if (style && style.data && style.data.source === 'definition') {
 			options.style = style.data.definition;
 		}
+	}
+
+	if(period) {
+		options.period = period;
 	}
 
 	return {
@@ -236,7 +241,7 @@ function getLayersStateWithoutFeatures(layersState) {
 				}
 			});
 		} else {
-			withoutFeatures.push(layersState);
+			withoutFeatures.push(layerState);
 		}
 	});
 

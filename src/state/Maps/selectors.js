@@ -16,6 +16,7 @@ import AppSelectors from '../App/selectors';
 // import {mapConstants} from '@gisatcz/ptr-core';
 import StylesSelectors from "../Styles/selectors";
 import SelectionsSelectors from "../Selections/selectors";
+import PeriodsSelectors from "../Periods/selectors";
 import AppSelect from "../App/selectors";
 
 const defaultMapView = {
@@ -626,13 +627,15 @@ const getMapBackgroundLayer = (state, mapKey) => {
  * @param {Object} stylesByLayerKey styles related to layerState.key
  * @param {Object} selections selections related to layerState.key
  * @param {Object} layerTemplatesByLayerKey layerTemplates related to layerState.key
+ * @param {Object} periodsByLayerKey periods related to layerState.key
  */
-const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey) => {
+const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey, periodsByLayerKey) => {
 	let layerKey = layerState.key;
 	let dataSources = dataSourcesByLayerKey[layerKey];
 	let attributeDataSources = attributeDataSourcesByLayerKey && attributeDataSourcesByLayerKey[layerKey];
 	let style = stylesByLayerKey && stylesByLayerKey[layerKey];
 	let layerTemplate = layerTemplatesByLayerKey && layerTemplatesByLayerKey[layerKey];
+	let period = periodsByLayerKey && periodsByLayerKey[layerKey];
 	let layer = null;
 	if (dataSources && dataSources.length) {
 		dataSources.forEach((dataSourceWithFidColumn, index) => {
@@ -662,7 +665,7 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
 					layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index);
 				}
 			} else {
-				layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate);
+				layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate, period);
 			}
 		});
 	}
@@ -686,6 +689,7 @@ const getLayers = (state, layersState) => {
 		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState, layersStateAsString);
 		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState, layersStateAsString);
 		let selections = SelectionsSelectors.getAllAsObject(state);
+		let periodsByLayerKey = PeriodsSelectors.getFilteredGroupedByLayerKey(state, layersWithFilter);
 
 		let cacheKey = JSON.stringify(layersWithFilter);
 		let cache = getLayersCache.findByKey(cacheKey);
@@ -696,13 +700,14 @@ const getLayers = (state, layersState) => {
 			&& cache.stylesByLayerKey === stylesByLayerKey
 			&& cache.attributeDataSourcesByLayerKey === attributeDataSourcesByLayerKey
 			&& cache.selections === selections
+			&& cache.periodsByLayerKey === periodsByLayerKey
 		) {
 			return cache.mapLayers;
 		} else {
 			const mapLayers = [];
 			layersState.forEach((layerState) => {
 				if (layerState.layerTemplateKey && dataSourcesByLayerKey && !_.isEmpty(dataSourcesByLayerKey)) {
-					const layer = getLayerFromState(state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey);
+					const layer = getLayerFromState(state, layerState, dataSourcesByLayerKey, attributeDataSourcesByLayerKey, stylesByLayerKey, selections, layerTemplatesByLayerKey, periodsByLayerKey);
 					if(layer) {
 						mapLayers.push(layer);
 					}
@@ -726,7 +731,8 @@ const getLayers = (state, layersState) => {
 				attributeDataSourcesByLayerKey,
 				mapLayers,
 				stylesByLayerKey,
-				selections
+				selections,
+				periodsByLayerKey
 			});
 
 			return mapLayers;
