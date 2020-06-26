@@ -164,22 +164,32 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 function prepareSelection(selections, layerSelections) {
 	let populatedSelections = {};
 	_.forIn(layerSelections, (value, key) => {
-		let selection = selections[key];
+		let selectionData = selections?.[key].data;
 
-		// TODO other selection types
-		if (selection && selection.data && selection.data.featureKeysFilter) {
-			// TODO get form style instead directly from selection colors?
-			populatedSelections[key] = {
-				style: {
-					outlineColor: selection.data.color,
-					outlineWidth: 2
-				},
-				hoveredStyle: {
-					outlineColor: selection.data.hoveredColor,
-					outlineWidth: 2
-				},
-				keys: selection.data.featureKeysFilter.keys
+		if (selectionData) {
+			const style = selectionData.style;
+			// TODO hovered style
+			const color = selectionData.color;
+			const hoveredColor = selectionData.hoveredColor;
+
+			if (selectionData.featureKeysFilter) {
+				populatedSelections[key] = {keys: selectionData.featureKeysFilter.keys};
+				if (style) {
+					populatedSelections[key].style = style;
+					populatedSelections[key].hoveredStyle = style;
+				} else {
+					populatedSelections[key].style = {
+						outlineColor: color,
+						outlineWidth: 2
+					};
+					populatedSelections[key].hoveredStyle = {
+						outlineColor: hoveredColor,
+						outlineWidth: 2
+					}
+				}
 			}
+
+			//TODO other selection types
 		}
 	});
 
