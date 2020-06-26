@@ -4,6 +4,7 @@ import moment from "moment";
 
 import common from "../_common/selectors";
 import attributeRelationsSelectors from "../AttributeRelations/selectors";
+import SpatialRelations from "../SpatialRelations/selectors";
 
 const getSubstate = state => state.periods;
 
@@ -70,6 +71,54 @@ const getByFullPeriodAsObject = createCachedSelector(
 	}
 )((state, start, end) => `${start}_${end}`);
 
+const getFilteredGroupedByLayerTemplateKey = createCachedSelector(
+	[
+		getAllAsObject,
+		SpatialRelations.getFilteredDataGroupedByLayerTemplateKey,
+		(state, layersState) => layersState
+	],
+	(periods, spatialRelationsDataGroupedByLayerTemplateKey, layersState) => {
+		if (periods && !_.isEmpty(periods) && spatialRelationsDataGroupedByLayerTemplateKey && !_.isEmpty(spatialRelationsDataGroupedByLayerTemplateKey) && layersState) {
+			const periodsByLayerKey = {};
+			for (const [layerTemplateKey, spatialRelations] of Object.entries(spatialRelationsDataGroupedByLayerTemplateKey)) {
+				periodsByLayerKey[layerTemplateKey] = spatialRelations.map(spatialRelation => {
+					if(periods[spatialRelation.data.periodKey]) {
+						return periods[spatialRelation.data.periodKey];
+					}
+				})
+				periodsByLayerKey[layerTemplateKey].filter(i => i); //filter empty
+			}
+			return periodsByLayerKey;
+		} else {
+			return null;
+		}
+	}
+)((state, layersState) => layersState.map(l => l.filter && l.filter.layerTemplateKey).join(','));
+
+const getFilteredGroupedByLayerKey = createCachedSelector(
+	[
+		getAllAsObject,
+		SpatialRelations.getFilteredDataGroupedByLayerKey,
+		(state, layersState) => layersState
+	],
+	(periods, spatialRelationsDataGroupedByLayerKey, layersState) => {
+		if (periods && !_.isEmpty(periods) && spatialRelationsDataGroupedByLayerKey && !_.isEmpty(spatialRelationsDataGroupedByLayerKey) && layersState) {
+			const periodsByLayerKey = {};
+			for (const [layerKey, spatialRelations] of Object.entries(spatialRelationsDataGroupedByLayerKey)) {
+				periodsByLayerKey[layerKey] = spatialRelations.map(spatialRelation => {
+					if(periods[spatialRelation.periodKey]) {
+						return periods[spatialRelation.periodKey];
+					}
+				})
+				periodsByLayerKey[layerKey].filter(i => i); //filter empty
+			}
+			return periodsByLayerKey;
+		} else {
+			return null;
+		}
+	}
+)((state, layersState) => layersState.map(l => l.key).join(','));
+
 export default {
 	getActive,
 	getActiveKey,
@@ -87,6 +136,8 @@ export default {
 	getDeletePermissionByKey,
 
 	getEditedDataByKey,
+	getFilteredGroupedByLayerTemplateKey,
+	getFilteredGroupedByLayerKey,
 	getIndexed,
 	getKeysByAttributeRelations,
 	getUpdatePermissionByKey,

@@ -34,6 +34,27 @@ const getFilteredTemplatesGroupedByLayerKey = createCachedSelector(
 	}
 )((state, layersState) => layersState.map(l => l.filter && l.filter.layerTemplateKey).join(','));
 
+const getFilteredTemplatesGroupedByLayerTemplateKey = createCachedSelector(
+	[
+		getAllAsObject,
+		(state, layersState) => layersState
+	],
+	(layerTemplates, layersState) => {
+		if (layerTemplates && !_.isEmpty(layerTemplates) && layersState) {
+			let layerTemplatesByLayerKey = {};
+			layersState.forEach(layer => {
+				if (layer.filter.layerTemplateKey) {
+					layerTemplatesByLayerKey[layer.filter.layerTemplateKey] = layerTemplates[layer.filter.layerTemplateKey];
+				}
+			});
+
+			return layerTemplatesByLayerKey;
+		} else {
+			return null;
+		}
+	}
+)((state, layersState) => layersState.map(l => l.filter && l.filter.layerTemplateKey).join(','));
+
 export default {
 	getActiveKey,
 	getAll,
@@ -50,5 +71,6 @@ export default {
 
 	getUpdatePermissionByKey,
 	getFilteredTemplatesGroupedByLayerKey,
+	getFilteredTemplatesGroupedByLayerTemplateKey,
 	getSubstate
 };
