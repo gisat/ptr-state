@@ -4,6 +4,7 @@ import Select from "../Select";
 
 const add = common.add(ActionTypes.SELECTIONS);
 const setActiveKey = common.setActiveKey(ActionTypes.SELECTIONS);
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.SELECTIONS);
 
 const setActiveSelectionFeatureKeysFilterKeys = (selectionKeys) => {
 	return (dispatch, getState) => {
@@ -26,5 +27,6 @@ function setFeatureKeysFilterKeys(key, featureKeys){
 export default {
 	add,
 	setActiveSelectionFeatureKeysFilterKeys,
-	setActiveKey
+	setActiveKey,
+	updateStateFromView
 }
