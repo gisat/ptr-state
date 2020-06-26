@@ -19,6 +19,20 @@ const getByKey = common.getByKey(getSubstate);
 const isLoggedIn = state => !!state.users.activeKey;
 const isAdmin = state => state.users.isAdmin;
 
+
+const getById = createSelector(
+	[
+		getAll,
+		(state, userId) => userId,
+	],
+	(users, userId) => {
+		if (users, userId) {
+			return users.find(user => user.id === userId);
+		}
+		return false;
+	}
+);
+
 const isAdminGroupMember = createSelector(
 	[getActive],
 	(user) => {
@@ -107,6 +121,7 @@ export default {
 
 	getActive,
 	getByKey,
+	getById,
 
 	getActiveKey: getActiveKey,
 	getActiveUser: getActive,
