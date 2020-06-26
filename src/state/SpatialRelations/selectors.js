@@ -90,10 +90,7 @@ const getFilteredDataGroupedByLayerTemplateKey = createCachedSelector(
 				let filteredRelations = _.filter(relations, {'data': layer.filter});
 				const layerTemplateKey = layer.filter.layerTemplateKey;
 				if (layerTemplateKey && filteredRelations.length) {
-					filteredGroupedByLayerKey[layerTemplateKey] = filteredRelations.map(relation => {
-						const {layerTemplateKey, ...rest} = relation.data;
-						return {...rest}
-					});
+					filteredGroupedByLayerKey[layerTemplateKey] = filteredRelations;
 				}
 			});
 			return !_.isEmpty(filteredGroupedByLayerKey) ? filteredGroupedByLayerKey : null;
