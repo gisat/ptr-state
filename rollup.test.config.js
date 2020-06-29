@@ -41,6 +41,8 @@ const lodashExternal = [
 	'lodash/uniqBy',
 	'lodash/intersection',
 	'lodash/isEmpty',
+	'lodash/head',
+	'lodash/tail',
 ];
 
 export default {
@@ -53,6 +55,7 @@ export default {
 		'redux-logger',
 		'@manaflair/redux-batch',
 		'react-redux',
+		'chai',
 		'connected-react-router',
 		'react-router-dom',
 		'react-router',

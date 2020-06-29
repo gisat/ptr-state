@@ -4,7 +4,6 @@ import _ from "lodash";
 import commonHelpers from './helpers';
 
 const activeScopeKey = state => state.scopes.activeKey;
-const activeThemeKey = state => state.themes.activeKey;
 
 /**
  *

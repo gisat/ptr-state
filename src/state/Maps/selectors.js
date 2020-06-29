@@ -688,7 +688,7 @@ const getLayers = (state, layersState) => {
 		let layerTemplatesByLayerKey = LayerTemplatesSelectors.getFilteredTemplatesGroupedByLayerKey(state, layersWithFilter);
 		let attributeDataSourcesByLayerKey = AttributeDataSourcesSelectors.getFilteredDataSourcesGroupedByLayerKey(state, layersWithFilter, layersState, layersStateAsString);
 		let stylesByLayerKey = StylesSelectors.getGroupedByLayerKey(state, layersState, layersStateAsString);
-		let selections = SelectionsSelectors.getAllAsObject(state);
+		let selections = SelectionsSelectors.getAllAsObjectWithStyles(state);
 		let periodsByLayerKey = PeriodsSelectors.getFilteredGroupedByLayerKey(state, layersWithFilter);
 
 		let cacheKey = JSON.stringify(layersWithFilter);

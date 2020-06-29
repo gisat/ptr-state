@@ -8,11 +8,13 @@ import Select from "../Select";
 const add = common.add(ActionTypes.STYLES);
 const useKeys = common.useKeys(Select.styles.getSubstate, 'styles', ActionTypes.STYLES);
 const useKeysClear = common.useKeysClear(ActionTypes.STYLES);
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.STYLES);
 
 // ============ export ===========
 
 export default {
 	add,
 	useKeys,
-	useKeysClear
+	useKeysClear,
+	updateStateFromView
 }
