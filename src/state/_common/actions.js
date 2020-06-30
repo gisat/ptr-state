@@ -346,12 +346,22 @@ function create(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEG
 					});
 
 					let uniqueIndexes = commonHelpers.getUniqueIndexes(indexes);
-					uniqueIndexes.forEach(index => {
-						//invalidate data
-						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
-						//refresh data
-						dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
-					});
+					if(!_.isEmpty(uniqueIndexes)) {
+						uniqueIndexes.forEach(index => {
+							//invalidate data
+							dispatch(actionClearIndex(actionTypes, index.filter, index.order));
+							//refresh data
+							dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
+						});
+					} else {
+						//if no indexes, then create one
+						const defaultFilter = null;
+						const defaultOrder = null;
+						const start = 0;
+						dispatch(actionAddIndex(actionTypes, defaultFilter, defaultOrder, result.total, start, result.data[dataType], result.changes && result.changes[dataType]));
+					}
+
+
 				}
 			})
 			.catch(error => {
