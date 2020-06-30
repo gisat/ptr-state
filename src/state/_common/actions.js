@@ -187,7 +187,7 @@ const saveEdited = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 
 			if (saved) {
 				// update
-				dispatch(apiUpdate(getSubstate, dataType, actionTypes, categoryPath, [edited])).then(() => {
+				return dispatch(apiUpdate(getSubstate, dataType, actionTypes, categoryPath, [edited])).then(() => {
 					//FIXME - check indexes
 				})
 
