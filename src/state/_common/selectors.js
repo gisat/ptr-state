@@ -486,7 +486,7 @@ const getIndexesByFilteredItem = (getSubstate) => {
 			if(!_.isEmpty(indexes)){
 				return indexes.filter((index) => commonHelpers.itemFitFilter(index.filter, item));
 			} else {
-				return [];
+				return null;
 			}
 		}
 	);
