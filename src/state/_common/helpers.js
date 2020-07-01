@@ -12,13 +12,17 @@ function getIndex(indexes, filter, order) {
 
 // TODO Test
 function getUniqueIndexes(indexes) {
-	return indexes.reduce((uniqueIndexes, index) => {
-		if (_.find(uniqueIndexes, (i) => isCorrespondingIndex(index, i.filter, i.order))) {
-			return uniqueIndexes;
-		}
-
-		return [...uniqueIndexes, index];
-	}, []);
+	if(!_.isEmpty(indexes)) {
+		return indexes.reduce((uniqueIndexes, index) => {
+			if (_.find(uniqueIndexes, (i) => i && isCorrespondingIndex(index, i.filter, i.order))) {
+				return uniqueIndexes;
+			}
+	
+			return [...uniqueIndexes, index];
+		}, []);
+	} else {
+		return null;
+	}
 }
 
 function isCorrespondingIndex(index, filter, order) {
