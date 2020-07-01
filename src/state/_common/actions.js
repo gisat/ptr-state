@@ -189,6 +189,15 @@ const saveEdited = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 				// update
 				return dispatch(apiUpdate(getSubstate, dataType, actionTypes, categoryPath, [edited])).then(() => {
 					//FIXME - check indexes
+					//refresh proper indexes
+					const state = getState();
+					const indexes = commonSelectors.getIndexesByFilteredItem(getSubstate)(state, edited);
+					indexes.forEach(index => {
+						//invalidate data
+						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
+						//refresh data
+						dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
+					})
 				})
 
 			} else {
