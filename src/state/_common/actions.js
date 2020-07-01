@@ -150,7 +150,7 @@ const deleteItem = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 
 					//refresh proper indexes
 					const state = getState();
-					const indexes = commonSelectors.getIndexesByFilteredItem(getSubstate)(state, item);
+					const indexes = commonSelectors.getIndexesByFilteredItem(getSubstate)(state, item) || [];
 					indexes.forEach(index => {
 						//invalidate data
 						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
@@ -351,7 +351,7 @@ function create(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEG
 
 					let indexes = [];
 					items.forEach(item => {
-						indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState(), item));
+						indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState(), item)) || [];
 					});
 
 					let uniqueIndexes = commonHelpers.getUniqueIndexes(indexes);
@@ -650,8 +650,8 @@ function receiveUpdated(getSubstate, actionTypes, result, dataType, categoryPath
 					}
 				});
 
-				indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState(), model));
-				indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState(), original));
+				indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState() || [], model));
+				indexes = indexes.concat(commonSelectors.getIndexesByFilteredItem(getSubstate)(getState() || [], original));
 			});
 
 			let uniqueIndexes = commonHelpers.getUniqueIndexes(indexes);
