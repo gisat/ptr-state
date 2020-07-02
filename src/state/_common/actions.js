@@ -151,12 +151,16 @@ const deleteItem = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 					//refresh proper indexes
 					const state = getState();
 					const indexes = commonSelectors.getIndexesByFilteredItem(getSubstate)(state, item) || [];
-					indexes.forEach(index => {
-						//invalidate data
-						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
-						//refresh data
-						dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
-					})
+					if(!_.isEmpty(indexes)) {
+						indexes.forEach(index => {
+							if(index) {
+								//invalidate data
+								dispatch(actionClearIndex(actionTypes, index.filter, index.order));
+								//refresh data
+								dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
+							}
+						})
+					}
 				} else {
 					//error
 					return dispatch(actionGeneralError('common/actions#deleteItem: Deleted key is not equal to key to delete!'));
@@ -187,10 +191,7 @@ const saveEdited = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 
 			if (saved) {
 				// update
-				dispatch(apiUpdate(getSubstate, dataType, actionTypes, categoryPath, [edited])).then(() => {
-					//FIXME - check indexes
-				})
-
+				return dispatch(apiUpdate(getSubstate, dataType, actionTypes, categoryPath, [edited]));
 			} else {
 				// create
 				debugger;
@@ -346,12 +347,16 @@ function create(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEG
 					});
 
 					let uniqueIndexes = commonHelpers.getUniqueIndexes(indexes);
-					uniqueIndexes.forEach(index => {
-						//invalidate data
-						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
-						//refresh data
-						dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
-					});
+					if(!_.isEmpty(uniqueIndexes)) {
+						uniqueIndexes.forEach(index => {
+							if(index) {
+								//invalidate data
+								dispatch(actionClearIndex(actionTypes, index.filter, index.order));
+								//refresh data
+								dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
+							}
+						});
+					}
 				}
 			})
 			.catch(error => {
@@ -646,12 +651,16 @@ function receiveUpdated(getSubstate, actionTypes, result, dataType, categoryPath
 			});
 
 			let uniqueIndexes = commonHelpers.getUniqueIndexes(indexes);
-			uniqueIndexes.forEach(index => {
-				//invalidate data
-				dispatch(actionClearIndex(actionTypes, index.filter, index.order));
-				//refresh data
-				dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
-			});
+			if(!_.isEmpty(uniqueIndexes)) {
+				uniqueIndexes.forEach(index => {
+					if(index) {
+						//invalidate data
+						dispatch(actionClearIndex(actionTypes, index.filter, index.order));
+						//refresh data
+						dispatch(refreshIndex(getSubstate, dataType, index.filter, index.order, actionTypes, categoryPath));
+					}
+				});
+			}
 		} else {
 			console.warn(`No data updated for ${dataType} metadata type`);
 		}
