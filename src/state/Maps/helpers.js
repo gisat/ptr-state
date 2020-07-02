@@ -122,9 +122,14 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 	if (type === 'wmts') {
 		options.url = options.urls[0];
 	} else if (type === 'wms') {
-		let {url, ...params} = options;
+		let {url, params, ...rest} = options;
+
 		options = {
-			params,
+			params: {
+				...params,
+				layers: rest.layers,
+				styles: rest.styles,
+			},
 			url
 		}
 	} else if (type === 'vector' && features) {
