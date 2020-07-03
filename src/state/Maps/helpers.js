@@ -156,8 +156,7 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 
 	return {
 		key: layerKey + '_' + index,
-		nameDisplay: layerState.name || layerTemplate?.data?.nameDisplay,
-		nameInternal: layerTemplate?.data?.nameInternal,
+		name: layerState.name || layerTemplate?.data?.nameDisplay,
 		description: layerTemplate?.data?.description,
 		layerKey: layerKey,
 		opacity: (layerState && layerState.opacity) || 1,
