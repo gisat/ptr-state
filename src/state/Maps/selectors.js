@@ -664,7 +664,7 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
 				} else {
 					layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index);
 				}
-			} else {
+			} else if (dataSource && dataSource.data) {
 				layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate, period);
 			}
 		});
