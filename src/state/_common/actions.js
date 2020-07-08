@@ -139,7 +139,7 @@ const deleteItem = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 				//Check if item deleted
 				if(isEqual(deletedKeys, [item.key])) {
 					// mark deleted items by "deleted" date
-					const deleteDate = moment(new Date().toString()).utc().format();
+					const deleteDate = moment(new Date().toISOString()).utc().format();
 					deletedKeys.forEach((key) => {
 						dispatch(actionMarkAsDeleted(actionTypes, key, deleteDate));
 					});

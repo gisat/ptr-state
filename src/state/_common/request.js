@@ -1,9 +1,19 @@
 import _ from "lodash";
-import fetch from "isomorphic-fetch";
+import _fetch from "isomorphic-fetch";
 import path from "path";
 import queryString from "query-string";
 
 const TTL = 5;
+
+let fetch = _fetch;
+
+export function setFetch(_fetch) {
+	fetch = _fetch;
+}
+
+export function resetFetch() {
+	fetch = _fetch;
+}
 
 /**
  * Request helper. Creates an request to backend.
