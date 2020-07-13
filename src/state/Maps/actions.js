@@ -599,13 +599,13 @@ const updateMapAndSetView = (mapKey, update) => {
 			forMap = update;
 		}
 
-		if (forSet) {
+		if (forSet && !_.isEmpty(forSet)) {
 			//check data integrity
 			forSet = mapUtils.ensureViewIntegrity(forSet); //TODO test
 			dispatch(actionUpdateSetView(set.key, forSet));
 		}
 
-		if (forMap) {
+		if (forMap && !_.isEmpty(forMap)) {
 			//check data integrity
 			forMap = mapUtils.ensureViewIntegrity(forMap); //TODO test
 			dispatch(actionUpdateMapView(mapKey, forMap));
