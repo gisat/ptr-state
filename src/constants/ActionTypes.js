@@ -388,6 +388,9 @@ export default utils.deepKeyMirror({
 				UPDATE: null
 			}
 		},
+        UPDATE: null,
+
+        // TODO deprecated
 		LAYERS: {
 			ADD_LAYERS: null,
 			REMOVE_LAYERS: null,
@@ -400,8 +403,7 @@ export default utils.deepKeyMirror({
 				SET_INDEX: null,
 			},
 			SET: null
-		},
-		UPDATE: null
+		}
 	},
 
 	PERIODS: {
