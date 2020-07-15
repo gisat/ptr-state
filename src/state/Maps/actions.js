@@ -733,6 +733,18 @@ const setSetBackgroundLayer = (setKey, backgroundLayer) => {
 	};
 };
 
+const setSetLayers = (setKey, layers) => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const setByKey = Select.maps.getMapSetByKey(state, setKey);
+        if(!setByKey) {
+            return dispatch(actionGeneralError(`No map set found for setKey ${setKey}.`));
+        } else {
+            dispatch(actionSetSetLayers(setKey, layers));
+        }
+    };
+};
+
 function use(mapKey, backgroundLayer, layers) {
 	return (dispatch, getState) => {
 		dispatch(useClear(mapKey));
@@ -1342,6 +1354,14 @@ const actionSetSetBackgroundLayer = (setKey, backgroundLayer) => {
 	}
 };
 
+const actionSetSetLayers = (setKey, layers) => {
+    return {
+        type: ActionTypes.MAPS.SET.SET_LAYERS,
+        setKey,
+        layers,
+    }
+};
+
 const actionSetMapLayers = (mapKey, layers) => {
 	return {
 		type: ActionTypes.MAPS.LAYERS.SET,
@@ -1476,6 +1496,7 @@ export default {
 
 	setMapSetActiveMapKey,
 	setSetBackgroundLayer,
+    setSetLayers,
 	setSetSync,
 	setSetView,
 
