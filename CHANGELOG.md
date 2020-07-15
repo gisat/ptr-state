@@ -1,3 +1,16 @@
+# v1.4.15 (Wed Jul 15 2020)
+
+#### 🐾 Patch
+
+- maps - set map set layers [#36](https://github.com/gisat-panther/ptr-state/pull/36) ([@vlach1989](https://github.com/vlach1989) [@tmdmc](https://github.com/tmdmc))
+
+#### Authors: 2
+
+- [@tmdmc](https://github.com/tmdmc)
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.4.14 (Wed Jul 15 2020)
 
 #### 🐾 Patch
