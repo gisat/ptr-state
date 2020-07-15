@@ -1,3 +1,15 @@
+# v1.4.14 (Wed Jul 15 2020)
+
+#### 🐾 Patch
+
+- Fix release [#35](https://github.com/gisat-panther/ptr-state/pull/35) ([@nenadalm](https://github.com/nenadalm))
+
+#### Authors: 1
+
+- Miloslav Nenadál ([@nenadalm](https://github.com/nenadalm))
+
+---
+
 # v1.4.13 (Tue Jul 14 2020)
 
 #### 🐾 Patch
