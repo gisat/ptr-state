@@ -478,15 +478,889 @@ describe('state/_common/actions', function () {
 			});
 	});
 
-	// ensureIndexed,
-	// ensureIndexesWithFilterByActive,
-	// ensureKeys,
-	// loadAll,
-	// loadFiltered,
-	// useIndexedBatch,
-	// loadIndexedPage,
-	// loadKeysPage,
-	// setActiveKey: creator(actionSetActiveKey),
+	describe('ensureIndexed', function () {
+		it('already loaded', function () {
+			const getSubState = (state) => state.sub;
+			const getState = () => ({
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
+				},
+				sub: {
+					indexes: [
+						{
+							filter: {name: 'fil'},
+							order: 'asc',
+							count: 5,
+							changedOn: '2020-01-01',
+							index: ['k1', 'k2', 'k3', 'k4', 'k5'],
+						},
+					],
+				},
+			});
+
+			actions
+				.ensureIndexed(
+					getSubState,
+					'users',
+					{name: 'fil'},
+					'asc',
+					0,
+					5,
+					{},
+					'user'
+				)(dispatch, getState)
+				.then(function () {
+					return runFunctionActions({dispatch, getState});
+				})
+				.then(function () {
+					assert.deepStrictEqual(dispatchedActions, []);
+				});
+		});
+
+		it('missing keys', function () {
+			const getSubState = (state) => state.sub;
+			const getState = () => ({
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
+				},
+				sub: {
+					indexes: [
+						{
+							filter: {name: 'fil'},
+							order: 'asc',
+							count: 5,
+							changedOn: '2020-01-01',
+							index: [null, 'k1', 'k2', 'k3'],
+						},
+					],
+				},
+			});
+			const dispatch = (action) => {
+				if (typeof action === 'function') {
+					const res = action(dispatch, getState);
+					if (res != null) {
+						dispatchedActions.push(res);
+					}
+
+					return res;
+				}
+
+				dispatchedActions.push(action);
+			};
+			setFetch(function (url, options) {
+				assert.strictEqual(
+					'http://localhost/backend/rest/user/filtered/users',
+					url
+				);
+				assert.deepStrictEqual(options, {
+					body: JSON.stringify({
+						filter: {
+							name: 'fil',
+							key: {
+								notin: ['k1', 'k2', 'k3'],
+							},
+						},
+						offset: 0,
+						order: 'asc',
+						limit: 100,
+					}),
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					method: 'POST',
+				});
+
+				const body = {
+					data: {users: {k3: {}, k4: {}}},
+					total: 5,
+					changes: {
+						users: '2020-01-01',
+					},
+				};
+
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve(body);
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: JSON.stringify(body),
+				});
+			});
+
+			return actions
+				.ensureIndexed(
+					getSubState,
+					'users',
+					{name: 'fil'},
+					'asc',
+					1,
+					5,
+					{INDEX: {ADD: 'ADD_INDEX'}},
+					'user'
+				)(dispatch, getState)
+				.then(function () {
+					return runFunctionActions({dispatch, getState});
+				})
+				.then(function () {
+					assert.deepStrictEqual(dispatchedActions, [
+						{
+							type: 'ADD_INDEX',
+							filter: {
+								name: 'fil',
+								key: {notin: ['k1', 'k2', 'k3']},
+							},
+							order: 'asc',
+							start: 1,
+							data: {k3: {}, k4: {}},
+							changedOn: '2020-01-01',
+							count: 5,
+						},
+					]);
+				});
+		});
+
+		it('nothing loaded', function () {
+			const getSubState = (state) => state.sub;
+			const getState = () => ({
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
+				},
+				sub: {
+					indexes: [],
+				},
+			});
+			const dispatch = (action) => {
+				if (typeof action === 'function') {
+					const res = action(dispatch, getState);
+					if (res != null) {
+						dispatchedActions.push(res);
+					}
+
+					return res;
+				}
+
+				dispatchedActions.push(action);
+			};
+			setFetch(function (url, options) {
+				assert.strictEqual(
+					'http://localhost/backend/rest/user/filtered/users',
+					url
+				);
+				assert.deepStrictEqual(options, {
+					body: JSON.stringify({
+						filter: {
+							name: 'fil',
+						},
+						offset: 0,
+						order: 'asc',
+						limit: 100,
+					}),
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					method: 'POST',
+				});
+
+				const body = {
+					data: {users: {k1: {}, k2: {}, k3: {}, k4: {}}},
+					total: 5,
+					changes: {
+						users: '2020-01-01',
+					},
+				};
+
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve(body);
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: JSON.stringify(body),
+				});
+			});
+
+			return actions
+				.ensureIndexed(
+					getSubState,
+					'users',
+					{name: 'fil'},
+					'asc',
+					1,
+					5,
+					{INDEX: {ADD: 'ADD_INDEX'}},
+					'user'
+				)(dispatch, getState)
+				.then(function () {
+					return runFunctionActions({dispatch, getState});
+				})
+				.then(function () {
+					assert.deepStrictEqual(dispatchedActions, [
+						{
+							type: 'ADD_INDEX',
+							filter: {
+								name: 'fil',
+							},
+							order: 'asc',
+							start: 1,
+							data: {k1: {}, k2: {}, k3: {}, k4: {}},
+							changedOn: '2020-01-01',
+							count: 5,
+						},
+					]);
+				});
+		});
+	});
+
+	it('ensureIndexesWithFilterByActive', function () {
+		const getSubState = (state) => state.sub;
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+			sub: {
+				inUse: {
+					indexes: [
+						[
+							{
+								filterByActive: {name: 'fil'},
+								filter: {
+									name: 'fil',
+								},
+								order: 'asc',
+								start: 1,
+								length: 5,
+							},
+						],
+					],
+				},
+			},
+		});
+		const dispatch = (action) => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {
+						name: 'fil',
+					},
+					offset: 0,
+					order: 'asc',
+					limit: 100,
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: {k1: {}, k2: {}, k3: {}, k4: {}}},
+				total: 5,
+				changes: {
+					users: '2020-01-01',
+				},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.ensureIndexesWithFilterByActive(
+				getSubState,
+				'users',
+				{INDEX: {ADD: 'ADD_INDEX'}},
+				'user'
+			)({name: 'fil'})(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'ADD_INDEX',
+						filter: {
+							name: 'fil',
+						},
+						order: 'asc',
+						start: 1,
+						data: {k1: {}, k2: {}, k3: {}, k4: {}},
+						changedOn: '2020-01-01',
+						count: 5,
+					},
+				]);
+			});
+	});
+
+	it('ensureKeys', function () {
+		const getSubState = (state) => state.sub;
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+			sub: {
+				byKey: {
+					k1: {},
+				},
+			},
+		});
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {
+						key: {in: ['k2', 'k3']},
+					},
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: [{key: 'k2'}]},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.ensureKeys(
+				getSubState,
+				'users',
+				{ADD_UNRECEIVED: 'ADD_UNRECEIVED', ADD: 'ADD'},
+				['k1', 'k2', 'k3'],
+				'user'
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'ADD',
+						filter: undefined,
+						data: [
+							{
+								key: 'k2',
+							},
+						],
+					},
+					{
+						type: 'ADD_UNRECEIVED',
+						keys: ['k3'],
+					},
+				]);
+			});
+	});
+
+	it('loadAll', function () {
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+		});
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					limit: 100,
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: {k1: {}, k2: {}}},
+				total: 2,
+				changes: {
+					users: '2020-01-01',
+				},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.loadAll(
+				'users',
+				{ADD: 'ADD'},
+				'user'
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'ADD',
+						filter: undefined,
+						data: [
+							{
+								k1: {},
+								k2: {},
+							},
+						],
+					},
+				]);
+			});
+	});
+
+	it('loadFiltered', function () {
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+		});
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {name: 'fil'},
+					limit: 100,
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: {k1: {}, k2: {}}},
+				total: 2,
+				changes: {
+					users: '2020-01-01',
+				},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.loadFiltered(
+				'users',
+				{ADD: 'ADD'},
+				{name: 'fil'},
+				'user'
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'ADD',
+						filter: undefined,
+						data: [
+							{
+								k1: {},
+								k2: {},
+							},
+						],
+					},
+				]);
+			});
+	});
+
+	it('useIndexedBatch', function () {
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+			scopes: {activeKey: 's1'},
+			periods: {activeKey: 'pe1'},
+			places: {activeKey: 'pl1'},
+		});
+		const dispatch = (action) => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {name: 'fil'},
+					order: 'asc',
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: {k1: {}, k2: {}}},
+				total: 2,
+				changes: {
+					users: '2020-01-01',
+				},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.useIndexedBatch(
+				'users',
+				{
+					USE: {INDEXED_BATCH: {REGISTER: 'REGISTER'}},
+					INDEX: {ADD_BATCH: 'ADD_BATCH'},
+				},
+				'user'
+			)(
+				{name: 'fil'},
+				{name: 'fil'},
+				'asc',
+				'cid',
+				'k1',
+				{}
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'REGISTER',
+						componentId: 'cid',
+						filterByActive: {name: 'fil'},
+						filter: {name: 'fil'},
+						order: 'asc',
+					},
+					{
+						type: 'ADD_BATCH',
+						filter: {name: 'fil'},
+						order: 'asc',
+						data: {k1: {}, k2: {}},
+						key: 'k1',
+					},
+				]);
+			});
+	});
+
+	it('loadIndexedPage', function () {
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+		});
+		const dispatch = (action) => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {name: 'fil'},
+					offset: 0,
+					order: 'asc',
+					limit: 100,
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: {k1: {}, k2: {}}},
+				total: 2,
+				changes: {
+					users: '2020-01-01',
+				},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.loadIndexedPage(
+				'users',
+				{name: 'fil'},
+				'asc',
+				1,
+				'2020-01-01',
+				{INDEX: {ADD: 'ADD_INDEX'}},
+				'user'
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{
+						type: 'ADD_INDEX',
+						filter: {name: 'fil'},
+						order: 'asc',
+						count: 2,
+						start: 1,
+						data: {k1: {}, k2: {}},
+						changedOn: '2020-01-01',
+					},
+				]);
+			});
+	});
+
+	it('loadKeysPage', function () {
+		const getState = () => ({
+			app: {
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: '',
+				},
+			},
+		});
+		const dispatch = (action) => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
+		setFetch(function (url, options) {
+			assert.strictEqual(
+				'http://localhost/backend/rest/user/filtered/users',
+				url
+			);
+			assert.deepStrictEqual(options, {
+				body: JSON.stringify({
+					filter: {key: {in: ['k1', 'k2']}},
+				}),
+				credentials: 'include',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			});
+
+			const body = {
+				data: {users: [{key: 'k1'}]},
+			};
+
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve(body);
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: JSON.stringify(body),
+			});
+		});
+
+		return actions
+			.loadKeysPage(
+				'users',
+				{ADD: 'ADD', ADD_UNRECEIVED: 'ADD_UNRECEIVED'},
+				['k1', 'k2'],
+				'user'
+			)(dispatch, getState)
+			.then(function () {
+				return runFunctionActions({dispatch, getState});
+			})
+			.then(function () {
+				assert.deepStrictEqual(dispatchedActions, [
+					{type: 'ADD', filter: undefined, data: [{key: 'k1'}]},
+					{keys: ['k2'], type: 'ADD_UNRECEIVED'},
+				]);
+			});
+	});
+
+	it('setActiveKey', function () {
+		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(
+			dispatch
+		);
+
+		assert.deepStrictEqual(dispatchedActions, [
+			{type: 'SET_ACTIVE_KEY', key: 'k1'},
+		]);
+	});
+
 	// setActiveKeyAndEnsureDependencies,
 	// setActiveKeysAndEnsureDependencies,
 	// setActiveKeys: creator(actionSetActiveKeys),

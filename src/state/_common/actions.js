@@ -374,7 +374,7 @@ function loadAll(dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
 		let payload = {
 			limit: PAGE_SIZE
 		};
-		request(localConfig, apiPath, 'POST', null, payload)
+		return request(localConfig, apiPath, 'POST', null, payload)
 			.then(result => {
 				if (result.errors && result.errors[dataType] || result.data && !result.data[dataType]) {
 					dispatch(actionGeneralError(result.errors[dataType] || new Error('no data')));
@@ -709,15 +709,16 @@ function ensureIndexesWithFilterByActive(getSubstate, dataType, actionTypes, cat
 	return filterByActive => {
 		return (dispatch, getState) => {
 
-			let state = getState();
-			let usedIndexes = commonSelectors.getUsesWithActiveDependency(getSubstate)(state, filterByActive);
+			const state = getState();
+			const usedIndexes = commonSelectors.getUsesWithActiveDependency(getSubstate)(state, filterByActive);
 
-			_.map(usedIndexes, (usedIndex) => {
+			const promises = _.flatMap(usedIndexes, (usedIndex) => {
 				_.map(usedIndex.uses, (use) => {
-					dispatch(ensureIndexed(getSubstate, dataType, usedIndex.filter, usedIndex.order, use.start, use.length, actionTypes, categoryPath))
+					return dispatch(ensureIndexed(getSubstate, dataType, usedIndex.filter, usedIndex.order, use.start, use.length, actionTypes, categoryPath))
 				});
-			})
+			});
 
+			return Promise.all(promises);
 		}
 	}
 }
