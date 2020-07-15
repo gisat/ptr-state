@@ -1,9 +1,6 @@
 name: Tests
 
-on:
-    push: ~
-    pull_request:
-        types: [assigned]
+on: [push]
 
 jobs:
     run_tests:
