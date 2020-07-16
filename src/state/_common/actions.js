@@ -696,11 +696,13 @@ function refreshUses(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_
 
 			let usedIndexPages = commonSelectors.getUsedIndexPages(getSubstate)(state);
 
-			_.each(usedIndexPages, (usedIndexPage) => {
-				_.each(usedIndexPage.uses, (use) => {
-					dispatch(ensureIndexed(getSubstate, dataType, usedIndexPage.filter, usedIndexPage.order, use.start, use.length, actionTypes, categoryPath))
+			const promises = _.flatMap(usedIndexPages, (usedIndexPage) => {
+				_.map(usedIndexPage.uses, (use) => {
+					return dispatch(ensureIndexed(getSubstate, dataType, usedIndexPage.filter, usedIndexPage.order, use.start, use.length, actionTypes, categoryPath))
 				});
 			})
+
+			return Promise.all(promises);
 		}
 	}
 }
