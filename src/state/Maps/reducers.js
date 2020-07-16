@@ -282,12 +282,22 @@ const updateMapView = (state, mapKey, updates) => {
  * @param {number} index - position in map
  */
 const addLayer = (state, mapKey, layerState, index) => {
-	let mapState = getMapByKey(state, mapKey);
 	//ensure that data.layers exists
-	if (!mapState.data.layers) {
-		mapState = {...mapState, data: {...mapState.data, layers: []}}
-	}
-	const newState = setMap(state, {...mapState, data: {...mapState.data, layers: [...mapState.data.layers, layerState]}})
+    const layers = state.maps[mapKey].data.layers;
+	const newState = {
+	    ...state,
+        maps: {
+	        ...state.maps,
+            [mapKey]: {
+                ...state.maps[mapKey],
+                data: {
+                    ...state.maps[mapKey].data,
+                    layers: layers ? [...layers, layerState] : [layerState]
+                }
+            }
+        }
+    };
+
 	if (_.isNumber(index)) {
 		// setLayerIndex
 		return setLayerIndex(newState, mapKey, layerState.key, index)
