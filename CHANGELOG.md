@@ -1,3 +1,27 @@
+# v1.4.17 (Tue Jul 21 2020)
+
+#### 🐾 Patch
+
+- Bump lodash from 4.17.15 to 4.17.19 [#39](https://github.com/gisat-panther/ptr-state/pull/39) ([@dependabot[bot]](https://github.com/dependabot[bot]))
+
+#### Authors: 1
+
+- [@dependabot[bot]](https://github.com/dependabot[bot])
+
+---
+
+# v1.4.16 (Fri Jul 17 2020)
+
+#### 🐾 Patch
+
+- Maps reducers - add layer - do not use setMap helper [#38](https://github.com/gisat-panther/ptr-state/pull/38) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.4.15 (Wed Jul 15 2020)
 
 #### 🐾 Patch
