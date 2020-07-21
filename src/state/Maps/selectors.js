@@ -440,7 +440,7 @@ const getMapSetActiveMapKey = createSelector(
  * @param state {Object}
  * @param mapKey {string}
  */
-const getView = createSelector(
+const getView = createCachedSelector(
 	[
 		getMapByKey,
 		getMapSetByMapKey
@@ -468,13 +468,13 @@ const getView = createSelector(
 			return null;
 		}
 	}
-);
+)((state, mapKey) => mapKey);
 
 /**
  * @param state {Object}
  * @param mapKey {string}
  */
-const getViewLimits = createSelector(
+const getViewLimits = createCachedSelector(
 	[
 		getMapByKey,
 		getMapSetByMapKey
@@ -493,7 +493,7 @@ const getViewLimits = createSelector(
 			return null;
 		}
 	}
-);
+)((state, mapKey) => mapKey);
 
 /**
  * @param state {Object}
