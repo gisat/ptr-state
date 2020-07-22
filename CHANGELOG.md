@@ -1,3 +1,15 @@
+# v1.4.18 (Tue Jul 21 2020)
+
+#### 🐾 Patch
+
+- Selections - enable to add data from view [#40](https://github.com/gisat-panther/ptr-state/pull/40) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.4.17 (Tue Jul 21 2020)
 
 #### 🐾 Patch
