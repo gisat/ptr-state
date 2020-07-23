@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import selectors from '../../../../src/state/Areas/AreaTreeLevels/selectors';
 
-describe.only('state/Areas/AreaTreeLevels/selectors', function () {
+describe('state/Areas/AreaTreeLevels/selectors', function () {
 	describe('getAll', function () {
 		const tests = [
 			{
