@@ -4,7 +4,6 @@ import GoToPlace from "./maps/GoToPlace";
 import Map from "./maps/Map";
 import MapControls from "./maps/MapControls";
 import MapSet from "./maps/MapSet";
-import NavList from "./NavList";
 import Screens from "./Screens";
 import User from "./User";
 import WindowsContainer from "./WindowsContainer";
@@ -16,7 +15,6 @@ export default {
     Map,
     MapControls,
     MapSet,
-    NavList,
     Screens,
     User,
     WindowsContainer
