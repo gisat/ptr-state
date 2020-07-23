@@ -440,7 +440,7 @@ const getMapSetActiveMapKey = createSelector(
  * @param state {Object}
  * @param mapKey {string}
  */
-const getView = createSelector(
+const getView = createCachedSelector(
 	[
 		getMapByKey,
 		getMapSetByMapKey
@@ -468,13 +468,13 @@ const getView = createSelector(
 			return null;
 		}
 	}
-);
+)((state, mapKey) => mapKey);
 
 /**
  * @param state {Object}
  * @param mapKey {string}
  */
-const getViewLimits = createSelector(
+const getViewLimits = createCachedSelector(
 	[
 		getMapByKey,
 		getMapSetByMapKey
@@ -493,7 +493,7 @@ const getViewLimits = createSelector(
 			return null;
 		}
 	}
-);
+)((state, mapKey) => mapKey);
 
 /**
  * @param state {Object}
@@ -664,7 +664,7 @@ const getLayerFromState = (state, layerState, dataSourcesByLayerKey, attributeDa
 				} else {
 					layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index);
 				}
-			} else {
+			} else if (dataSource && dataSource.data) {
 				layer = mapHelpers.prepareLayerByDataSourceType(layerKey, dataSource, fidColumnName, index, layerState, style, attributeDataSources, selections, layerTemplate, period);
 			}
 		});

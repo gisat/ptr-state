@@ -161,8 +161,9 @@ const getByFilterOrder = (getSubstate) => {
 				const index = commonHelpers.getIndex(indexes, filter, order);
 
 				return modelsFromIndex(models, index);
+			} else {
+				return null;
 			}
-			return null;
 		}
 	);
 };
@@ -179,9 +180,9 @@ const getBatchByFilterOrder = (getSubstate) => {
 			if (models && indexes) {
 				const index = commonHelpers.getIndex(indexes, filter, order);
 				return modelsFromIndex2(models, index);
+			} else {
+				return null;
 			}
-
-			return null;
 		}
 	);
 };
@@ -471,13 +472,22 @@ const getIndexTotal = (getSubstate) => {
 	);
 };
 
+/**
+ * 
+ * @param {func} getSubstate 
+ * @return {Array}
+ */
 const getIndexesByFilteredItem = (getSubstate) => {
 	return createSelector([
 		getIndexes(getSubstate),
 		(state, item) => item,
 		],
 		(indexes, item) => {
-			return indexes.filter((index) => commonHelpers.itemFitFilter(index.filter, item));
+			if(!_.isEmpty(indexes)){
+				return indexes.filter((index) => commonHelpers.itemFitFilter(index.filter, item));
+			} else {
+				return null;
+			}
 		}
 	);
 };
@@ -571,30 +581,32 @@ const getUsedIndexPages = (getSubstate) => {
 		(indexedDataUses, activeKeys) => {
 			let groupedUses = [];
 			let finalUsedIndexes = [];
-			_.each(indexedDataUses, (usedIndexes) => {
-				usedIndexes.forEach(usedIndex => {
-					let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
-
-					let existingIndex = _.find(groupedUses, (use) => {
-						return _.isEqual(use.filter, mergedFilter) && _.isEqual(use.order, usedIndex.order) ;
-					});
-					if (existingIndex){
-						existingIndex.inUse.push({
-							start: usedIndex.start,
-							length: usedIndex.length
+			if(!_.isEmpty(indexedDataUses)) {
+				_.each(indexedDataUses, (usedIndexes) => {
+					usedIndexes.forEach(usedIndex => {
+						let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
+	
+						let existingIndex = _.find(groupedUses, (use) => {
+							return _.isEqual(use.filter, mergedFilter) && _.isEqual(use.order, usedIndex.order) ;
 						});
-					} else {
-						groupedUses.push({
-							filter: mergedFilter,
-							order: usedIndex.order,
-							inUse: [{
+						if (existingIndex){
+							existingIndex.inUse.push({
 								start: usedIndex.start,
 								length: usedIndex.length
-							}]
-						});
-					}
+							});
+						} else {
+							groupedUses.push({
+								filter: mergedFilter,
+								order: usedIndex.order,
+								inUse: [{
+									start: usedIndex.start,
+									length: usedIndex.length
+								}]
+							});
+						}
+					});
 				});
-			});
+			}
 
 			_.each(groupedUses, index => {
 				if (index.inUse && Object.keys(index.inUse).length) {
@@ -618,29 +630,31 @@ const getUsesForIndex = (getSubstate) => {
 		getAllActiveKeys,
 		(indexedDataUses, filter, order, activeKeys) => {
 			let index = null;
-			_.each(indexedDataUses, (usedIndexes) => {
-				_.each(usedIndexes, usedIndex => {
-					let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
+			if(!_.isEmpty(indexedDataUses)) {
+				_.each(indexedDataUses, (usedIndexes) => {
+					_.each(usedIndexes, usedIndex => {
+						let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
 
-					if (_.isEqual(filter, mergedFilter) && _.isEqual(order, usedIndex.order)){
-						if (index){
-							index.inUse.push({
-								start: usedIndex.start,
-								length: usedIndex.length
-							});
-						} else {
-							index = {
-								filter: filter,
-								order: usedIndex.order,
-								inUse: [{
+						if (_.isEqual(filter, mergedFilter) && _.isEqual(order, usedIndex.order)){
+							if (index){
+								index.inUse.push({
 									start: usedIndex.start,
 									length: usedIndex.length
-								}]
-							};
+								});
+							} else {
+								index = {
+									filter: filter,
+									order: usedIndex.order,
+									inUse: [{
+										start: usedIndex.start,
+										length: usedIndex.length
+									}]
+								};
+							}
 						}
-					}
+					});
 				});
-			});
+			}
 
 			if (index){
 				return {
@@ -682,7 +696,7 @@ const getUsesWithActiveDependency = (getSubstate) => {
 			let groupedUses = []; // uses grouped by filter
 			let usedIndexes = [];
 
-			if (filterByActive) {
+			if (filterByActive && !_.isEmpty(indexedDataUses)) {
 				// loop through components
 				_.map(indexedDataUses, (componentUsedIndexes) => {
 					// loop through uses for component

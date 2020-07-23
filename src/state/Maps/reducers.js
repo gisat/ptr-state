@@ -282,12 +282,22 @@ const updateMapView = (state, mapKey, updates) => {
  * @param {number} index - position in map
  */
 const addLayer = (state, mapKey, layerState, index) => {
-	let mapState = getMapByKey(state, mapKey);
 	//ensure that data.layers exists
-	if (!mapState.data.layers) {
-		mapState = {...mapState, data: {...mapState.data, layers: []}}
-	}
-	const newState = setMap(state, {...mapState, data: {...mapState.data, layers: [...mapState.data.layers, layerState]}})
+    const layers = state.maps[mapKey].data.layers;
+	const newState = {
+	    ...state,
+        maps: {
+	        ...state.maps,
+            [mapKey]: {
+                ...state.maps[mapKey],
+                data: {
+                    ...state.maps[mapKey].data,
+                    layers: layers ? [...layers, layerState] : [layerState]
+                }
+            }
+        }
+    };
+
 	if (_.isNumber(index)) {
 		// setLayerIndex
 		return setLayerIndex(newState, mapKey, layerState.key, index)
@@ -402,6 +412,22 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	};
 };
 
+const setSetLayers = (state, setKey, layers) => {
+    return {
+        ...state,
+        sets: {
+            ...state.sets,
+            [setKey]: {
+                ...state.sets[setKey],
+                data: {
+                    ...state.sets[setKey].data,
+                    layers
+                }
+            }
+        }
+    };
+};
+
 const update = (state, data) => {
 	return {...state, ...data};
 };
@@ -484,6 +510,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return removeMapKeyFromSet(state, action.setKey, action.mapKey);
 		case ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER:
 			return setSetBackgroundLayer(state, action.setKey, action.backgroundLayer);
+        case ActionTypes.MAPS.SET.SET_LAYERS:
+            return setSetLayers(state, action.setKey, action.layers);
 		case ActionTypes.MAPS.SET.VIEW.SET:
 			return setSetView(state, action.setKey, action.view);
 		case ActionTypes.MAPS.SET.VIEW.UPDATE:

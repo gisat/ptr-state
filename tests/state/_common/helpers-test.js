@@ -39,7 +39,7 @@ describe('state/_common/helpers', function () {
 			{
 				name: 'empty',
 				indexes: [],
-				expectedResult: [],
+				expectedResult: null,
 			},
 			{
 				name: 'unique indexes',
