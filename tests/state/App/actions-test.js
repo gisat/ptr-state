@@ -1,4 +1,5 @@
 import {assert} from 'chai';
+import slash from 'slash';
 import actions from '../../../src/state/App/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
 
@@ -78,7 +79,7 @@ describe('state/App/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/applications/filtered/configurations',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({

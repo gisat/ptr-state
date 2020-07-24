@@ -43,6 +43,7 @@ const lodashExternal = [
 	'lodash/isEmpty',
 	'lodash/head',
 	'lodash/tail',
+    'lodash/flatMap'
 ];
 
 export default {
@@ -65,6 +66,7 @@ export default {
 		'moment',
 		'reselect',
 		're-reselect',
+        'slash',
 		'isomorphic-fetch',
 		'query-string',
 		...lodashExternal,

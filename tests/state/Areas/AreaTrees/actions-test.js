@@ -1,4 +1,5 @@
 import {assert} from 'chai';
+import slash from 'slash';
 import actions from '../../../../src/state/Areas/AreaTrees/actions';
 import {resetFetch, setFetch} from '../../../../src/state/_common/request';
 
@@ -85,7 +86,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/metadata/filtered/areaTrees',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -194,7 +195,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/metadata/filtered/areaTrees',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -294,7 +295,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/metadata/filtered/areaTrees',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({

@@ -1,4 +1,5 @@
 import {assert} from 'chai';
+import slash from 'slash';
 import '../../../src/state/Action';
 import actions from '../../../src/state/_common/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
@@ -171,7 +172,7 @@ describe('state/_common/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/backend/rest/user', url);
+			assert.strictEqual('http://localhost/backend/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {name: 'new'}}]},
@@ -267,7 +268,7 @@ describe('state/_common/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/backend/rest/user', url);
+			assert.strictEqual('http://localhost/backend/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {applicationKey: 'ak'}}]},
@@ -352,7 +353,7 @@ describe('state/_common/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/backend/rest/user', url);
+			assert.strictEqual('http://localhost/backend/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1'}]},
@@ -424,7 +425,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -558,7 +559,7 @@ describe('state/_common/actions', function () {
 			setFetch(function (url, options) {
 				assert.strictEqual(
 					'http://localhost/backend/rest/user/filtered/users',
-					url
+                    slash(url)
 				);
 				assert.deepStrictEqual(options, {
 					body: JSON.stringify({
@@ -663,7 +664,7 @@ describe('state/_common/actions', function () {
 			setFetch(function (url, options) {
 				assert.strictEqual(
 					'http://localhost/backend/rest/user/filtered/users',
-					url
+                    slash(url)
 				);
 				assert.deepStrictEqual(options, {
 					body: JSON.stringify({
@@ -779,7 +780,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -866,7 +867,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -943,7 +944,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1017,7 +1018,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1108,7 +1109,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1209,7 +1210,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1301,7 +1302,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1558,7 +1559,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1651,7 +1652,7 @@ describe('state/_common/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/backend/rest/user', url);
+			assert.strictEqual('http://localhost/backend/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {prop: 'val'}}]},
@@ -1855,7 +1856,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/backend/rest/user/filtered/users',
-				url
+                slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
