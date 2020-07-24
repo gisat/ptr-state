@@ -5,16 +5,6 @@ import queryString from "query-string";
 
 const TTL = 5;
 
-let fetch = _fetch;
-
-export function setFetch(_fetch) {
-	fetch = _fetch;
-}
-
-export function resetFetch() {
-	fetch = _fetch;
-}
-
 /**
  * Fetch implementation used by this module.
  *
