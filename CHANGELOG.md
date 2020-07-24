@@ -1,3 +1,15 @@
+# v1.5.0 (Thu Jul 23 2020)
+
+#### 🚀 Enhancement
+
+- Fix/nav list and maps [#25](https://github.com/gisat-panther/ptr-state/pull/25) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.4.18 (Tue Jul 21 2020)
 
 #### 🐾 Patch
