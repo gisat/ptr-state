@@ -1,3 +1,15 @@
+# v1.5.2 (Wed Jul 29 2020)
+
+#### 🐾 Patch
+
+- Get WMS layer option from layer confuguration [#41](https://github.com/gisat-panther/ptr-state/pull/41) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v1.5.1 (Fri Jul 24 2020)
 
 #### 🐾 Patch
