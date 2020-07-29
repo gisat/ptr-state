@@ -15,6 +15,15 @@ const setActiveSelectionFeatureKeysFilterKeys = (selectionKeys) => {
 	}
 };
 
+const updateStateFromViewWithData = (view) => {
+    return (dispatch, getState) => {
+        dispatch(updateStateFromView(view));
+        if (view.data) {
+            dispatch(add(view.data));
+        }
+    }
+};
+
 // ============ actions ===========
 function setFeatureKeysFilterKeys(key, featureKeys){
 	return {
@@ -28,5 +37,6 @@ export default {
 	add,
 	setActiveSelectionFeatureKeysFilterKeys,
 	setActiveKey,
-	updateStateFromView
+	updateStateFromView,
+    updateStateFromViewWithData
 }
