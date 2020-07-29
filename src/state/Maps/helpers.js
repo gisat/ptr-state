@@ -122,7 +122,8 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 	if (type === 'wmts') {
 		options.url = options.urls[0];
 	} else if (type === 'wms') {
-		let {url, params, ...rest} = options;
+		const {url, params, configuration, ...rest} = options;
+		const singleTile = configuration && configuration.hasOwnProperty('singleTile') ? configuration.singleTile : false;
 
 		options = {
 			params: {
@@ -130,6 +131,7 @@ const prepareLayerByDataSourceType = (layerKey, dataSource, fidColumnName, index
 				layers: rest.layers,
 				styles: rest.styles,
 			},
+			singleTile,
 			url
 		}
 	} else if (type === 'vector' && features) {
