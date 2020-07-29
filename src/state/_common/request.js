@@ -1,9 +1,30 @@
 import _ from "lodash";
-import fetch from "isomorphic-fetch";
+import _fetch from "isomorphic-fetch";
 import path from "path";
 import queryString from "query-string";
 
 const TTL = 5;
+
+/**
+ * Fetch implementation used by this module.
+ *
+ * It can be useful in tests to override this using `setFetch` fn.
+ */
+let fetch = _fetch;
+
+/**
+ * Set different fetch implementation. Useful in tests.
+ */
+export function setFetch(_fetch) {
+	fetch = _fetch;
+}
+
+/**
+ * Reset fetch implementation to default one.
+ */
+export function resetFetch() {
+	fetch = _fetch;
+}
 
 /**
  * Request helper. Creates an request to backend.

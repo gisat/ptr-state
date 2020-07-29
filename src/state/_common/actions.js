@@ -139,7 +139,7 @@ const deleteItem = (getSubstate, dataType, actionTypes, categoryPath = DEFAULT_C
 				//Check if item deleted
 				if(isEqual(deletedKeys, [item.key])) {
 					// mark deleted items by "deleted" date
-					const deleteDate = moment(new Date().toString()).utc().format();
+					const deleteDate = moment(new Date().toISOString()).utc().format();
 					deletedKeys.forEach((key) => {
 						dispatch(actionMarkAsDeleted(actionTypes, key, deleteDate));
 					});
@@ -374,7 +374,7 @@ function loadAll(dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
 		let payload = {
 			limit: PAGE_SIZE
 		};
-		request(localConfig, apiPath, 'POST', null, payload)
+		return request(localConfig, apiPath, 'POST', null, payload)
 			.then(result => {
 				if (result.errors && result.errors[dataType] || result.data && !result.data[dataType]) {
 					dispatch(actionGeneralError(result.errors[dataType] || new Error('no data')));
@@ -696,11 +696,13 @@ function refreshUses(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_
 
 			let usedIndexPages = commonSelectors.getUsedIndexPages(getSubstate)(state);
 
-			_.each(usedIndexPages, (usedIndexPage) => {
-				_.each(usedIndexPage.uses, (use) => {
-					dispatch(ensureIndexed(getSubstate, dataType, usedIndexPage.filter, usedIndexPage.order, use.start, use.length, actionTypes, categoryPath))
+			const promises = _.flatMap(usedIndexPages, (usedIndexPage) => {
+				_.map(usedIndexPage.uses, (use) => {
+					return dispatch(ensureIndexed(getSubstate, dataType, usedIndexPage.filter, usedIndexPage.order, use.start, use.length, actionTypes, categoryPath))
 				});
 			})
+
+			return Promise.all(promises);
 		}
 	}
 }
@@ -709,15 +711,16 @@ function ensureIndexesWithFilterByActive(getSubstate, dataType, actionTypes, cat
 	return filterByActive => {
 		return (dispatch, getState) => {
 
-			let state = getState();
-			let usedIndexes = commonSelectors.getUsesWithActiveDependency(getSubstate)(state, filterByActive);
+			const state = getState();
+			const usedIndexes = commonSelectors.getUsesWithActiveDependency(getSubstate)(state, filterByActive);
 
-			_.map(usedIndexes, (usedIndex) => {
+			const promises = _.flatMap(usedIndexes, (usedIndex) => {
 				_.map(usedIndex.uses, (use) => {
-					dispatch(ensureIndexed(getSubstate, dataType, usedIndex.filter, usedIndex.order, use.start, use.length, actionTypes, categoryPath))
+					return dispatch(ensureIndexed(getSubstate, dataType, usedIndex.filter, usedIndex.order, use.start, use.length, actionTypes, categoryPath))
 				});
-			})
+			});
 
+			return Promise.all(promises);
 		}
 	}
 }

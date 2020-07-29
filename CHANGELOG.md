@@ -1,3 +1,17 @@
+# v1.5.1 (Fri Jul 24 2020)
+
+#### 🐾 Patch
+
+- Add common actions tests [#27](https://github.com/gisat-panther/ptr-state/pull/27) ([@nenadalm](https://github.com/nenadalm) [@tmdmc](https://github.com/tmdmc) [@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 3
+
+- [@tmdmc](https://github.com/tmdmc)
+- Miloslav Nenadál ([@nenadalm](https://github.com/nenadalm))
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.0 (Thu Jul 23 2020)
 
 #### 🚀 Enhancement
