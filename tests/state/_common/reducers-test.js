@@ -496,10 +496,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.useIndexedClear(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.useIndexedClear(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -557,10 +559,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.useKeysRegister(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.useKeysRegister(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -604,10 +608,12 @@ describe('state/_common/reducers', function () {
 			},
 		];
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.useKeysClear(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.useKeysClear(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -640,10 +646,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.markDeleted(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.markDeleted(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -704,10 +712,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.removeEdited(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.removeEdited(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -740,10 +750,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.removeEditedActive(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.removeEditedActive(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -827,10 +839,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.removeEditedProperty(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.removeEditedProperty(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -902,10 +916,15 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.removeEditedPropertyValues(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.removeEditedPropertyValues(
+						test.state,
+						test.action
+					),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -927,10 +946,12 @@ describe('state/_common/reducers', function () {
 			},
 		];
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.setActive(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.setActive(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -1005,10 +1026,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.updateEdited(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.updateEdited(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -1055,10 +1078,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.clearIndexes(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.clearIndexes(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -1155,10 +1180,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.clearIndex(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.clearIndex(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -1189,10 +1216,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.dataSetOutdated(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.dataSetOutdated(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 
@@ -1218,10 +1247,12 @@ describe('state/_common/reducers', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				reducers.cleanupOnLogout(test.state, test.action),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					reducers.cleanupOnLogout(test.state, test.action),
+					test.expectedResult
+				);
+			});
 		});
 	});
 });
