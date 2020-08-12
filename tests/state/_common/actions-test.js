@@ -1979,7 +1979,7 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('useIndexedClear', function () {
+	it('useIndexedClearAll', function () {
 		actions.useIndexedClearAll({
 			USE: {INDEXED: {CLEAR_ALL: 'CLEAR_ALL'}},
 		})()(dispatch);
