@@ -132,7 +132,7 @@ describe('state/Charts/actions', function () {
 				'http://localhost/backend/rest/relations/filtered/attribute',
 				slash(url)
 			);
-			console.log('================', JSON.stringify(options));
+
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					filter: {
