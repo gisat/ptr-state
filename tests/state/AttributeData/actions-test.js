@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import actions from '../../../src/state/AttributeData/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
+import slash from "slash";
 
 describe('state/AttributeData/actions', function () {
 	let dispatchedActions = [];
@@ -69,10 +70,7 @@ describe('state/AttributeData/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/backend/rest/data/filtered/attribute',
-				url
-			);
+            assert.strictEqual('http://localhost/backend/rest/data/filtered/attribute', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					filter: {name: 'fil'},
