@@ -1,3 +1,16 @@
+# v1.5.4 (Tue Aug 18 2020)
+
+#### 🐾 Patch
+
+- Additional tests [#37](https://github.com/gisat-panther/ptr-state/pull/37) ([@nenadalm](https://github.com/nenadalm) [@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 2
+
+- Miloslav Nenadál ([@nenadalm](https://github.com/nenadalm))
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.3 (Tue Aug 18 2020)
 
 #### 🐾 Patch
