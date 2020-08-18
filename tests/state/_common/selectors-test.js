@@ -653,10 +653,12 @@ describe('state/_common/selectors', function () {
 		];
 
 		tests.forEach((test) => {
-			assert.deepStrictEqual(
-				selectors.getByKeys(getSubState)(test.state, test.keys),
-				test.expectedResult
-			);
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					selectors.getByKeys(getSubState)(test.state, test.keys),
+					test.expectedResult
+				);
+			});
 		});
 	});
 

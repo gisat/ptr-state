@@ -112,6 +112,7 @@ export default utils.deepKeyMirror({
 		},
 		INDEX: {
 			ADD: null,
+			ADD_BATCH: null,
 			CLEAR_ALL: null,
 			CLEAR_INDEX: null,
 		},
