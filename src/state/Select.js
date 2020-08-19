@@ -12,6 +12,7 @@ import AttributeStatistics from './AttributeStatistics/selectors';
 import Cases from './Cases/selectors';
 import Charts from './Charts/selectors';
 import Components from './Components/selectors';
+import Data from './Data/selectors';
 import LayerPeriods from './LayerPeriods/selectors';
 import LayerTemplates from './LayerTemplates/selectors';
 import LayerTrees from './LayerTrees/selectors';
@@ -46,6 +47,7 @@ export default {
 	cases: Cases,
 	charts: Charts,
 	components: Components,
+	data: Data,
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,

@@ -12,6 +12,7 @@ import AttributeStatistics from './AttributeStatistics/actions';
 import Cases from './Cases/actions';
 import Charts from './Charts/actions';
 import Components from './Components/actions';
+import Data from './Data/actions';
 import LayerPeriods from "./LayerPeriods/actions";
 import LayerTemplates from './LayerTemplates/actions';
 import LayerTrees from './LayerTrees/actions';
@@ -46,6 +47,7 @@ export default {
 	cases: Cases,
 	charts: Charts,
 	components: Components,
+	data: Data,
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,
