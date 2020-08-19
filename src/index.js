@@ -26,6 +26,7 @@ import attributeSetsReducers from './state/AttributeSets/reducers';
 import casesReducers from './state/Cases/reducers';
 import componentsReducers from './state/Components/reducers';
 import chartsReducers from './state/Charts/reducers';
+import dataReducers from './state/Data/reducers';
 import layerPeriodsReducers from './state/LayerPeriods/reducers';
 import layerTemplatesReducers from './state/LayerTemplates/reducers';
 import layerTreesReducers from './state/LayerTrees/reducers';
@@ -62,6 +63,7 @@ const baseStores = {
 	cases: casesReducers,
 	charts: chartsReducers,
 	components: componentsReducers,
+	data: dataReducers,
 	layerPeriods: layerPeriodsReducers,
 	layerTemplates: layerTemplatesReducers,
 	layerTrees: layerTreesReducers,
