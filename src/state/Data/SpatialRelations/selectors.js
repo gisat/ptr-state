@@ -1,5 +1,9 @@
 import common from '../../_common/selectors';
 
-export default {
+const getSubstate = (state) => state.data.spatialRelations;
 
+const getIndex = common.getIndex(getSubstate);
+
+export default {
+    getIndex
 };
