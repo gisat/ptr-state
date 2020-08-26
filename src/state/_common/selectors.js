@@ -396,6 +396,10 @@ const getIndexes = (getSubstate) => {
 	return (state) => getSubstate(state).indexes;
 };
 
+/**
+ * Get whole index by given filter and order
+ * @param getSubstate
+ */
 const getIndex = (getSubstate) => {
 	return createSelector([
 		getIndexes(getSubstate),
