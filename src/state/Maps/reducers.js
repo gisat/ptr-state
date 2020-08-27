@@ -232,6 +232,30 @@ const setMapLayerSelection = (state, mapKey, layerKey, selectionKey) => {
 	}
 };
 
+const setMapLayerStyle = (state, mapKey, layerKey, style) => {
+    const mapState = getMapByKey(state, mapKey);
+
+    const layerIndex = mapState.data.layers.findIndex(l => l.key === layerKey);
+    const layerState = _.find(mapState.data.layers, (layer) => {
+        return layer.key === layerKey;
+    });
+
+    if (layerState) {
+        const newLayerState = {
+            ...layerState,
+            options: {
+                ...layerState.options,
+                style
+            }
+        };
+
+        const updatedLayers = stateManagement.replaceItemOnIndex(mapState.data.layers, layerIndex, newLayerState);
+        return setMap(state, {...mapState, data: {...mapState.data, layers: updatedLayers}});
+    } else {
+        return state;
+    }
+};
+
 const clearMapLayersSelection = (state, mapKey, selectionKey) => {
 	const mapState = getMapByKey(state, mapKey);
 
@@ -528,6 +552,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return setMapLayerHoveredFeatureKeys(state, action.mapKey, action.layerKey, action.hoveredFeatureKeys);
 		case ActionTypes.MAPS.MAP.LAYERS.SET.SELECTION:
 			return setMapLayerSelection(state, action.mapKey, action.layerKey, action.selectionKey);
+        case ActionTypes.MAPS.MAP.LAYERS.SET.STYLE:
+            return setMapLayerStyle(state, action.mapKey, action.layerKey, action.style);
 		case ActionTypes.MAPS.MAP.LAYERS.CLEAR.SELECTION:
 			return clearMapLayersSelection(state, action.mapKey, action.selectionKey);
 		case ActionTypes.MAPS.MAP.REMOVE:

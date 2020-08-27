@@ -25,16 +25,24 @@ const updateStateFromViewWithData = (view) => {
 };
 
 // ============ actions ===========
-function setFeatureKeysFilterKeys(key, featureKeys){
+function clearFeatureKeysFilter(key){
 	return {
-		type: ActionTypes.SELECTIONS.SET.FEATURE_KEYS_FILTER.KEYS,
-		key,
-		featureKeys
+		type: ActionTypes.SELECTIONS.CLEAR.FEATURE_KEYS_FILTER,
+		key
 	}
+}
+
+function setFeatureKeysFilterKeys(key, featureKeys){
+    return {
+        type: ActionTypes.SELECTIONS.SET.FEATURE_KEYS_FILTER.KEYS,
+        key,
+        featureKeys
+    }
 }
 
 export default {
 	add,
+    clearFeatureKeysFilter,
 	setActiveSelectionFeatureKeysFilterKeys,
 	setActiveKey,
 	updateStateFromView,
