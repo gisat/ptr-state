@@ -1,3 +1,15 @@
+# v1.5.5 (Thu Aug 27 2020)
+
+#### 🐾 Patch
+
+- Feature/updates [#44](https://github.com/gisat-panther/ptr-state/pull/44) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.4 (Tue Aug 18 2020)
 
 #### 🐾 Patch
