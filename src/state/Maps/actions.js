@@ -556,6 +556,24 @@ const setMapLayer = (mapKey, layerKey, layer) => {
 	}
 };
 
+const setMapLayerStyle = (mapKey, layerKey, style) => {
+    return (dispatch, getState) => {
+        const state = getState();
+        const mapByKey = Select.maps.getMapByKey(state, mapKey);
+        if(!mapByKey) {
+            return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
+        } else {
+            //check if layer exist
+            const layerExists = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+            if(layerExists) {
+                dispatch(actionSetMapLayerStyle(mapKey, layerKey, style));
+            } else {
+                return dispatch(actionGeneralError(`No layer (${layerKey}) found in mapKey ${mapKey}.`));
+            }
+        }
+    }
+};
+
 
 /**
  * 
@@ -1312,6 +1330,15 @@ const actionSetMapLayer = (mapKey, layerKey, layer) => {
 	}
 };
 
+const actionSetMapLayerStyle = (mapKey, layerKey, style) => {
+    return {
+        type: ActionTypes.MAPS.MAP.LAYERS.SET.STYLE,
+        mapKey,
+        layerKey,
+        style,
+    }
+};
+
 const actionSetMapLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.SET.HOVERED_FEATURE_KEYS,
@@ -1486,6 +1513,7 @@ export default {
 	setMapCase,
 	setMapData,
 	setMapLayer,
+    setMapLayerStyle,
 	setMapLayers,
 	setMapName,
 	setMapPeriod,

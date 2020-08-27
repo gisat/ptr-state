@@ -371,7 +371,8 @@ export default utils.deepKeyMirror({
 			LAYERS: {
 				SET: {
 					HOVERED_FEATURE_KEYS: null,
-					SELECTION: null
+					SELECTION: null,
+                    STYLE: null
 				},
 				CLEAR: {
 					SELECTION: null
