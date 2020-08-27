@@ -584,7 +584,10 @@ export default utils.deepKeyMirror({
 			FEATURE_KEYS_FILTER: {
 				KEYS: null
 			}
-		}
+		},
+        CLEAR: {
+		    FEATURE_KEYS_FILTER: null
+        }
 	},
 
 	_DEPRECATED_SELECTIONS: {
