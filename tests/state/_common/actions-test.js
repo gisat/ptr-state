@@ -330,7 +330,7 @@ describe('state/_common/actions', function () {
 			});
 	});
 
-	it('deleteItem', function () {
+	it('delete', function () {
 		const getSubState = (state) => state.sub;
 		const getState = () => ({
 			app: {
