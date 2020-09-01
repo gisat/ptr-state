@@ -50,8 +50,8 @@ const getActiveMap = createSelector(
         getActiveMapKey
     ],
     (maps, activeKey) => {
-        if (maps && !_.isEmpty(maps) && activeKey) {
-            return maps?.[activeKey];
+        if (maps && !_.isEmpty(maps) && activeKey && maps[activeKey]) {
+            return maps[activeKey];
         } else {
             return null;
         }
