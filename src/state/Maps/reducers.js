@@ -206,14 +206,13 @@ const setMapLayerHoveredFeatureKeys = (state, mapKey, layerKey, hoveredFeatureKe
 const setMapLayerSelection = (state, mapKey, layerKey, selectionKey) => {
 	const mapState = getMapByKey(state, mapKey);
 
-	const layerIndex = mapState?.data?.layers?.findIndex(l => l.key === layerKey);
 	const layerState = _.find(mapState?.data?.layers, (layer) => {
 		return layer.key === layerKey;
 	});
 
     if (layerState) {
-        const updatedLayers = mapState.data.layers.map((item, index) => {
-            if (index === layerIndex) {
+        const updatedLayers = mapState.data.layers.map((item) => {
+            if (item.key === layerKey) {
                 return {
                     ...layerState,
                     options: {
@@ -252,14 +251,13 @@ const setMapLayerSelection = (state, mapKey, layerKey, selectionKey) => {
 const setMapLayerStyle = (state, mapKey, layerKey, style) => {
     const mapState = getMapByKey(state, mapKey);
 
-    const layerIndex = mapState?.data?.layers?.findIndex(l => l.key === layerKey);
     const layerState = _.find(mapState?.data?.layers, (layer) => {
         return layer.key === layerKey;
     });
 
     if (layerState) {
-        const updatedLayers = mapState.data.layers.map((item, index) => {
-            if (index === layerIndex) {
+        const updatedLayers = mapState.data.layers.map((item) => {
+            if (item.key === layerKey) {
                 return {
                     ...layerState,
                     options: {
