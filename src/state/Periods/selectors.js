@@ -51,19 +51,17 @@ const getByFullPeriodAsObject = createCachedSelector(
 	(periods, start, end) => {
 		if (periods && start && end) {
 			return _.pickBy(periods, (period) => {
-				const periodStart = period.data && period.data.start;
-				const periodEnd = period.data && period.data.end;
-
-				if (periodStart && periodEnd) {
-					return moment(periodStart).isBetween(start, end, null, '[]')
-						&& moment(periodEnd).isBetween(start, end, null, '[]');
-				} else if (periodStart) {
-					return moment(periodStart).isBetween(start, end, null, '[]');
-				} else if (periodEnd) {
-					return moment(periodEnd).isBetween(start, end, null, '[]');
-				} else {
-					return true;
+				const periodStart = period?.data?.start;
+				if (periodStart && !moment(periodStart).isBetween(start, end, null, '[]')) {
+					return false;
 				}
+
+				const periodEnd = period?.data?.end;
+				if (periodEnd && !moment(periodEnd).isBetween(start, end, null, '[]')) {
+					return false;
+				}
+
+				return true;
 			})
 		} else {
 			return periods;
