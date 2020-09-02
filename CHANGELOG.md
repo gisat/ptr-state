@@ -1,3 +1,15 @@
+# v1.5.7 (Wed Sep 02 2020)
+
+#### 🐾 Patch
+
+- Maps - update some reducers [#47](https://github.com/gisat-panther/ptr-state/pull/47) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.6 (Tue Sep 01 2020)
 
 #### 🐾 Patch
