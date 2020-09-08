@@ -711,7 +711,7 @@ const setMapBackgroundLayer = (mapKey, backgroundLayer) => {
 		if (backgroundLayer && !backgroundLayer.key){
 			backgroundLayer.key = utils.uuid();
 		}
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -729,7 +729,7 @@ const setMapBackgroundLayer = (mapKey, backgroundLayer) => {
 const setMapLayers = (mapKey, layers) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -742,7 +742,7 @@ const setMapLayers = (mapKey, layers) => {
 const setSetBackgroundLayer = (setKey, backgroundLayer) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No map set found for setKey ${setKey}.`));
 		} else {
@@ -754,7 +754,7 @@ const setSetBackgroundLayer = (setKey, backgroundLayer) => {
 const setSetLayers = (setKey, layers) => {
     return (dispatch, getState) => {
         const state = getState();
-        const setByKey = Select.maps.getMapSetByKey(state, setKey);
+        const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
         if(!setByKey) {
             return dispatch(actionGeneralError(`No map set found for setKey ${setKey}.`));
         } else {
@@ -768,7 +768,7 @@ function use(mapKey, backgroundLayer, layers) {
 		dispatch(useClear(mapKey));
 		let state = getState();
 
-		// let filterByActive = Select.maps.getFilterByActiveByMapKey(state, mapKey);
+		// let filterByActive = Select._deprecatedMaps.getFilterByActiveByMapKey(state, mapKey);
 		if (backgroundLayer || layers) {
 			if (backgroundLayer) {
 				backgroundLayer = {...backgroundLayer, key: 'pantherBackgroundLayer'};
@@ -776,7 +776,7 @@ function use(mapKey, backgroundLayer, layers) {
 				layers = [backgroundLayer, ...layers];
 			}
 		} else {
-			layers = Select.maps.getAllLayersStateByMapKey(state, mapKey);
+			layers = Select._deprecatedMaps.getAllLayersStateByMapKey(state, mapKey);
 		}
 
 		let activeKeys = commonSelectors.getAllActiveKeys(state);
@@ -927,7 +927,7 @@ function goToPlace(placeString) {
 		if (placeString && placeString.length) {
 			mapUtils.getLocationFromPlaceString(placeString).then(location => {
 				if (location) {
-					let mapKey = Select.maps.getActiveMapKey(getState());
+					let mapKey = Select._deprecatedMaps.getActiveMapKey(getState());
 					dispatch(updateMapAndSetView(mapKey, location));
 
 					// TODO temporary solution for old map state
@@ -952,8 +952,8 @@ function goToPlace(placeString) {
 function deprecated_use(mapKey, useActiveMetadataKeys) {
 	return (dispatch, getState) => {
 		let state = getState();
-		let layers = Select.maps.getLayersStateByMapKey_deprecated(state, mapKey, useActiveMetadataKeys);
-		let backgroundLayer = Select.maps.getBackgroundLayerStateByMapKey_deprecated(state, mapKey);
+		let layers = Select._deprecatedMaps.getLayersStateByMapKey_deprecated(state, mapKey, useActiveMetadataKeys);
+		let backgroundLayer = Select._deprecatedMaps.getBackgroundLayerStateByMapKey_deprecated(state, mapKey);
 		let finalLayers = [];
 
 		if (backgroundLayer) {
@@ -1056,7 +1056,7 @@ const deprecated_checkWorldWindNavigatorIntegrity = (WorldWindNavigator) => {
 const deprecated_setMapWorldWindNavigator = (mapKey, worldWindNavigator) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -1068,7 +1068,7 @@ const deprecated_setMapWorldWindNavigator = (mapKey, worldWindNavigator) => {
 const deprecated_setSetWorldWindNavigator = (setKey, worldWindNavigator) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
@@ -1079,7 +1079,7 @@ const deprecated_setSetWorldWindNavigator = (setKey, worldWindNavigator) => {
 
 const deprecated_updateWorldWindNavigator = (mapKey, updates) => {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		let set = Select._deprecatedMaps.getMapSetByMapKey(getState(), mapKey);
 		let forSet = {};
 		let forMap = {};
 
@@ -1119,7 +1119,7 @@ const deprecated_updateWorldWindNavigator = (mapKey, updates) => {
 
 const deprecated_resetWorldWindNavigatorHeading = (mapKey, defaultIncrement) => {
 	return (dispatch, getState) => {
-		const mapNavigator = Select.maps.getNavigator_deprecated(getState(), mapKey);
+		const mapNavigator = Select._deprecatedMaps.getNavigator_deprecated(getState(), mapKey);
 
 		let headingIncrement = 1.0;
 		if (Math.abs(mapNavigator.heading) > 60) {
