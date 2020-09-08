@@ -346,6 +346,21 @@ export default utils.deepKeyMirror({
 	MAPS_SET_ACTIVE: 'MAPS_SET_ACTIVE',
 	MAPS_SET_INDEPENDENT_OF_PERIOD: 'MAPS_SET_INDEPENDENT_OF_PERIOD',
 
+    MAPS: {
+	    SET: {
+            VIEW: {
+                SET: null,
+                UPDATE: null
+            }
+        },
+        MAP: {
+            VIEW: {
+                SET: null,
+                UPDATE: null
+            }
+        }
+    },
+
 	_DEPRECATED_MAPS: {
 		SET_INITIAL: null,
 		SET_ACTIVE_MAP_KEY: null,

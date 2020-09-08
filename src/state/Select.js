@@ -17,6 +17,7 @@ import Data from './Data/selectors';
 import LayerPeriods from './LayerPeriods/selectors';
 import LayerTemplates from './LayerTemplates/selectors';
 import LayerTrees from './LayerTrees/selectors';
+import Maps from './Maps/selectors';
 import Periods from './Periods/selectors';
 import Places from './Places/selectors';
 import Scenarios from './Scenarios/selectors';
@@ -52,6 +53,7 @@ export default {
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,
+    maps: Maps,
 	periods: Periods,
 	places: Places,
 	scenarios: Scenarios,
