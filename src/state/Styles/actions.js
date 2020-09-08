@@ -12,9 +12,20 @@ const updateStateFromView = common.updateSubstateFromView(ActionTypes.STYLES);
 
 // ============ export ===========
 
+// TODO - common?
+const updateStateFromViewWithData = (view) => {
+    return (dispatch, getState) => {
+        dispatch(updateStateFromView(view));
+        if (view.data) {
+            dispatch(add(view.data));
+        }
+    }
+};
+
 export default {
 	add,
 	useKeys,
 	useKeysClear,
-	updateStateFromView
+	updateStateFromView,
+    updateStateFromViewWithData
 }

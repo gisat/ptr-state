@@ -206,30 +206,86 @@ const setMapLayerHoveredFeatureKeys = (state, mapKey, layerKey, hoveredFeatureKe
 const setMapLayerSelection = (state, mapKey, layerKey, selectionKey) => {
 	const mapState = getMapByKey(state, mapKey);
 
-	const layerIndex = mapState.data.layers.findIndex(l => l.key === layerKey);
-	const layerState = _.find(mapState.data.layers, (layer) => {
+	const layerState = _.find(mapState?.data?.layers, (layer) => {
 		return layer.key === layerKey;
 	});
 
-	if (layerState) {
-		const newLayerState = {
-			...layerState,
-			options: {
-				...layerState.options,
-				selected: layerState.options.selected ? {
-					...layerState.options.selected,
-					[selectionKey]: {}
-				} : {
-					[selectionKey]: {}
-				}
-			}
-		};
+    if (layerState) {
+        const updatedLayers = mapState.data.layers.map((item) => {
+            if (item.key === layerKey) {
+                return {
+                    ...layerState,
+                    options: {
+                        ...layerState.options,
+                        selected: layerState.options.selected ? {
+                            ...layerState.options.selected,
+                            [selectionKey]: {}
+                        } : {
+                            [selectionKey]: {}
+                        }
+                    }
+                };
+            } else {
+                return item;
+            }
+        });
 
-		const updatedLayers = stateManagement.replaceItemOnIndex(mapState.data.layers, layerIndex, newLayerState);
-		return setMap(state, {...mapState, data: {...mapState.data, layers: updatedLayers}});
-	} else {
-		return state;
-	}
+        return {
+            ...state,
+            maps: {
+                ...state.maps,
+                [mapKey]: {
+                    ...state.maps[mapKey],
+                    data: {
+                        ...state.maps[mapKey].data,
+                        layers: updatedLayers
+                    }
+                }
+            }
+        };
+    } else {
+        return state;
+    }
+};
+
+const setMapLayerStyle = (state, mapKey, layerKey, style) => {
+    const mapState = getMapByKey(state, mapKey);
+
+    const layerState = _.find(mapState?.data?.layers, (layer) => {
+        return layer.key === layerKey;
+    });
+
+    if (layerState) {
+        const updatedLayers = mapState.data.layers.map((item) => {
+            if (item.key === layerKey) {
+                return {
+                    ...layerState,
+                    options: {
+                        ...layerState.options,
+                        style
+                    }
+                };
+            } else {
+                return item;
+            }
+        });
+
+        return {
+            ...state,
+            maps: {
+                ...state.maps,
+                [mapKey]: {
+                    ...state.maps[mapKey],
+                    data: {
+                        ...state.maps[mapKey].data,
+                        layers: updatedLayers
+                    }
+                }
+            }
+        };
+    } else {
+        return state;
+    }
 };
 
 const clearMapLayersSelection = (state, mapKey, selectionKey) => {
@@ -282,9 +338,19 @@ const updateMapView = (state, mapKey, updates) => {
  * @param {number} index - position in map
  */
 const addLayer = (state, mapKey, layerState, index) => {
-	//ensure that data.layers exists
-    const layers = state.maps[mapKey].data.layers;
-	const newState = {
+    const layers = state.maps?.[mapKey]?.data?.layers;
+    let newLayers;
+
+    if (layers) {
+        if (index >= -1) {
+            newLayers = layers.slice();
+            newLayers.splice(index, 0, layerState);
+        } else {
+            newLayers = [...layers, layerState];
+        }
+    }
+
+    return {
 	    ...state,
         maps: {
 	        ...state.maps,
@@ -292,25 +358,36 @@ const addLayer = (state, mapKey, layerState, index) => {
                 ...state.maps[mapKey],
                 data: {
                     ...state.maps[mapKey].data,
-                    layers: layers ? [...layers, layerState] : [layerState]
+                    layers: layers ? newLayers : [layerState]
                 }
             }
         }
     };
-
-	if (_.isNumber(index)) {
-		// setLayerIndex
-		return setLayerIndex(newState, mapKey, layerState.key, index)
-	} else {
-		return newState
-	}
-
 };
 
 const removeLayer = (state, mapKey, layerKey) => {
 	const mapState = getMapByKey(state, mapKey);
-	const layerIndex = mapState.data.layers.findIndex(l => l.key === layerKey);
-	return setMap(state, {...mapState, data: {...mapState.data, layers: stateManagement.removeItemByIndex(mapState.data.layers, layerIndex)}});
+	const layerIndex = mapState?.data?.layers?.findIndex(l => l.key === layerKey);
+
+	if (layerIndex >= 0) {
+        const updatedLayers =  mapState.data.layers.filter((item, index) => index !== layerIndex);
+
+        return {
+            ...state,
+            maps: {
+                ...state.maps,
+                [mapKey]: {
+                    ...state.maps[mapKey],
+                    data: {
+                        ...state.maps[mapKey].data,
+                        layers: updatedLayers
+                    }
+                }
+            }
+        };
+    } else {
+	    return state;
+    }
 };
 
 const removeLayers = (state, mapKey, layersKeys = [])=> {
@@ -528,6 +605,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return setMapLayerHoveredFeatureKeys(state, action.mapKey, action.layerKey, action.hoveredFeatureKeys);
 		case ActionTypes.MAPS.MAP.LAYERS.SET.SELECTION:
 			return setMapLayerSelection(state, action.mapKey, action.layerKey, action.selectionKey);
+        case ActionTypes.MAPS.MAP.LAYERS.SET.STYLE:
+            return setMapLayerStyle(state, action.mapKey, action.layerKey, action.style);
 		case ActionTypes.MAPS.MAP.LAYERS.CLEAR.SELECTION:
 			return clearMapLayersSelection(state, action.mapKey, action.selectionKey);
 		case ActionTypes.MAPS.MAP.REMOVE:
