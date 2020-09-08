@@ -30,7 +30,7 @@ import dataReducers from './state/Data/reducers';
 import layerPeriodsReducers from './state/LayerPeriods/reducers';
 import layerTemplatesReducers from './state/LayerTemplates/reducers';
 import layerTreesReducers from './state/LayerTrees/reducers';
-import mapsReducers from './state/Maps/reducers';
+import _deprecatedMapsReducers from './state/_deprecatedMaps/reducers';
 import periodsReducers from './state/Periods/reducers';
 import placesReducers from './state/Places/reducers';
 import scenariosReducers from './state/Scenarios/reducers';
@@ -67,7 +67,7 @@ const baseStores = {
 	layerPeriods: layerPeriodsReducers,
 	layerTemplates: layerTemplatesReducers,
 	layerTrees: layerTreesReducers,
-	maps: mapsReducers,
+	_deprecatedMaps: _deprecatedMapsReducers,
 	periods: periodsReducers,
 	places: placesReducers,
 	scenarios: scenariosReducers,

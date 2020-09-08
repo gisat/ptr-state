@@ -571,91 +571,91 @@ const deprecated_updateSetWorldWindNavigator = (state, setKey, updates) => {
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
-		case ActionTypes.MAPS.SET_INITIAL:
+		case ActionTypes._DEPRECATED_MAPS.SET_INITIAL:
 			return setInitial();
-		case ActionTypes.MAPS.SET_ACTIVE_MAP_KEY:
+		case ActionTypes._DEPRECATED_MAPS.SET_ACTIVE_MAP_KEY:
 			return setActiveMapKey(state, action.mapKey);
-		case ActionTypes.MAPS.SET_ACTIVE_SET_KEY:
+		case ActionTypes._DEPRECATED_MAPS.SET_ACTIVE_SET_KEY:
 			return setActiveSetKey(state, action.setKey); //TEST
-		case ActionTypes.MAPS.SET.ADD:
+		case ActionTypes._DEPRECATED_MAPS.SET.ADD:
 			return addSet(state, action.set);
-		case ActionTypes.MAPS.SET.REMOVE:
+		case ActionTypes._DEPRECATED_MAPS.SET.REMOVE:
 			return removeSet(state, action.setKey);
-		case ActionTypes.MAPS.SET.ADD_MAP:
+		case ActionTypes._DEPRECATED_MAPS.SET.ADD_MAP:
 			return addMapKeyToSet(state, action.setKey, action.mapKey);
-		case ActionTypes.MAPS.SET.REMOVE_MAP:
+		case ActionTypes._DEPRECATED_MAPS.SET.REMOVE_MAP:
 			return removeMapKeyFromSet(state, action.setKey, action.mapKey);
-		case ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER:
+		case ActionTypes._DEPRECATED_MAPS.SET.SET_BACKGROUND_LAYER:
 			return setSetBackgroundLayer(state, action.setKey, action.backgroundLayer);
-        case ActionTypes.MAPS.SET.SET_LAYERS:
+        case ActionTypes._DEPRECATED_MAPS.SET.SET_LAYERS:
             return setSetLayers(state, action.setKey, action.layers);
-		case ActionTypes.MAPS.SET.VIEW.SET:
+		case ActionTypes._DEPRECATED_MAPS.SET.VIEW.SET:
 			return setSetView(state, action.setKey, action.view);
-		case ActionTypes.MAPS.SET.VIEW.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.SET.VIEW.UPDATE:
 			return updateSetView(state, action.setKey, action.update);
-		case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
+		case ActionTypes._DEPRECATED_MAPS.SET.SET_ACTIVE_MAP_KEY:
 			return setSetActiveMapKey(state, action.setKey, action.mapKey);
-		case ActionTypes.MAPS.SET.SET_MAPS:
+		case ActionTypes._DEPRECATED_MAPS.SET.SET_MAPS:
 			return setSetMaps(state, action.setKey, action.maps);
-		case ActionTypes.MAPS.SET.SET_SYNC:
+		case ActionTypes._DEPRECATED_MAPS.SET.SET_SYNC:
 			return setSetSync(state, action.setKey, action.sync);
-		case ActionTypes.MAPS.MAP.ADD:
+		case ActionTypes._DEPRECATED_MAPS.MAP.ADD:
 			return addMap(state, action.map);
-		case ActionTypes.MAPS.MAP.LAYERS.SET.HOVERED_FEATURE_KEYS:
+		case ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.HOVERED_FEATURE_KEYS:
 			return setMapLayerHoveredFeatureKeys(state, action.mapKey, action.layerKey, action.hoveredFeatureKeys);
-		case ActionTypes.MAPS.MAP.LAYERS.SET.SELECTION:
+		case ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.SELECTION:
 			return setMapLayerSelection(state, action.mapKey, action.layerKey, action.selectionKey);
-        case ActionTypes.MAPS.MAP.LAYERS.SET.STYLE:
+        case ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.STYLE:
             return setMapLayerStyle(state, action.mapKey, action.layerKey, action.style);
-		case ActionTypes.MAPS.MAP.LAYERS.CLEAR.SELECTION:
+		case ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.CLEAR.SELECTION:
 			return clearMapLayersSelection(state, action.mapKey, action.selectionKey);
-		case ActionTypes.MAPS.MAP.REMOVE:
+		case ActionTypes._DEPRECATED_MAPS.MAP.REMOVE:
 			return removeMap(state, action.mapKey);
-		case ActionTypes.MAPS.MAP.SET_NAME:
+		case ActionTypes._DEPRECATED_MAPS.MAP.SET_NAME:
 			return setMapName(state, action.mapKey, action.name);
-		case ActionTypes.MAPS.MAP.SET_DATA:
+		case ActionTypes._DEPRECATED_MAPS.MAP.SET_DATA:
 			return setMapData(state, action.mapKey, action.data);
-		case ActionTypes.MAPS.MAP.VIEW.SET:
+		case ActionTypes._DEPRECATED_MAPS.MAP.VIEW.SET:
 			return setMapView(state, action.mapKey, action.view);
-		case ActionTypes.MAPS.MAP.VIEW.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.MAP.VIEW.UPDATE:
 			return updateMapView(state, action.mapKey, action.update);
-		case ActionTypes.MAPS.LAYERS.LAYER.ADD:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.ADD:
 			return addLayer(state, action.mapKey, action.layer, action.index);
-		case ActionTypes.MAPS.LAYERS.LAYER.REMOVE:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.REMOVE:
 			return removeLayer(state, action.mapKey, action.layerKey);
-		case ActionTypes.MAPS.LAYERS.REMOVE_LAYERS:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.REMOVE_LAYERS:
 			return removeLayers(state, action.mapKey, action.layersKeys);
-		case ActionTypes.MAPS.LAYERS.LAYER.SET_INDEX:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.SET_INDEX:
 			return setLayerIndex(state, action.mapKey, action.layerKey, action.index);
-		case ActionTypes.MAPS.LAYERS.LAYER.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.UPDATE:
 			return updateMapLayer(state, action.mapKey, action.layer, action.layerKey);
-		case ActionTypes.MAPS.LAYERS.LAYER.SET:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.SET:
 			return setMapLayer(state, action.mapKey, action.layer, action.layerKey);
-		case ActionTypes.MAPS.LAYERS.SET:
+		case ActionTypes._DEPRECATED_MAPS.LAYERS.SET:
 			return setMapLayers(state, action.mapKey, action.layers);
-		case ActionTypes.MAPS.SET_SCOPE:
+		case ActionTypes._DEPRECATED_MAPS.SET_SCOPE:
 			return setMapScope(state, action.mapKey, action.scope);
-		case ActionTypes.MAPS.SET_SCENARIO:
+		case ActionTypes._DEPRECATED_MAPS.SET_SCENARIO:
 			return setMapScenario(state, action.mapKey, action.scenario);
-		case ActionTypes.MAPS.SET_PERIOD:
+		case ActionTypes._DEPRECATED_MAPS.SET_PERIOD:
 			return setMapPeriod(state, action.mapKey, action.period);
-		case ActionTypes.MAPS.SET_PLACE:
+		case ActionTypes._DEPRECATED_MAPS.SET_PLACE:
 			return setMapPlace(state, action.mapKey, action.place);
-		case ActionTypes.MAPS.SET_CASE:
+		case ActionTypes._DEPRECATED_MAPS.SET_CASE:
 			return setMapCase(state, action.mapKey, action.case);
-		case ActionTypes.MAPS.SET_BACKGROUND_LAYER:
+		case ActionTypes._DEPRECATED_MAPS.SET_BACKGROUND_LAYER:
 			return setMapBackgroundLayer(state, action.mapKey, action.backgroundLayer);
-		case ActionTypes.MAPS.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.UPDATE:
 			return update(state, action.data);
 
 		// deprecated
-		case ActionTypes.MAPS.SET.WORLD_WIND_NAVIGATOR.SET:
+		case ActionTypes._DEPRECATED_MAPS.SET.WORLD_WIND_NAVIGATOR.SET:
 			return deprecated_setSetWorldWindNavigator(state, action.setKey, action.worldWindNavigator);
-		case ActionTypes.MAPS.SET.WORLD_WIND_NAVIGATOR.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.SET.WORLD_WIND_NAVIGATOR.UPDATE:
 			return deprecated_updateSetWorldWindNavigator(state, action.setKey, action.worldWindNavigator);
-		case ActionTypes.MAPS.MAP.WORLD_WIND_NAVIGATOR.SET:
+		case ActionTypes._DEPRECATED_MAPS.MAP.WORLD_WIND_NAVIGATOR.SET:
 			return deprecated_setMapWorldWindNavigator(state, action.mapKey, action.worldWindNavigator);
-		case ActionTypes.MAPS.MAP.WORLD_WIND_NAVIGATOR.UPDATE:
+		case ActionTypes._DEPRECATED_MAPS.MAP.WORLD_WIND_NAVIGATOR.UPDATE:
 			return deprecated_updateMapWorldWindNavigator(state, action.mapKey, action.worldWindNavigator);
 		default:
 			return state;

@@ -41,12 +41,12 @@ Table of contents
 const setActiveMapKey = (mapKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(mapByKey) {
-			const activeMapKey = Select.maps.getActiveMapKey(state);
+			const activeMapKey = Select._deprecatedMaps.getActiveMapKey(state);
 			if(mapKey !== activeMapKey) {
 				dispatch(actionSetActiveMapKey(mapKey));
-				const setByMapKey = Select.maps.getMapSetByMapKey(state, mapKey);
+				const setByMapKey = Select._deprecatedMaps.getMapSetByMapKey(state, mapKey);
 				if(setByMapKey) {
 					dispatch(setActiveSetKey(setByMapKey.key));
 				}
@@ -59,7 +59,7 @@ const setActiveMapKey = (mapKey) => {
 
 const setMapSetActiveMapKey = (mapKey) => {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		let set = Select._deprecatedMaps.getMapSetByMapKey(getState(), mapKey);
 		if (set) {
 			dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
 		}
@@ -69,9 +69,9 @@ const setMapSetActiveMapKey = (mapKey) => {
 const setActiveSetKey = (setKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(setByKey) {
-			const activeSetKey = Select.maps.getActiveSetKey(state);
+			const activeSetKey = Select._deprecatedMaps.getActiveSetKey(state);
 			if(setKey !== activeSetKey) {
 				return dispatch(actionSetActiveSetKey(setKey));
 			}
@@ -88,13 +88,13 @@ const addSet = (set) => {
 		if(!setKey) {
 			return dispatch(actionGeneralError(`Undefined setKey for set ${set}`));
 		} else {
-			const setByKey = Select.maps.getMapSetByKey(state, setKey);
+			const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 			if(setByKey) {
 				return dispatch(actionGeneralError(`Set with given setKey (${setKey}) already exists ${setByKey}`));
 			} else {
 				dispatch(actionAddSet(set));
 				//if no set is active, set set as active
-				const activeSetKey = Select.maps.getActiveSetKey(state);
+				const activeSetKey = Select._deprecatedMaps.getActiveSetKey(state);
 				if(!activeSetKey) {
 					dispatch(actionSetActiveSetKey(setKey));
 				}
@@ -144,7 +144,7 @@ const addTreeLayers = (treeLayers, layerTreeBranchKey, mapKeys, useActiveMetadat
 			mapKeys.forEach((mapKey) => {
 
 				// check if layer in map
-				const layersState = Select.maps.getLayersStateByMapKey_deprecated(state, mapKey, useActiveMetadataKeys);
+				const layersState = Select._deprecatedMaps.getLayersStateByMapKey_deprecated(state, mapKey, useActiveMetadataKeys);
 
 				// clean templateKeys found in map
 				const uniqVisibleLayersKeys = layersState ? visibleLayersKeys.filter((lk) => !layersState.some(ls => ls.layer && ls.layer.layerTemplate === lk)) : visibleLayersKeys;
@@ -169,7 +169,7 @@ const addTreeLayers = (treeLayers, layerTreeBranchKey, mapKeys, useActiveMetadat
 const removeSet = (setKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
@@ -181,7 +181,7 @@ const removeSet = (setKey) => {
 const addMapToSet = (setKey, mapKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
@@ -191,7 +191,7 @@ const addMapToSet = (setKey, mapKey) => {
 			} else {
 				dispatch(actionAddMapToSet(setKey, mapKey));
 				//if no map is active, set map as active
-				const activeMapKey = Select.maps.getMapSetActiveMapKey(state, setKey);
+				const activeMapKey = Select._deprecatedMaps.getMapSetActiveMapKey(state, setKey);
 				if(!activeMapKey) {
 					dispatch(setMapSetActiveMapKey(mapKey));
 				}
@@ -204,17 +204,17 @@ const addMapToSet = (setKey, mapKey) => {
 const removeMapKeyFromSet = (setKey, mapKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
 			//check map exist
 			if (setByKey.maps && setByKey.maps.includes(mapKey)) {
-				const activeMapKey = Select.maps.getMapSetActiveMapKey(state, setKey);
+				const activeMapKey = Select._deprecatedMaps.getMapSetActiveMapKey(state, setKey);
 				dispatch(actionRemoveMapKeyFromSet(setKey, mapKey));
 
 				if (activeMapKey === mapKey) {
-					const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
+					const mapSetMapKeys = Select._deprecatedMaps.getMapSetMapKeys(getState(), setKey);
 					if (mapSetMapKeys) {
 						dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
 					}
@@ -229,7 +229,7 @@ const removeMapKeyFromSet = (setKey, mapKey) => {
 const setSetView = (setKey, view) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
@@ -241,7 +241,7 @@ const setSetView = (setKey, view) => {
 const setSetSync = (setKey, sync) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const setByKey = Select.maps.getMapSetByKey(state, setKey);
+		const setByKey = Select._deprecatedMaps.getMapSetByKey(state, setKey);
 		if(!setByKey) {
 			return dispatch(actionGeneralError(`No set found for setKey ${setKey}.`));
 		} else {
@@ -253,8 +253,8 @@ const setSetSync = (setKey, sync) => {
 const orderSetByMapPeriod = (setKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		let setMaps = Select.maps.getMapSetMapKeys(state, setKey);
-		let maps = Select.maps.getMapsAsObject(state);
+		let setMaps = Select._deprecatedMaps.getMapSetMapKeys(state, setKey);
+		let maps = Select._deprecatedMaps.getMapsAsObject(state);
 		let periods = Select.periods.getAllAsObject(state);
 		if (setMaps && maps && periods) {
 			let extendedSetMaps = setMaps.map(mapKey => {
@@ -281,7 +281,7 @@ const addMap = (map) => {
 			return dispatch(actionGeneralError(`Undefined mapKey for map ${map}`));
 		} else {
 			const state = getState();
-			const mapByKey = Select.maps.getMapByKey(state, map.key);
+			const mapByKey = Select._deprecatedMaps.getMapByKey(state, map.key);
 			
 			if (mapByKey) {
 				return dispatch(actionGeneralError(`Map with given mapKey (${map.key}) already exists ${mapByKey}`));
@@ -295,7 +295,7 @@ const addMap = (map) => {
 const addMapForPeriod = (periodKey, setKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		let map = Select.maps.getMapByMetadata_deprecated(state, {period: periodKey});
+		let map = Select._deprecatedMaps.getMapByMetadata_deprecated(state, {period: periodKey});
 
 		if (!map) {
 			let mapKey = utils.uuid();
@@ -318,11 +318,11 @@ const addMapForPeriod = (periodKey, setKey) => {
 const removeMap = (mapKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
-			const mapSets = Select.maps.getMapSets(state);
+			const mapSets = Select._deprecatedMaps.getMapSets(state);
 			if (mapSets) {
 				_.each(mapSets, mapSet => {
 					const mapSetMapKey = _.includes(mapSet.maps, mapKey);
@@ -339,7 +339,7 @@ const removeMap = (mapKey) => {
 const removeMapForPeriod = (periodKey, setKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const map = Select.maps.getMapByMetadata_deprecated(state, {period: periodKey});
+		const map = Select._deprecatedMaps.getMapByMetadata_deprecated(state, {period: periodKey});
 		if(!map) {
 			dispatch(actionGeneralError(`No map found for period ${periodKey}.`));
 		} else {
@@ -351,7 +351,7 @@ const removeMapForPeriod = (periodKey, setKey) => {
 const setMapName = (mapKey, name) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -363,7 +363,7 @@ const setMapName = (mapKey, name) => {
 const setMapData = (mapKey, data) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -375,7 +375,7 @@ const setMapData = (mapKey, data) => {
 const setMapView = (mapKey, view) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -390,7 +390,7 @@ const addLayer = (mapKey, layer, index, useActiveMetadataKeys) => {
 		if (!layer.key){
 			layer.key = utils.uuid();
 		}
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -403,7 +403,7 @@ const addLayer = (mapKey, layer, index, useActiveMetadataKeys) => {
 const addLayers = (mapKey, layers) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -418,12 +418,12 @@ const removeLayer = (mapKey, layerKey) => {
 			return dispatch(actionGeneralError(`Undefined layer key.`));
 		} else {
 			const state = getState();
-			const mapByKey = Select.maps.getMapByKey(state, mapKey);
+			const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 			if(!mapByKey) {
 				return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 			} else {
 				//check if layer exist
-				const layer = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+				const layer = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
 				if(layer) {
 					return dispatch(actionRemoveLayer(mapKey, layerKey));
 				} else {
@@ -437,7 +437,7 @@ const removeLayer = (mapKey, layerKey) => {
 const removeLayers = (mapKey, layersKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -449,7 +449,7 @@ const removeLayers = (mapKey, layersKeys) => {
 const setLayerIndex = (mapKey, layerKey, index) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -461,7 +461,7 @@ const setLayerIndex = (mapKey, layerKey, index) => {
 const setLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapLayer = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+		const mapLayer = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
 		if (mapLayer) {
 			const prevKeys = mapLayer && mapLayer.options && mapLayer.options.hovered && mapLayer.options.hovered.keys;
 
@@ -478,9 +478,9 @@ const setLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 
 		// TODO
 		else {
-			let set = Select.maps.getMapSetByMapKey(state, mapKey);
+			let set = Select._deprecatedMaps.getMapSetByMapKey(state, mapKey);
 			if (set) {
-				// let setLayer = Select.maps.getSetLayerBySetKeyAndLayerKey(state, set.key, layerKey);
+				// let setLayer = Select._deprecatedMaps.getSetLayerBySetKeyAndLayerKey(state, set.key, layerKey);
 				// if (setLayer) {
 				// 	 dispatch(actionSetSetLayerHoveredFeatureKeys(state, setKey, layerKey, hoveredFeatureKeys));
 				// }
@@ -493,7 +493,7 @@ const setLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapLayer = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+		const mapLayer = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
 		const activeSelectionKey = Select.selections.getActiveKey(state);
 		const selectionKey = activeSelectionKey || utils.uuid();
 
@@ -524,7 +524,7 @@ const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 		//
 		// // TODO
 		// else {
-		// 	let set = Select.maps.getMapSetByMapKey(state, mapKey);
+		// 	let set = Select._deprecatedMaps.getMapSetByMapKey(state, mapKey);
 		// 	if (set) {
 		//
 		// 	}
@@ -541,12 +541,12 @@ const setLayerSelectedFeatureKeys = (mapKey, layerKey, selectedFeatureKeys) => {
 const setMapLayer = (mapKey, layerKey, layer) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			//check if layer exist
-			const layerExists = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+			const layerExists = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
 			if(layerExists) {
 				dispatch(actionSetMapLayer(mapKey, layerKey, layer));
 			} else {
@@ -559,12 +559,12 @@ const setMapLayer = (mapKey, layerKey, layer) => {
 const setMapLayerStyle = (mapKey, layerKey, style) => {
     return (dispatch, getState) => {
         const state = getState();
-        const mapByKey = Select.maps.getMapByKey(state, mapKey);
+        const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
         if(!mapByKey) {
             return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
         } else {
             //check if layer exist
-            const layerExists = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+            const layerExists = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
             if(layerExists) {
                 dispatch(actionSetMapLayerStyle(mapKey, layerKey, style));
             } else {
@@ -583,12 +583,12 @@ const setMapLayerStyle = (mapKey, layerKey, style) => {
 const updateMapLayer = (mapKey, layerKey, layer) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
 			//check if layer exist
-			const layerExists = Select.maps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
+			const layerExists = Select._deprecatedMaps.getMapLayerByMapKeyAndLayerKey(state, mapKey, layerKey);
 			if(layerExists) {
 				dispatch(actionUpdateMapLayer(mapKey, layerKey, layer));
 			} else {
@@ -600,7 +600,7 @@ const updateMapLayer = (mapKey, layerKey, layer) => {
 
 const updateMapAndSetView = (mapKey, update) => {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		let set = Select._deprecatedMaps.getMapSetByMapKey(getState(), mapKey);
 		let forSet = null;
 		let forMap = null;
 
@@ -633,14 +633,14 @@ const updateMapAndSetView = (mapKey, update) => {
 
 const updateSetView = (setKey, update) => {
 	return (dispatch, getState) => {
-		let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
+		let activeMapKey = Select._deprecatedMaps.getMapSetActiveMapKey(getState(), setKey);
 		dispatch(updateMapAndSetView(activeMapKey, update));
 	};
 };
 
 const resetViewHeading = (mapKey) => {
 	return (dispatch, getState) => {
-		const view = Select.maps.getView(getState(), mapKey);
+		const view = Select._deprecatedMaps.getView(getState(), mapKey);
 		mapUtils.resetHeading(view.heading, heading => dispatch(updateMapAndSetView(mapKey, {heading})));
 	}
 };
@@ -648,7 +648,7 @@ const resetViewHeading = (mapKey) => {
 const setMapScope = (mapKey, scope) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -660,7 +660,7 @@ const setMapScope = (mapKey, scope) => {
 const setMapScenario = (mapKey, scenario) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -672,7 +672,7 @@ const setMapScenario = (mapKey, scenario) => {
 const setMapPeriod = (mapKey, period) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -684,7 +684,7 @@ const setMapPeriod = (mapKey, period) => {
 const setMapPlace = (mapKey, place) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -696,7 +696,7 @@ const setMapPlace = (mapKey, place) => {
 const setMapCase = (mapKey, caseKey) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const mapByKey = Select._deprecatedMaps.getMapByKey(state, mapKey);
 		if(!mapByKey) {
 			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
 		} else {
@@ -1157,14 +1157,14 @@ const deprecated_resetWorldWindNavigatorHeading = (mapKey, defaultIncrement) => 
 
 const actionSetActiveMapKey = (mapKey) => {
 	return {
-		type: ActionTypes.MAPS.SET_ACTIVE_MAP_KEY,
+		type: ActionTypes._DEPRECATED_MAPS.SET_ACTIVE_MAP_KEY,
 		mapKey
 	}
 };
 
 const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
 	return {
-		type: ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY,
+		type: ActionTypes._DEPRECATED_MAPS.SET.SET_ACTIVE_MAP_KEY,
 		mapKey,
 		setKey
 	}
@@ -1172,28 +1172,28 @@ const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
 
 const actionSetActiveSetKey = (setKey) => {
 	return {
-		type: ActionTypes.MAPS.SET_ACTIVE_SET_KEY,
+		type: ActionTypes._DEPRECATED_MAPS.SET_ACTIVE_SET_KEY,
 		setKey
 	}
 };
 
 const actionAddSet = (set) => {
 	return {
-		type: ActionTypes.MAPS.SET.ADD,
+		type: ActionTypes._DEPRECATED_MAPS.SET.ADD,
 		set
 	}
 };
 
 const actionRemoveSet = (setKey) => {
 	return {
-		type: ActionTypes.MAPS.SET.REMOVE,
+		type: ActionTypes._DEPRECATED_MAPS.SET.REMOVE,
 		setKey
 	}
 };
 
 const actionAddMapToSet = (setKey, mapKey) => {
 	return {
-		type: ActionTypes.MAPS.SET.ADD_MAP,
+		type: ActionTypes._DEPRECATED_MAPS.SET.ADD_MAP,
 		setKey,
 		mapKey,
 	}
@@ -1201,7 +1201,7 @@ const actionAddMapToSet = (setKey, mapKey) => {
 
 const actionRemoveMapKeyFromSet = (setKey, mapKey) => {
 	return {
-		type: ActionTypes.MAPS.SET.REMOVE_MAP,
+		type: ActionTypes._DEPRECATED_MAPS.SET.REMOVE_MAP,
 		setKey,
 		mapKey,
 	}
@@ -1209,7 +1209,7 @@ const actionRemoveMapKeyFromSet = (setKey, mapKey) => {
 
 const actionSetSetView = (setKey, view) => {
 	return {
-		type: ActionTypes.MAPS.SET.VIEW.SET,
+		type: ActionTypes._DEPRECATED_MAPS.SET.VIEW.SET,
 		setKey,
 		view
 	}
@@ -1217,7 +1217,7 @@ const actionSetSetView = (setKey, view) => {
 
 const actionUpdateSetView = (setKey, update) => {
 	return {
-		type: ActionTypes.MAPS.SET.VIEW.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.SET.VIEW.UPDATE,
 		setKey,
 		update
 	}
@@ -1225,7 +1225,7 @@ const actionUpdateSetView = (setKey, update) => {
 
 const actionSetSetSync = (setKey, sync) => {
 	return {
-		type: ActionTypes.MAPS.SET.SET_SYNC,
+		type: ActionTypes._DEPRECATED_MAPS.SET.SET_SYNC,
 		setKey,
 		sync,
 	}
@@ -1233,7 +1233,7 @@ const actionSetSetSync = (setKey, sync) => {
 
 const actionSetSetMaps = (setKey, maps) => {
 	return {
-		type: ActionTypes.MAPS.SET.SET_MAPS,
+		type: ActionTypes._DEPRECATED_MAPS.SET.SET_MAPS,
 		setKey,
 		maps,
 	}
@@ -1241,21 +1241,21 @@ const actionSetSetMaps = (setKey, maps) => {
 
 const actionAddMap = (map) => {
 	return {
-		type: ActionTypes.MAPS.MAP.ADD,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.ADD,
 		map,
 	}
 };
 
 const actionRemoveMap = (mapKey) => {
 	return {
-		type: ActionTypes.MAPS.MAP.REMOVE,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.REMOVE,
 		mapKey,
 	}
 };
 
 const actionSetMapName = (mapKey, name) => {
 	return {
-		type: ActionTypes.MAPS.MAP.SET_NAME,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.SET_NAME,
 		mapKey,
 		name,
 	}
@@ -1263,7 +1263,7 @@ const actionSetMapName = (mapKey, name) => {
 
 const actionSetMapData = (mapKey, data) => {
 	return {
-		type: ActionTypes.MAPS.MAP.SET_DATA,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.SET_DATA,
 		mapKey,
 		data,
 	}
@@ -1271,7 +1271,7 @@ const actionSetMapData = (mapKey, data) => {
 
 const actionSetMapView = (mapKey, view) => {
 	return {
-		type: ActionTypes.MAPS.MAP.VIEW.SET,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.VIEW.SET,
 		mapKey,
 		view
 	}
@@ -1279,7 +1279,7 @@ const actionSetMapView = (mapKey, view) => {
 
 const actionUpdateMapView = (mapKey, update) => {
 	return {
-		type: ActionTypes.MAPS.MAP.VIEW.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.VIEW.UPDATE,
 		mapKey,
 		update
 	}
@@ -1288,7 +1288,7 @@ const actionUpdateMapView = (mapKey, update) => {
 
 const actionAddLayer = (mapKey, layer, index) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.ADD,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.ADD,
 		mapKey,
 		layer,
 		index,
@@ -1297,7 +1297,7 @@ const actionAddLayer = (mapKey, layer, index) => {
 
 const actionRemoveLayer = (mapKey, layerKey) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.REMOVE,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.REMOVE,
 		mapKey,
 		layerKey,
 	}
@@ -1305,7 +1305,7 @@ const actionRemoveLayer = (mapKey, layerKey) => {
 
 const actionSetLayerIndex = (mapKey, layerKey, index) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.SET_INDEX,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.SET_INDEX,
 		mapKey,
 		layerKey,
 		index,
@@ -1314,7 +1314,7 @@ const actionSetLayerIndex = (mapKey, layerKey, index) => {
 
 const actionUpdateMapLayer = (mapKey, layerKey, layer) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.UPDATE,
 		mapKey,
 		layerKey,
 		layer,
@@ -1323,7 +1323,7 @@ const actionUpdateMapLayer = (mapKey, layerKey, layer) => {
 
 const actionSetMapLayer = (mapKey, layerKey, layer) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.SET,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.LAYER.SET,
 		mapKey,
 		layerKey,
 		layer,
@@ -1332,7 +1332,7 @@ const actionSetMapLayer = (mapKey, layerKey, layer) => {
 
 const actionSetMapLayerStyle = (mapKey, layerKey, style) => {
     return {
-        type: ActionTypes.MAPS.MAP.LAYERS.SET.STYLE,
+        type: ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.STYLE,
         mapKey,
         layerKey,
         style,
@@ -1341,7 +1341,7 @@ const actionSetMapLayerStyle = (mapKey, layerKey, style) => {
 
 const actionSetMapLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKeys) => {
 	return {
-		type: ActionTypes.MAPS.MAP.LAYERS.SET.HOVERED_FEATURE_KEYS,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.HOVERED_FEATURE_KEYS,
 		mapKey,
 		layerKey,
 		hoveredFeatureKeys
@@ -1350,7 +1350,7 @@ const actionSetMapLayerHoveredFeatureKeys = (mapKey, layerKey, hoveredFeatureKey
 
 const actionSetMapLayerSelection = (mapKey, layerKey, selectionKey) => {
 	return {
-		type: ActionTypes.MAPS.MAP.LAYERS.SET.SELECTION,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.SET.SELECTION,
 		mapKey,
 		layerKey,
 		selectionKey
@@ -1359,7 +1359,7 @@ const actionSetMapLayerSelection = (mapKey, layerKey, selectionKey) => {
 
 const actionClearSelectionInAllLayers = (mapKey, selectionKey) => {
 	return {
-		type: ActionTypes.MAPS.MAP.LAYERS.CLEAR.SELECTION,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.LAYERS.CLEAR.SELECTION,
 		mapKey,
 		selectionKey
 	}
@@ -1367,7 +1367,7 @@ const actionClearSelectionInAllLayers = (mapKey, selectionKey) => {
 
 const actionSetMapBackgroundLayer = (mapKey, backgroundLayer) => {
 	return {
-		type: ActionTypes.MAPS.SET_BACKGROUND_LAYER,
+		type: ActionTypes._DEPRECATED_MAPS.SET_BACKGROUND_LAYER,
 		mapKey,
 		backgroundLayer,
 	}
@@ -1375,7 +1375,7 @@ const actionSetMapBackgroundLayer = (mapKey, backgroundLayer) => {
 
 const actionSetSetBackgroundLayer = (setKey, backgroundLayer) => {
 	return {
-		type: ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER,
+		type: ActionTypes._DEPRECATED_MAPS.SET.SET_BACKGROUND_LAYER,
 		setKey,
 		backgroundLayer,
 	}
@@ -1383,7 +1383,7 @@ const actionSetSetBackgroundLayer = (setKey, backgroundLayer) => {
 
 const actionSetSetLayers = (setKey, layers) => {
     return {
-        type: ActionTypes.MAPS.SET.SET_LAYERS,
+        type: ActionTypes._DEPRECATED_MAPS.SET.SET_LAYERS,
         setKey,
         layers,
     }
@@ -1391,7 +1391,7 @@ const actionSetSetLayers = (setKey, layers) => {
 
 const actionSetMapLayers = (mapKey, layers) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.SET,
+		type: ActionTypes._DEPRECATED_MAPS.LAYERS.SET,
 		mapKey,
 		layers,
 	}
@@ -1399,7 +1399,7 @@ const actionSetMapLayers = (mapKey, layers) => {
 
 const actionSetMapCase = (mapKey, caseKey) => {
 	return {
-		type: ActionTypes.MAPS.SET_CASE,
+		type: ActionTypes._DEPRECATED_MAPS.SET_CASE,
 		mapKey,
 		case: caseKey,
 	}
@@ -1407,7 +1407,7 @@ const actionSetMapCase = (mapKey, caseKey) => {
 
 const actionSetMapScope = (mapKey, scope) => {
 	return {
-		type: ActionTypes.MAPS.SET_SCOPE,
+		type: ActionTypes._DEPRECATED_MAPS.SET_SCOPE,
 		mapKey,
 		scope,
 	}
@@ -1415,7 +1415,7 @@ const actionSetMapScope = (mapKey, scope) => {
 
 const actionSetMapScenario = (mapKey, scenario) => {
 	return {
-		type: ActionTypes.MAPS.SET_SCENARIO,
+		type: ActionTypes._DEPRECATED_MAPS.SET_SCENARIO,
 		mapKey,
 		scenario,
 	}
@@ -1423,7 +1423,7 @@ const actionSetMapScenario = (mapKey, scenario) => {
 
 const actionSetMapPlace = (mapKey, place) => {
 	return {
-		type: ActionTypes.MAPS.SET_PLACE,
+		type: ActionTypes._DEPRECATED_MAPS.SET_PLACE,
 		mapKey,
 		place,
 	}
@@ -1431,7 +1431,7 @@ const actionSetMapPlace = (mapKey, place) => {
 
 const actionSetMapPeriod = (mapKey, period) => {
 	return {
-		type: ActionTypes.MAPS.SET_PERIOD,
+		type: ActionTypes._DEPRECATED_MAPS.SET_PERIOD,
 		mapKey,
 		period,
 	}
@@ -1439,7 +1439,7 @@ const actionSetMapPeriod = (mapKey, period) => {
 
 const actionUpdate = (data) => {
 	return {
-		type: ActionTypes.MAPS.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.UPDATE,
 		data
 	}
 };
@@ -1450,7 +1450,7 @@ const actionUpdate = (data) => {
 
 const deprecated_actionSetSetWorldWindNavigator = (setKey, worldWindNavigator) => {
 	return {
-		type: ActionTypes.MAPS.SET.WORLD_WIND_NAVIGATOR.SET,
+		type: ActionTypes._DEPRECATED_MAPS.SET.WORLD_WIND_NAVIGATOR.SET,
 		setKey,
 		worldWindNavigator,
 	}
@@ -1458,7 +1458,7 @@ const deprecated_actionSetSetWorldWindNavigator = (setKey, worldWindNavigator) =
 
 const deprecated_actionUpdateSetWorldWindNavigator = (setKey, worldWindNavigator) => {
 	return {
-		type: ActionTypes.MAPS.SET.WORLD_WIND_NAVIGATOR.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.SET.WORLD_WIND_NAVIGATOR.UPDATE,
 		setKey,
 		worldWindNavigator,
 	}
@@ -1466,7 +1466,7 @@ const deprecated_actionUpdateSetWorldWindNavigator = (setKey, worldWindNavigator
 
 const deprecated_actionSetMapWorldWindNavigator = (mapKey, worldWindNavigator) => {
 	return {
-		type: ActionTypes.MAPS.MAP.WORLD_WIND_NAVIGATOR.SET,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.WORLD_WIND_NAVIGATOR.SET,
 		mapKey,
 		worldWindNavigator,
 	}
@@ -1474,7 +1474,7 @@ const deprecated_actionSetMapWorldWindNavigator = (mapKey, worldWindNavigator) =
 
 const deprecated_actionUpdateMapWorldWindNavigator = (mapKey, worldWindNavigator) => {
 	return {
-		type: ActionTypes.MAPS.MAP.WORLD_WIND_NAVIGATOR.UPDATE,
+		type: ActionTypes._DEPRECATED_MAPS.MAP.WORLD_WIND_NAVIGATOR.UPDATE,
 		mapKey,
 		worldWindNavigator,
 	}

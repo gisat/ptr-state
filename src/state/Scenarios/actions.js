@@ -1,6 +1,6 @@
 import SpatialRelationsAction from '../SpatialRelations/actions';
 import SpatialDataSourcesAction from '../SpatialDataSources/actions';
-import MapsAction from '../Maps/actions';
+import MapsAction from '../_deprecatedMaps/actions';
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../Select';
 

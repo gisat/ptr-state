@@ -36,13 +36,13 @@ let getBackgroundLayerCache = new CacheFifo(10);
 let getLayersCache = new CacheFifo(10);
 
 /* ===== Basic selectors ==================== */
-const getSubstate = state => state.maps;
+const getSubstate = state => state._deprecatedMaps;
 
-const getMapsAsObject = state => state.maps.maps;
-const getMapSetsAsObject = state => state.maps.sets;
+const getMapsAsObject = state => state._deprecatedMaps.maps;
+const getMapSetsAsObject = state => state._deprecatedMaps.sets;
 
-const getActiveSetKey = state => state.maps.activeSetKey;
-const getActiveMapKey = state => state.maps.activeMapKey;
+const getActiveSetKey = state => state._deprecatedMaps.activeSetKey;
+const getActiveMapKey = state => state._deprecatedMaps.activeMapKey;
 
 const getActiveMap = createSelector(
     [

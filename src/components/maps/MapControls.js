@@ -3,10 +3,10 @@ import Action from '../../state/Action';
 import Select from '../../state/Select';
 
 const mapStateToProps = (state, ownProps) => {
-	let mapKey = Select.maps.getActiveMapKey(state);
+	let mapKey = Select._deprecatedMaps.getActiveMapKey(state);
 
 	return {
-		view: Select.maps.getView(state, mapKey),
+		view: Select._deprecatedMaps.getView(state, mapKey),
 		mapKey
 	}
 };
@@ -14,11 +14,11 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		updateView: (update, mapKey) => {
-			dispatch(Action.maps.updateMapAndSetView(mapKey, update))
+			dispatch(Action._deprecatedMaps.updateMapAndSetView(mapKey, update))
 		},
 		resetHeading: (mapKey) => {
 			//todo disable button while reseting
-			dispatch(Action.maps.resetViewHeading(mapKey))
+			dispatch(Action._deprecatedMaps.resetViewHeading(mapKey))
 		}
 	}
 };

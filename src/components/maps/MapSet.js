@@ -6,16 +6,16 @@ import {utils} from '@gisatcz/ptr-utils'
 const mapStateToProps = (state, ownProps) => {
 	if (ownProps.stateMapSetKey) {
 		return {
-			activeMapKey: Select.maps.getMapSetActiveMapKey(state, ownProps.stateMapSetKey),
-			activeMapView: Select.maps.getMapSetActiveMapView(state, ownProps.stateMapSetKey),
-			maps: Select.maps.getMapSetMapKeys(state, ownProps.stateMapSetKey),
-			view: Select.maps.getMapSetView(state, ownProps.stateMapSetKey),
-			viewLimits: Select.maps.getMapSetViewLimits(state, ownProps.stateMapSetKey)
+			activeMapKey: Select._deprecatedMaps.getMapSetActiveMapKey(state, ownProps.stateMapSetKey),
+			activeMapView: Select._deprecatedMaps.getMapSetActiveMapView(state, ownProps.stateMapSetKey),
+			maps: Select._deprecatedMaps.getMapSetMapKeys(state, ownProps.stateMapSetKey),
+			view: Select._deprecatedMaps.getMapSetView(state, ownProps.stateMapSetKey),
+			viewLimits: Select._deprecatedMaps.getMapSetViewLimits(state, ownProps.stateMapSetKey)
 		}
 	} else {
 		return {
-			backgroundLayer: Select.maps.getBackgroundLayer(state, ownProps.backgroundLayer),
-			layers: Select.maps.getLayers(state, ownProps.layers)
+			backgroundLayer: Select._deprecatedMaps.getBackgroundLayer(state, ownProps.backgroundLayer),
+			layers: Select._deprecatedMaps.getLayers(state, ownProps.layers)
 		}
 	}
 };
@@ -27,28 +27,28 @@ const mapDispatchToPropsFactory = () => {
 		if (ownProps.stateMapSetKey) {
 			return {
 				updateView: (update) => {
-					dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
+					dispatch(Action._deprecatedMaps.updateSetView(ownProps.stateMapSetKey, update));
 				},
 				resetHeading: (mapKey) => {
-					dispatch(Action.maps.resetViewHeading(mapKey));
+					dispatch(Action._deprecatedMaps.resetViewHeading(mapKey));
 				},
 				onMapRemove: (mapKey) => {
-					dispatch(Action.maps.removeMap(mapKey));
+					dispatch(Action._deprecatedMaps.removeMap(mapKey));
 				}
 			}
 		} else {
 			let setKey = ownProps.setKey || componentId;
 			return {
 				onMount: () => {
-					dispatch(Action.maps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
+					dispatch(Action._deprecatedMaps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
 				},
 
 				onUnmount: () => {
-					dispatch(Action.maps.useClear(setKey));
+					dispatch(Action._deprecatedMaps.useClear(setKey));
 				},
 
 				refreshUse: () => {
-					dispatch(Action.maps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
+					dispatch(Action._deprecatedMaps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
 				},
 			}
 		}
