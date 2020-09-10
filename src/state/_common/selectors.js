@@ -594,6 +594,63 @@ const getAllActiveKeys = createSelector(
 	}
 );
 
+const getActiveKeysByFilterByActive = createCachedSelector(
+    [
+        getAllActiveKeys,
+        (state, filterByActive) => filterByActive
+    ],
+    (activeKeys, filterByActive) => {
+        if (filterByActive && !_.isEmpty(filterByActive)) {
+            let keys = {};
+
+            if (filterByActive.scope && activeKeys.activeScopeKey) {
+                keys.scopeKey = activeKeys.activeScopeKey;
+            }
+            if (filterByActive.place) {
+                if (activeKeys.activePlaceKey) {
+                    keys.placeKey = activeKeys.activePlaceKey;
+                } else if (activeKeys.activePlaceKeys) {
+                    keys.placeKeys = activeKeys.activePlaceKeys;
+                }
+            }
+            if (filterByActive.scenario){
+                if (activeKeys.activeScenarioKey) {
+                    keys.scenarioKey = activeKeys.activeScenarioKey;
+                } else if (activeKeys.activeScenarioKeys) {
+                    keys.scenarioKeys = activeKeys.activeScenarioKeys;
+                }
+            }
+            if (filterByActive.case) {
+                if (activeKeys.activeCaseKey) {
+                    keys.caseKey = activeKeys.activeCaseKey;
+                } else if (activeKeys.activeCaseKeys) {
+                    keys.caseKeys = activeKeys.activeCaseKeys;
+                }
+            }
+            if (filterByActive.period) {
+                if (activeKeys.activePeriodKey) {
+                    keys.periodKey = activeKeys.activePeriodKey;
+                } else if (activeKeys.activePeriodKeys) {
+                    keys.periodKeys = activeKeys.activePeriodKeys;
+                }
+            }
+            if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
+                keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+            }
+            if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
+                keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+            }
+            if (filterByActive.application && activeKeys.activeApplicationKey) {
+                keys.applicationKey = activeKeys.activeApplicationKey
+            }
+
+            return !_.isEmpty(keys) ? keys : null;
+        } else {
+            return null;
+        }
+    }
+)((state, filterByActive) => JSON.stringify(filterByActive));
+
 const getUsedIndexPages = (getSubstate) => {
 	return createSelector([
 			getIndexedDataUses(getSubstate),
@@ -821,6 +878,7 @@ export default {
 	getActiveModels,
 	getActiveKey,
 	getActiveKeys,
+    getActiveKeysByFilterByActive,
 	getAll,
 	getAllActiveKeys,
 	getAllAsObject,

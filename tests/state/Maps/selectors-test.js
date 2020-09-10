@@ -24,7 +24,9 @@ describe('state/Maps/selectors', function () {
                                     scenarioKeys: ["scenario1", "scenario2"]
                                 },
                                 filterByActive: {
-                                    place: true
+                                    place: true,
+                                    layerTemplateKey: true,
+                                    applicationKey: true
                                 }
                             }, {
                                 key: "layerDefinition1",
@@ -470,7 +472,9 @@ describe('state/Maps/selectors', function () {
                 },
                 filterByActive: {
                     place: true,
-                    period: true
+                    period: true,
+                    layerTemplateKey: true,
+                    applicationKey: true
                 }
             }, {
                 key: "layerDefinition1",
@@ -524,7 +528,9 @@ describe('state/Maps/selectors', function () {
                 },
                 filterByActive: {
                     place: true,
-                    period: true
+                    period: true,
+                    layerTemplateKey: true,
+                    applicationKey: true
                 }
             }, {
                 key: "layerDefinition1",
@@ -611,7 +617,9 @@ describe('state/Maps/selectors', function () {
                 },
                 filterByActive: {
                     place: true,
-                    period: true
+                    period: true,
+                    layerTemplateKey: true,
+                    applicationKey: true
                 }
             }, {
                 key: "layerDefinition1",
