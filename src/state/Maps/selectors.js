@@ -156,12 +156,8 @@ const getMetadataModifiersByMapKey = createCachedSelector(
     (mapModifiers, setModifiers) => {
         if (mapModifiers && setModifiers) {
             return {...mapModifiers, ...setModifiers};
-        } else if (setModifiers) {
-            return setModifiers;
-        } else if (mapModifiers) {
-            return mapModifiers;
         } else {
-            return null;
+            return setModifiers || mapModifiers || null;
         }
     }
 )((state, mapKey) => mapKey);
@@ -203,7 +199,11 @@ const getFilterByActiveByMapKey = createCachedSelector(
         getMapSetFilterByActiveByMapKey
     ],
     (mapFilter, setFilter) => {
-        return (setFilter || mapFilter) && {...setFilter, ...mapFilter};
+        if (mapFilter && setFilter) {
+            return {...mapFilter, ...setFilter};
+        } else {
+            return setFilter || mapFilter || null;
+        }
     }
 )((state, mapKey) => mapKey);
 
@@ -217,7 +217,7 @@ const getBackgroundLayerStateByMapKey = createSelector(
         getMapSetBackgroundLayerStateByMapKey,
     ],
     (mapBackgroundLayer, setBackgroundLayer) => {
-        return mapBackgroundLayer || setBackgroundLayer;
+        return mapBackgroundLayer || setBackgroundLayer || null;
     }
 );
 
@@ -235,8 +235,8 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
     (setLayers, metadataModifiers, mapFilterByActive) => {
         if (setLayers?.length) {
             setLayers = setLayers.map(layer => {
-                let layerMetadataModifiers = layer.metadataModifiers ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers;
-                let layerFilterByActive = layer.filterByActive ? {...mapFilterByActive, ...layer.filterByActive} : mapFilterByActive;
+                let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers || layer.metadataModifiers;
+                let layerFilterByActive = (layer.filterByActive && mapFilterByActive) ? {...mapFilterByActive, ...layer.filterByActive} : (mapFilterByActive || layer.filterByActive || null);
 
                 return {...layer, metadataModifiers: layerMetadataModifiers, filterByActive: layerFilterByActive};
             });
@@ -262,8 +262,8 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
     (mapLayers, metadataModifiers, mapFilterByActive) => {
         if (mapLayers?.length) {
             mapLayers = mapLayers.map(layer => {
-                let layerMetadataModifiers = layer.metadataModifiers ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers;
-                let layerFilterByActive = layer.filterByActive ? {...mapFilterByActive, ...layer.filterByActive} : mapFilterByActive;
+                let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : (metadataModifiers || layer.metadataModifiers || null);
+                let layerFilterByActive = (layer.filterByActive && mapFilterByActive) ? {...mapFilterByActive, ...layer.filterByActive} : (mapFilterByActive || layer.filterByActive || null);
 
                 return {...layer, metadataModifiers: layerMetadataModifiers, filterByActive: layerFilterByActive};
             });
