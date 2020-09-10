@@ -225,7 +225,7 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
         getMapSetFilterByActiveByMapKey
     ],
     (setLayers, metadataModifiers, mapFilterByActive) => {
-        if (setLayers) {
+        if (setLayers?.length) {
             setLayers = setLayers.map(layer => {
                 let layerMetadataModifiers = layer.metadataModifiers ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers;
                 let layerFilterByActive = layer.filterByActive ? {...mapFilterByActive, ...layer.filterByActive} : mapFilterByActive;
@@ -252,7 +252,7 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
         getFilterByActiveByMapKey
     ],
     (mapLayers, metadataModifiers, mapFilterByActive) => {
-        if (mapLayers) {
+        if (mapLayers?.length) {
             mapLayers = mapLayers.map(layer => {
                 let layerMetadataModifiers = layer.metadataModifiers ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers;
                 let layerFilterByActive = layer.filterByActive ? {...mapFilterByActive, ...layer.filterByActive} : mapFilterByActive;

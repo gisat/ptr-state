@@ -54,5 +54,15 @@ describe('state/Maps/selectorHelpers', function () {
         });
 
         testHelpers.testCache(selectorHelpers.mergeBackgroundLayerWithLayer, [backgroundLayer, layers], expectedResult);
+
+        it('should return null, if both backgroundLayer and layers are null', () => {
+            // check structure
+            assert.isNull(selectorHelpers.mergeBackgroundLayerWithLayer(null, null));
+        });
+
+        it('should return layer with one item, if layers are null, but backgroundLayer', () => {
+            // check structure
+            assert.deepStrictEqual(selectorHelpers.mergeBackgroundLayerWithLayer(backgroundLayer), [expectedResult[0]]);
+        });
     });
 });

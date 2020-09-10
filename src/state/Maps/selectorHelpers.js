@@ -30,7 +30,7 @@ const mergeBackgroundLayerWithLayer = createCachedSelector(
         (backgroundLayer, layers) => layers
     ],
     (backgroundLayer, layers) => {
-        let finalLayers = null;
+        let finalLayers = [];
 
         if (layers) {
             finalLayers = layers || [];
@@ -40,9 +40,9 @@ const mergeBackgroundLayerWithLayer = createCachedSelector(
             finalLayers = [backgroundLayer, ...finalLayers];
         }
 
-        return finalLayers;
+        return finalLayers?.length ? finalLayers : null;
     }
-)((backgroundLayer, layer) => `${backgroundLayer}_${layer}`);
+)((backgroundLayer, layer) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(backgroundLayer)}`);
 
 export default {
     getBackgroundLayerAsLayer,
