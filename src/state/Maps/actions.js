@@ -14,7 +14,9 @@ const {actionGeneralError} = commonActions;
 
 function use(mapKey, backgroundLayer, layers) {
     return (dispatch, getState) => {
-        // TODO clear use for given mapKey, if exists?
+        // TODO clear use for given mapKey, if exists
+        const state = getState();
+        const activeKeys = commonSelectors.getAllActiveKeys(state);
 
         // uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
         if (backgroundLayer || layers) {
@@ -22,7 +24,7 @@ function use(mapKey, backgroundLayer, layers) {
         }
         // controlled map (with stateMapKey) - the map is completely controlled from store
         else {
-            layers = Select.maps.getAllLayersStateByMapKey(getState(), mapKey);
+            layers = Select.maps.getAllLayersStateByMapKey(state, mapKey);
         }
     }
 }
