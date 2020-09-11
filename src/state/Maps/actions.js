@@ -37,7 +37,7 @@ function use(mapKey, backgroundLayer, layers) {
     }
 }
 
-function layerUse(componentKey, activeKeys, layer) {
+function layerUse(componentId, activeKeys, layer) {
     return (dispatch, getState) => {
         const state = getState();
 
