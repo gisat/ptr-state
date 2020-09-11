@@ -42,7 +42,7 @@ function layerUse(componentId, activeKeys, layer) {
         const state = getState();
 
         // modifiers defined by key
-        let metadataDefinedByKey = {...layer.metadataModifiers};
+        let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
 
         // add layerTemplate od areaTreeLevelKey
         if (layer.layerTemplateKey) {
