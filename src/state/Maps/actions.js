@@ -2,12 +2,12 @@ import _ from 'lodash';
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../../state/Select';
 import commonActions from '../_common/actions';
+import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
+import DataActions from "../Data/actions";
+
 import helpers from "./selectorHelpers";
-import LayerTemplatesAction from "../LayerTemplates/actions";
-import AreasAction from "../Areas/actions";
-import {commonHelpers} from "../../index";
 
 const {actionGeneralError} = commonActions;
 
@@ -15,7 +15,7 @@ const {actionGeneralError} = commonActions;
  * CREATORS
  * ================================================== */
 
-function use(mapKey, backgroundLayer, layers) {
+function use(mapKey, backgroundLayer, layers, spatialFilter) {
     return (dispatch, getState) => {
         // TODO clear use for given mapKey, if exists
         const state = getState();
@@ -32,12 +32,12 @@ function use(mapKey, backgroundLayer, layers) {
         }
 
         if (layers) {
-            layers.forEach(layer => layerUse(componentId, activeKeys, layer));
+            layers.forEach(layer => layerUse(componentId, activeKeys, layer, spatialFilter));
         }
     }
 }
 
-function layerUse(componentId, activeKeys, layer) {
+function layerUse(componentId, activeKeys, layer, spatialFilter) {
     return (dispatch, getState) => {
         const state = getState();
 
@@ -64,6 +64,19 @@ function layerUse(componentId, activeKeys, layer) {
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
         const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers);
+
+        if (layerTemplateKey || areaTreeLevelKey) {
+            // TODO register use?
+            dispatch(DataActions.ensure({
+                modifiers: modifiersForRequest,
+                areaTreeLevelKey,
+                layerTemplateKey,
+                styleKey: layer.styleKey || null,
+                data: {
+                    spatialFilter
+                }
+            }));
+        }
     }
 }
 

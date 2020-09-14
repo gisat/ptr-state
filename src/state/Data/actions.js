@@ -15,11 +15,12 @@ function ensure(filter) {
     return (dispatch, getState) => {
 
         // Filter params - see Panther docs: Code/API/Data endpoint
-        const {relationsFilter, spatialFilter, attributeFilter, order, offset, limit, attributeKeys, featureKeys, geometry} = filter;
+        const {modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, data} = filter;
+        const {spatialFilter} = data;
 
         // select indexes
-        const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), spatialFilter, order);
-        const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), spatialFilter, order);
+        // const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), spatialFilter, order);
+        // const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), spatialFilter, order);
 
 
             // complete -> data sources - continue
@@ -39,5 +40,7 @@ export default {
     attributeRelations,
     spatialData,
     spatialDataSources,
-    spatialRelations
+    spatialRelations,
+
+    ensure
 }
