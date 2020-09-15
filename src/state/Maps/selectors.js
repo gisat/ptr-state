@@ -438,7 +438,7 @@ const getAllLayersStateByMapKey = createCachedSelector(
     ],
     (backgroundLayer, layers) => {
         if (layers || backgroundLayer) {
-            return helpers.mergeBackgroundLayerWithLayer(backgroundLayer, layers);
+            return helpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers);
         } else {
             return null;
         }

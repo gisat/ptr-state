@@ -26,7 +26,7 @@ const getBackgroundLayerAsLayer = createCachedSelector(
 /**
  * Merge background layer definition with layers to one collection
  */
-const mergeBackgroundLayerWithLayer = createCachedSelector(
+const mergeBackgroundLayerWithLayers = createCachedSelector(
     [
         (backgroundLayer) => getBackgroundLayerAsLayer(backgroundLayer),
         (backgroundLayer, layers) => layers
@@ -44,7 +44,7 @@ const mergeBackgroundLayerWithLayer = createCachedSelector(
 
         return finalLayers?.length ? finalLayers : null;
     }
-)((backgroundLayer, layer) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(backgroundLayer)}`);
+)((backgroundLayer, layers) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(layers)}`);
 
 const getView = (map, set) => {
     if (map) {
@@ -73,5 +73,5 @@ const getView = (map, set) => {
 export default {
     getBackgroundLayerAsLayer,
     getView,
-    mergeBackgroundLayerWithLayer
+    mergeBackgroundLayerWithLayers
 }

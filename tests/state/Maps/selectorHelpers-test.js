@@ -21,7 +21,7 @@ describe('state/Maps/selectorHelpers', function () {
         testHelpers.testCache(selectorHelpers.getBackgroundLayerAsLayer, [backgroundLayer], expectedResult);
     });
 
-    describe('mergeBackgroundLayerWithLayer', function () {
+    describe('mergeBackgroundLayerWithLayers', function () {
         const backgroundLayer = {
             layerTemplateKey: "layerTemplate-uuid"
         };
@@ -50,10 +50,10 @@ describe('state/Maps/selectorHelpers', function () {
 
         it('should return merged layers', () => {
             // check structure
-            assert.deepStrictEqual(selectorHelpers.mergeBackgroundLayerWithLayer(backgroundLayer, layers), expectedResult);
+            assert.deepStrictEqual(selectorHelpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers), expectedResult);
         });
 
-        testHelpers.testCache(selectorHelpers.mergeBackgroundLayerWithLayer, [backgroundLayer, layers], expectedResult);
+        testHelpers.testCache(selectorHelpers.mergeBackgroundLayerWithLayers, [backgroundLayer, layers], expectedResult);
 
         it('should return null, if both backgroundLayer and layers are null', () => {
             // check structure
@@ -62,7 +62,7 @@ describe('state/Maps/selectorHelpers', function () {
 
         it('should return layer with one item, if layers are null, but backgroundLayer', () => {
             // check structure
-            assert.deepStrictEqual(selectorHelpers.mergeBackgroundLayerWithLayer(backgroundLayer), [expectedResult[0]]);
+            assert.deepStrictEqual(selectorHelpers.mergeBackgroundLayerWithLayers(backgroundLayer), [expectedResult[0]]);
         });
     });
 });

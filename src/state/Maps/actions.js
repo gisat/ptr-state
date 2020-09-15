@@ -25,7 +25,7 @@ function use(mapKey, backgroundLayer, layers, spatialFilter) {
 
         // uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
         if (backgroundLayer || layers) {
-            layers = helpers.mergeBackgroundLayerWithLayer(layers, backgroundLayer);
+            layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);
         }
         // controlled map (with stateMapKey) - the map is completely controlled from store
         else {
