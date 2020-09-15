@@ -1,6 +1,9 @@
 import {assert} from 'chai';
 import Select from "../../../src/state/Select";
 import testHelpers from "../../helpers";
+import {createSelector} from "reselect";
+import _ from "lodash";
+import {mapConstants} from "@gisatcz/ptr-core";
 
 describe('state/Maps/selectors', function () {
     const state = {
@@ -47,7 +50,11 @@ describe('state/Maps/selectors', function () {
                             period: true
                         },
                         view: {
-                            range: 500000
+                            boxRange: 500000,
+                            center: {
+                                lat: 49,
+                                lon: 10
+                            }
                         }
                     }
                 },
@@ -68,7 +75,7 @@ describe('state/Maps/selectors', function () {
                             }
                         ],
                         view: {
-                            range: 1000000
+                            boxRange: 1000000
                         },
                         metadataModifiers: {
                             periodKey: "period2"
@@ -107,7 +114,8 @@ describe('state/Maps/selectors', function () {
                                 lat: 50,
                                 lon: 10
                             }
-                        }
+                        },
+                        viewLimits: [500, 500000]
                     }
                 }
             }
@@ -154,6 +162,173 @@ describe('state/Maps/selectors', function () {
 
         it('should return null, if map set for given map key does not exist', () => {
             const output = Select.maps.getMapSetByMapKey(state, "mapXYZ");
+            assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetByKey', function () {
+        it('should return data for given setKey, if set exists', () => {
+            const expectedResult = state.maps.sets.set1;
+            const output = Select.maps.getMapSetByKey(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return null, if map does not exist', () => {
+            const output = Select.maps.getMapSetByKey(state, "setXYZ");
+            assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetActiveMapKey', function () {
+        it('should return data active map key, if it is defined in map set', () => {
+            const expectedResult = state.maps.sets.set1.activeMapKey;
+            const output = Select.maps.getMapSetActiveMapKey(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return global map key, if map set does not have active key, but map exists in given map set', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    activeMapKey: "map2",
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            activeMapKey: null
+                        }
+                    }
+                }
+            }
+            const output = Select.maps.getMapSetActiveMapKey(updatedState, "set1");
+            assert.deepStrictEqual(output, "map2");
+        });
+
+        it('should return null if map set does not exist', () => {
+            const output = Select.maps.getMapSetActiveMapKey(state, "setXYZ");
+            assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetActiveMapView', function () {
+        it('should return data active map view and omit synced view params', () => {
+            const expectedResult = {
+                center: {
+                    lat: 50,
+                    lon: 10
+                },
+                boxRange: 500000,
+                heading: 0,
+                tilt: 0,
+                roll: 0
+            };
+            const output = Select.maps.getMapSetActiveMapView(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return data active map view and omit synced view params 2', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            data: {
+                                ...state.maps.sets.set1.data,
+                                view: {
+                                    ...state.maps.sets.set1.data.view,
+                                    heading: 1
+                                }
+                            }
+                        }
+                    },
+                    maps: {
+                        ...state.maps.maps,
+                        map1: {
+                            ...state.maps.maps.map1,
+                            data: {
+                                ...state.maps.maps.map1.data,
+                                view: {
+                                    ...state.maps.maps.map1.data.view,
+                                    heading: 0.5
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            const expectedResult = {
+                center: {
+                    lat: 50,
+                    lon: 10
+                },
+                boxRange: 500000,
+                heading: 0.5,
+                tilt: 0,
+                roll: 0
+            };
+            const output = Select.maps.getMapSetActiveMapView(updatedState, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+    });
+
+    describe('getMapSetMapKeys', function () {
+        it('should return map set keys for given setKey, if set exists', () => {
+            const expectedResult = state.maps.sets.set1.maps;
+            const output = Select.maps.getMapSetMapKeys(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return null, maps is empty array', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            maps: []
+                        }
+                    },
+                }
+            };
+            const output = Select.maps.getMapSetMapKeys(updatedState, "set1");
+            assert.isNull(output);
+        });
+
+        it('should return null, map set does not exist', () => {
+            const output = Select.maps.getMapSetMapKeys(state, "setXYZ");
+            assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetView', function () {
+        it('should return map set view for given setKey, if set exists', () => {
+            const expectedResult = {...mapConstants.defaultMapView, ...state.maps.sets.set1.data.view};
+            const output = Select.maps.getMapSetView(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return null, map set does not exist', () => {
+            const output = Select.maps.getMapSetView(state, "setXYZ");
+            assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetViewLimits', function () {
+        it('should return map set view limits for given setKey, if set exists', () => {
+            const expectedResult = state.maps.sets.set1.data.viewLimits;
+            const output = Select.maps.getMapSetViewLimits(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return null, map set does not exist', () => {
+            const output = Select.maps.getMapSetViewLimits(state, "setXYZ");
             assert.isNull(output);
         });
     });

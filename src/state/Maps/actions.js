@@ -8,6 +8,7 @@ import commonSelectors from '../_common/selectors';
 import DataActions from "../Data/actions";
 
 import helpers from "./selectorHelpers";
+import {map as mapUtils} from "@gisatcz/ptr-utils";
 
 const {actionGeneralError} = commonActions;
 
@@ -32,7 +33,7 @@ function use(mapKey, backgroundLayer, layers, spatialFilter) {
         }
 
         if (layers) {
-            layers.forEach(layer => layerUse(componentId, activeKeys, layer, spatialFilter));
+            layers.forEach(layer => dispatch(layerUse(componentId, activeKeys, layer, spatialFilter)));
         }
     }
 }
@@ -80,6 +81,46 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
     }
 }
 
+function updateMapAndSetView(mapKey, update) {
+    return (dispatch, getState) => {
+        let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+        let forSet = null;
+        let forMap = null;
+
+        if (set && set.sync) {
+            // pick key-value pairs that are synced for set
+            forSet = _.pickBy(update, (updateVal, updateKey) => {
+                return set.sync[updateKey];
+            });
+
+            forMap = _.omitBy(update, (updateVal, updateKey) => {
+                return set.sync[updateKey];
+            });
+        } else {
+            forMap = update;
+        }
+
+        if (forSet && !_.isEmpty(forSet)) {
+            //check data integrity
+            forSet = mapUtils.view.ensureViewIntegrity(forSet); //TODO test
+            dispatch(actionUpdateSetView(set.key, forSet));
+        }
+
+        if (forMap && !_.isEmpty(forMap)) {
+            //check data integrity
+            forMap = mapUtils.view.ensureViewIntegrity(forMap); //TODO test
+            dispatch(actionUpdateMapView(mapKey, forMap));
+        }
+    }
+}
+
+function updateSetView(setKey, update) {
+    return (dispatch, getState) => {
+        let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
+        dispatch(updateMapAndSetView(activeMapKey, update));
+    };
+}
+
 function updateStateFromView(data) {
     return dispatch => {
         if (data) {
@@ -101,8 +142,28 @@ const actionUpdate = (data) => {
 };
 
 
+const actionUpdateMapView = (mapKey, update) => {
+    return {
+        type: ActionTypes.MAPS.MAP.VIEW.UPDATE,
+        mapKey,
+        update
+    }
+};
+
+
+const actionUpdateSetView = (setKey, update) => {
+    return {
+        type: ActionTypes.MAPS.SET.VIEW.UPDATE,
+        setKey,
+        update
+    }
+}
+
+
 // ============ export ===========
 export default {
+    updateMapAndSetView,
+    updateSetView,
     updateStateFromView,
     use
 }

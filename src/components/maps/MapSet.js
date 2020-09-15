@@ -6,11 +6,11 @@ import {utils} from '@gisatcz/ptr-utils'
 const mapStateToProps = (state, ownProps) => {
 	if (ownProps.stateMapSetKey) {
 		return {
-			activeMapKey: null,
-			activeMapView: null,
-			maps: null,
-			view: null,
-			viewLimits: null
+			activeMapKey: Select.maps.getMapSetActiveMapKey(state, ownProps.stateMapSetKey),
+			activeMapView: Select.maps.getMapSetActiveMapView(state, ownProps.stateMapSetKey),
+			maps: Select.maps.getMapSetMapKeys(state, ownProps.stateMapSetKey),
+			view: Select.maps.getMapSetView(state, ownProps.stateMapSetKey),
+			viewLimits: Select.maps.getMapSetViewLimits(state, ownProps.stateMapSetKey)
 		}
 	} else {
 		return {
@@ -27,7 +27,7 @@ const mapDispatchToPropsFactory = () => {
 		if (ownProps.stateMapSetKey) {
 			return {
 				updateView: (update) => {
-
+                    dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
 				},
 				resetHeading: (mapKey) => {
 

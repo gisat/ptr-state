@@ -3,10 +3,14 @@ import createCachedSelector from "re-reselect";
 import _ from 'lodash';
 
 import helpers from "./selectorHelpers";
+import {map as mapUtils} from "@gisatcz/ptr-utils";
+import {mapConstants} from "@gisatcz/ptr-core";
 
 /* === SELECTORS ======================================================================= */
 
 const getSubstate = state => state.maps;
+
+const getActiveMapKey = state => state.maps.activeMapKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
 
@@ -20,11 +24,7 @@ const getMapByKey = createSelector(
         (state, key) => key
     ],
     (maps, key) => {
-        if (maps && !_.isEmpty(maps) && key && maps[key]) {
-            return maps[key];
-        } else {
-            return null;
-        }
+        return maps?.[key] || null;
     }
 );
 
@@ -39,6 +39,20 @@ const getMapSets = createSelector(
         } else {
             return null;
         }
+    }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetByKey = createSelector(
+    [
+        getMapSetsAsObject,
+        (state, key) => key
+    ],
+    (sets, key) => {
+        return sets?.[key] || null;
     }
 );
 
@@ -63,6 +77,121 @@ const getMapSetByMapKey = createSelector(
         } else {
             return null;
         }
+    }
+);
+
+/**
+ * Get active map key for set. Either local, or global.
+ *
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetActiveMapKey = createSelector(
+    [
+        getActiveMapKey,
+        getMapSetByKey
+    ],
+    (mapKey, set) => {
+        if (set) {
+            let mapKeyInSet = _.includes(set.maps, mapKey);
+            return set.activeMapKey || (mapKeyInSet && mapKey) || null;
+        } else {
+            return null;
+        }
+    }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetActiveMapView = createCachedSelector(
+    [
+        getMapSetActiveMapKey,
+        getMapSetByKey,
+        getMapsAsObject
+    ],
+    (mapKey, set, maps) => {
+        let map = maps?.[mapKey];
+        return helpers.getView(map, set);
+    }
+)((state, mapKey) => mapKey);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewByMapKey = createCachedSelector(
+    [
+        getMapByKey,
+        getMapSetByMapKey
+    ],
+    helpers.getView
+)((state, mapKey) => mapKey);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewLimitsByMapKey = createCachedSelector(
+    [
+        getMapByKey,
+        getMapSetByMapKey
+    ],
+    (map, set) => {
+        if (map) {
+            if (set) {
+                let mapViewLimits = map.data?.viewLimits;
+                let mapSetViewLimits = set.data?.viewLimits;
+                let viewLimits = mapUtils.view.mergeViews(mapSetViewLimits, mapViewLimits);
+                return !_.isEmpty(viewLimits) ? viewLimits : null;
+            } else {
+                return map.data?.viewLimits;
+            }
+        } else {
+            return null;
+        }
+    }
+)((state, mapKey) => mapKey);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetMapKeys = createSelector(
+    [getMapSetByKey],
+    (set) => {
+        return set?.maps?.length ? set.maps : null;
+    }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetView = createSelector(
+    [
+        getMapSetByKey
+    ],
+    (set) => {
+        if (set) {
+            return mapUtils.view.mergeViews(mapConstants.defaultMapView, set.data?.view);
+        } else {
+            return null;
+        }
+    }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetViewLimits = createSelector(
+    [
+        getMapSetByKey
+    ],
+    (set) => {
+        return set?.data?.viewLimits || null;
     }
 );
 
@@ -316,6 +445,25 @@ const getAllLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
+// TODO add logic
+const getMapBackgroundLayer = createCachedSelector(
+    [
+        (state, mapKey) => getBackgroundLayerStateByMapKey(state, mapKey)
+    ],
+    (layerState) => {
+        if (layerState) {
+            if (layerState.type) {
+                return layerState;
+            } else {
+                // TODO
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+)((state, mapKey) => mapKey);
+
 export default {
     getAllLayersStateByMapKey,
     getBackgroundLayerStateByMapKey,
@@ -324,17 +472,27 @@ export default {
     getMetadataModifiersByMapKey,
 
     getMapBackgroundLayerStateByMapKey,
+    getMapBackgroundLayer,
     getMapByKey,
     getMapFilterByActiveByMapKey,
     getMapLayersStateByMapKey,
     getMapLayersStateByMapKeyWithModifiers,
     getMapMetadataModifiersByMapKey,
 
+    getMapSetActiveMapKey,
+    getMapSetActiveMapView,
     getMapSetBackgroundLayerStateByMapKey,
     getMapSetByMapKey,
+    getMapSetByKey,
     getMapSetFilterByActiveByMapKey,
     getMapSetLayersStateByMapKey,
     getMapSetLayersStateByMapKeyWithModifiers,
     getMapSetMetadataModifiersByMapKey,
-    getMapSets
+    getMapSetMapKeys,
+    getMapSets,
+    getMapSetView,
+    getMapSetViewLimits,
+
+    getViewByMapKey,
+    getViewLimitsByMapKey
 };

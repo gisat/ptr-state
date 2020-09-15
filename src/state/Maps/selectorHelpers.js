@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
 import _ from 'lodash';
+import {map as mapUtils} from "@gisatcz/ptr-utils";
+import {mapConstants} from "@gisatcz/ptr-core";
 
 /* === HELPERS ======================================================================= */
 
@@ -44,7 +46,32 @@ const mergeBackgroundLayerWithLayer = createCachedSelector(
     }
 )((backgroundLayer, layer) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(backgroundLayer)}`);
 
+const getView = (map, set) => {
+    if (map) {
+        if (set) {
+            let mapView = map.data?.view;
+
+            // omit synced view params from map
+            if (set.sync && !_.isEmpty(set.sync)) {
+                mapView = _.omitBy(mapView, (viewValue, viewKey) => {
+                    return set.sync[viewKey];
+                });
+            }
+
+            let mapSetView = set.data?.view;
+            let view = mapUtils.view.mergeViews(mapConstants.defaultMapView, mapSetView, mapView);
+            return !_.isEmpty(view) ? view : null;
+        } else {
+            let view = map.data?.view;
+            return mapUtils.view.mergeViews(mapConstants.defaultMapView, view);
+        }
+    } else {
+        return null;
+    }
+}
+
 export default {
     getBackgroundLayerAsLayer,
+    getView,
     mergeBackgroundLayerWithLayer
 }

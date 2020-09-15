@@ -57,6 +57,7 @@ const lodashExternal = [
   'lodash/isEmpty',
   'lodash/head',
   'lodash/tail',
+  'lodash/flatMap'
 ]
 
 export default {

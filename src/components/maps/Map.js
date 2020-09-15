@@ -6,10 +6,10 @@ import {utils} from '@gisatcz/ptr-utils';
 const mapStateToProps = (state, ownProps) => {
     if (ownProps.stateMapKey) {
         return {
-            backgroundLayer: null,
+            backgroundLayer: Select.maps.getMapBackgroundLayer(state, ownProps.stateMapKey),
             layers: null,
-            view: null,
-            viewLimits: null,
+            view: Select.maps.getViewByMapKey(state, ownProps.stateMapKey),
+            viewLimits: Select.maps.getViewLimitsByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
@@ -39,7 +39,7 @@ const mapDispatchToPropsFactory = () => {
                 },
 
                 onViewChange: (update) => {
-
+                    dispatch(Action.maps.updateMapAndSetView(ownProps.stateMapKey, update));
                 },
 
                 resetHeading: () => {
