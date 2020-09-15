@@ -80,13 +80,29 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
     }
 }
 
+function updateStateFromView(data) {
+    return dispatch => {
+        if (data) {
+            dispatch(actionUpdate(data));
+        }
+    };
+}
+
 
 /* ==================================================
  * ACTIONS
  * ================================================== */
 
+const actionUpdate = (data) => {
+    return {
+        type: ActionTypes.MAPS.UPDATE,
+        data
+    }
+};
+
 
 // ============ export ===========
 export default {
+    updateStateFromView,
     use
 }

@@ -1,8 +1,10 @@
 import AppContainer from "./AppContainer";
 import ChartSet from "./charts/ChartSet";
 import GoToPlace from "./maps/GoToPlace";
+import _deprecatedMap from "./maps/_deprecatedMap";
+import _deprecatedMapSet from "./maps/_deprecatedMapSet";
+import _deprecatedMapControls from "./maps/_deprecatedMapControls";
 import Map from "./maps/Map";
-import MapControls from "./maps/MapControls";
 import MapSet from "./maps/MapSet";
 import Screens from "./Screens";
 import User from "./User";
@@ -12,8 +14,10 @@ export default {
     AppContainer,
     ChartSet,
     GoToPlace,
+    _deprecatedMap,
+    _deprecatedMapControls,
+    _deprecatedMapSet,
     Map,
-    MapControls,
     MapSet,
     Screens,
     User,

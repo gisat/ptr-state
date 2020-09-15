@@ -6,16 +6,16 @@ import {utils} from '@gisatcz/ptr-utils';
 const mapStateToProps = (state, ownProps) => {
     if (ownProps.stateMapKey) {
         return {
-            backgroundLayer: null,
-            layers: null,
-            view: null,
-            viewLimits: null,
+            backgroundLayer: Select._deprecatedMaps.getMapBackgroundLayer(state, ownProps.stateMapKey),
+            layers: Select._deprecatedMaps.getMapLayers(state, ownProps.stateMapKey),
+            view: Select._deprecatedMaps.getView(state, ownProps.stateMapKey),
+            viewLimits: Select._deprecatedMaps.getViewLimits(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
         return {
-            backgroundLayer: null,
-            layers: null
+            backgroundLayer: Select._deprecatedMaps.getBackgroundLayer(state, ownProps.backgroundLayer),
+            layers: Select._deprecatedMaps.getLayers(state, ownProps.layers)
         }
     }
 };
@@ -27,30 +27,31 @@ const mapDispatchToPropsFactory = () => {
         if (ownProps.stateMapKey) {
             return {
                 onMount: () => {
+                    // dispatch(Action._deprecatedMaps.use(ownProps.stateMapKey));
                     dispatch(Action.maps.use(ownProps.stateMapKey));
                 },
 
                 onUnmount: () => {
-
+                    dispatch(Action._deprecatedMaps.useClear(ownProps.stateMapKey));
                 },
 
                 refreshUse: () => {
-
+                    dispatch(Action._deprecatedMaps.use(ownProps.stateMapKey));
                 },
 
                 onViewChange: (update) => {
-
+                    dispatch(Action._deprecatedMaps.updateMapAndSetView(ownProps.stateMapKey, update));
                 },
 
                 resetHeading: () => {
-
+                    dispatch(Action._deprecatedMaps.resetViewHeading(ownProps.stateMapKey));
                 },
 
                 onClick: (view) => {
-
+                    dispatch(Action._deprecatedMaps.setMapSetActiveMapKey(ownProps.stateMapKey));
                 },
                 onLayerClick: (mapKey, layerKey, selectedFeatureKeys) => {
-
+                    dispatch(Action._deprecatedMaps.setLayerSelectedFeatureKeys(ownProps.stateMapKey, layerKey, selectedFeatureKeys))
                 }
             }
         } else {
@@ -58,15 +59,16 @@ const mapDispatchToPropsFactory = () => {
 
             return {
                 onMount: () => {
+                    // dispatch(Action._deprecatedMaps.use(mapKey, ownProps.backgroundLayer, ownProps.layers));
                     dispatch(Action.maps.use(mapKey, ownProps.backgroundLayer, ownProps.layers));
                 },
 
                 onUnmount: () => {
-
+                    dispatch(Action._deprecatedMaps.useClear(mapKey));
                 },
 
                 refreshUse: () => {
-
+                    dispatch(Action._deprecatedMaps.use(mapKey, ownProps.backgroundLayer, ownProps.layers));
                 },
 
                 onViewChange: ownProps.onViewChange || ((update) => {}),
