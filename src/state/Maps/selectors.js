@@ -3,8 +3,7 @@ import createCachedSelector from "re-reselect";
 import _ from 'lodash';
 import * as path from "path";
 
-import {map as mapUtils} from '@gisatcz/ptr-utils';
-import {CacheFifo} from '@gisatcz/ptr-utils';
+import {CacheFifo, map as mapUtils} from '@gisatcz/ptr-utils';
 import mapHelpers from './helpers';
 
 import commonSelectors from "../_common/selectors";
@@ -472,11 +471,11 @@ const getView = createCachedSelector(
 				}
 
 				let mapSetView = set.data && set.data.view;
-				let view = mapUtils.mergeViews(mapConstants.defaultMapView, mapSetView, mapView);
+				let view = mapUtils.view.mergeViews(mapConstants.defaultMapView, mapSetView, mapView);
 				return !_.isEmpty(view) ? view : null;
 			} else {
 				let view = map.data && map.data.view;
-				return mapUtils.mergeViews(mapConstants.defaultMapView, view);
+				return mapUtils.view.mergeViews(mapConstants.defaultMapView, view);
 			}
 		} else {
 			return null;
@@ -498,7 +497,7 @@ const getViewLimits = createCachedSelector(
 			if (set) {
 				let mapViewLimits = map.data?.viewLimits;
 				let mapSetViewLimits = set.data?.viewLimits;
-				let viewLimits = mapUtils.mergeViews(mapSetViewLimits, mapViewLimits);
+				let viewLimits = mapUtils.view.mergeViews(mapSetViewLimits, mapViewLimits);
 				return !_.isEmpty(viewLimits) ? viewLimits : null;
 			} else {
 				return map.data?.viewLimits;
@@ -520,7 +519,7 @@ const getMapSetView = createSelector(
 	(set) => {
 		if (set) {
 			let setView = set.data && set.data.view;
-			return mapUtils.mergeViews(mapConstants.defaultMapView, setView);
+			return mapUtils.view.mergeViews(mapConstants.defaultMapView, setView);
 		} else {
 			return null;
 		}
@@ -561,11 +560,11 @@ const getMapSetActiveMapView = createSelector(
 				}
 
 				let mapSetView = set.data && set.data.view;
-				let view = mapUtils.mergeViews(mapConstants.defaultMapView, mapSetView, mapView);
+				let view = mapUtils.view.mergeViews(mapConstants.defaultMapView, mapSetView, mapView);
 				return !_.isEmpty(view) ? view : null;
 			} else {
 				let view = map.data && map.data.view;
-				return mapUtils.mergeViews(mapConstants.defaultMapView, view);
+				return mapUtils.view.mergeViews(mapConstants.defaultMapView, view);
 			}
 		} else {
 			return null;
