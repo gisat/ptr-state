@@ -4,6 +4,7 @@ import testHelpers from "../../helpers";
 import {createSelector} from "reselect";
 import _ from "lodash";
 import {mapConstants} from "@gisatcz/ptr-core";
+import selectorHelpers from "../../../src/state/Maps/selectorHelpers";
 
 describe('state/Maps/selectors', function () {
     const state = {
@@ -793,5 +794,21 @@ describe('state/Maps/selectors', function () {
             const output = Select.maps.getAllLayersStateByMapKey(state, "map2");
             assert.deepStrictEqual(output, expectedResult);
         });
+    });
+
+    describe('getMapBackgroundLayer', function () {
+        const expectedResult = {
+            type: "wmts",
+            options: {
+                url: "http://backgroundLayer.no"
+            }
+        };
+
+        it('should', () => {
+            const output = Select.maps.getMapBackgroundLayer(state, "map2");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        testHelpers.testCache(Select.maps.getMapBackgroundLayer, [state, "map2"], expectedResult, [state, "map1"]);
     });
 });
