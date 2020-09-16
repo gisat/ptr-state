@@ -113,7 +113,11 @@ const getMapSetActiveMapView = createCachedSelector(
     ],
     (mapKey, set, maps) => {
         let map = maps?.[mapKey];
-        return helpers.getView(map, set);
+        if (map) {
+            return helpers.getView(map, set);
+        } else {
+            return null;
+        }
     }
 )((state, mapKey) => mapKey);
 
@@ -143,10 +147,9 @@ const getViewLimitsByMapKey = createCachedSelector(
             if (set) {
                 let mapViewLimits = map.data?.viewLimits;
                 let mapSetViewLimits = set.data?.viewLimits;
-                let viewLimits = mapUtils.view.mergeViews(mapSetViewLimits, mapViewLimits);
-                return !_.isEmpty(viewLimits) ? viewLimits : null;
+                return mapViewLimits || mapSetViewLimits || null;
             } else {
-                return map.data?.viewLimits;
+                return map.data?.viewLimits || null;
             }
         } else {
             return null;

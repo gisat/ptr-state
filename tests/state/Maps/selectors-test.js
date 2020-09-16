@@ -1,10 +1,7 @@
 import {assert} from 'chai';
 import Select from "../../../src/state/Select";
 import testHelpers from "../../helpers";
-import {createSelector} from "reselect";
-import _ from "lodash";
 import {mapConstants} from "@gisatcz/ptr-core";
-import selectorHelpers from "../../../src/state/Maps/selectorHelpers";
 
 describe('state/Maps/selectors', function () {
     const state = {
@@ -209,6 +206,105 @@ describe('state/Maps/selectors', function () {
         it('should return null if map set does not exist', () => {
             const output = Select.maps.getMapSetActiveMapKey(state, "setXYZ");
             assert.isNull(output);
+        });
+    });
+
+    describe('getMapSetActiveMapView', function () {
+        it('should return null, if there is no activeMapKey for map set', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            activeMapKey: null
+                        }
+                    }
+                }
+            };
+            const output = Select.maps.getMapSetActiveMapView(updatedState, "set1");
+            assert.isNull(output);
+        });
+
+        it('should return null if map set does not exist', () => {
+            const output = Select.maps.getMapSetActiveMapView(state, "setXYZ");
+            assert.isNull(output);
+        });
+
+        it('should return view', () => {
+            const expectedResult = {
+                boxRange: 500000,
+                center: {
+                    lat: 50,
+                    lon: 10
+                },
+                heading: 0,
+                tilt: 0,
+                roll: 0
+            }
+            const output = Select.maps.getMapSetActiveMapView(state, "set1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+    });
+
+    describe('getViewByMapKey', function () {
+        it('should return view for given map key', () => {
+            const expectedResult = {
+                boxRange: 500000,
+                center: {
+                    lat: 50,
+                    lon: 10
+                },
+                heading: 0,
+                tilt: 0,
+                roll: 0
+            }
+            const output = Select.maps.getViewByMapKey(state, "map1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+    });
+
+    describe('getViewLimitsByMapKey', function () {
+        it('should return null, if map for given key does not exist', () => {
+            const output = Select.maps.getViewLimitsByMapKey(state, "mapXYZ");
+            assert.isNull(output);
+        });
+
+        it('should return map view limits only, if a map is not in any set', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            maps: []
+                        }
+                    },
+                    maps: {
+                        ...state.maps.maps,
+                        map1: {
+                            ...state.maps.maps.map1,
+                            data: {
+                                ...state.maps.maps.map1.data,
+                                viewLimits: [500,5000]
+                            }
+                        }
+                    }
+                }
+            };
+            const expectedResult = [500, 5000];
+            const output = Select.maps.getViewLimitsByMapKey(updatedState, "map1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return set view limits', () => {
+            const expectedResult = state.maps.sets.set1.data.viewLimits;
+            const output = Select.maps.getViewLimitsByMapKey(state, "map1");
+            assert.deepStrictEqual(output, expectedResult);
         });
     });
 
@@ -512,6 +608,35 @@ describe('state/Maps/selectors', function () {
             assert.deepStrictEqual(output, expectedResult);
         });
 
+        it('should return merged filter by active 2', () => {
+            const expectedResult = {
+                period: true,
+                scope: true
+            };
+
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            data: {
+                                ...state.maps.sets.set1,
+                                filterByActive: {
+                                    scope: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            const output = Select.maps.getFilterByActiveByMapKey(updatedState, "map1");
+            assert.deepStrictEqual(output, expectedResult);
+        });
+
         testHelpers.testCache(Select.maps.getFilterByActiveByMapKey, [state, "map1"], {
             period: true
         });
@@ -699,6 +824,79 @@ describe('state/Maps/selectors', function () {
         });
 
         testHelpers.testCache(Select.maps.getLayersStateByMapKey, [state, "map1"], expectedResult, [state, "map2"]);
+
+        it('should return just map layers, if set layers do not exist', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            data: {
+                                ...state.maps.sets.set1.data,
+                                layers: null
+                            }
+                        }
+                    }
+                }
+            };
+            const output = Select.maps.getLayersStateByMapKey(updatedState, "map2");
+            assert.deepStrictEqual(output, [expectedResult2[1]]);
+        });
+
+        it('should return just set layers, if map layers do not exist', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    maps: {
+                        ...state.maps.maps,
+                        map2: {
+                            ...state.maps.maps.map2,
+                            data: {
+                                ...state.maps.maps.map2.data,
+                                layers: null
+                            }
+                        }
+                    }
+                }
+            };
+            const output = Select.maps.getLayersStateByMapKey(updatedState, "map2");
+            assert.deepStrictEqual(output, [expectedResult2[0]]);
+        });
+
+        it('should return null, if both set layers and map layers is null', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            data: {
+                                ...state.maps.sets.set1.data,
+                                layers: null
+                            }
+                        }
+                    },
+                    maps: {
+                        ...state.maps.maps,
+                        map2: {
+                            ...state.maps.maps.map2,
+                            data: {
+                                ...state.maps.maps.map2.data,
+                                layers: null
+                            }
+                        }
+                    }
+                }
+            };
+            const output = Select.maps.getLayersStateByMapKey(updatedState, "map2");
+            assert.isNull(output);
+        });
     });
 
     describe('getAllLayersStateByMapKey', function () {
@@ -793,6 +991,39 @@ describe('state/Maps/selectors', function () {
             ];
             const output = Select.maps.getAllLayersStateByMapKey(state, "map2");
             assert.deepStrictEqual(output, expectedResult);
+        });
+
+        it('should return null, if both backgroundLayer and layers is null', () => {
+            const updatedState = {
+                ...state,
+                maps: {
+                    ...state.maps,
+                    sets: {
+                        ...state.maps.sets,
+                        set1: {
+                            ...state.maps.sets.set1,
+                            data: {
+                                ...state.maps.sets.set1.data,
+                                layers: null,
+                                backgroundLayer: null
+                            }
+                        }
+                    },
+                    maps: {
+                        ...state.maps.maps,
+                        map1: {
+                            ...state.maps.maps.map1,
+                            data: {
+                                ...state.maps.maps.map1.data,
+                                layers: null,
+                                backgroundLayer: null
+                            }
+                        }
+                    }
+                }
+            }
+            const output = Select.maps.getAllLayersStateByMapKey(updatedState, "map1");
+            assert.isNull(output);
         });
     });
 
