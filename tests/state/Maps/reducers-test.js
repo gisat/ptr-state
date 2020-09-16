@@ -344,13 +344,7 @@ describe('state/Maps/reducers', function () {
 				maps: {
 					m1: {
 						key: 'm1',
-						name: null,
 						data: {
-							backgroundLayer: null,
-							filterByActive: null,
-							metadataModifiers: null,
-							view: null,
-							worldWindNavigator: null,
 							layers: [
 								{key: 'l1', options: {selected: {s1: {}}}},
 							],
@@ -383,13 +377,7 @@ describe('state/Maps/reducers', function () {
 				maps: {
 					m1: {
 						key: 'm1',
-						name: null,
 						data: {
-							backgroundLayer: null,
-							filterByActive: null,
-							metadataModifiers: null,
-							view: null,
-							worldWindNavigator: null,
 							layers: [{key: 'l1', options: {style: 's1'}}],
 						},
 					},
@@ -608,13 +596,7 @@ describe('state/Maps/reducers', function () {
 				maps: {
 					m1: {
 						key: 'm1',
-						name: null,
 						data: {
-							backgroundLayer: null,
-							filterByActive: null,
-							metadataModifiers: null,
-							view: null,
-							worldWindNavigator: null,
 							layers: [{key: 'l1'}, {key: 'l3'}, {key: 'l2'}],
 						},
 					},
@@ -640,13 +622,7 @@ describe('state/Maps/reducers', function () {
 				maps: {
 					m1: {
 						key: 'm1',
-						name: null,
 						data: {
-							backgroundLayer: null,
-							filterByActive: null,
-							metadataModifiers: null,
-							view: null,
-							worldWindNavigator: null,
 							layers: [{key: 'l2'}],
 						},
 					},
