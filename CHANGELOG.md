@@ -1,3 +1,15 @@
+# v1.5.8 (Wed Sep 16 2020)
+
+#### 🐾 Patch
+
+- Fix ptr-utils map view paths [#49](https://github.com/gisat-panther/ptr-state/pull/49) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v1.5.7 (Wed Sep 02 2020)
 
 #### 🐾 Patch

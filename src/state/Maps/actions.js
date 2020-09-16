@@ -4,8 +4,7 @@ import Select from '../../state/Select';
 import commonActions from '../_common/actions';
 import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
-import {utils} from '@gisatcz/ptr-utils'
-import {map as mapUtils, layerTree} from '@gisatcz/ptr-utils';
+import {utils, map as mapUtils, layerTree} from '@gisatcz/ptr-utils'
 
 import LayerTemplatesAction from "../LayerTemplates/actions";
 import AreasAction from "../Areas/actions";
@@ -619,13 +618,13 @@ const updateMapAndSetView = (mapKey, update) => {
 
 		if (forSet && !_.isEmpty(forSet)) {
 			//check data integrity
-			forSet = mapUtils.ensureViewIntegrity(forSet); //TODO test
+			forSet = mapUtils.view.ensureViewIntegrity(forSet); //TODO test
 			dispatch(actionUpdateSetView(set.key, forSet));
 		}
 
 		if (forMap && !_.isEmpty(forMap)) {
 			//check data integrity
-			forMap = mapUtils.ensureViewIntegrity(forMap); //TODO test
+			forMap = mapUtils.view.ensureViewIntegrity(forMap); //TODO test
 			dispatch(actionUpdateMapView(mapKey, forMap));
 		}
 	}
