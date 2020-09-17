@@ -81,6 +81,15 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
     }
 }
 
+function setMapSetActiveMapKey(mapKey) {
+    return (dispatch, getState) => {
+        let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+        if (set) {
+            dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+        }
+    };
+}
+
 function updateMapAndSetView(mapKey, update) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
@@ -134,6 +143,14 @@ function updateStateFromView(data) {
  * ACTIONS
  * ================================================== */
 
+const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
+    return {
+        type: ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY,
+        mapKey,
+        setKey
+    }
+};
+
 const actionUpdate = (data) => {
     return {
         type: ActionTypes.MAPS.UPDATE,
@@ -162,6 +179,7 @@ const actionUpdateSetView = (setKey, update) => {
 
 // ============ export ===========
 export default {
+    setMapSetActiveMapKey,
     updateMapAndSetView,
     updateSetView,
     updateStateFromView,

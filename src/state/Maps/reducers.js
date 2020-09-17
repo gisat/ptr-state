@@ -8,6 +8,19 @@ const INITIAL_STATE = {
     sets: {}
 };
 
+const setSetActiveMapKey = (state, setKey, mapKey) => {
+    return {
+        ...state,
+        sets: {
+            ...state.sets,
+            [setKey]: {
+                ...state.sets[setKey],
+                activeMapKey: mapKey
+            }
+        }
+    };
+};
+
 const update = (state, data) => {
     return {...state, ...data};
 };
@@ -54,6 +67,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
         case ActionTypes.MAPS.MAP.VIEW.UPDATE:
             return updateMapView(state, action.mapKey, action.update);
+        case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
+            return setSetActiveMapKey(state, action.setKey, action.mapKey);
         case ActionTypes.MAPS.SET.VIEW.UPDATE:
             return updateSetView(state, action.setKey, action.update);
         case ActionTypes.MAPS.UPDATE:

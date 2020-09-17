@@ -47,7 +47,7 @@ const mapDispatchToPropsFactory = () => {
                 },
 
                 onClick: (view) => {
-
+                    dispatch(Action.maps.setMapSetActiveMapKey(ownProps.stateMapKey));
                 },
                 onLayerClick: (mapKey, layerKey, selectedFeatureKeys) => {
 
