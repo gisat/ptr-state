@@ -45,6 +45,14 @@ describe('state/Users/actions', function () {
 		clearDispatchedActions();
 	});
 
+	before(function () {
+		global.document = {cookie: {}};
+	});
+
+	after(function () {
+		delete global.document;
+	});
+
 	it('add', function () {
 		actions.add('data', 'filter')(dispatch);
 		assert.deepStrictEqual(dispatchedActions, [
@@ -65,7 +73,7 @@ describe('state/Users/actions', function () {
 		});
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/user/current',
+				'http://localhost/backend/api/login/getLoginInfo',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -103,24 +111,7 @@ describe('state/Users/actions', function () {
 					type: 'USERS.CURRENT.REQUEST',
 				},
 				{
-					data: [
-						{
-							key: 1,
-							permissions: {
-								guest: {
-									get: false,
-								},
-							},
-						},
-						{
-							key: 2,
-							permissions: {
-								guest: {
-									get: false,
-								},
-							},
-						},
-					],
+					data: [],
 					type: 'USERS.GROUPS.ADD',
 				},
 				{
@@ -131,7 +122,7 @@ describe('state/Users/actions', function () {
 					data: [
 						{
 							data: {},
-							groups: [1, 2],
+							groups: [],
 							key: 1,
 							permissions: {
 								guest: {
@@ -241,7 +232,29 @@ describe('state/Users/actions', function () {
 					type: 'COMMON.DATA.SET_OUTDATED',
 				},
 				{
-					type: 'USERS.CURRENT.REQUEST',
+					data: [],
+					type: 'USERS.GROUPS.ADD',
+				},
+				{
+					key: undefined,
+					type: 'USERS.SET_ACTIVE_KEY',
+				},
+				{
+					data: [
+						{
+							data: {
+								status: 'ok',
+							},
+							groups: [],
+							permissions: {
+								guest: {
+									get: false,
+								},
+							},
+						},
+					],
+					filter: undefined,
+					type: 'USERS.ADD',
 				},
 				{
 					type: 'SCOPES.INDEX.CLEAR_ALL',
@@ -257,47 +270,6 @@ describe('state/Users/actions', function () {
 				},
 				{
 					type: 'USERS.GROUPS.INDEX.CLEAR_ALL',
-				},
-				{
-					data: [
-						{
-							key: 1,
-							permissions: {
-								guest: {
-									get: false,
-								},
-							},
-						},
-						{
-							key: 2,
-							permissions: {
-								guest: {
-									get: false,
-								},
-							},
-						},
-					],
-					type: 'USERS.GROUPS.ADD',
-				},
-				{
-					key: 1,
-					type: 'USERS.SET_ACTIVE_KEY',
-				},
-				{
-					data: [
-						{
-							data: {},
-							groups: [1, 2],
-							key: 1,
-							permissions: {
-								guest: {
-									get: false,
-								},
-							},
-						},
-					],
-					filter: undefined,
-					type: 'USERS.ADD',
 				},
 			]);
 		});
