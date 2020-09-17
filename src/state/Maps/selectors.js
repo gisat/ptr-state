@@ -922,7 +922,6 @@ const getLayersStateByMapKey_deprecated = createSelector(
 			let layers = [...(setLayers || []), ...(mapLayers || [])];
 			let modifiers = {};
 			if (mapSet) {
-				let a = mapSet.data.metadataModifiers;
 				modifiers = {...modifiers, ...mapSet.data.metadataModifiers};
 			}
 			modifiers = {...modifiers, ...map.data.metadataModifiers};

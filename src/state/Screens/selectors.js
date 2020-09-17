@@ -43,11 +43,7 @@ const getScreensBySetKey = createSelector(
 	 */
 	(set, screens) => {
 		if (set) {
-			let setScreens = {};
-			_.each(set.orderBySpace, (lineage) => {
-				setScreens[lineage] = screens[lineage];
-			});
-			return setScreens;
+			return _.pick(screens, set.orderBySpace);
 		} else {
 			return null;
 		}

@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import Select from "../../../src/state/Select";
 
-describe('state/selections/selectors', function () {
+describe('state/Selections/selectors', function () {
 	const state = {
 		styles: {
 			byKey: {

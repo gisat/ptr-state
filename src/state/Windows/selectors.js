@@ -4,6 +4,13 @@ import {createSelector} from 'reselect';
 const getAllSetsAsObject = state => state.windows.sets;
 const getAllWindowsAsObject = state => state.windows.windows;
 
+/**
+ * If `val` is empty, returns `null`, else `val`
+ */
+function notEmpty(val) {
+	return _.isEmpty(val) ? null : val;
+}
+
 const getSetByKey = createSelector(
 	[
 		getAllSetsAsObject,
@@ -30,22 +37,14 @@ const getWindowsBySetKeyAsObject = createSelector(
 		getAllWindowsAsObject
 	],
 	(set, windows) => {
-		if (set && set.orderByHistory && set.orderByHistory.length) {
-			let setWindows = {};
-			_.each(set.orderByHistory, (key) => {
-				setWindows[key] = windows[key];
-			});
-			return setWindows;
-		} else {
-			return null;
-		}
+		return notEmpty(_.pick(windows, set?.orderByHistory));
 	}
 );
 
 const isOpen = createSelector(
 	[getWindow],
 	(window) => {
-		return window && window.data && window.data.state === 'open';
+		return window?.data?.state === 'open';
 	}
 );
 

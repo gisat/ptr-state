@@ -7,7 +7,7 @@ const INITIAL_STATE = {
 
 const add = (state, action) => {
 	let newData = {...state.byKey};
-	if (action.data && action.data.length) {
+	if (action?.data?.length) {
 		action.data.forEach(model => {
 			newData[model.key] = {...newData[model.key], ...model};
 		});
