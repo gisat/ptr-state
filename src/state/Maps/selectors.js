@@ -5,6 +5,7 @@ import _ from 'lodash';
 import helpers from "./selectorHelpers";
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
+import selectorHelpers from "./selectorHelpers";
 
 /* === SELECTORS ======================================================================= */
 
@@ -364,16 +365,9 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
         getMapSetMetadataModifiersByMapKey,
         getMapSetFilterByActiveByMapKey
     ],
-    (setLayers, metadataModifiers, mapFilterByActive) => {
+    (setLayers, metadataModifiers, mapSetFilterByActive) => {
         if (setLayers?.length) {
-            setLayers = setLayers.map(layer => {
-                let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : metadataModifiers || layer.metadataModifiers;
-                let layerFilterByActive = (layer.filterByActive && mapFilterByActive) ? {...mapFilterByActive, ...layer.filterByActive} : (mapFilterByActive || layer.filterByActive || null);
-
-                return {...layer, metadataModifiers: layerMetadataModifiers, filterByActive: layerFilterByActive};
-            });
-
-            return setLayers;
+            return selectorHelpers.mergeModifiersWithFilterByActive(setLayers, metadataModifiers, mapSetFilterByActive);
         } else {
             return null;
         }
@@ -393,14 +387,7 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
     ],
     (mapLayers, metadataModifiers, mapFilterByActive) => {
         if (mapLayers?.length) {
-            mapLayers = mapLayers.map(layer => {
-                let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : (metadataModifiers || layer.metadataModifiers || null);
-                let layerFilterByActive = (layer.filterByActive && mapFilterByActive) ? {...mapFilterByActive, ...layer.filterByActive} : (mapFilterByActive || layer.filterByActive || null);
-
-                return {...layer, metadataModifiers: layerMetadataModifiers, filterByActive: layerFilterByActive};
-            });
-
-            return mapLayers;
+            return selectorHelpers.mergeModifiersWithFilterByActive(mapLayers, metadataModifiers, mapFilterByActive);
         } else {
             return null;
         }

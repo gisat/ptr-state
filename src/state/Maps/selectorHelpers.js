@@ -46,6 +46,16 @@ const mergeBackgroundLayerWithLayers = createCachedSelector(
     }
 )((backgroundLayer, layers) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(layers)}`);
 
+
+const mergeModifiersWithFilterByActive = (layers, metadataModifiers, filterByActive) => {
+    return layers.map(layer => {
+        let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : (metadataModifiers || layer.metadataModifiers || null);
+        let layerFilterByActive = (layer.filterByActive && filterByActive) ? {...filterByActive, ...layer.filterByActive} : (filterByActive || layer.filterByActive || null);
+
+        return {...layer, metadataModifiers: layerMetadataModifiers, filterByActive: layerFilterByActive};
+    });
+}
+
 const getView = (map, set) => {
     if (map) {
         if (set) {
@@ -73,5 +83,6 @@ const getView = (map, set) => {
 export default {
     getBackgroundLayerAsLayer,
     getView,
-    mergeBackgroundLayerWithLayers
+    mergeBackgroundLayerWithLayers,
+    mergeModifiersWithFilterByActive
 }
