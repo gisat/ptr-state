@@ -68,13 +68,7 @@ const getMapSetByMapKey = createSelector(
     ],
     (sets, mapKey) => {
         if (sets && !_.isEmpty(sets) && mapKey) {
-            let setForMap = null;
-            sets.forEach((set) => {
-                if (set.maps && _.includes(set.maps, mapKey)) {
-                    setForMap = set;
-                }
-            });
-            return setForMap;
+            return _.find(sets, (set) => set.maps && _.includes(set.maps, mapKey)) || null;
         } else {
             return null;
         }
