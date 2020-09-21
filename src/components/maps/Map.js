@@ -26,8 +26,12 @@ const mapDispatchToPropsFactory = () => {
     return (dispatch, ownProps) => {
         if (ownProps.stateMapKey) {
             return {
-                onMount: () => {
-                    dispatch(Action.maps.use(ownProps.stateMapKey));
+                onMount: (mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
+                },
+
+                onResize: (mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
                 },
 
                 onUnmount: () => {
@@ -40,6 +44,10 @@ const mapDispatchToPropsFactory = () => {
 
                 onViewChange: (update) => {
                     dispatch(Action.maps.updateMapAndSetView(ownProps.stateMapKey, update));
+                },
+
+                onPropViewChange: (update, mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
                 },
 
                 resetHeading: () => {

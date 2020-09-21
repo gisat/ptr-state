@@ -3,6 +3,7 @@ import createCachedSelector from "re-reselect";
 import _ from 'lodash';
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
+import {utils as tileGridUtils, grid} from "@gisatcz/ptr-tile-grid";
 
 /* === HELPERS ======================================================================= */
 
@@ -80,9 +81,47 @@ const getView = (map, set) => {
     }
 }
 
+/**
+ * Get zoom level of current view represented by mapWidth, mapHeight and boxRange.
+ */
+const getZoomLevel = createCachedSelector(
+    [
+        (mapWidth) => mapWidth,
+        (mapWidth, mapHeight) => mapHeight,
+        (mapWidth, mapHeight, boxRange) => boxRange,
+    ],
+    (mapWidth, mapHeight, boxRange) => {
+        const viewportRange = mapUtils.view.getMapViewportRange(mapWidth, mapHeight);
+		const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(mapWidth, mapHeight, boxRange);
+        const level = grid.getLevelByViewport(levelBoxRange, viewportRange);
+        return level
+    }
+)((mapWidth, mapHeight, boxRange) => `${mapWidth}${mapHeight}${boxRange}`);
+
+/**
+ * Get tiles intersected by map extent.
+ * Map extent is represented by mapWidth, mapHeight, center and boxRange.
+ */
+const getTiles = createCachedSelector(
+    [
+        (mapWidth) => mapWidth,
+        (mapWidth, mapHeight) => mapHeight,
+        (mapWidth, mapHeight, center) => center,
+        (mapWidth, mapHeight, center, boxRange) => boxRange,
+    ],
+    (mapWidth, mapHeight, center, boxRange) => {
+		const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(mapWidth, mapHeight, boxRange);
+		const lonLat = [center.lon, center.lat];
+        const tileGrid = grid.getTileGrid(mapWidth, mapHeight, levelBoxRange, lonLat, true);
+        return tileGrid.flat(1);
+    }
+)((mapWidth, mapHeight, center, boxRange) => `${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`);
+
 export default {
     getBackgroundLayerAsLayer,
+    getTiles,
     getView,
+    getZoomLevel,
     mergeBackgroundLayerWithLayers,
     mergeModifiersWithFilterByActive
 }
