@@ -15,14 +15,20 @@ const {actionGeneralError} = commonActions;
 /* ==================================================
  * CREATORS
  * ================================================== */
-
-function use(mapKey, backgroundLayer, layers, spatialFilter) {
+function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
     return (dispatch, getState) => {
         // TODO clear use for given mapKey, if exists
         const state = getState();
         const componentId = `map_${mapKey}`;
         const activeKeys = commonSelectors.getAllActiveKeys(state);
-
+        const spatialFilter = {};
+        if(mapWidth && mapHeight) {
+            const view = Select.maps.getViewByMapKey(state, mapKey);
+            const tiles = helpers.getTiles(mapWidth, mapHeight, view.center, view.boxRange);
+            const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
+            spatialFilter.tiles = tiles;
+            spatialFilter.level = level;
+        }
         // uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
         if (backgroundLayer || layers) {
             layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);
