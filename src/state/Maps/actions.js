@@ -22,7 +22,7 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
         const componentId = `map_${mapKey}`;
         const activeKeys = commonSelectors.getAllActiveKeys(state);
         const spatialFilter = {};
-        if(mapWidth, mapHeight) {
+        if(mapWidth && mapHeight) {
             const view = Select.maps.getViewByMapKey(state, mapKey);
             const tiles = helpers.getTiles(mapWidth, mapHeight, view.center, view.boxRange);
             const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
