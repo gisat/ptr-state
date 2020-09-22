@@ -673,7 +673,7 @@ describe('state/Maps/selectors', function () {
         });
     });
 
-    describe('getMapSetLayersStateByMapKeyWithModifiers', function () {
+    describe('getMapSetLayersStateWithModifiersByMapKey', function () {
         const expectedResult = [
             {
                 key: "layer2",
@@ -687,14 +687,14 @@ describe('state/Maps/selectors', function () {
         ];
 
         it('should return map set layers for map 1', () => {
-            const output = Select.maps.getMapSetLayersStateByMapKeyWithModifiers(state, "map1");
+            const output = Select.maps.getMapSetLayersStateWithModifiersByMapKey(state, "map1");
             assert.deepStrictEqual(output, expectedResult);
         });
 
-        testHelpers.testCache(Select.maps.getMapSetLayersStateByMapKeyWithModifiers, [state, "map1"], expectedResult);
+        testHelpers.testCache(Select.maps.getMapSetLayersStateWithModifiersByMapKey, [state, "map1"], expectedResult);
     });
 
-    describe('getMapLayersStateByMapKeyWithModifiers', function () {
+    describe('getMapLayersStateWithModifiersByMapKey', function () {
         const expectedResult = [
             {
                 key: "layer1",
@@ -734,11 +734,11 @@ describe('state/Maps/selectors', function () {
         ];
 
         it('should return map layers for map 1', () => {
-            const output = Select.maps.getMapLayersStateByMapKeyWithModifiers(state, "map1");
+            const output = Select.maps.getMapLayersStateWithModifiersByMapKey(state, "map1");
             assert.deepStrictEqual(output, expectedResult);
         });
 
-        testHelpers.testCache(Select.maps.getMapLayersStateByMapKeyWithModifiers, [state, "map1"], expectedResult);
+        testHelpers.testCache(Select.maps.getMapLayersStateWithModifiersByMapKey, [state, "map1"], expectedResult);
     });
 
     describe('getLayersStateByMapKey', function () {

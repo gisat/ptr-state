@@ -353,7 +353,7 @@ const getBackgroundLayerStateByMapKey = createSelector(
  * @param mapKey {string}
  * @return {Object} Merged mapSetState with metadataModifiers and filterByActive.
  */
-const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
+const getMapSetLayersStateWithModifiersByMapKey = createCachedSelector(
     [
         getMapSetLayersStateByMapKey,
         getMapSetMetadataModifiersByMapKey,
@@ -373,7 +373,7 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
  * @param mapKey {string}
  * @return {Object} Merged mapState with metadataModifiers and filterByActive.
  */
-const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
+const getMapLayersStateWithModifiersByMapKey = createCachedSelector(
     [
         getMapLayersStateByMapKey,
         getMetadataModifiersByMapKey,
@@ -395,8 +395,8 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
  */
 const getLayersStateByMapKey = createCachedSelector(
     [
-        getMapSetLayersStateByMapKeyWithModifiers,
-        getMapLayersStateByMapKeyWithModifiers
+        getMapSetLayersStateWithModifiersByMapKey,
+        getMapLayersStateWithModifiersByMapKey
     ],
     (setLayers, mapLayers) => {
         if (mapLayers && setLayers) {
@@ -460,7 +460,7 @@ export default {
     getMapByKey,
     getMapFilterByActiveByMapKey,
     getMapLayersStateByMapKey,
-    getMapLayersStateByMapKeyWithModifiers,
+    getMapLayersStateWithModifiersByMapKey,
     getMapMetadataModifiersByMapKey,
 
     getMapSetActiveMapKey,
@@ -470,7 +470,7 @@ export default {
     getMapSetByKey,
     getMapSetFilterByActiveByMapKey,
     getMapSetLayersStateByMapKey,
-    getMapSetLayersStateByMapKeyWithModifiers,
+    getMapSetLayersStateWithModifiersByMapKey,
     getMapSetMetadataModifiersByMapKey,
     getMapSetMapKeys,
     getMapSets,
