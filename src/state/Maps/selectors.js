@@ -282,7 +282,7 @@ const getMetadataModifiersByMapKey = createCachedSelector(
     ],
     (mapModifiers, setModifiers) => {
         if (mapModifiers && setModifiers) {
-            return {...mapModifiers, ...setModifiers};
+            return {...setModifiers, ...mapModifiers};
         } else {
             return setModifiers || mapModifiers || null;
         }
