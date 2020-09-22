@@ -114,7 +114,7 @@ const getMapSetActiveMapView = createCachedSelector(
             return null;
         }
     }
-)((state, mapKey) => mapKey);
+)((state, setKey) => setKey);
 
 /**
  * @param state {Object}
