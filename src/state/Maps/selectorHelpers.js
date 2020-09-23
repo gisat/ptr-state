@@ -3,7 +3,7 @@ import createCachedSelector from "re-reselect";
 import _ from 'lodash';
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
-import {utils as tileGridUtils, grid} from "@gisatcz/ptr-tile-grid";
+import {grid} from "@gisatcz/ptr-tile-grid";
 
 /* === HELPERS ======================================================================= */
 
@@ -117,10 +117,15 @@ const getTiles = createCachedSelector(
     }
 )((mapWidth, mapHeight, center, boxRange) => `${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`);
 
+function getMapByKey(state, mapKey) {
+    return state?.maps?.[mapKey]
+}
+
 export default {
     getBackgroundLayerAsLayer,
     getTiles,
     getView,
+    getMapByKey,
     getZoomLevel,
     mergeBackgroundLayerWithLayers,
     mergeModifiersWithFilterByActive

@@ -145,6 +145,31 @@ function updateStateFromView(data) {
 }
 
 
+/**
+ * 
+ * It enables to update any layer property except layerKey. 
+ * Layer object is merged with actual layer option.
+ */
+function updateMapLayer(mapKey, layerKey, update) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		if(!mapByKey) {
+			return dispatch(actionGeneralError(`No map found for mapKey ${mapKey}.`));
+		} else {
+            //check if layer exist
+			const layers = Select.maps.getMapLayersStateByMapKey(state, mapKey);
+            const layerExists = layers ? layers.find(l => l.key === layerKey) : null;
+			if(layerExists) {
+				return dispatch(actionUpdateMapLayer(mapKey, layerKey, update));
+			} else {
+				return dispatch(actionGeneralError(`No layer (${layerKey}) found in mapKey ${mapKey}.`));
+			}
+		}
+	}
+};
+
+
 /* ==================================================
  * ACTIONS
  * ================================================== */
@@ -182,11 +207,22 @@ const actionUpdateSetView = (setKey, update) => {
     }
 }
 
+const actionUpdateMapLayer = (mapKey, layerKey, update) => {
+	return {
+		type: ActionTypes.MAPS.LAYERS.LAYER.UPDATE,
+		mapKey,
+		layerKey,
+		update,
+	}
+};
+
+
 
 // ============ export ===========
 export default {
     setMapSetActiveMapKey,
     updateMapAndSetView,
+    updateMapLayer,
     updateSetView,
     updateStateFromView,
     use

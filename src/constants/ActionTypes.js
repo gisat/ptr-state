@@ -359,8 +359,13 @@ export default utils.deepKeyMirror({
                 SET: null,
                 UPDATE: null
             }
-        },
-        UPDATE: null
+		},
+		LAYERS: {
+			LAYER: {
+				UPDATE: null,
+			}
+		},
+        UPDATE: null,
     },
 
 	_DEPRECATED_MAPS: {
