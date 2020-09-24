@@ -346,7 +346,24 @@ export default utils.deepKeyMirror({
 	MAPS_SET_ACTIVE: 'MAPS_SET_ACTIVE',
 	MAPS_SET_INDEPENDENT_OF_PERIOD: 'MAPS_SET_INDEPENDENT_OF_PERIOD',
 
-	MAPS: {
+    MAPS: {
+	    SET: {
+            SET_ACTIVE_MAP_KEY: null,
+            VIEW: {
+                SET: null,
+                UPDATE: null
+            }
+        },
+        MAP: {
+            VIEW: {
+                SET: null,
+                UPDATE: null
+            }
+        },
+        UPDATE: null
+    },
+
+	_DEPRECATED_MAPS: {
 		SET_INITIAL: null,
 		SET_ACTIVE_MAP_KEY: null,
 		SET_ACTIVE_SET_KEY: null,
@@ -380,7 +397,8 @@ export default utils.deepKeyMirror({
 			LAYERS: {
 				SET: {
 					HOVERED_FEATURE_KEYS: null,
-					SELECTION: null
+					SELECTION: null,
+                    STYLE: null
 				},
 				CLEAR: {
 					SELECTION: null
@@ -593,7 +611,10 @@ export default utils.deepKeyMirror({
 			FEATURE_KEYS_FILTER: {
 				KEYS: null
 			}
-		}
+		},
+        CLEAR: {
+		    FEATURE_KEYS_FILTER: null
+        }
 	},
 
 	_DEPRECATED_SELECTIONS: {

@@ -1,6 +1,6 @@
 import SpatialRelationsAction from '../SpatialRelations/actions';
 import SpatialDataSourcesAction from '../SpatialDataSources/actions';
-import MapsAction from '../Maps/actions';
+import MapsAction from '../_deprecatedMaps/actions';
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../Select';
 
@@ -19,6 +19,7 @@ const TTL = 5;
 // ============ creators ===========
 
 const add = common.add(ActionTypes.SCENARIOS);
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.SCENARIOS);
 
 // Edited data
 function addEditedScenario(key, options){
@@ -1233,6 +1234,7 @@ export default {
 	removeScenarioFromActiveCaseEdited: removeScenarioFromActiveCaseEdited,
 
 	updateEditedActiveCase: updateEditedActiveCase,
-	updateEditedScenario: updateEditedScenario
+	updateEditedScenario: updateEditedScenario,
+	updateStateFromView,
 }
 

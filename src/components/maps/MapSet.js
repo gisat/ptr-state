@@ -14,8 +14,8 @@ const mapStateToProps = (state, ownProps) => {
 		}
 	} else {
 		return {
-			backgroundLayer: Select.maps.getBackgroundLayer(state, ownProps.backgroundLayer),
-			layers: Select.maps.getLayers(state, ownProps.layers)
+			backgroundLayer: null,
+			layers: null
 		}
 	}
 };
@@ -27,28 +27,28 @@ const mapDispatchToPropsFactory = () => {
 		if (ownProps.stateMapSetKey) {
 			return {
 				updateView: (update) => {
-					dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
+                    dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
 				},
 				resetHeading: (mapKey) => {
-					dispatch(Action.maps.resetViewHeading(mapKey));
+
 				},
 				onMapRemove: (mapKey) => {
-					dispatch(Action.maps.removeMap(mapKey));
+
 				}
 			}
 		} else {
 			let setKey = ownProps.setKey || componentId;
 			return {
 				onMount: () => {
-					dispatch(Action.maps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
+
 				},
 
 				onUnmount: () => {
-					dispatch(Action.maps.useClear(setKey));
+
 				},
 
 				refreshUse: () => {
-					dispatch(Action.maps.use(setKey, ownProps.backgroundLayer, ownProps.layers));
+
 				},
 			}
 		}

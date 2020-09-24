@@ -7,15 +7,15 @@ const mapStateToProps = (state, ownProps) => {
     if (ownProps.stateMapKey) {
         return {
             backgroundLayer: Select.maps.getMapBackgroundLayer(state, ownProps.stateMapKey),
-            layers: Select.maps.getMapLayers(state, ownProps.stateMapKey),
-            view: Select.maps.getView(state, ownProps.stateMapKey),
-            viewLimits: Select.maps.getViewLimits(state, ownProps.stateMapKey),
+            layers: null,
+            view: Select.maps.getViewByMapKey(state, ownProps.stateMapKey),
+            viewLimits: Select.maps.getViewLimitsByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
         return {
-            backgroundLayer: Select.maps.getBackgroundLayer(state, ownProps.backgroundLayer),
-            layers: Select.maps.getLayers(state, ownProps.layers)
+            backgroundLayer: null,
+            layers: null
         }
     }
 };
@@ -26,31 +26,39 @@ const mapDispatchToPropsFactory = () => {
     return (dispatch, ownProps) => {
         if (ownProps.stateMapKey) {
             return {
-                onMount: () => {
-                    dispatch(Action.maps.use(ownProps.stateMapKey));
+                onMount: (mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, null, null, mapWidth, mapHeight));
+                },
+
+                onResize: (mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, null, null, mapWidth, mapHeight));
                 },
 
                 onUnmount: () => {
-                    dispatch(Action.maps.useClear(ownProps.stateMapKey));
+
                 },
 
                 refreshUse: () => {
-                    dispatch(Action.maps.use(ownProps.stateMapKey));
+
                 },
 
                 onViewChange: (update) => {
                     dispatch(Action.maps.updateMapAndSetView(ownProps.stateMapKey, update));
                 },
 
+                onPropViewChange: (update, mapWidth, mapHeight) => {
+                    dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
+                },
+
                 resetHeading: () => {
-                    dispatch(Action.maps.resetViewHeading(ownProps.stateMapKey));
+
                 },
 
                 onClick: (view) => {
                     dispatch(Action.maps.setMapSetActiveMapKey(ownProps.stateMapKey));
                 },
                 onLayerClick: (mapKey, layerKey, selectedFeatureKeys) => {
-                    dispatch(Action.maps.setLayerSelectedFeatureKeys(ownProps.stateMapKey, layerKey, selectedFeatureKeys))
+
                 }
             }
         } else {
@@ -62,11 +70,11 @@ const mapDispatchToPropsFactory = () => {
                 },
 
                 onUnmount: () => {
-                    dispatch(Action.maps.useClear(mapKey));
+
                 },
 
                 refreshUse: () => {
-                    dispatch(Action.maps.use(mapKey, ownProps.backgroundLayer, ownProps.layers));
+
                 },
 
                 onViewChange: ownProps.onViewChange || ((update) => {}),

@@ -1,5 +1,9 @@
 import common from '../../_common/selectors';
 
-export default {
+const getSubstate = (state) => state.data.attributeRelations;
 
+const getIndex = common.getIndex(getSubstate);
+
+export default {
+    getIndex
 };

@@ -57,6 +57,7 @@ const lodashExternal = [
   'lodash/isEmpty',
   'lodash/head',
   'lodash/tail',
+  'lodash/flatMap'
 ]
 
 export default {
@@ -74,6 +75,7 @@ export default {
     'react-router',
     '@gisatcz/ptr-utils',
     '@gisatcz/ptr-core',
+    '@gisatcz/ptr-tile-grid',
     'path',
     'moment',
     'reselect',

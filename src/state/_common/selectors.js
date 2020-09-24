@@ -396,6 +396,10 @@ const getIndexes = (getSubstate) => {
 	return (state) => getSubstate(state).indexes;
 };
 
+/**
+ * Get whole index by given filter and order
+ * @param getSubstate
+ */
 const getIndex = (getSubstate) => {
 	return createSelector([
 		getIndexes(getSubstate),
@@ -548,19 +552,36 @@ const getAllActiveKeys = createSelector(
 	[
 		state => state.scopes && state.scopes.activeKey,
 		state => state.cases && state.cases.activeKey,
+		state => state.cases && state.cases.activeKeys,
 		state => state.scenarios && state.scenarios.activeKey,
+		state => state.scenarios && state.scenarios.activeKeys,
 		state => state.places && state.places.activeKey,
 		state => state.places && state.places.activeKeys,
 		state => state.periods && state.periods.activeKey,
 		state => state.periods && state.periods.activeKeys,
 		state => state.attributes && state.attributes.activeKey,
+		state => state.attributes && state.attributes.activeKeys,
 		state => state.layerTemplates && state.layerTemplates.activeKey,
 		state => state.areaTreeLevelKeys && state.areaTreeLevelKeys.activeKey,
 		state => state.specific && state.specific.apps,
 		state => state.app && state.app.key
 	],
-	(activeScopeKey,activeCaseKey,activeScenarioKey,activePlaceKey,activePlaceKeys,activePeriodKey,activePeriodKeys,activeAttributeKey, activeLayerTemplateKey, activeAreaTreeLevelKey, apps, appKey) => {
-		let activeKeys = {activeScopeKey,activeCaseKey,activeScenarioKey,activePlaceKey,activePlaceKeys,activePeriodKey,activePeriodKeys,activeAttributeKey, activeLayerTemplateKey, activeAreaTreeLevelKey};
+	(activeScopeKey,activeCaseKey,activeCaseKeys,activeScenarioKey,activeScenarioKeys,activePlaceKey,activePlaceKeys,activePeriodKey,activePeriodKeys,activeAttributeKey,activeAttributeKeys, activeLayerTemplateKey, activeAreaTreeLevelKey, apps, appKey) => {
+		let activeKeys = {
+		    activeScopeKey: activeScopeKey || null,
+            activeCaseKey: activeCaseKey || null,
+            activeCaseKeys: activeCaseKeys || null,
+            activeScenarioKey: activeScenarioKey || null,
+            activeScenarioKeys: activeScenarioKeys || null,
+            activePlaceKey: activePlaceKey || null,
+            activePlaceKeys: activePlaceKeys || null,
+            activePeriodKey: activePeriodKey || null,
+            activePeriodKeys: activePeriodKeys || null,
+            activeAttributeKey: activeAttributeKey || null,
+            activeAttributeKeys: activeAttributeKeys || null,
+            activeLayerTemplateKey: activeLayerTemplateKey || null,
+            activeAreaTreeLevelKey: activeAreaTreeLevelKey || null
+		};
 
 		// for BO usage
 		if (apps){
@@ -572,6 +593,63 @@ const getAllActiveKeys = createSelector(
 		return activeKeys;
 	}
 );
+
+const getActiveKeysByFilterByActive = createCachedSelector(
+    [
+        getAllActiveKeys,
+        (state, filterByActive) => filterByActive
+    ],
+    (activeKeys, filterByActive) => {
+        if (filterByActive && !_.isEmpty(filterByActive)) {
+            let keys = {};
+
+            if (filterByActive.scope && activeKeys.activeScopeKey) {
+                keys.scopeKey = activeKeys.activeScopeKey;
+            }
+            if (filterByActive.place) {
+                if (activeKeys.activePlaceKey) {
+                    keys.placeKey = activeKeys.activePlaceKey;
+                } else if (activeKeys.activePlaceKeys) {
+                    keys.placeKeys = activeKeys.activePlaceKeys;
+                }
+            }
+            if (filterByActive.scenario){
+                if (activeKeys.activeScenarioKey) {
+                    keys.scenarioKey = activeKeys.activeScenarioKey;
+                } else if (activeKeys.activeScenarioKeys) {
+                    keys.scenarioKeys = activeKeys.activeScenarioKeys;
+                }
+            }
+            if (filterByActive.case) {
+                if (activeKeys.activeCaseKey) {
+                    keys.caseKey = activeKeys.activeCaseKey;
+                } else if (activeKeys.activeCaseKeys) {
+                    keys.caseKeys = activeKeys.activeCaseKeys;
+                }
+            }
+            if (filterByActive.period) {
+                if (activeKeys.activePeriodKey) {
+                    keys.periodKey = activeKeys.activePeriodKey;
+                } else if (activeKeys.activePeriodKeys) {
+                    keys.periodKeys = activeKeys.activePeriodKeys;
+                }
+            }
+            if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
+                keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+            }
+            if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
+                keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+            }
+            if (filterByActive.application && activeKeys.activeApplicationKey) {
+                keys.applicationKey = activeKeys.activeApplicationKey
+            }
+
+            return !_.isEmpty(keys) ? keys : null;
+        } else {
+            return null;
+        }
+    }
+)((state, filterByActive) => JSON.stringify(filterByActive));
 
 const getUsedIndexPages = (getSubstate) => {
 	return createSelector([
@@ -800,6 +878,7 @@ export default {
 	getActiveModels,
 	getActiveKey,
 	getActiveKeys,
+    getActiveKeysByFilterByActive,
 	getAll,
 	getAllActiveKeys,
 	getAllAsObject,

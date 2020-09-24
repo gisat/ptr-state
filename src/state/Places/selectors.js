@@ -38,7 +38,7 @@ const getActiveView = createSelector(
 	],
 	(place) => {
 		if (place && place.data && place.data.bbox) {
-			return mapUtils.getViewFromBoundingBox(place.data.bbox, true);
+			return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
 		} else {
 			return null;
 		}

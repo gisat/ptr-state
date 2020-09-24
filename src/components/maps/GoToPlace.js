@@ -8,7 +8,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		goToPlace: (placeString) => {
-			dispatch(Action.maps.goToPlace(placeString))
+			dispatch(Action._deprecatedMaps.goToPlace(placeString))
 		}
 	}
 };

@@ -1,3 +1,4 @@
+import _deprecatedMaps from './_deprecatedMaps/actions';
 import _deprecatedSelections from './_deprecatedSelections/actions';
 
 import App from './App/actions';
@@ -51,7 +52,8 @@ export default {
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,
-	maps: Maps,
+    maps: Maps,
+	_deprecatedMaps: _deprecatedMaps,
 	periods: Periods,
 	places: Places,
 	scenarios: Scenarios,

@@ -1,4 +1,5 @@
 import _deprecatedSelections from './_deprecatedSelections/selectors';
+import _deprecatedMaps from './_deprecatedMaps/selectors';
 
 import App from './App/selectors';
 import Areas from './Areas/selectors';
@@ -35,6 +36,7 @@ import Windows from './Windows/selectors';
 
 export default {
 	_deprecatedSelections: _deprecatedSelections,
+    _deprecatedMaps: _deprecatedMaps,
 	app: App,
 	areas: Areas,
 	areaRelations: AreaRelations,
@@ -51,7 +53,7 @@ export default {
 	layerPeriods: LayerPeriods,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,
-	maps: Maps,
+    maps: Maps,
 	periods: Periods,
 	places: Places,
 	scenarios: Scenarios,

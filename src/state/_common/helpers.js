@@ -132,10 +132,68 @@ function mergeFilters(activeKeys, filterByActive, filter) {
 	}
 }
 
+/**
+ * Merge metadata defined by key with metadata keys defined by filterByActive
+ * @param definedKeys {Object}
+ * @param activeKeys {Object}
+ * @return {Object|null}
+ */
+function mergeMetadataKeys(definedKeys, activeKeys) {
+    if (definedKeys && activeKeys) {
+        return {...activeKeys, ...definedKeys}
+    } else {
+        return definedKeys || activeKeys || null;
+    }
+}
+
+/**
+ * It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+ * @param modifiers {Object}
+ * @return {Object|null}
+ */
+function convertModifiersToRequestFriendlyFormat(modifiers) {
+    if (modifiers) {
+        let modifiersForRequest = {};
+        if (modifiers.scopeKey) {
+            modifiersForRequest.scopeKey = modifiers.scopeKey;
+        }
+        
+        if (modifiers.placeKeys) {
+            modifiersForRequest.placeKey = {in: modifiers.placeKeys};
+        } else if (modifiers.placeKey) {
+            modifiersForRequest.placeKey = modifiers.placeKey;
+        }
+
+        if (modifiers.caseKeys) {
+            modifiersForRequest.caseKey = {in: modifiers.caseKeys};
+        } else if (modifiers.caseKey) {
+            modifiersForRequest.caseKey = modifiers.caseKey;
+        }
+
+        if (modifiers.scenarioKeys) {
+            modifiersForRequest.scenarioKey = {in: modifiers.scenarioKeys};
+        } else if (modifiers.scenarioKey) {
+            modifiersForRequest.scenarioKey = modifiers.scenarioKey;
+        }
+
+        if (modifiers.periodKeys) {
+            modifiersForRequest.periodKey = {in: modifiers.periodKeys};
+        } else if (modifiers.periodKey) {
+            modifiersForRequest.periodKey = modifiers.periodKey;
+        }
+
+        return !_.isEmpty(modifiersForRequest) ? modifiersForRequest : null;
+    } else {
+        return null;
+    }
+}
+
 export default {
+    convertModifiersToRequestFriendlyFormat,
 	getIndex,
 	getUniqueIndexes,
 	mergeFilters,
+    mergeMetadataKeys,
 	isCorrespondingIndex,
 	itemFitFilter,
 }

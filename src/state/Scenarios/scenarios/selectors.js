@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 import _ from 'lodash';
 
 import common from "../../_common/selectors";
-import MapsSelectors from "../../Maps/selectors";
+import MapsSelectors from "../../_deprecatedMaps/selectors";
 
 const getSubstate = state => state.scenarios.scenarios;
 
