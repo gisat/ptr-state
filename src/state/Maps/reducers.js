@@ -1,4 +1,4 @@
-import {stateManagement} from '@gisatcz/ptr-utils';
+import { stateManagement } from '@gisatcz/ptr-utils';
 import ActionTypes from '../../constants/ActionTypes';
 import selectorHelpers from './selectorHelpers';
 import _ from 'lodash';
@@ -11,8 +11,8 @@ const INITIAL_STATE = {
 };
 
 const INITIAL_LAYER_STATE = {
-	key: null,
-	layerTemplate: null,
+    key: null,
+    layerTemplate: null,
 };
 
 const setSetActiveMapKey = (state, setKey, mapKey) => {
@@ -29,7 +29,7 @@ const setSetActiveMapKey = (state, setKey, mapKey) => {
 };
 
 const update = (state, data) => {
-    return {...state, ...data};
+    return { ...state, ...data };
 };
 
 const updateMapView = (state, mapKey, updates) => {
@@ -42,7 +42,7 @@ const updateMapView = (state, mapKey, updates) => {
                 data: {
                     ...state.maps[mapKey].data,
                     view: state.maps[mapKey].data.view ?
-                        {...state.maps[mapKey].data.view, ...updates} : updates
+                        { ...state.maps[mapKey].data.view, ...updates } : updates
                 }
             }
         }
@@ -60,7 +60,7 @@ const updateSetView = (state, setKey, updates) => {
                     data: {
                         ...state.sets[setKey].data,
                         view: state.sets[setKey].data.view ?
-                            {...state.sets[setKey].data.view, ...updates} : updates
+                            { ...state.sets[setKey].data.view, ...updates } : updates
                     }
                 }
             }
@@ -71,23 +71,23 @@ const updateSetView = (state, setKey, updates) => {
 };
 
 const updateMapLayer = (state, mapKey, layerUpdate = INITIAL_LAYER_STATE, layerKey) => {
-	const mapState = selectorHelpers.getMapByKey(state, mapKey);
+    const mapState = selectorHelpers.getMapByKey(state, mapKey);
     const layerIndex = mapState?.data?.layers?.findIndex(l => l.key === layerKey);
-	if(_.isNumber(layerIndex) && layerIndex > -1) {
+    if (_.isNumber(layerIndex) && layerIndex > -1) {
         layerUpdate['key'] = layerKey;
-        
-        const mergedLayerState = _.mergeWith({...mapState.data.layers[layerIndex]}, layerUpdate, (objValue, srcValue) => {
-            if( _.isArray(srcValue)) {
-              return srcValue;
+
+        const mergedLayerState = _.mergeWith({ ...mapState.data.layers[layerIndex] }, layerUpdate, (objValue, srcValue) => {
+            if (_.isArray(srcValue)) {
+                return srcValue;
             }
-          });
+        });
 
         const updatedLayers = stateManagement.replaceItemOnIndex(mapState.data.layers, layerIndex, mergedLayerState);
-		return {...state,  maps: {...state.maps, [mapKey]: {...mapState, data: {...mapState.data, layers: updatedLayers}}}};
-	} else {
-		//error - layer not found
-		return state;
-	}
+        return { ...state, maps: { ...state.maps, [mapKey]: { ...mapState, data: { ...mapState.data, layers: updatedLayers } } } };
+    } else {
+        //error - layer not found
+        return state;
+    }
 };
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
