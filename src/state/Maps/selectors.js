@@ -361,7 +361,7 @@ const getMapSetLayersStateWithModifiersByMapKey = createCachedSelector(
     ],
     (setLayers, metadataModifiers, mapSetFilterByActive) => {
         if (setLayers?.length) {
-            return selectorHelpers.mergeModifiersWithFilterByActive(setLayers, metadataModifiers, mapSetFilterByActive);
+            return selectorHelpers.mergeModifiersAndFilterByActiveToLayerStructure(setLayers, metadataModifiers, mapSetFilterByActive);
         } else {
             return null;
         }
@@ -381,7 +381,7 @@ const getMapLayersStateWithModifiersByMapKey = createCachedSelector(
     ],
     (mapLayers, metadataModifiers, mapFilterByActive) => {
         if (mapLayers?.length) {
-            return selectorHelpers.mergeModifiersWithFilterByActive(mapLayers, metadataModifiers, mapFilterByActive);
+            return selectorHelpers.mergeModifiersAndFilterByActiveToLayerStructure(mapLayers, metadataModifiers, mapFilterByActive);
         } else {
             return null;
         }
