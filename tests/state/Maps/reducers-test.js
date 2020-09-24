@@ -17,7 +17,7 @@ describe('state/Maps/reducers', function () {
 				}
 			},
 			{
-				type: 'MAPS.LAYERS.LAYER.UPDATE',
+				type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 				mapKey: 'map1',
 				layerKey: 'layer1',
 				update: { layerTemplateKey: 'layerTemplateKey1' }
@@ -58,7 +58,7 @@ describe('state/Maps/reducers', function () {
 				}
 			},
 			{
-				type: 'MAPS.LAYERS.LAYER.UPDATE',
+				type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 				mapKey: 'map1',
 				layerKey: 'layer1',
 				update: { data: { districts: [1, 2] } }
@@ -110,7 +110,7 @@ describe('state/Maps/reducers', function () {
 				}
 			},
 			{
-				type: 'MAPS.LAYERS.LAYER.UPDATE',
+				type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 				mapKey: 'map1',
 				layerKey: 'layer1',
 				update: { data: { districts: { brno: { citizens: 400000 } } } }
@@ -176,7 +176,7 @@ describe('state/Maps/reducers', function () {
 				}
 			},
 			{
-				type: 'MAPS.LAYERS.LAYER.UPDATE',
+				type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 				mapKey: 'map1',
 				layerKey: 'layer1',
 				update: { data: { districts: { brno: { cars: 100000 } } } }
@@ -245,7 +245,7 @@ describe('state/Maps/reducers', function () {
 		const result = reducer(
 			initState,
 			{
-				type: 'MAPS.LAYERS.LAYER.UPDATE',
+				type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 				mapKey: 'map1',
 				layerKey: 'layer3',
 				update: { data: { districts: { brno: { citizens: 400000 } } } }

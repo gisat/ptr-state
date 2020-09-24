@@ -39,7 +39,7 @@ describe('state/Maps/actions', function () {
 			actions.updateMapLayer('map1', 'layer1', {layerTemplateKey: 'layerTemplateKey1'})(dispatch, getState)
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-					type: 'MAPS.LAYERS.LAYER.UPDATE',
+					type: 'MAPS.MAP.LAYERS.LAYER.UPDATE',
 					mapKey:'map1',
 					layerKey:'layer1' ,
 					update: {layerTemplateKey: 'layerTemplateKey1'},

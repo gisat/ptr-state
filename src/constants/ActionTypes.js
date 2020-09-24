@@ -358,12 +358,12 @@ export default utils.deepKeyMirror({
             VIEW: {
                 SET: null,
                 UPDATE: null
-            }
-		},
-		LAYERS: {
-			LAYER: {
-				UPDATE: null,
-			}
+            },
+			LAYERS: {
+				LAYER: {
+					UPDATE: null,
+				}
+			},
 		},
         UPDATE: null,
     },

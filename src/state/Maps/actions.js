@@ -209,7 +209,7 @@ const actionUpdateSetView = (setKey, update) => {
 
 const actionUpdateMapLayer = (mapKey, layerKey, update) => {
 	return {
-		type: ActionTypes.MAPS.LAYERS.LAYER.UPDATE,
+		type: ActionTypes.MAPS.MAP.LAYERS.LAYER.UPDATE,
 		mapKey,
 		layerKey,
 		update,

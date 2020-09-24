@@ -102,7 +102,7 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
             return updateSetView(state, action.setKey, action.update);
         case ActionTypes.MAPS.UPDATE:
             return update(state, action.data);
-        case ActionTypes.MAPS.LAYERS.LAYER.UPDATE:
+        case ActionTypes.MAPS.MAP.LAYERS.LAYER.UPDATE:
             return updateMapLayer(state, action.mapKey, action.update, action.layerKey);
         default:
             return state;
