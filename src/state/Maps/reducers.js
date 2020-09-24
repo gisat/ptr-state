@@ -13,8 +13,6 @@ const INITIAL_STATE = {
 const INITIAL_LAYER_STATE = {
 	key: null,
 	layerTemplate: null,
-	style: null,
-	opacity: 100
 };
 
 const setSetActiveMapKey = (state, setKey, mapKey) => {
