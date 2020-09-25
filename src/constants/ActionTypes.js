@@ -229,6 +229,7 @@ export default utils.deepKeyMirror({
         ATTRIBUTE_RELATIONS: {},
         SPATIAL_DATA: {
 			ADD: null,
+			UPDATE: null,
 			INDEX: {
 				ADD: null,
 			},
@@ -240,7 +241,7 @@ export default utils.deepKeyMirror({
 			},
 		},
         SPATIAL_RELATIONS: {
-			ADD_OR_UPDATE: null,
+			ADD: null,
 			INDEX: {
 				ADD: null,
 			},

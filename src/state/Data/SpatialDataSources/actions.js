@@ -8,7 +8,7 @@ function receiveIndexed(result, filter, order, start, total, changes) {
     return dispatch => {
         // add data to store
         if (result.length) {
-            dispatch(common.actionAdd(actionTypes, result, filter));
+            dispatch(common.add(actionTypes)(result, filter));
         }
 
         // add to index
