@@ -20,7 +20,6 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
         // TODO clear use for given mapKey, if exists
         const state = getState();
         const componentId = `map_${mapKey}`;
-        const activeKeys = commonSelectors.getAllActiveKeys(state);
         const spatialFilter = {};
         if(mapWidth && mapHeight) {
             const view = Select.maps.getViewByMapKey(state, mapKey);
@@ -28,7 +27,13 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
             const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
             spatialFilter.tiles = tiles;
             spatialFilter.level = level;
+        } else {
+            //spatial filter is required
+            return;
         }
+
+        const activeKeys = commonSelectors.getAllActiveKeys(state);
+
         // uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
         if (backgroundLayer || layers) {
             layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);

@@ -923,6 +923,7 @@ export default {
 	addBatchIndex: creator(actionAddBatchIndex),
 	action,
 	actionAdd,
+	actionAddIndex,
 	actionGeneralError,
 	apiUpdate,
 	creator,
