@@ -1,10 +1,9 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import common from '../../_common/actions';
 import _ from "lodash";
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
 // ============ creators ===========
-const receiveIndexed = (result, filter) => {
+const receiveIndexed = (result, filter, level, order, changedOn) => {
     return dispatch => {
         // add data to store
         if (result) {            
@@ -12,7 +11,16 @@ const receiveIndexed = (result, filter) => {
         }
 
         // add to index
-        // dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, result, changes));
+        dispatch(addIndex(filter, level, order, result, changedOn));
+    }
+}
+
+function addIndex(filter, level, order, result, changedOn) {
+    return (dispatch, getState) => {
+        const state = getState();
+        for(const key of Object.keys(result)) {
+            dispatch(addIndexesAction(key, filter, level, order, result[key].spatialIndex, changedOn));
+        }
     }
 }
 
@@ -43,6 +51,18 @@ function updateDataAction(key, data) {
         type: actionTypes.UPDATE,
         key,
         data,
+    }
+}
+
+function addIndexesAction(spatialDataSourceKey, filter, level, order, index, changedOn) {
+    return {
+        type: actionTypes.INDEX.ADD,
+        filter,
+        order,
+        spatialDataSourceKey,
+        level,
+        changedOn,
+        index,
     }
 }
 

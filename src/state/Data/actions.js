@@ -179,7 +179,8 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             //TODO add level to indexes on BE?
                             //TODO indexes
                             const changes = null;
-                            dispatch(spatialData.receiveIndexed(result.data.spatialData));
+                            const level = spatialFilter.level
+                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedRelationsSpatialFilter, level, order, changes));
                         }
                     } else {
                         const error = new Error('no data');
