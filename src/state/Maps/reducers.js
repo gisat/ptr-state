@@ -8,6 +8,25 @@ const INITIAL_STATE = {
     sets: {}
 };
 
+const setMapViewport = (state, mapKey, width, height) => {
+	return {
+		...state,
+		maps: {
+			...state.maps,
+			[mapKey]: {
+				...state.maps[mapKey],
+				data: {
+					...state.maps[mapKey].data,
+					viewport: {
+						width,
+						height
+					}
+				}
+			}
+		}
+	};
+};
+
 const setSetActiveMapKey = (state, setKey, mapKey) => {
     return {
         ...state,
@@ -67,6 +86,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
         case ActionTypes.MAPS.MAP.VIEW.UPDATE:
             return updateMapView(state, action.mapKey, action.update);
+		case ActionTypes.MAPS.MAP.VIEWPORT.SET:
+			return setMapViewport(state, action.mapKey, action.width, action.height);
         case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
             return setSetActiveMapKey(state, action.setKey, action.mapKey);
         case ActionTypes.MAPS.SET.VIEW.UPDATE:

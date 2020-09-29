@@ -371,6 +371,9 @@ export default utils.deepKeyMirror({
             }
         },
         MAP: {
+	    	VIEWPORT: {
+	    		SET: null,
+			},
             VIEW: {
                 SET: null,
                 UPDATE: null

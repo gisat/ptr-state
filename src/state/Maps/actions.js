@@ -162,6 +162,15 @@ const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
     }
 };
 
+const actionSetMapViewport = (mapKey, width, height) => {
+	return {
+		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
+		mapKey,
+		width,
+		height
+	}
+};
+
 const actionUpdate = (data) => {
     return {
         type: ActionTypes.MAPS.UPDATE,
@@ -191,6 +200,7 @@ const actionUpdateSetView = (setKey, update) => {
 // ============ export ===========
 export default {
     setMapSetActiveMapKey,
+	setMapViewport: actionSetMapViewport,
     updateMapAndSetView,
     updateSetView,
     updateStateFromView,
