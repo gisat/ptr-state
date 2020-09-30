@@ -15,7 +15,8 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		logout: () => {
 			dispatch(Action.users.apiLogoutUser());
-		}
+		},
+		loginViaSso: (provider) => () => dispatch(Action.users.loginViaSso(provider))
 	}
 };
 

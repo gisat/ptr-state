@@ -95,6 +95,33 @@ function apiLoginUser(email, password) {
 	};
 }
 
+/**
+ * @param {string} provider (e.g. `facebook` or `google`)
+ */
+function loginViaSso(provider) {
+	return function(dispatch, getState) {
+		const backendUrl = Select.app.getBackendUrl(getState(), `/api/login/sso/${provider}`);
+		const loginWindow = window.open(backendUrl);
+		window.addEventListener('message', function (e) {
+			const message = e.data;
+			if (
+				e.source !== loginWindow ||
+				message == null ||
+				typeof message !== 'object' ||
+				message.type !== 'sso_response'
+			) {
+				return;
+			}
+
+			loginWindow.close();
+
+			const result = message.data;
+			const user = _.omit(result, 'authToken');
+			dispatch(onLogin({user: user, authToken: result.authToken}));
+		});
+	}
+}
+
 // function apiLoad(ttl) {
 // 	if (_.isUndefined(ttl)) ttl = TTL;
 // 	return (dispatch, getState) => {
@@ -304,6 +331,7 @@ export default {
 	// apiLoad: apiLoad,
 	apiLoadCurrentUser: apiLoadCurrentUser,
 	apiLoginUser: apiLoginUser,
+	loginViaSso,
 	apiLogoutUser: apiLogoutUser,
 	refreshUses,
 	useKeys,
