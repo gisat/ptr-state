@@ -59,20 +59,40 @@ describe('selectorsCacheTest', function () {
 
         testHelpers.testCache(selectorsCacheTest.countries.getEuropeCountryByKey, [state, "germany"], expectedResult, [updatedState, "france"]);
 
+
         it('should return cached value', () => {
             const output = selectorsCacheTest.countries.getEuropeCountryByKey(state, "germany");
-            const updatedState = {
+            const updatedState2 = {
                 ...state,
-                cities: {
-                    ...state.cities,
-                    prague: {}
+                countries: {
+                    ...state.countries,
+                    europe: {
+                    	...state.countries.europe,
+						czechia: {}
+					}
                 }
             };
 
-            const secondOutput = selectorsCacheTest.countries.getEuropeCountryByKey(updatedState, "germany");
+			const midtermOutput = selectorsCacheTest.countries.getEuropeCountryByKey(state, "france");
+            const secondOutput = selectorsCacheTest.countries.getEuropeCountryByKey(updatedState2, "germany");
 
-            assert.equal(output, secondOutput);
+            assert.notEqual(output, secondOutput);
         });
+
+		it('should return cached value', () => {
+			const output = selectorsCacheTest.countries.getEuropeCountryByKey(state, "germany");
+			const updatedState = {
+				...state,
+				cities: {
+					...state.cities,
+					prague: {}
+				}
+			};
+
+			const secondOutput = selectorsCacheTest.countries.getEuropeCountryByKey(updatedState, "germany");
+
+			assert.equal(output, secondOutput);
+		});
     });
 
     describe('getThreeCountries', function () {
