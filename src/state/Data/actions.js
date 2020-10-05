@@ -62,7 +62,7 @@ function ensure(filter) {
                 // start: 0,
                 // length: 1000,
                 offset: 0,
-                limit: 1000,
+                limit: PAGE_SIZE,
             };
             const attributeFilter = null;
             const loadGeometry = true;
@@ -71,8 +71,32 @@ function ensure(filter) {
             const spatialIndex = null;
             if(spatialFilter && !_.isEmpty(spatialFilter)) {
                 return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)).then((response) => {
-                    //FIXME
-                    //ensure all relations
+                    const promises = [];
+
+                    // load remaining relations pages
+                    // What is higer to load? attributeRelations or spatialRelations
+                    const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
+
+                    for (let i = 0; i < remainingRelationsPageCount; i++) {
+                        const relations = {
+                            offset: (i + 1) * PAGE_SIZE,
+                            limit: PAGE_SIZE
+                        };
+                        promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                    }
+
+                    //load rest tiles
+
+                    const remainingTilesPageCount = spatialFilter.tiles.length;
+                    //first tile is loaded while first request
+                    for (let i = (remainingRelationsPageCount + 1 + remainingRelationsPageCount); i < remainingTilesPageCount; i++) {
+                        const spatialIndex = {
+                            tiles: [spatialFilter.tiles[i]],
+                        };
+                        promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                    }
+
+                    return Promise.all(promises);
                 }).catch((err)=>{
                     if (err.message === 'Index outdated'){
                         dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
@@ -84,9 +108,6 @@ function ensure(filter) {
                 return dispatch(commonActions.actionGeneralError(new Error('Missing spatial filter XX')));
             }
         }
-        // debugger
-
-
             // complete -> data sources - continue
             // incomplete -> loading of relations, ds, data - break
 
@@ -155,7 +176,6 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
 				if (result.errors) {
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
-                    // debugger
                     if(result.data) {
                         const mergedRelationsSpatialFilter = {
                             ...modifiers,
@@ -182,6 +202,7 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             const level = spatialFilter.level
                             dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedRelationsSpatialFilter, level, order, changes));
                         }
+                        return result;
                     } else {
                         const error = new Error('no data');
                         dispatch(commonActions.actionGeneralError(error));        
