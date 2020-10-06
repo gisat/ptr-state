@@ -117,8 +117,39 @@ const getTiles = createCachedSelector(
     }
 )((mapWidth, mapHeight, center, boxRange) => `${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`);
 
+const getLayerByDataSourceType = (index, layerKey, layerState, dataSource) => {
+	let {attribution, nameInternal, type, tableName, layerName, features, selected, ...options} = dataSource;
+
+	if (type === 'wmts') {
+		options.url = options.urls[0];
+	} else if (type === 'wms') {
+		const {url, params, configuration, ...rest} = options;
+		const singleTile = configuration && configuration.hasOwnProperty('singleTile') ? configuration.singleTile : false;
+
+		options = {
+			params: {
+				...params,
+				layers: rest.layers,
+				styles: rest.styles,
+			},
+			singleTile,
+			url
+		}
+	}
+
+	return {
+		key: layerKey + '_' + index,
+		name: layerState.name,
+		layerKey: layerKey,
+		opacity: (layerState && layerState.opacity) || 1,
+		type,
+		options
+	};
+};
+
 export default {
     getBackgroundLayerAsLayer,
+	getLayerByDataSourceType,
     getTiles,
     getView,
     getZoomLevel,

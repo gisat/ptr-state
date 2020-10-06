@@ -8,6 +8,8 @@ import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
 import selectorHelpers from "./selectorHelpers";
 
+import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
+
 /* === SELECTORS ======================================================================= */
 
 const getSubstate = state => state.maps;
@@ -451,14 +453,21 @@ const getAllLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
-const getBackgroundLayer = createRecomputeSelector((layerState) => {
-	console.log("getBackgroundLayer");
+const getMapBackgroundLayer = createRecomputeSelector((mapKey) => {
+	const layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
+	console.log("getMapBackgroundLayer");
 	if (layerState) {
 		if (layerState.type) {
 			return layerState;
 		} else {
-			// TODO
-			return null;
+			// TODO filterByActive & metadata modifiers?
+			const layerKey = 'pantherBackgroundLayer';
+			const spatialDataSources = SpatialDataSourcesSelectors.getFiltered(layerState);
+			if (spatialDataSources) {
+				return spatialDataSources.map((dataSource, index) => selectorHelpers.getLayerByDataSourceType(index, layerKey, layerState, dataSource));
+			} else {
+				return null;
+			}
 		}
 	} else {
 		return null;
@@ -466,12 +475,12 @@ const getBackgroundLayer = createRecomputeSelector((layerState) => {
 });
 
 
-const getMapBackgroundLayer = createCachedSelector(
-    [
-		(state, mapKey) => getBackgroundLayerStateByMapKeyObserver(mapKey)
-    ],
-	getBackgroundLayer
-)((state, mapKey) => mapKey);
+// const getMapBackgroundLayer = createCachedSelector(
+//     [
+// 		(state, mapKey) => getBackgroundLayerStateByMapKeyObserver(mapKey)
+//     ],
+// 	getBackgroundLayer
+// )((state, mapKey) => mapKey);
 
 export default {
     getAllLayersStateByMapKey,
