@@ -1,9 +1,12 @@
 import {connect} from 'react-redux';
+import {setState} from '@jvitela/recompute';
 import Action from '../../state/Action';
 import Select from '../../state/Select';
 import {utils} from '@gisatcz/ptr-utils';
 
 const mapStateToProps = (state, ownProps) => {
+	setState(state);
+
     if (ownProps.stateMapKey) {
         return {
             backgroundLayer: Select.maps.getMapBackgroundLayer(state, ownProps.stateMapKey),

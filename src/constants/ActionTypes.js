@@ -365,6 +365,7 @@ export default utils.deepKeyMirror({
     MAPS: {
 	    SET: {
             SET_ACTIVE_MAP_KEY: null,
+			SET_BACKGROUND_LAYER: null,
             VIEW: {
                 SET: null,
                 UPDATE: null

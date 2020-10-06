@@ -40,6 +40,22 @@ const setSetActiveMapKey = (state, setKey, mapKey) => {
     };
 };
 
+const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
+	return {
+		...state,
+		sets: {
+			...state.sets,
+			[setKey]: {
+				...state.sets[setKey],
+				data: {
+					...state.sets[setKey].data,
+					backgroundLayer
+				}
+			}
+		}
+	};
+};
+
 const update = (state, data) => {
     return {...state, ...data};
 };
@@ -90,6 +106,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return setMapViewport(state, action.mapKey, action.width, action.height);
         case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
             return setSetActiveMapKey(state, action.setKey, action.mapKey);
+		case ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER:
+			return setSetBackgroundLayer(state, action.setKey, action.backgroundLayer);
         case ActionTypes.MAPS.SET.VIEW.UPDATE:
             return updateSetView(state, action.setKey, action.update);
         case ActionTypes.MAPS.UPDATE:

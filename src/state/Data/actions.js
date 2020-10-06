@@ -101,7 +101,7 @@ function ensure(filter) {
                     if (err.message === 'Index outdated'){
                         dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
                     } else {
-                        throw new Error(`_common/actions#ensure: ${err}`);
+                        throw new Error(`data/actions#ensure: ${err}`);
                     }
                 });
             } else {

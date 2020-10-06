@@ -1,8 +1,9 @@
 import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
+import {makeSelector} from '@taskworld.com/rereselect';
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import _ from 'lodash';
 
-import helpers from "./selectorHelpers";
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
 import selectorHelpers from "./selectorHelpers";
@@ -109,7 +110,7 @@ const getMapSetActiveMapView = createCachedSelector(
     (mapKey, set, maps) => {
         let map = maps?.[mapKey];
         if (map) {
-            return helpers.getView(map, set);
+            return selectorHelpers.getView(map, set);
         } else {
             return null;
         }
@@ -125,7 +126,7 @@ const getViewByMapKey = createCachedSelector(
         getMapByKey,
         getMapSetByMapKey
     ],
-    helpers.getView
+	selectorHelpers.getView
 )((state, mapKey) => mapKey);
 
 /**
@@ -161,6 +162,24 @@ const getMapSetMapKeys = createSelector(
     (set) => {
         return set?.maps?.length ? set.maps : null;
     }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetMaps = createSelector(
+	[
+		getMapsAsObject,
+		getMapSetMapKeys
+	],
+	(maps, mapKeys) => {
+		if (maps && mapKeys?.length) {
+			return mapKeys.map(key => maps[key]);
+		} else {
+			return null;
+		}
+	}
 );
 
 /**
@@ -338,15 +357,18 @@ const getFilterByActiveByMapKey = createCachedSelector(
  * @param state {Object}
  * @param mapKey {string}
  */
-const getBackgroundLayerStateByMapKey = createSelector(
+const getBackgroundLayerStateByMapKey = createCachedSelector(
     [
         getMapBackgroundLayerStateByMapKey,
         getMapSetBackgroundLayerStateByMapKey,
     ],
     (mapBackgroundLayer, setBackgroundLayer) => {
+		console.log("getBackgroundLayerStateByMapKey");
         return mapBackgroundLayer || setBackgroundLayer || null;
     }
-);
+)((state, mapKey) => mapKey);
+
+const getBackgroundLayerStateByMapKeyObserver = createRecomputeObserver(getBackgroundLayerStateByMapKey);
 
 /**
  * @param state {Object}
@@ -422,30 +444,33 @@ const getAllLayersStateByMapKey = createCachedSelector(
     ],
     (backgroundLayer, layers) => {
         if (layers || backgroundLayer) {
-            return helpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers);
+            return selectorHelpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers);
         } else {
             return null;
         }
     }
 )((state, mapKey) => mapKey);
 
-// TODO add logic
+const getBackgroundLayer = createRecomputeSelector((layerState) => {
+	console.log("getBackgroundLayer");
+	if (layerState) {
+		if (layerState.type) {
+			return layerState;
+		} else {
+			// TODO
+			return null;
+		}
+	} else {
+		return null;
+	}
+});
+
+
 const getMapBackgroundLayer = createCachedSelector(
     [
-        (state, mapKey) => getBackgroundLayerStateByMapKey(state, mapKey)
+		(state, mapKey) => getBackgroundLayerStateByMapKeyObserver(mapKey)
     ],
-    (layerState) => {
-        if (layerState) {
-            if (layerState.type) {
-                return layerState;
-            } else {
-                // TODO
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
+	getBackgroundLayer
 )((state, mapKey) => mapKey);
 
 export default {
@@ -473,6 +498,7 @@ export default {
     getMapSetLayersStateWithModifiersByMapKey,
     getMapSetMetadataModifiersByMapKey,
     getMapSetMapKeys,
+    getMapSetMaps,
     getMapSets,
     getMapSetView,
     getMapSetViewLimits,

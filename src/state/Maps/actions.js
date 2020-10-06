@@ -75,7 +75,7 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         const {areaTreeLevelKey, layerTemplateKey, applicationKey, ...modifiers} = mergedMetadataKeys;
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers);
+        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers) // TODO remove "|| {}" after fix on BE
 
         if (layerTemplateKey || areaTreeLevelKey) {
             // TODO register use?
@@ -99,6 +99,19 @@ function setMapSetActiveMapKey(mapKey) {
             dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
         }
     };
+}
+
+function setMapSetBackgroundLayer(setKey, backgroundLayer) {
+	return (dispatch, getState) => {
+		dispatch(actionSetMapSetBackgroundLayer(setKey, backgroundLayer));
+		const maps = Select.maps.getMapSetMaps(getState(), setKey);
+		if (maps) {
+			maps.map(map => {
+				// TODO is viewport always defined?
+				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
+			});
+		}
+	};
 }
 
 function updateMapAndSetView(mapKey, update) {
@@ -162,6 +175,14 @@ const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
     }
 };
 
+const actionSetMapSetBackgroundLayer = (setKey, backgroundLayer) => {
+	return {
+		type: ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER,
+		setKey,
+		backgroundLayer
+	}
+};
+
 const actionSetMapViewport = (mapKey, width, height) => {
 	return {
 		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
@@ -200,6 +221,7 @@ const actionUpdateSetView = (setKey, update) => {
 // ============ export ===========
 export default {
     setMapSetActiveMapKey,
+	setMapSetBackgroundLayer,
 	setMapViewport: actionSetMapViewport,
     updateMapAndSetView,
     updateSetView,
