@@ -76,23 +76,35 @@ function ensure(filter) {
                     // load remaining relations pages
                     // What is higer to load? attributeRelations or spatialRelations
                     const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
-
+                    let tilesPagination = 0;
                     for (let i = 0; i < remainingRelationsPageCount; i++) {
                         const relations = {
                             offset: (i + 1) * PAGE_SIZE,
                             limit: PAGE_SIZE
                         };
+
+                        tilesPagination = i + 1;
+                        const spatialIndex = {
+                            tiles: [spatialFilter.tiles[tilesPagination]],
+                        };
                         promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
                     }
 
                     //load rest tiles
-
                     const remainingTilesPageCount = spatialFilter.tiles.length;
                     //first tile is loaded while first request
-                    for (let i = (remainingRelationsPageCount + 1 + remainingRelationsPageCount); i < remainingTilesPageCount; i++) {
+                    for (let i = (tilesPagination + 1); i < remainingTilesPageCount; i++) {
                         const spatialIndex = {
                             tiles: [spatialFilter.tiles[i]],
                         };
+
+                        //TODO hack before possibility to ask for data without relations
+                        //ask for relations pages without content 
+                        const relations = {
+                            offset: (remainingRelationsPageCount + 1) * PAGE_SIZE,
+                            limit: PAGE_SIZE
+                        };
+
                         promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
                     }
 
