@@ -1027,19 +1027,19 @@ describe('state/Maps/selectors', function () {
         });
     });
 
-    describe('getMapBackgroundLayer', function () {
-        const expectedResult = {
-            type: "wmts",
-            options: {
-                url: "http://backgroundLayer.no"
-            }
-        };
+    // describe('getMapBackgroundLayer', function () {
+    //     const expectedResult = {
+    //         type: "wmts",
+    //         options: {
+    //             url: "http://backgroundLayer.no"
+    //         }
+    //     };
 
-        it('should', () => {
-            const output = Select.maps.getMapBackgroundLayer(state, "map2");
-            assert.deepStrictEqual(output, expectedResult);
-        });
+    //     it('should', () => {
+    //         const output = Select.maps.getMapBackgroundLayer(state, "map2");
+    //         assert.deepStrictEqual(output, expectedResult);
+    //     });
 
-        testHelpers.testCache(Select.maps.getMapBackgroundLayer, [state, "map2"], expectedResult, [state, "map1"]);
-    });
+    //     testHelpers.testCache(Select.maps.getMapBackgroundLayer, [state, "map2"], expectedResult, [state, "map1"]);
+    // });
 });
