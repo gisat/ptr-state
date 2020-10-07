@@ -411,6 +411,22 @@ const getIndex = (getSubstate) => {
 	);
 };
 
+/**
+ * TODO tests
+ * Get indexes by given filter and order
+ * @param getSubstate
+ */
+const getFilteredIndexes = (getSubstate) => {
+	return createSelector([
+		getIndexes(getSubstate),
+		(state, filter) => filter,
+		(state, filter, order) => order],
+		(indexes, filter, order) => {
+			return commonHelpers.getIndexes(indexes, filter, order);
+		}
+	);
+};
+
 const getIndexChangedOn = (getSubstate) => {
 	return createSelector(
 		[getIndex(getSubstate)],
@@ -908,6 +924,7 @@ export default {
 	getIndexedPage,
 	getIndexTotal,
 	getIndexesByFilteredItem,
+	getFilteredIndexes,
 
 	getKeysToLoad,
 

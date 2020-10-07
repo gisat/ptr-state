@@ -23,7 +23,7 @@ const addIndexes = (state, action) => {
     if(!stateUpdate.indexes) {
         stateUpdate.indexes = [];
     }
-    const tiles = Object.keys(action.index);
+    const tiles = Object.keys(action.index[action.level]);
     
     //Check if some tiles are not already in state
     if (state.indexes) {
@@ -45,12 +45,12 @@ const addIndexes = (state, action) => {
                 filter: action.filter,
                 order: action.order,
                 spatialDataSourceKey: action.spatialDataSourceKey,
-                tile: index.tile,
+                tile: index.tile[action.level],
                 level: action.level,
         
-                count: action.index[index.tile].length,
+                count: action.index[action.level][index.tile].length,
                 changedOn: action.changedOn,
-                index: action.index[index.tile],
+                index: action.index[action.level][index.tile],
             }
             indexes = stateManagement.replaceItemOnIndex(indexes, index.index, updatedIndex);
         })
@@ -67,9 +67,9 @@ const addIndexes = (state, action) => {
                 tile: newTile,
                 level: action.level,
         
-                count: action.index[newTile].length,
+                count: action.index[action.level][newTile].length,
                 changedOn: action.changedOn,
-                index: action.index[newTile],
+                index: action.index[action.level][newTile],
             };
             
             stateUpdate = {...stateUpdate, indexes: [...stateUpdate.indexes, newIndex]};

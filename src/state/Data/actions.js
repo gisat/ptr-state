@@ -28,12 +28,12 @@ function ensure(filter) {
 
         // select indexes
         const order = null;
-        let areaRelationsIndex;
+        let areaRelationsIndex = null;
         if(areaTreeLevelKey) {
             areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), {...modifiers, areaTreeLevelKey}, order);
         }
         
-        let spatialRelationsIndex;
+        let spatialRelationsIndex = null;
         if(layerTemplateKey) {
             spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(),  {...modifiers, layerTemplateKey}, order);
         }
@@ -53,10 +53,46 @@ function ensure(filter) {
 
 
         const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
-
-        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
+        const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+        //commented for tests, we do not have attributeRelations yet
+        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
+        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
             //which data to load
+
+            //diff spatial data loaded and to load
+            const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  {...modifiers, layerTemplateKey}, order, spatialFilter.level) || [];
+
+            const loadedTiles = spatialDataIndex.reduce((loaded, index) => {
+                if(spatialFilter.tiles.find(tile => index.tile === `${tile[0]},${tile[1]}`)) {
+                    return [...loaded, index.tile];
+                } else {
+                    return loaded;
+                }
+            }, []);
+
+            const missingTiles = spatialFilter.tiles.filter(tile => !loadedTiles.includes(`${tile[0]},${tile[1]}`));
+
+            const promises = [];
+            for (const tile of missingTiles) {
+                const spatialIndex = {
+                    tiles: [tile],
+                }
+
+                // TODO
+                // relations:false
+                const relations = {
+                    offset: 0,
+                    limit: 0,
+                };
+                const attributeFilter = null;
+                const loadGeometry = true;
+                const dataSourceKeys = null;
+                const featureKeys = null;
+                promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order))) 
+            }
+            return Promise.all(promises);
+
+
         } else {
             const relations = {
                 // start: 0,
