@@ -270,5 +270,7 @@ export default {
     spatialDataSources,
     spatialRelations,
 
-    ensure
+    ensure,
+    ensureMissingSpatialData,
+    ensureDataAndRelations,
 }
