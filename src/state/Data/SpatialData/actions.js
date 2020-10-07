@@ -17,7 +17,6 @@ const receiveIndexed = (result, filter, level, order, changedOn) => {
 
 function addIndex(filter, level, order, result, changedOn) {
     return (dispatch, getState) => {
-        const state = getState();
         for(const key of Object.keys(result)) {
             dispatch(addIndexesAction(key, filter, level, order, result[key].spatialIndex, changedOn));
         }
