@@ -151,6 +151,7 @@ function ensure(filter) {
         }
 
         const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), modifiers, order);
+        //corectly identify if missing spatialData or attributeData or all
         //fixme ensure missing attribute data?
         if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
         // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
@@ -158,8 +159,6 @@ function ensure(filter) {
         } else {
             return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         }
-
-        //return what?
     }
 }
 
@@ -246,6 +245,9 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             const level = spatialFilter.level
                             dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedRelationsSpatialFilter, level, order, changes));
                         }
+
+                        //TODO add attribute relations, dataSources, data
+
                         return result;
                     } else {
                         const error = new Error('no data');
@@ -271,7 +273,7 @@ export default {
     spatialDataSources,
     spatialRelations,
 
-    ensure,
-    ensureMissingSpatialData,
-    ensureDataAndRelations,
+    ensure, //todo TESTS
+    ensureMissingSpatialData, //todo TESTS
+    ensureDataAndRelations, //todo TESTS
 }
