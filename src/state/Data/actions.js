@@ -149,13 +149,12 @@ function ensure(filter) {
         }
 
         const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), modifiers, order);
-
-        //fixme ensire missing attribute data?
-        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
-        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
-            return ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order);
+        //fixme ensure missing attribute data?
+        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
+        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
+            return dispatch(ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         } else {
-            return ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order);
+            return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         }
 
         //return what?

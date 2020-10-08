@@ -26,19 +26,17 @@ const addIndexes = (state, action) => {
     const tiles = Object.keys(action.index[action.level]);
     
     //Check if some tiles are not already in state
-    if (state.indexes) {
-        for (const [i, index] of Object.entries(state.indexes)) {
-            if (_.isEqual(index.filter, action.filter) && _.isEqual(index.order, action.order) && tiles.includes(index.tile) && _.isEqual(index.level, action.level) && _.isEqual(index.spatialDataSourceKey, action.spatialDataSourceKey)){
-                foundIndexes.push({index: i, tile: index.tile})
-            }
-        };
-    }
+    for (const [i, index] of Object.entries(stateUpdate.indexes)) {
+        if (_.isEqual(index.filter, action.filter) && _.isEqual(index.order, action.order) && tiles.includes(index.tile) && _.isEqual(index.level, action.level) && _.isEqual(index.spatialDataSourceKey, action.spatialDataSourceKey)){
+            foundIndexes.push({index: i, tile: index.tile})
+        }
+    };
 
     const newIndexes = tiles.filter(t => !foundIndexes.find(f => f.tile === t));
 
     //replace same indexes
     if(foundIndexes.length > 0) {
-        let indexes = state.indexes;
+        let indexes = stateUpdate.indexes;
         foundIndexes.forEach(index => {
             //replace old index by new one
             const updatedIndex = {
