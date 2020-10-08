@@ -1,6 +1,7 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import {stateManagement} from '@gisatcz/ptr-utils';
+import _ from 'lodash';
 
 const INITIAL_STATE = {
     ...DEFAULT_INITIAL_STATE,
@@ -43,7 +44,7 @@ const addIndexes = (state, action) => {
                 filter: action.filter,
                 order: action.order,
                 spatialDataSourceKey: action.spatialDataSourceKey,
-                tile: index.tile[action.level],
+                tile: index.tile,
                 level: action.level,
         
                 count: action.index[action.level][index.tile].length,
