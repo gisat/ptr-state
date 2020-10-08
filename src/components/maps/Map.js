@@ -53,7 +53,7 @@ const mapDispatchToPropsFactory = () => {
 
                 onPropViewChange: (update, mapWidth, mapHeight) => {
 					dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
-                    // dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
+                    dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
                 },
 
                 resetHeading: () => {
