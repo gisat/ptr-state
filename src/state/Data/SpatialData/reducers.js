@@ -23,34 +23,32 @@ const addIndexes = (state, action) => {
     if(!stateUpdate.indexes) {
         stateUpdate.indexes = [];
     }
-    const tiles = Object.keys(action.index);
+    const tiles = Object.keys(action.index[action.level]);
     
     //Check if some tiles are not already in state
-    if (state.indexes) {
-        for (const [i, index] of Object.entries(state.indexes)) {
-            if (_.isEqual(index.filter, action.filter) && _.isEqual(index.order, action.order) && tiles.includes(index.tile) && _.isEqual(index.level, action.level) && _.isEqual(index.spatialDataSourceKey, action.spatialDataSourceKey)){
-                foundIndexes.push({index: i, tile: index.tile})
-            }
-        };
-    }
+    for (const [i, index] of Object.entries(stateUpdate.indexes)) {
+        if (_.isEqual(index.filter, action.filter) && _.isEqual(index.order, action.order) && tiles.includes(index.tile) && _.isEqual(index.level, action.level) && _.isEqual(index.spatialDataSourceKey, action.spatialDataSourceKey)){
+            foundIndexes.push({index: i, tile: index.tile})
+        }
+    };
 
     const newIndexes = tiles.filter(t => !foundIndexes.find(f => f.tile === t));
 
     //replace same indexes
     if(foundIndexes.length > 0) {
-        let indexes = state.indexes;
+        let indexes = stateUpdate.indexes;
         foundIndexes.forEach(index => {
             //replace old index by new one
             const updatedIndex = {
                 filter: action.filter,
                 order: action.order,
                 spatialDataSourceKey: action.spatialDataSourceKey,
-                tile: index.tile,
+                tile: index.tile[action.level],
                 level: action.level,
         
-                count: action.index[index.tile].length,
+                count: action.index[action.level][index.tile].length,
                 changedOn: action.changedOn,
-                index: action.index[index.tile],
+                index: action.index[action.level][index.tile],
             }
             indexes = stateManagement.replaceItemOnIndex(indexes, index.index, updatedIndex);
         })
@@ -67,9 +65,9 @@ const addIndexes = (state, action) => {
                 tile: newTile,
                 level: action.level,
         
-                count: action.index[newTile].length,
+                count: action.index[action.level][newTile].length,
                 changedOn: action.changedOn,
-                index: action.index[newTile],
+                index: action.index[action.level][newTile],
             };
             
             stateUpdate = {...stateUpdate, indexes: [...stateUpdate.indexes, newIndex]};

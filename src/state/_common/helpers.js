@@ -10,6 +10,23 @@ function getIndex(indexes, filter, order) {
 	}
 }
 
+/**
+ * TODO tests
+ * Returns all indexes that fits filter and order
+ * @param {*} indexes 
+ * @param {*} filter 
+ * @param {*} order 
+ */
+function getIndexes(indexes, filter, order) {
+	if (indexes){
+		// TODO re-reselect?
+		const filteredIndexes = _.filter(indexes, (index) => isCorrespondingIndex(index, filter, order));
+		return _.isEmpty(filteredIndexes) ? null : filteredIndexes;
+	} else {
+		return null;
+	}
+}
+
 // TODO Test
 function getUniqueIndexes(indexes) {
 	if(!_.isEmpty(indexes)) {
@@ -191,6 +208,7 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 export default {
     convertModifiersToRequestFriendlyFormat,
 	getIndex,
+	getIndexes,
 	getUniqueIndexes,
 	mergeFilters,
     mergeMetadataKeys,

@@ -16,6 +16,116 @@ const DEFAULT_RELATIONS_PAGNIATIONS = {
 }
 
 /**
+ * @return {function}
+ */
+function ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order) {
+    //which spatial data to load
+
+    //diff spatial data loaded and to load
+    const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  {...modifiers, layerTemplateKey}, order, spatialFilter.level) || [];
+
+    const loadedTiles = spatialDataIndex.reduce((loaded, index) => {
+        if(spatialFilter.tiles.find(tile => index.tile === `${tile[0]},${tile[1]}`)) {
+            return [...loaded, index.tile];
+        } else {
+            return loaded;
+        }
+    }, []);
+
+    const missingTiles = spatialFilter.tiles.filter(tile => !loadedTiles.includes(`${tile[0]},${tile[1]}`));
+
+    const promises = [];
+    for (const tile of missingTiles) {
+        const spatialIndex = {
+            tiles: [tile],
+        }
+
+        // TODO
+        // relations:false
+        const relations = {
+            offset: 0,
+            limit: 0,
+        };
+        const attributeFilter = null;
+        const loadGeometry = true;
+        const dataSourceKeys = null;
+        const featureKeys = null;
+        promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order))) 
+    }
+    return Promise.all(promises);
+}
+/**
+ * @return {function}
+ */
+function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order) {
+    return (dispatch, getState) => {
+        const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+        const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+
+        const relations = {
+            // start: 0,
+            // length: 1000,
+            offset: 0,
+            limit: PAGE_SIZE,
+        };
+        const attributeFilter = null;
+        const loadGeometry = true;
+        const dataSourceKeys = null;
+        const featureKeys = null;
+        const spatialIndex = null;
+        if(spatialFilter && !_.isEmpty(spatialFilter)) {
+            return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)).then((response) => {
+                const promises = [];
+
+                // load remaining relations pages
+                // What is higer to load? attributeRelations or spatialRelations
+                const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
+                let tilesPagination = 0;
+                for (let i = 0; i < remainingRelationsPageCount; i++) {
+                    const relations = {
+                        offset: (i + 1) * PAGE_SIZE,
+                        limit: PAGE_SIZE
+                    };
+
+                    tilesPagination = i + 1;
+                    const spatialIndex = {
+                        tiles: [spatialFilter.tiles[tilesPagination]],
+                    };
+                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                }
+
+                //load rest tiles
+                const remainingTilesPageCount = spatialFilter.tiles.length;
+                //first tile is loaded while first request
+                for (let i = (tilesPagination + 1); i < remainingTilesPageCount; i++) {
+                    const spatialIndex = {
+                        tiles: [spatialFilter.tiles[i]],
+                    };
+
+                    //TODO hack before possibility to ask for data without relations
+                    //ask for relations pages without content 
+                    const relations = {
+                        offset: (remainingRelationsPageCount + 1) * PAGE_SIZE,
+                        limit: PAGE_SIZE
+                    };
+
+                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                }
+
+                return Promise.all(promises);
+            }).catch((err)=>{
+                if (err.message === 'Index outdated'){
+                    dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
+                } else {
+                    throw new Error(`data/actions#ensure: ${err}`);
+                }
+            });
+        } else {
+            return dispatch(commonActions.actionGeneralError(new Error('Missing spatial filter')));
+        }
+    }
+}
+/**
  * @param filter {Object}
  * @return {function}
  */
@@ -28,106 +138,26 @@ function ensure(filter) {
 
         // select indexes
         const order = null;
-        let areaRelationsIndex;
+        let areaRelationsIndex = null;
         if(areaTreeLevelKey) {
             areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), {...modifiers, areaTreeLevelKey}, order);
         }
         
-        let spatialRelationsIndex;
+        let spatialRelationsIndex = null;
         if(layerTemplateKey) {
             spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(),  {...modifiers, layerTemplateKey}, order);
         }
 
         const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), modifiers, order);
-        
-        
-            // complete -> data sources - continue
-            // incomplete -> loading of relations, ds, data - break
-
-        // select data sources by key in relations
-            // completed -> data - continue
-            // incomplete -> loading of ds, data - break
-
-        // ensure data
-
-
-
-        const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
-
+        //fixme ensure missing attribute data?
         if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
-            //which data to load
+        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
+            return dispatch(ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         } else {
-            const relations = {
-                // start: 0,
-                // length: 1000,
-                offset: 0,
-                limit: PAGE_SIZE,
-            };
-            const attributeFilter = null;
-            const loadGeometry = true;
-            const dataSourceKeys = null;
-            const featureKeys = null;
-            const spatialIndex = null;
-            if(spatialFilter && !_.isEmpty(spatialFilter)) {
-                return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)).then((response) => {
-                    const promises = [];
-
-                    // load remaining relations pages
-                    // What is higer to load? attributeRelations or spatialRelations
-                    const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
-                    let tilesPagination = 0;
-                    for (let i = 0; i < remainingRelationsPageCount; i++) {
-                        const relations = {
-                            offset: (i + 1) * PAGE_SIZE,
-                            limit: PAGE_SIZE
-                        };
-
-                        tilesPagination = i + 1;
-                        const spatialIndex = {
-                            tiles: [spatialFilter.tiles[tilesPagination]],
-                        };
-                        promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
-                    }
-
-                    //load rest tiles
-                    const remainingTilesPageCount = spatialFilter.tiles.length;
-                    //first tile is loaded while first request
-                    for (let i = (tilesPagination + 1); i < remainingTilesPageCount; i++) {
-                        const spatialIndex = {
-                            tiles: [spatialFilter.tiles[i]],
-                        };
-
-                        //TODO hack before possibility to ask for data without relations
-                        //ask for relations pages without content 
-                        const relations = {
-                            offset: (remainingRelationsPageCount + 1) * PAGE_SIZE,
-                            limit: PAGE_SIZE
-                        };
-
-                        promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
-                    }
-
-                    return Promise.all(promises);
-                }).catch((err)=>{
-                    if (err.message === 'Index outdated'){
-                        dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
-                    } else {
-                        throw new Error(`data/actions#ensure: ${err}`);
-                    }
-                });
-            } else {
-                return dispatch(commonActions.actionGeneralError(new Error('Missing spatial filter XX')));
-            }
+            return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         }
-            // complete -> data sources - continue
-            // incomplete -> loading of relations, ds, data - break
 
-        // select data sources by key in relations
-            // completed -> data - continue
-            // incomplete -> loading of ds, data - break
-
-        // ensure data
+        //return what?
     }
 }
 
@@ -239,5 +269,7 @@ export default {
     spatialDataSources,
     spatialRelations,
 
-    ensure
+    ensure,
+    ensureMissingSpatialData,
+    ensureDataAndRelations,
 }
