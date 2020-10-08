@@ -22,6 +22,7 @@ const getFiltered = createRecomputeSelector(filter => {
 });
 
 const getFilteredDataSourceKeys = createRecomputeSelector(filter => {
+	console.log("SpatialRelations#getFilteredDataSourceKeys");
 	const filteredRelations = getFiltered(filter);
 	if (filteredRelations?.length) {
 		return filteredRelations.map(relation => relation.data.spatialDataSourceKey);
