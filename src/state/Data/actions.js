@@ -224,20 +224,20 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             ...(layerTemplateKey && {layerTemplateKey}),
                             ...(areaTreeLevelKey && {areaTreeLevelKey}),
                         }
-                        if(result.data.spatialRelations) {
+                        if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
                             //TODO relations.offset
                             const changes = null;
                             dispatch(spatialRelations.receiveIndexed(result.data.spatialRelations, mergedRelationsSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
-                        if(result.data.spatialDataSources) {
+                        if(result.data.spatialDataSources && !_.isEmpty(result.data.spatialDataSources)) {
                             //TODO relations.offset
                             //TODO result.total.spatialRelations ?
                             const changes = null;
                             dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedRelationsSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
-                        if(result.data.spatialData) {
+                        if(result.data.spatialData && !_.isEmpty(result.data.spatialData)) {
                             //TODO add level to indexes on BE?
                             //TODO indexes
                             const changes = null;
