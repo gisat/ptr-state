@@ -19,3 +19,12 @@ export function makeParameterizedSelector(
 		{ displayName }
 	)
 }
+
+export class RecomputeCache {
+	constructor() { this.contents = {}; }
+	get(key) { return this.contents[key]; }
+	set(key, value) { this.contents[key] = value; }
+	clear() { this.contents = {}; }
+}
+
+export const RecomputeSerialize = args => JSON.stringify(args);

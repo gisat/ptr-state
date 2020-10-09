@@ -21,5 +21,6 @@ function receiveIndexed(result, filter, order, start, total, changes) {
 // ============ export ===========
 
 export default {
+	add: common.add(actionTypes),
     receiveIndexed,
 }

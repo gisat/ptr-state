@@ -1,6 +1,5 @@
 import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
-import {makeSelector} from '@taskworld.com/rereselect';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import _ from 'lodash';
 
@@ -365,7 +364,6 @@ const getBackgroundLayerStateByMapKey = createCachedSelector(
         getMapSetBackgroundLayerStateByMapKey,
     ],
     (mapBackgroundLayer, setBackgroundLayer) => {
-		console.log("getBackgroundLayerStateByMapKey");
         return mapBackgroundLayer || setBackgroundLayer || null;
     }
 )((state, mapKey) => mapKey);
@@ -455,7 +453,6 @@ const getAllLayersStateByMapKey = createCachedSelector(
 
 const getMapBackgroundLayer = createRecomputeSelector((mapKey) => {
 	const layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
-	console.log("getMapBackgroundLayer");
 	if (layerState) {
 		if (layerState.type) {
 			return layerState;
@@ -473,14 +470,6 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey) => {
 		return null;
 	}
 });
-
-
-// const getMapBackgroundLayer = createCachedSelector(
-//     [
-// 		(state, mapKey) => getBackgroundLayerStateByMapKeyObserver(mapKey)
-//     ],
-// 	getBackgroundLayer
-// )((state, mapKey) => mapKey);
 
 export default {
     getAllLayersStateByMapKey,
