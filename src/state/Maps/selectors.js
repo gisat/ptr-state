@@ -451,8 +451,11 @@ const getAllLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
-const getMapBackgroundLayer = createRecomputeSelector((mapKey) => {
-	const layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
+const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
+	if (!layerState) {
+		layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
+	}
+
 	if (layerState) {
 		if (layerState.type) {
 			return layerState;

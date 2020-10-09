@@ -17,7 +17,7 @@ const mapStateToProps = (state, ownProps) => {
         }
     } else {
         return {
-            backgroundLayer: null,
+            backgroundLayer:  Select.maps.getMapBackgroundLayer(state, ownProps.backgroundLayer),
             layers: null
         }
     }
