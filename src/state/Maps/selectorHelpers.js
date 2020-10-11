@@ -118,7 +118,7 @@ const getTiles = createCachedSelector(
 )((mapWidth, mapHeight, center, boxRange) => `${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`);
 
 const getLayerByDataSourceType = (index, layerKey, layerState, dataSource) => {
-	let {attribution, nameInternal, type, tableName, layerName, features, selected, ...options} = dataSource;
+	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...options} = dataSource?.data;
 
 	if (type === 'wmts') {
 		options.url = options.urls[0];
@@ -135,6 +135,12 @@ const getLayerByDataSourceType = (index, layerKey, layerState, dataSource) => {
 			singleTile,
 			url
 		}
+	} else if (type === "vector") {
+		options = {
+			...options,
+			fidColumnName,
+			geometryColumnName
+		};
 	}
 
 	return {

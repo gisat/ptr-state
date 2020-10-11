@@ -7,7 +7,11 @@ import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
 import selectorHelpers from "./selectorHelpers";
 
+import common from "../_common/selectors";
 import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
+import SpatialDataSelectors from "../Data/SpatialData/selectors";
+import commonSelectors from '../_common/selectors';
+import commonHelpers from '../_common/helpers';
 
 /* === SELECTORS ======================================================================= */
 
@@ -421,6 +425,7 @@ const getLayersStateByMapKey = createCachedSelector(
         getMapLayersStateWithModifiersByMapKey
     ],
     (setLayers, mapLayers) => {
+    	console.log("Maps # getLayersStateByMapKey", ((new Date()).getMilliseconds()));
         if (mapLayers && setLayers) {
             return [...setLayers, ...mapLayers]
         } else if (mapLayers) {
@@ -432,6 +437,8 @@ const getLayersStateByMapKey = createCachedSelector(
         }
     }
 )((state, mapKey) => mapKey);
+
+const getLayersStateByMapKeyObserver = createRecomputeObserver(getLayersStateByMapKey);
 
 /**
  * @param state {Object}
@@ -450,6 +457,37 @@ const getAllLayersStateByMapKey = createCachedSelector(
         }
     }
 )((state, mapKey) => mapKey);
+
+const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
+	console.log("getRelationsFilterFromLayerState", layerState);
+	if (layerState) {
+		// TODO at leeast a part is the same as in Maps/actions/layerUse?
+		const layer = layerState;
+
+		// modifiers defined by key
+		let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
+
+		// Get actual metadata keys defined by filterByActive
+		const activeMetadataKeys = common.getActiveKeysByFilterByActiveObserver(layer.filterByActive);
+
+		// Merge metadata, metadata defined by key have priority
+		const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
+
+		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+		let relationsFilter = commonHelpers.convertModifiersToRequestFriendlyFormat(mergedMetadataKeys);
+
+		// add layerTemplate od areaTreeLevelKey
+		if (layer.layerTemplateKey) {
+			relationsFilter.layerTemplateKey = layer.layerTemplateKey;
+		} else if (layer.areaTreeLevelKey) {
+			relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
+		}
+
+		return relationsFilter;
+	} else {
+		return null;
+	}
+});
 
 const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	if (!layerState) {
@@ -474,6 +512,49 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	}
 });
 
+const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
+	console.log("Maps # getMapLayers", ((new Date()).getMilliseconds()));
+
+	if (!layersState) {
+		layersState = getLayersStateByMapKeyObserver(mapKey);
+	}
+
+	if (layersState) {
+		let finalLayers = [];
+		_.forEach(layersState, layerState => {
+			if (layerState.type) {
+				finalLayers.push(layerState);
+			} else {
+				const relationsFilter = getRelationsFilterFromLayerState(layerState);
+				const spatialDataSources = SpatialDataSourcesSelectors.getFiltered(relationsFilter);
+
+				if (spatialDataSources) {
+					_.forEach(spatialDataSources, (dataSource, index) => {
+						let layer = selectorHelpers.getLayerByDataSourceType(index, layerState.key, layerState, dataSource);
+						if (dataSource.data?.type === "vector") {
+							let features = SpatialDataSelectors.getFeaturesByDataSourceKey(dataSource.key, dataSource.data.fidColumnName);
+							if (features?.length) {
+								layer = {
+									...layer,
+									options: {
+										...layer.options,
+										features
+									}
+								}
+							}
+						}
+						finalLayers.push(layer);
+					});
+				}
+			}
+		});
+
+		return finalLayers.length ? finalLayers : null;
+	} else {
+		return null;
+	}
+});
+
 export default {
     getAllLayersStateByMapKey,
     getBackgroundLayerStateByMapKey,
@@ -486,6 +567,7 @@ export default {
     getMapByKey,
     getMapFilterByActiveByMapKey,
     getMapLayersStateByMapKey,
+	getMapLayers,
     getMapLayersStateWithModifiersByMapKey,
     getMapMetadataModifiersByMapKey,
 

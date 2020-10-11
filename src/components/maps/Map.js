@@ -10,15 +10,15 @@ const mapStateToProps = (state, ownProps) => {
     if (ownProps.stateMapKey) {
         return {
             backgroundLayer: Select.maps.getMapBackgroundLayer(ownProps.stateMapKey),
-            layers: null,
+            layers: Select.maps.getMapLayers(ownProps.stateMapKey),
             view: Select.maps.getViewByMapKey(state, ownProps.stateMapKey),
             viewLimits: Select.maps.getViewLimitsByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
         return {
-            backgroundLayer:  Select.maps.getMapBackgroundLayer(state, ownProps.backgroundLayer),
-            layers: null
+            backgroundLayer:  Select.maps.getMapBackgroundLayer(ownProps.mapKey, ownProps.backgroundLayer),
+            layers: Select.maps.getMapLayers(ownProps.mapKey, ownProps.layers)
         }
     }
 };

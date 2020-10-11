@@ -1,4 +1,5 @@
 import {createSelector} from "reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import createCachedSelector from "re-reselect";
 import _ from "lodash";
 import commonHelpers from './helpers';
@@ -667,6 +668,8 @@ const getActiveKeysByFilterByActive = createCachedSelector(
     }
 )((state, filterByActive) => JSON.stringify(filterByActive));
 
+const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(getActiveKeysByFilterByActive);
+
 const getUsedIndexPages = (getSubstate) => {
 	return createSelector([
 			getIndexedDataUses(getSubstate),
@@ -936,5 +939,8 @@ export default {
 	getUsedKeys,
 	getUsesWithActiveDependency,
 
-	_mergeIntervals
+	_mergeIntervals,
+
+	// recompute observers
+	getActiveKeysByFilterByActiveObserver
 }

@@ -3,7 +3,7 @@ import {createSelector as createRecomputeSelector, createObserver as createRecom
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	return state.data.spatialDataSources.byKey?.[key]?.data;
+	return state.data.spatialDataSources.byKey?.[key];
 });
 
 const getIndexesObserver = createRecomputeObserver(state => {

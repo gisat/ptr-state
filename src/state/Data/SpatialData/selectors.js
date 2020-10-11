@@ -1,5 +1,6 @@
 import common from '../../_common/selectors';
 import {createSelector} from "reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 
 const getSubstate = (state) => state.data.spatialData;
 
@@ -23,6 +24,30 @@ const getFilteredIndexes =  createSelector([
     }
 );
 
+const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
+	return state.data.spatialData.byDataSourceKey?.[key];
+});
+
+
+const getFeaturesByDataSourceKey = createRecomputeSelector((dataSourceKey, fidColumnName) => {
+	const data = getByDataSourceKeyObserver(dataSourceKey);
+	if (data) {
+		return _.map(data, (geometry, key) => {
+			return {
+				type: "Feature",
+				key,
+				geometry,
+				properties: {
+					[fidColumnName]: key // TODO fix dependency on this in ptr-maps
+				}
+			}
+		});
+	} else {
+		return null;
+	}
+});
+
 export default {
+	getFeaturesByDataSourceKey,
     getFilteredIndexes
 };

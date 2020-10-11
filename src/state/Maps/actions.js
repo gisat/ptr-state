@@ -75,7 +75,7 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         const {areaTreeLevelKey, layerTemplateKey, applicationKey, ...modifiers} = mergedMetadataKeys;
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers) // TODO remove "|| {}" after fix on BE
+        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers)
 
         if (layerTemplateKey || areaTreeLevelKey) {
             // TODO register use?
