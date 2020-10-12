@@ -2,7 +2,7 @@ import ActionTypes from '../../../constants/ActionTypes';
 import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import {stateManagement} from '@gisatcz/ptr-utils';
 import _ from 'lodash';
-
+import commonHelpers from '../../_common/helpers';
 const INITIAL_STATE = {
     ...DEFAULT_INITIAL_STATE,
     byDataSourceKey: {},
@@ -78,6 +78,35 @@ const addIndexes = (state, action) => {
     return stateUpdate;
 }
 
+function registerIndex(state, action) {
+		const indexes = state.indexes || [];
+        const allIndexes = commonHelpers.getIndexes(indexes, action.filter, action.order) || [];
+        let existingIndex = null;
+        if(!_.isEmpty(allIndexes)) {
+            //find if index already exists by tile and level
+            existingIndex = allIndexes.filter(index => index.level === action.level && (action.tile ? index.tile === `${action.tile[0][0]},${action.tile[0][1]}` : action.tile === index.tile));
+        } else {
+            existingIndex = null;
+        }
+
+		if(existingIndex && _.isEmpty(existingIndex)) {
+			const index = {
+                filter: action.filter,
+				order: action.order,
+				count: null, //TODO
+                spatialDataSourceKey: action.spatialDataSourceKey,
+                level: action.level,
+                tile: action.tile ? `${action.tile[0][0]},${action.tile[0][1]}` : null,
+                changedOn: null,
+				index: [new Array(action.limit).fill(true)] //TODO
+			};
+
+			return {...state, indexes: [...indexes, index]};
+		} else {
+			return state;
+		}
+}
+
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ActionTypes.DATA.SPATIAL_DATA.ADD:
@@ -85,7 +114,9 @@ export default (state = INITIAL_STATE, action) => {
         case ActionTypes.DATA.SPATIAL_DATA.UPDATE:
 			return update(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA.INDEX.ADD:
-			return addIndexes(state, action);
+            return addIndexes(state, action);
+        case ActionTypes.DATA.SPATIAL_DATA.INDEX.REGISTER:
+            return registerIndex(state, action);
         default:
             return state;
     }

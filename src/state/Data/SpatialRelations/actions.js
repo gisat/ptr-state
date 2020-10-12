@@ -3,6 +3,8 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_RELATIONS;
 
+const registerIndex = common.registerIndex(actionTypes);
+
 // ============ creators ===========
 function receiveIndexed(result, filter, order, start, total, changes) {
     return dispatch => {
@@ -22,4 +24,5 @@ function receiveIndexed(result, filter, order, start, total, changes) {
 
 export default {
     receiveIndexed,
+    registerIndex,
 }

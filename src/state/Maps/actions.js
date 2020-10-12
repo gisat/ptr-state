@@ -75,9 +75,17 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         const {areaTreeLevelKey, layerTemplateKey, applicationKey, ...modifiers} = mergedMetadataKeys;
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers)
-
+        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers) // TODO remove "|| {}" after fix on BE
         if (layerTemplateKey || areaTreeLevelKey) {
+            if(layerTemplateKey) {
+                //TODO determinate what is better aproach
+                // const spatialDataSource = Select.data.spatialDataSources.getFilteredIndexes(state, {layerTemplateKey, ...modifiers}, null);
+                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndexes(state, {layerTemplateKey, ...modifiers}, null);
+                const dataSourceType = spatialDataSource?.data?.type || null;
+                if(dataSourceType &&  dataSourceType !== 'vector') {
+                    return
+                }
+            }
             // TODO register use?
             dispatch(DataActions.ensure({
                 modifiers: modifiersForRequest,

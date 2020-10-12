@@ -1,10 +1,19 @@
 import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
+import {createSelector} from "reselect";
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
 	return state.data.spatialDataSources.byKey?.[key];
 });
+
+const getSubstate = state => state.data.spatialDataSources;
+
+const getIndex = common.getIndex(getSubstate);
+
+const getFilteredIndexes = common.getFilteredIndexes(getSubstate);
+
+const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getIndexesObserver = createRecomputeObserver(state => {
 	// console.log("SpatialDataSources/selectors#getIndexesObserver", ((new Date()).getMilliseconds()));
@@ -37,7 +46,31 @@ const getFiltered = createRecomputeSelector(filter => {
 	}
 });
 
-export default {
-	getFiltered
-};
 
+/**
+ * @param {*} state 
+ * @param {*} filter 
+ * @param {*} order 
+ * @param {*} level 
+ */
+const getByFilteredIndexes =  createSelector([
+	getFilteredIndexes,
+	getAllAsObject,
+    ],
+    (indexes, dataSources) => {
+        if(!_.isEmpty(indexes)) {
+			const dataSourceKey = indexes[0].index[0];
+			return dataSources[dataSourceKey];
+        } else {
+            return null;
+        }
+    }
+);
+
+
+export default {
+	getFiltered,
+	getIndex,
+	getFilteredIndexes,
+	getByFilteredIndexes,
+};

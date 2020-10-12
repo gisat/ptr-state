@@ -8,7 +8,7 @@ import request from '../_common/request';
 import commonActions from '../_common/actions';
 
 import Select from "../Select";
-
+import {getMissingTiles} from './helpers';
 
 const DEFAULT_RELATIONS_PAGNIATIONS = {
     offset: 0,
@@ -22,19 +22,11 @@ function ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, ar
     return (dispatch, getState) => {
         //which spatial data to load
 
-        //diff spatial data loaded and to load
+        //get spatial data index with loaded and loading data
         const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  {...modifiers, layerTemplateKey}, order, spatialFilter.level) || [];
-
-        const loadedTiles = spatialDataIndex.reduce((loaded, index) => {
-            if(spatialFilter.tiles.find(tile => index.tile === `${tile[0]},${tile[1]}`)) {
-                return [...loaded, index.tile];
-            } else {
-                return loaded;
-            }
-        }, []);
-
-        const missingTiles = spatialFilter.tiles.filter(tile => !loadedTiles.includes(`${tile[0]},${tile[1]}`));
-
+        
+        //diff spatial data loaded/loading and to load
+        const missingTiles = getMissingTiles(spatialDataIndex, spatialFilter) || [];
         const promises = [];
         for (const tile of missingTiles) {
             const spatialIndex = {
@@ -116,7 +108,7 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
 
                 return Promise.all(promises);
             }).catch((err)=>{
-                if (err.message === 'Index outdated'){
+                if (err?.message === 'Index outdated'){
                     dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
                 } else {
                     throw new Error(`data/actions#ensure: ${err}`);
@@ -153,8 +145,10 @@ function ensure(filter) {
         const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), modifiers, order);
         //corectly identify if missing spatialData or attributeData or all
         //fixme ensure missing attribute data?
-        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
-        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
+
+        //uncomment after resolve attribute data
+        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
+        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
             return dispatch(ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
         } else {
             return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order));
@@ -169,6 +163,31 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = 'backend/rest/data/filtered';
+
+        const mergedRelationsSpatialFilter = {
+            ...modifiers,
+            ...(layerTemplateKey && {layerTemplateKey}),
+            ...(areaTreeLevelKey && {areaTreeLevelKey}),
+        }
+
+        //what if we have already some DS or DR?
+        //check if indexes are loading (ds, dr, data - all)
+        const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedRelationsSpatialFilter, order);
+        const spatialDataSourceIndex = Select.data.spatialDataSources.getIndex(getState(), mergedRelationsSpatialFilter, order);
+        const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  {...modifiers, layerTemplateKey}, order, spatialFilter.level) || [];
+        const missingTiles = getMissingTiles(spatialDataIndex, spatialIndex) || [];
+        if(spatialRelationsIndex && spatialDataSourceIndex && missingTiles?.length === 0) {
+            //only on first render of map, when all maps tryes to load data
+            return new Promise((r,rj) => {
+            });
+        };
+
+        //register indexes
+        dispatch(spatialRelations.registerIndex(mergedRelationsSpatialFilter, order, relations.offset, spatialIndex));
+        //todo correct parameters
+        const limit = 1;
+        const spatialDataSourceKey = null
+        dispatch(spatialData.registerIndex(mergedRelationsSpatialFilter, spatialFilter.level, order, spatialDataSourceKey, spatialIndex?.tiles || null, limit));
 
 		let payload = {
             modifiers,
@@ -220,11 +239,6 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
                     if(result.data) {
-                        const mergedRelationsSpatialFilter = {
-                            ...modifiers,
-                            ...(layerTemplateKey && {layerTemplateKey}),
-                            ...(areaTreeLevelKey && {areaTreeLevelKey}),
-                        }
                         if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
                             //TODO relations.offset
                             const changes = null;

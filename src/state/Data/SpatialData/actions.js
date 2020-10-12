@@ -53,6 +53,19 @@ function updateDataAction(key, data) {
     }
 }
 
+function registerIndex(filter, level, order, spatialDataSourceKey, tile, limit) {
+    return {
+        type: actionTypes.INDEX.REGISTER,
+        count: null,
+        filter,
+        level,
+        order,
+        spatialDataSourceKey,
+        limit,
+        tile,
+    };
+}
+
 function addIndexesAction(spatialDataSourceKey, filter, level, order, index, changedOn) {
     return {
         type: actionTypes.INDEX.ADD,
@@ -69,4 +82,5 @@ function addIndexesAction(spatialDataSourceKey, filter, level, order, index, cha
 
 export default {
     receiveIndexed,
+    registerIndex,
 }
