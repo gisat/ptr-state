@@ -26,8 +26,8 @@ const mapDispatchToPropsFactory = () => {
 	return (dispatch, ownProps) => {
 		if (ownProps.stateMapSetKey) {
 			return {
-				updateView: (update) => {
-                    dispatch(Action.maps.updateSetView(ownProps.stateMapSetKey, update));
+				updateView: (update, mapKey) => {
+					dispatch(Action.maps.updateMapAndSetView(mapKey, update));
 				},
 				resetHeading: (mapKey) => {
 
