@@ -2,6 +2,7 @@ import _ from "lodash";
 import common from "../_common/selectors";
 import StyleSelectors from "../Styles/selectors";
 import {createSelector} from "reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 
 const getSubstate = state => state.selections;
 const getActive = common.getActive(getSubstate);
@@ -48,10 +49,13 @@ const getAllAsObjectWithStyles = createSelector(
 	}
 );
 
+const getAllAsObjectWithStylesObserver = createRecomputeObserver(getAllAsObjectWithStyles);
+
 export default {
 	getActiveKey,
 	getActive,
 	getAllAsObject,
 
-	getAllAsObjectWithStyles
+	getAllAsObjectWithStyles,
+	getAllAsObjectWithStylesObserver
 }

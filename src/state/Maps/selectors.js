@@ -12,6 +12,7 @@ import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
 import SpatialDataSelectors from "../Data/SpatialData/selectors";
 import commonSelectors from '../_common/selectors';
 import commonHelpers from '../_common/helpers';
+import SelectionsSelectors from '../Selections/selectors';
 
 /* === SELECTORS ======================================================================= */
 
@@ -443,6 +444,27 @@ const getLayersStateByMapKeyObserver = createRecomputeObserver(getLayersStateByM
 /**
  * @param state {Object}
  * @param mapKey {string}
+ * @param layerKey {string}
+ * @return {Object}
+ */
+const getLayerStateByLayerKeyAndMapKey = createSelector(
+	[
+		getLayersStateByMapKey,
+		(state, mapKey, layerKey) => layerKey
+	],
+	(layers, layerKey) => {
+		if (layers) {
+			const layer = _.find(layers, layer => layer.key === layerKey);
+			return layer || null;
+		} else {
+			return null;
+		}
+	}
+);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
  */
 const getAllLayersStateByMapKey = createCachedSelector(
     [
@@ -521,8 +543,20 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 	if (layersState) {
 		let finalLayers = [];
+		const selections = SelectionsSelectors.getAllAsObjectWithStylesObserver();
+
 		_.forEach(layersState, layerState => {
 			if (layerState.type) {
+				if (layerState.type === "vector" && layerState.options?.selected) {
+					layerState = {
+						...layerState,
+						options: {
+							...layerState.options,
+							selected: selectorHelpers.prepareSelections(selections, layerState.options.selected)
+						}
+					}
+				}
+
 				finalLayers.push(layerState);
 			} else {
 				const relationsFilter = getRelationsFilterFromLayerState(layerState);
@@ -543,7 +577,16 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 									}
 								}
 							}
-							console.log("Maps # getMapLayers", layer, features);
+
+							if (layerState.options.selected) {
+								layer = {
+									...layer,
+									options: {
+										...layer.options,
+										selected: selectorHelpers.prepareSelections(selections, layerState.options.selected)
+									}
+								}
+							}
 						}
 						finalLayers.push(layer);
 					});
@@ -561,6 +604,7 @@ export default {
     getAllLayersStateByMapKey,
     getBackgroundLayerStateByMapKey,
     getFilterByActiveByMapKey,
+	getLayerStateByLayerKeyAndMapKey,
     getLayersStateByMapKey,
     getMetadataModifiersByMapKey,
 

@@ -9,6 +9,7 @@ import DataActions from "../Data/actions";
 
 import helpers from "./selectorHelpers";
 import {map as mapUtils} from "@gisatcz/ptr-utils";
+import SelectionsAction from '../Selections/actions';
 
 const {actionGeneralError} = commonActions;
 
@@ -98,6 +99,21 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
             }));
         }
     }
+}
+
+function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(getState(), mapKey, layerKey);
+		if (layer?.options?.selectable) {
+			const activeSelectionKey = Select.selections.getActiveKey(getState());
+			if (activeSelectionKey) {
+				// TODO check if activeSelectionKey is in layer.options.selected?
+				dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
+			} else {
+				// TODO what if there is no active selection?
+			}
+		}
+	}
 }
 
 function setMapSetActiveMapKey(mapKey) {
@@ -241,6 +257,7 @@ const actionUpdateSetView = (setKey, update) => {
 // ============ export ===========
 export default {
 	refreshMapSetUse,
+	setLayerSelectedFeatureKeys,
     setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
 	setMapViewport: actionSetMapViewport,
