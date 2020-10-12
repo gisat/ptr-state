@@ -11,6 +11,7 @@ const mapStateToProps = (state, ownProps) => {
         return {
             backgroundLayer: Select.maps.getMapBackgroundLayer(ownProps.stateMapKey),
             layers: Select.maps.getMapLayers(ownProps.stateMapKey),
+            viewport: Select.maps.getViewportByMapKey(state, ownProps.stateMapKey),
             view: Select.maps.getViewByMapKey(state, ownProps.stateMapKey),
             viewLimits: Select.maps.getViewLimitsByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
