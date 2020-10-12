@@ -119,6 +119,9 @@ const getTiles = createCachedSelector(
 
 const getLayerByDataSourceType = (index, layerKey, layerState, dataSource) => {
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...options} = dataSource?.data;
+	if (layerState.options) {
+		options = {...options, ...layerState.options};
+	}
 
 	if (type === 'wmts') {
 		options.url = options.urls[0];

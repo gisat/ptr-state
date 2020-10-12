@@ -532,6 +532,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 					_.forEach(spatialDataSources, (dataSource, index) => {
 						let layer = selectorHelpers.getLayerByDataSourceType(index, layerState.key, layerState, dataSource);
 						if (dataSource.data?.type === "vector") {
+							console.log("Maps # getMapLayers vector", ((new Date()).getMilliseconds()));
 							let features = SpatialDataSelectors.getFeaturesByDataSourceKey(dataSource.key, dataSource.data.fidColumnName);
 							if (features?.length) {
 								layer = {
@@ -542,6 +543,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 									}
 								}
 							}
+							console.log("Maps # getMapLayers", layer, features);
 						}
 						finalLayers.push(layer);
 					});
