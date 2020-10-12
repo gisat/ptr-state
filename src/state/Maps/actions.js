@@ -122,6 +122,18 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 	};
 }
 
+function refreshMapSetUse(setKey) {
+	return (dispatch, getState) => {
+		const maps = Select.maps.getMapSetMaps(getState(), setKey);
+		if (maps) {
+			maps.map(map => {
+				// TODO is viewport always defined?
+				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
+			});
+		}
+	};
+}
+
 function updateMapAndSetView(mapKey, update) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
@@ -228,6 +240,7 @@ const actionUpdateSetView = (setKey, update) => {
 
 // ============ export ===========
 export default {
+	refreshMapSetUse,
     setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
 	setMapViewport: actionSetMapViewport,
