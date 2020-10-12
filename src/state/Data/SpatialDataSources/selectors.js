@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import {createSelector} from "reselect";
+import common from "../../_common/selectors";
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
@@ -25,7 +26,7 @@ const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
 });
 
-const getIndex = createRecomputeSelector(filter => {
+const getIndexByFilter = createRecomputeSelector(filter => {
 	// console.log("SpatialDataSources/selectors#getIndex", ((new Date()).getMilliseconds()));
 	const indexes = getIndexesObserver();
 	return _.find(indexes, (index) => _.isMatch(index.filter, filter))?.index || null;
@@ -33,7 +34,7 @@ const getIndex = createRecomputeSelector(filter => {
 
 const getFiltered = createRecomputeSelector(filter => {
 	console.log("SpatialDataSources/selectors#getFiltered", ((new Date()).getMilliseconds()));
-	const index = getIndex(filter);
+	const index = getIndexByFilter(filter);
 	if (index) {
 		let keys = Object.values(index);
 		if (keys) {
