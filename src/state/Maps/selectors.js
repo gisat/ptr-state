@@ -139,6 +139,23 @@ const getViewByMapKey = createCachedSelector(
  * @param state {Object}
  * @param mapKey {string}
  */
+const getViewportByMapKey = createCachedSelector(
+    [
+        getMapByKey,
+    ],
+	(map) => {
+        if(!_.isEmpty(map)) {
+            return map?.data?.viewport;
+        } else {
+            null
+        }
+    }
+)((state, mapKey) => mapKey);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ */
 const getViewLimitsByMapKey = createCachedSelector(
     [
         getMapByKey,
@@ -633,5 +650,6 @@ export default {
     getMapSetViewLimits,
 
     getViewByMapKey,
+    getViewportByMapKey,
     getViewLimitsByMapKey
 };
