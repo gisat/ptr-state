@@ -227,6 +227,7 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                 
                 //request for geometry
                 geometry: loadGeometry === false ? false : true,
+				relations: true,
                 
                 // use data source keys as filter or add them to filter
                 ...(dataSourceKeys && {dataSourceKeys}),

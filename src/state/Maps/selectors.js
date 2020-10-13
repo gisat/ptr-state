@@ -560,7 +560,6 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 	if (layersState) {
 		let finalLayers = [];
-		const selections = SelectionsSelectors.getAllAsObjectWithStylesObserver();
 
 		_.forEach(layersState, layerState => {
 			if (layerState.type) {
@@ -569,7 +568,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 						...layerState,
 						options: {
 							...layerState.options,
-							selected: selectorHelpers.prepareSelections(selections, layerState.options.selected)
+							selected: SelectionsSelectors.prepareSelectionByLayerStateSelectedObserver(layerState.options.selected)
 						}
 					}
 				}
@@ -600,7 +599,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 									...layer,
 									options: {
 										...layer.options,
-										selected: selectorHelpers.prepareSelections(selections, layerState.options.selected)
+										selected: SelectionsSelectors.prepareSelectionByLayerStateSelectedObserver(layerState.options.selected)
 									}
 								}
 							}

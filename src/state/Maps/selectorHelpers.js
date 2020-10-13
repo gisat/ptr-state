@@ -157,41 +157,6 @@ const getLayerByDataSourceType = (index, layerKey, layerState, dataSource) => {
 };
 
 
-const prepareSelections = (selections, layerSelections) => {
-	let populatedSelections = {};
-	_.forIn(layerSelections, (value, key) => {
-		let selectionData = selections?.[key].data;
-
-		if (selectionData) {
-			const style = selectionData.style;
-			// TODO hovered style
-			const color = selectionData.color;
-			const hoveredColor = selectionData.hoveredColor;
-
-			if (selectionData.featureKeysFilter) {
-				populatedSelections[key] = {keys: selectionData.featureKeysFilter.keys};
-				if (style) {
-					populatedSelections[key].style = style;
-					populatedSelections[key].hoveredStyle = style;
-				} else {
-					populatedSelections[key].style = {
-						outlineColor: color,
-						outlineWidth: 2
-					};
-					populatedSelections[key].hoveredStyle = {
-						outlineColor: hoveredColor,
-						outlineWidth: 2
-					}
-				}
-			}
-
-			//TODO other selection types
-		}
-	});
-
-	return populatedSelections;
-}
-
 export default {
     getBackgroundLayerAsLayer,
 	getLayerByDataSourceType,
@@ -199,6 +164,5 @@ export default {
     getView,
     getZoomLevel,
     mergeBackgroundLayerWithLayers,
-	mergeModifiersAndFilterByActiveToLayerStructure,
-	prepareSelections
+	mergeModifiersAndFilterByActiveToLayerStructure
 }

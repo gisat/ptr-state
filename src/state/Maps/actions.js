@@ -106,8 +106,7 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
 		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(getState(), mapKey, layerKey);
 		if (layer?.options?.selectable) {
 			const activeSelectionKey = Select.selections.getActiveKey(getState());
-			if (activeSelectionKey) {
-				// TODO check if activeSelectionKey is in layer.options.selected?
+			if (activeSelectionKey && layer.options.selected?.hasOwnProperty(activeSelectionKey)) {
 				dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
 			} else {
 				// TODO what if there is no active selection?
