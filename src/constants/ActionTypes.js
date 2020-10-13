@@ -224,9 +224,26 @@ export default utils.deepKeyMirror({
 	},
 
     DATA: {
-        ATTRIBUTE_DATA: {},
-        ATTRIBUTE_DATA_SOURCES: {},
-        ATTRIBUTE_RELATIONS: {},
+        ATTRIBUTE_DATA: {
+			ADD: null,
+			UPDATE: null,
+			INDEX: {
+				ADD: null,
+				REGISTER: null,
+			},
+		},
+        ATTRIBUTE_DATA_SOURCES: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+			},
+		},
+        ATTRIBUTE_RELATIONS: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+				REGISTER: null,
+			},},
         SPATIAL_DATA: {
 			ADD: null,
 			UPDATE: null,

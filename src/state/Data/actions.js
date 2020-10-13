@@ -262,6 +262,12 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                         }
 
                         //TODO add attribute relations, dataSources, data
+                        if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
+                            //TODO relations.offset
+                            const changes = null;
+                            dispatch(attributeRelations.receiveIndexed(result.data.attributeData, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
+                        }
+
 
                         return result;
                     } else {

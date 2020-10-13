@@ -7,6 +7,12 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
+        case ActionTypes.DATA.ATTRIBUTE_RELATIONS.ADD:
+			return common.add(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_RELATIONS.INDEX.ADD:
+			return common.addIndex(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_RELATIONS.INDEX.REGISTER:
+			return common.registerIndex(state, action);
         default:
             return state;
     }
