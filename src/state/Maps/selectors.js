@@ -595,7 +595,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 								}
 							}
 
-							if (layerState.options.selected) {
+							if (layerState.options?.selected) {
 								layer = {
 									...layer,
 									options: {
