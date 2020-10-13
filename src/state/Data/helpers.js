@@ -1,5 +1,5 @@
 export const getMissingTiles = (indexes = [], filter) => {
-    if(filter && filter.tiles && indexes && indexes.length) {
+    if(filter && filter.tiles && indexes) {
         const loadedTiles = indexes.reduce((loaded, index) => {
             if(filter.tiles.find(tile => index.tile === `${tile[0]},${tile[1]}`)) {
                 return [...loaded, index.tile];
