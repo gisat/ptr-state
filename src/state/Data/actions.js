@@ -286,9 +286,6 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                         ////
                         // Attributes
                         ////
-
-
-                        //TODO add attribute dataSources, data
                         if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
                             //TODO relations.offset
                             const changes = null;
@@ -300,6 +297,13 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             //TODO result.total.spatialRelations ?
                             const changes = null;
                             dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
+                        }
+
+                        if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
+                            //TODO add level to indexes on BE?
+                            //TODO indexes
+                            const changes = null;
+                            dispatch(attributeData.receiveIndexed(result.data.attributeData, mergedRelationsSpatialFilter, order, changes));
                         }
 
 
