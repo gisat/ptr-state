@@ -177,13 +177,26 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
         };
 
         //register indexes
+
+        ////
+        // Spatial
+        ////
+
         dispatch(spatialRelations.registerIndex(mergedRelationsSpatialFilter, order, relations.offset, spatialIndex));
         //todo correct parameters
         const limit = 1;
         const spatialDataSourceKey = null
         dispatch(spatialData.registerIndex(mergedRelationsSpatialFilter, spatialFilter.level, order, spatialDataSourceKey, spatialIndex?.tiles || null, limit));
 
-		let payload = {
+
+        ////
+        // Attribute
+        ////
+        dispatch(attributeRelations.registerIndex(mergedRelationsSpatialFilter, order, relations.offset, spatialIndex));
+
+
+
+		const payload = {
             modifiers,
 
             // which layer you want
@@ -237,6 +250,11 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
                     if(result.data) {
+
+                        ////
+                        // Spatial data
+                        ////
+
                         if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
                             //TODO relations.offset
                             const changes = null;
@@ -258,11 +276,23 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                             dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedRelationsSpatialFilter, level, order, changes));
                         }
 
-                        //TODO add attribute relations, dataSources, data
+                        ////
+                        // Attributes
+                        ////
+
+
+                        //TODO add attribute dataSources, data
                         if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
                             //TODO relations.offset
                             const changes = null;
                             dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
+                        }
+
+                        if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
+                            //TODO relations.offset
+                            //TODO result.total.spatialRelations ?
+                            const changes = null;
+                            dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
                         }
 
 
