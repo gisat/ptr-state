@@ -35,15 +35,13 @@ function ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, ar
 
             // TODO
             // relations:false
-            const relations = {
-                offset: 1000,
-                limit: 1,
-            };
+            const relations = {};
             const attributeFilter = null;
             const loadGeometry = true;
+            const loadRelations = false;
             const dataSourceKeys = null;
             const featureKeys = null;
-            promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order))) 
+            promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order))) 
         }
         return Promise.all(promises);
     }
@@ -64,11 +62,12 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
         };
         const attributeFilter = null;
         const loadGeometry = true;
+        const loadRelations = true;
         const dataSourceKeys = null;
         const featureKeys = null;
         const spatialIndex = null;
         if(spatialFilter && !_.isEmpty(spatialFilter)) {
-            return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)).then((response) => {
+            return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order)).then((response) => {
                 const promises = [];
 
                 // load remaining relations pages
@@ -85,7 +84,7 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
                     const spatialIndex = {
                         tiles: [spatialFilter.tiles[tilesPagination]],
                     };
-                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order)))
                 }
 
                 //load rest tiles
@@ -96,14 +95,9 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
                         tiles: [spatialFilter.tiles[i]],
                     };
 
-                    //TODO hack before possibility to ask for data without relations
-                    //ask for relations pages without content 
-                    const relations = {
-                        offset: (remainingRelationsPageCount + 1) * PAGE_SIZE,
-                        limit: PAGE_SIZE
-                    };
-
-                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order)))
+                    const relations = {};
+                    const loadRestTilesRelations = false;
+                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order)))
                 }
 
                 return Promise.all(promises);
@@ -158,7 +152,7 @@ function ensure(filter) {
 
 
 
-function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, dataSourceKeys, order) {
+function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
@@ -229,6 +223,9 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                 geometry: loadGeometry === false ? false : true,
 				relations: true,
                 
+                //request for relations
+                relations: loadRelations === false ? false : true,
+                
                 // use data source keys as filter or add them to filter
                 ...(dataSourceKeys && {dataSourceKeys}),
             },
@@ -262,10 +259,10 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                         }
 
                         //TODO add attribute relations, dataSources, data
-                        if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
+                        if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
                             //TODO relations.offset
                             const changes = null;
-                            dispatch(attributeRelations.receiveIndexed(result.data.attributeData, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
+                            dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedRelationsSpatialFilter, order, relations.offset, result.total.attributeRelations, changes));
                         }
 
 
