@@ -70,6 +70,13 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
             return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order)).then((response) => {
                 const promises = [];
 
+                //Check if some of returned spatialDataSources are type of vector. Otherwise theri is no reason to make further requests.
+                const spatialDataSources = response?.data?.spatialDataSources || [];
+                const allSourcesAreVectors = spatialDataSources.every(ds => ds.data?.type === 'vector');
+                if(!allSourcesAreVectors) {
+                    return
+                }
+
                 // load remaining relations pages
                 // What is higer to load? attributeRelations or spatialRelations
                 const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
