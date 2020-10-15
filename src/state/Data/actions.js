@@ -241,7 +241,6 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
                 
                 //request for geometry
                 geometry: loadGeometry === false ? false : true,
-				relations: true,
                 
                 //request for relations
                 relations: loadRelations === false ? false : true,
