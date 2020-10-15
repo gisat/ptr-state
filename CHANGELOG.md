@@ -1,3 +1,15 @@
+# v1.5.10 (Thu Oct 15 2020)
+
+#### 🐾 Patch
+
+- Prevent empty relations in periods selector [#55](https://github.com/gisat-panther/ptr-state/pull/55) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v1.5.9 (Thu Sep 17 2020)
 
 #### 🐾 Patch
