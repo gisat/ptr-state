@@ -8,8 +8,9 @@ import {mapConstants} from "@gisatcz/ptr-core";
 import selectorHelpers from "./selectorHelpers";
 
 import common from "../_common/selectors";
-import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
-import SpatialDataSelectors from "../Data/SpatialData/selectors";
+// import AttributeRelationsSelectors from "../Data/AttributeRelations/selectors";
+// import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
+import DataSelectors from "../Data/selectors";
 import commonSelectors from '../_common/selectors';
 import commonHelpers from '../_common/helpers';
 import SelectionsSelectors from '../Selections/selectors';
@@ -527,7 +528,7 @@ const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) =>
 	}
 });
 
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey) => {
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs) => {
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
@@ -560,7 +561,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			url
 		}
 	} else if (type === "vector") {
-		let features = SpatialDataSelectors.getFeaturesByDataSourceKey(dataSource.key, fidColumnName);
+		let features = DataSelectors.getFeatures(dataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
 		let selected = null;
 
 		if (options?.selected) {
@@ -597,7 +598,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 		} else {
 			// TODO filterByActive & metadata modifiers?
 			const layerKey = 'pantherBackgroundLayer';
-			const spatialDataSources = SpatialDataSourcesSelectors.getFiltered(layerState);
+			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
 			if (spatialDataSources) {
 				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, dataSource, layerKey));
 			} else {
@@ -633,11 +634,12 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 				finalLayers.push(layerState);
 			} else {
 				const relationsFilter = getRelationsFilterFromLayerState(layerState);
-				const spatialDataSources = SpatialDataSourcesSelectors.getFiltered(relationsFilter);
+				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(relationsFilter);
+				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(relationsFilter);
 
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, (dataSource, index) => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState));
+						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs));
 					});
 				}
 			}
