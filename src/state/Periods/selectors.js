@@ -104,7 +104,7 @@ const getFilteredGroupedByLayerKey = createCachedSelector(
 			const periodsByLayerKey = {};
 			for (const [layerKey, spatialRelations] of Object.entries(spatialRelationsDataGroupedByLayerKey)) {
 				periodsByLayerKey[layerKey] = spatialRelations.map(spatialRelation => {
-					if(periods[spatialRelation.periodKey]) {
+					if(spatialRelation && periods[spatialRelation.periodKey]) {
 						return periods[spatialRelation.periodKey];
 					}
 				})
