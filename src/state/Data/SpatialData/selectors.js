@@ -30,7 +30,7 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 
 
 const getFeaturesByDataSourceKey = createRecomputeSelector((dataSourceKey, fidColumnName) => {
-	console.log("SpatialData # getFeaturesByDataSourceKey", ((new Date()).getMilliseconds()));
+	// console.log("SpatialData # getFeaturesByDataSourceKey", ((new Date()).getMilliseconds()));
 	const data = getByDataSourceKeyObserver(dataSourceKey);
 	if (data) {
 		return _.map(data, (geometry, key) => {

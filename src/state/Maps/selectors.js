@@ -498,9 +498,8 @@ const getAllLayersStateByMapKey = createCachedSelector(
 )((state, mapKey) => mapKey);
 
 const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
-	console.log("getRelationsFilterFromLayerState", layerState);
 	if (layerState) {
-		// TODO at leeast a part is the same as in Maps/actions/layerUse?
+		// TODO at least a part is the same as in Maps/actions/layerUse?
 		const layer = layerState;
 
 		// modifiers defined by key
@@ -528,6 +527,65 @@ const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) =>
 	}
 });
 
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey) => {
+	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
+
+	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
+	let {key, name, opacity, options: layerStateOptions} = layerState;
+
+	layerKey = layerKey || key;
+
+	let options = {};
+	if (dataSourceOptions && layerStateOptions) {
+		options = {...dataSourceOptions, ...layerStateOptions};
+	} else if (layerStateOptions) {
+		options = {...layerStateOptions}
+	} else if (dataSourceOptions) {
+		options = {...dataSourceOptions};
+	}
+
+	if (type === 'wmts') {
+		options.url = dataSourceOptions.url || dataSourceOptions.urls[0];
+	} else if (type === 'wms') {
+		const {url, params, configuration, ...rest} = dataSourceOptions;
+		const singleTile = configuration && configuration.hasOwnProperty('singleTile') ? configuration.singleTile : false;
+
+		options = {
+			params: {
+				...params,
+				layers: rest.layers,
+				styles: rest.styles,
+			},
+			singleTile,
+			url
+		}
+	} else if (type === "vector") {
+		let features = SpatialDataSelectors.getFeaturesByDataSourceKey(dataSource.key, fidColumnName);
+		let selected = null;
+
+		if (options?.selected) {
+			selected = SelectionsSelectors.prepareSelectionByLayerStateSelected(options.selected);
+		}
+
+		options = {
+			...options,
+			features,
+			selected,
+			fidColumnName,
+			geometryColumnName
+		};
+	}
+
+	return {
+		key: layerKey + '_' + index,
+		layerKey,
+		opacity: opacity || 1,
+		name,
+		type,
+		options
+	};
+});
+
 const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	if (!layerState) {
 		layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
@@ -541,7 +599,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			const layerKey = 'pantherBackgroundLayer';
 			const spatialDataSources = SpatialDataSourcesSelectors.getFiltered(layerState);
 			if (spatialDataSources) {
-				return spatialDataSources.map((dataSource, index) => selectorHelpers.getLayerByDataSourceType(index, layerKey, layerState, dataSource));
+				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, dataSource, layerKey));
 			} else {
 				return null;
 			}
@@ -552,8 +610,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 });
 
 const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
-	console.log("Maps # getMapLayers", ((new Date()).getMilliseconds()));
-
+	// console.log("Maps # getMapLayers", ((new Date()).getMilliseconds()), mapKey);
 	if (!layersState) {
 		layersState = getLayersStateByMapKeyObserver(mapKey);
 	}
@@ -568,7 +625,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 						...layerState,
 						options: {
 							...layerState.options,
-							selected: SelectionsSelectors.prepareSelectionByLayerStateSelectedObserver(layerState.options.selected)
+							selected: SelectionsSelectors.prepareSelectionByLayerStateSelected(layerState.options.selected)
 						}
 					}
 				}
@@ -580,31 +637,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, (dataSource, index) => {
-						let layer = selectorHelpers.getLayerByDataSourceType(index, layerState.key, layerState, dataSource);
-						if (dataSource.data?.type === "vector") {
-							console.log("Maps # getMapLayers vector", ((new Date()).getMilliseconds()));
-							let features = SpatialDataSelectors.getFeaturesByDataSourceKey(dataSource.key, dataSource.data.fidColumnName);
-							if (features?.length) {
-								layer = {
-									...layer,
-									options: {
-										...layer.options,
-										features
-									}
-								}
-							}
-
-							if (layerState.options?.selected) {
-								layer = {
-									...layer,
-									options: {
-										...layer.options,
-										selected: SelectionsSelectors.prepareSelectionByLayerStateSelectedObserver(layerState.options.selected)
-									}
-								}
-							}
-						}
-						finalLayers.push(layer);
+						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState));
 					});
 				}
 			}

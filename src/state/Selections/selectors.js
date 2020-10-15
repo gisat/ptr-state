@@ -3,7 +3,6 @@ import common from "../_common/selectors";
 import StyleSelectors from "../Styles/selectors";
 import {createSelector} from "reselect";
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
-import createCachedSelector from 're-reselect';
 
 const getSubstate = state => state.selections;
 const getActive = common.getActive(getSubstate);
@@ -51,30 +50,26 @@ const getAllAsObjectWithStyles = createSelector(
 	}
 );
 
-const getAllAsObjectWithStylesObserver = createRecomputeObserver(getAllAsObjectWithStyles);
+const getByKeyObserver = createRecomputeObserver((state, key) => state.selections.byKey[key]);
 
-const prepareSelectionByLayerStateSelected = createCachedSelector(
-	[
-		getAllAsObjectWithStyles,
-		(state, layerStateSelected) => layerStateSelected
-	],
-	(selections, layerStateSelected) => {
-		console.log("Selections # prepareSelectionByLayerStateSelected");
+const prepareSelectionByLayerStateSelected = createRecomputeSelector(
+	(layerStateSelected) => {
 		let populatedSelections = {};
 		_.forIn(layerStateSelected, (value, key) => {
-			let selectionData = selections?.[key].data;
+			let selection = getByKeyObserver(key);
+			let selectionData = selection?.data;
 
 			if (selectionData) {
 				const style = selectionData.style;
-				// TODO hovered style
+				const hoveredStyle = selectionData.hoveredStyle || style;
 				const color = selectionData.color;
-				const hoveredColor = selectionData.hoveredColor;
+				const hoveredColor = selectionData.hoveredColor || color;
 
 				if (selectionData.featureKeysFilter) {
 					populatedSelections[key] = {keys: selectionData.featureKeysFilter.keys};
 					if (style) {
 						populatedSelections[key].style = style;
-						populatedSelections[key].hoveredStyle = style;
+						populatedSelections[key].hoveredStyle = hoveredStyle;
 					} else {
 						populatedSelections[key].style = {
 							outlineColor: color,
@@ -93,9 +88,7 @@ const prepareSelectionByLayerStateSelected = createCachedSelector(
 
 		return populatedSelections;
 	}
-)((state, layerStateSelected) => JSON.stringify(layerStateSelected));
-
-const prepareSelectionByLayerStateSelectedObserver = createRecomputeObserver(prepareSelectionByLayerStateSelected);
+);
 
 export default {
 	getActiveKey,
@@ -104,7 +97,6 @@ export default {
 	getAllAsObject,
 
 	getAllAsObjectWithStyles,
-	getAllAsObjectWithStylesObserver,
 
-	prepareSelectionByLayerStateSelectedObserver
+	prepareSelectionByLayerStateSelected
 }
