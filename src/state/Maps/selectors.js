@@ -5,15 +5,14 @@ import _ from 'lodash';
 
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
-import selectorHelpers from "./selectorHelpers";
 
 import common from "../_common/selectors";
-// import AttributeRelationsSelectors from "../Data/AttributeRelations/selectors";
-// import SpatialDataSourcesSelectors from "../Data/SpatialDataSources/selectors";
-import DataSelectors from "../Data/selectors";
-import commonSelectors from '../_common/selectors';
 import commonHelpers from '../_common/helpers';
+import selectorHelpers from "./selectorHelpers";
+
+import DataSelectors from "../Data/selectors";
 import SelectionsSelectors from '../Selections/selectors';
+import StylesSelectors from '../Styles/selectors';
 
 /* === SELECTORS ======================================================================= */
 
@@ -532,7 +531,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
-	let {key, name, opacity, options: layerStateOptions} = layerState;
+	let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
 
 	layerKey = layerKey || key;
 
@@ -563,15 +562,22 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 	} else if (type === "vector") {
 		let features = DataSelectors.getFeatures(dataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
 		let selected = null;
+		let style = options?.style;
 
 		if (options?.selected) {
 			selected = SelectionsSelectors.prepareSelectionByLayerStateSelected(options.selected);
 		}
 
+		if (!style && styleKey) {
+			style = StylesSelectors.getDefinitionByKey(styleKey);
+		}
+
+
 		options = {
 			...options,
+			...(selected && {selected}),
+			...(style && {style}),
 			features,
-			selected,
 			fidColumnName,
 			geometryColumnName
 		};
@@ -645,6 +651,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 			}
 		});
 
+		console.log(finalLayers);
 		return finalLayers.length ? finalLayers : null;
 	} else {
 		return null;

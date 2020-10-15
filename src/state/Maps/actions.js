@@ -6,6 +6,7 @@ import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
 import DataActions from "../Data/actions";
+import StylesActions from "../Styles/actions";
 
 import helpers from "./selectorHelpers";
 import {map as mapUtils} from "@gisatcz/ptr-utils";
@@ -53,6 +54,11 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 function layerUse(componentId, activeKeys, layer, spatialFilter) {
     return (dispatch, getState) => {
         const state = getState();
+
+		// TODO ensure style here for now
+		if (layer.styleKey) {
+			dispatch(StylesActions.useKeys([layer.styleKey], "layerUse"));
+		}
 
         // modifiers defined by key
         let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
