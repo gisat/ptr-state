@@ -443,7 +443,7 @@ const getLayersStateByMapKey = createCachedSelector(
         getMapLayersStateWithModifiersByMapKey
     ],
     (setLayers, mapLayers) => {
-    	console.log("Maps # getLayersStateByMapKey", ((new Date()).getMilliseconds()));
+    	// console.log("Maps # getLayersStateByMapKey", ((new Date()).getMilliseconds()));
         if (mapLayers && setLayers) {
             return [...setLayers, ...mapLayers]
         } else if (mapLayers) {
@@ -651,7 +651,6 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 			}
 		});
 
-		console.log(finalLayers);
 		return finalLayers.length ? finalLayers : null;
 	} else {
 		return null;

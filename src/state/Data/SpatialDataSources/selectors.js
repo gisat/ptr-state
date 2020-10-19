@@ -33,7 +33,7 @@ const getIndexByFilter = createRecomputeSelector(filter => {
 });
 
 const getFiltered = createRecomputeSelector(filter => {
-	console.log("SpatialDataSources/selectors#getFiltered", ((new Date()).getMilliseconds()));
+	// console.log("SpatialDataSources/selectors#getFiltered", ((new Date()).getMilliseconds()));
 	const index = getIndexByFilter(filter);
 	if (index) {
 		let keys = Object.values(index);
