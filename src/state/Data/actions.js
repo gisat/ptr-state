@@ -18,7 +18,7 @@ const DEFAULT_RELATIONS_PAGE = {
 /**
  * @return {function}
  */
-function loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter) {
+function loadMissing(spatialFilter, styleKey, order, mergedFilter) {
     return (dispatch, getState) => {
         //which spatial data to load
 
@@ -41,7 +41,7 @@ function loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKe
             const loadRelations = false;
             const dataSourceKeys = null;
             const featureKeys = null;
-            promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter))) 
+            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter))) 
         }
         return Promise.all(promises);
     }
@@ -49,7 +49,7 @@ function loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKe
 /**
  * @return {function}
  */
-function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter) {
+function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
     return (dispatch, getState) => {
         const localConfig = Select.app.getCompleteLocalConfiguration(getState());
         const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
@@ -67,7 +67,7 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
         const featureKeys = null;
         const spatialIndex = null;
         if(spatialFilter && !_.isEmpty(spatialFilter)) {
-            return dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)).then((response) => {
+            return dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)).then((response) => {
                 const promises = [];
 
                 //Check if some of returned spatialDataSources are type of vector. Otherwise theri is no reason to make further requests.
@@ -91,7 +91,7 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
                     const spatialIndex = {
                         tiles: [spatialFilter.tiles[tilesPagination]],
                     };
-                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)))
+                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)))
                 }
 
                 //load rest tiles
@@ -104,7 +104,7 @@ function ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, area
 
                     const relations = {};
                     const loadRestTilesRelations = false;
-                    promises.push(dispatch(loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedFilter)))
+                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedFilter)))
                 }
 
                 return Promise.all(promises);
@@ -128,46 +128,46 @@ function ensure(filter) {
     return (dispatch, getState) => {
 
         // Filter params - see Panther docs: Code/API/Data endpoint
-        const {modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, data, mergedFilter} = filter;
+        const {styleKey, data, mergedFilter} = filter;
         const {spatialFilter} = data;
+        const {areaTreeLevelKey, layerTemplateKey} = mergedFilter;
 
         // select indexes
         const order = null;
         let areaRelationsIndex = null;
-        // let mergedFilter = {};
         if(areaTreeLevelKey) {
-            // mergedFilter = {...modifiers, areaTreeLevelKey};
             //FIXME - attributeRelations why?
             areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), mergedFilter, order);
         }
         
         let spatialRelationsIndex = null;
         if(layerTemplateKey) {
-            // mergedFilter = {...modifiers, layerTemplateKey};
             spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(),  mergedFilter, order);
         }
 
-        const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), modifiers, order);
+        //FIXME
+        const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedFilter, order);
         //corectly identify if missing spatialData or attributeData or all
         //fixme ensure missing attribute data?
         // uncomment after resolve attribute data
         // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
         if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
-            return dispatch(loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter));
+            return dispatch(loadMissing(spatialFilter, styleKey, order, mergedFilter));
         } else {
-            return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter));
+            return dispatch(ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter));
         }
     }
 }
 
 
 
-function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter) {
+function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = 'backend/rest/data/filtered';
 
+        const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedFilter
         //what if we have already some DS or DR?
         //check if indexes are loading (ds, dr, data - all)
         const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedFilter, order);
@@ -197,11 +197,6 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
         // Attribute
         ////
         dispatch(attributeRelations.registerIndex(mergedFilter, order, relations.offset, spatialIndex));
-
-
-        //TODO
-        // instead of destructing modifiers, layerTemplateKey and areaTreeLevelKey we can just destruct mergedFilter
-
 		const payload = {
             modifiers,
 
@@ -331,6 +326,6 @@ export default {
     spatialRelations,
 
     ensure, //todo TESTS
-    ensureMissingSpatialData, //todo TESTS
+    loadMissing, //todo TESTS
     ensureDataAndRelations, //todo TESTS
 }

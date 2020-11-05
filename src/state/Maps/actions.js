@@ -90,12 +90,12 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         if (layerTemplateKey || areaTreeLevelKey) {
             let mergedFilter = {};
             if(areaTreeLevelKey) {
-                mergedFilter = {...modifiers, areaTreeLevelKey};
+                mergedFilter = {...modifiersForRequest, areaTreeLevelKey};
             }
             
             let spatialRelationsIndex = null;
             if(layerTemplateKey) {
-                mergedFilter = {...modifiers, layerTemplateKey};
+                mergedFilter = {...modifiersForRequest, layerTemplateKey};
             }
 
 
@@ -111,9 +111,6 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
             }
             // TODO register use?
             dispatch(DataActions.ensure({
-                modifiers: modifiersForRequest,
-                areaTreeLevelKey,
-                layerTemplateKey,
                 styleKey: layer.styleKey || null,
                 data: {
                     spatialFilter
