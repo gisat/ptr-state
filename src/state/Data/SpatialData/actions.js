@@ -3,34 +3,34 @@ import _ from "lodash";
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
 // ============ creators ===========
-const receiveIndexed = (result, filter, level, order, changedOn) => {
+const receiveIndexed = (data, filter, level, order, changedOn) => {
     return dispatch => {
         // add data to store
-        if (result) {            
-            dispatch(addOrUpdateData(result));
+        if (data) {            
+            dispatch(addOrUpdateData(data));
         }
 
         // add to index
-        dispatch(addIndex(filter, level, order, result, changedOn));
+        dispatch(addIndex(filter, level, order, data, changedOn));
     }
 }
 
-function addIndex(filter, level, order, result, changedOn) {
+function addIndex(filter, level, order, data, changedOn) {
     return (dispatch, getState) => {
-        for(const key of Object.keys(result)) {
-            dispatch(addIndexesAction(key, filter, level, order, result[key].spatialIndex, changedOn));
+        for(const key of Object.keys(data)) {
+            dispatch(addIndexesAction(key, filter, level, order, data[key].spatialIndex, changedOn));
         }
     }
 }
 
-function addOrUpdateData(result) {
+function addOrUpdateData(data) {
     return (dispatch, getState) => {
         const state = getState();
-        for(const key of Object.keys(result)) {
+        for(const key of Object.keys(data)) {
             if(_.isEmpty(state.data.spatialData.byDataSourceKey[key])) {
-                dispatch(addDataAction(key, result[key].data));
+                dispatch(addDataAction(key, data[key].data));
             } else {
-                dispatch(updateDataAction(key, result[key].data));
+                dispatch(updateDataAction(key, data[key].data));
             }
         }
     }

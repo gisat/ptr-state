@@ -6,36 +6,36 @@ const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 const registerIndex = common.registerIndex(actionTypes);
 
 // ============ creators ===========
-const receiveIndexed = (result, filter, order, changedOn) => {
+const receiveIndexed = (data, filter, order, changedOn) => {
     return dispatch => {
         // add data to store
-        if (result) {            
-            dispatch(addOrUpdateData(result));
+        if (data) {            
+            dispatch(addOrUpdateData(data));
         }
         // attribute data index is same like spatial data index
         // add to index
-        // dispatch(addIndex(filter, order, result, changedOn));
+        // dispatch(addIndex(filter, order, data, changedOn));
     }
 }
 
-function addOrUpdateData(result) {
+function addOrUpdateData(data) {
     return (dispatch, getState) => {
         const state = getState();
-        for(const key of Object.keys(result)) {
+        for(const key of Object.keys(data)) {
             if(_.isEmpty(state.data.attributeData.byDataSourceKey[key])) {
-                dispatch(addDataAction(key, result[key]));
+                dispatch(addDataAction(key, data[key]));
             } else {
-                dispatch(updateDataAction(key, result[key]));
+                dispatch(updateDataAction(key, data[key]));
             }
         }
     }
 }
 
 
-function addIndex(filter, order, result, changedOn) {
+function addIndex(filter, order, data, changedOn) {
     return (dispatch) => {
-        for(const key of Object.keys(result)) {
-            dispatch(addIndexesAction(key, filter, order, result[key], changedOn));
+        for(const key of Object.keys(data)) {
+            dispatch(addIndexesAction(key, filter, order, data[key], changedOn));
         }
     }
 }
