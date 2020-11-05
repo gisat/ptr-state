@@ -8,11 +8,13 @@ const getIndex = common.getIndex(getSubstate);
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("AttributeDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	return state.data.attributeRelations.byKey?.[key];
+	const substate = getSubstate(state);
+	return substate.byKey?.[key];
 });
 
 const getIndexesObserver = createRecomputeObserver(state => {
-	return state.data.attributeRelations.indexes;
+	const substate = getSubstate(state);
+	return substate.indexes;
 });
 
 const getByKeys = createRecomputeSelector(keys => {

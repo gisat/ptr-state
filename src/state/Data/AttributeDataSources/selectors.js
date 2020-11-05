@@ -3,12 +3,14 @@ import {createSelector as createRecomputeSelector, createObserver as createRecom
 import {createSelector} from "reselect";
 import common from "../../_common/selectors";
 
+const getSubstate = state => state.data.attributeDataSources;
+
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("AttributeDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	return state.data.attributeDataSources.byKey?.[key];
+	const substate = getSubstate(state);
+	return substate.byKey?.[key];
 });
 
-const getSubstate = state => state.data.attributeDataSources;
 
 const getIndex = common.getIndex(getSubstate);
 
@@ -18,7 +20,8 @@ const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getIndexesObserver = createRecomputeObserver(state => {
 	// console.log("AttributeDataSources/selectors#getIndexesObserver", ((new Date()).getMilliseconds()));
-	return state.data.attributeDataSources.indexes;
+	const substate = getSubstate(state);
+	return substate.indexes;
 });
 
 const getByKeys = createRecomputeSelector(keys => {

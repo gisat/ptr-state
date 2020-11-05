@@ -4,12 +4,13 @@ import {createSelector} from "reselect";
 import common from "../../_common/selectors";
 import createCachedSelector from "re-reselect";
 
+const getSubstate = state => state.data.spatialDataSources;
+
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	return state.data.spatialDataSources.byKey?.[key];
+	const substate = getSubstate(state);
+	return substate.byKey?.[key];
 });
-
-const getSubstate = state => state.data.spatialDataSources;
 
 const getIndex = common.getIndex(getSubstate);
 
@@ -19,7 +20,8 @@ const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getIndexesObserver = createRecomputeObserver(state => {
 	// console.log("SpatialDataSources/selectors#getIndexesObserver", ((new Date()).getMilliseconds()));
-	return state.data.spatialDataSources.indexes;
+	const substate = getSubstate(state);
+	return substate.indexes;
 });
 
 const getByKeys = createRecomputeSelector(keys => {
