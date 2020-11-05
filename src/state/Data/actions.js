@@ -10,7 +10,7 @@ import commonActions from '../_common/actions';
 import Select from "../Select";
 import {getMissingTiles} from './helpers';
 
-const DEFAULT_RELATIONS_PAGNIATIONS = {
+const DEFAULT_RELATIONS_PAGE = {
     offset: 0,
     limit: 100,
 }
@@ -213,7 +213,7 @@ function loadIndexedPage(modifiers, layerTemplateKey, areaTreeLevelKey, styleKey
             ...(styleKey && {styleKey}),
 
             // pagination for relations (& data sources)
-            ...(relations && {relations} || DEFAULT_RELATIONS_PAGNIATIONS),
+            ...(relations && {relations} || DEFAULT_RELATIONS_PAGE),
 
             data: {
                 // list of features you want
