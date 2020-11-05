@@ -18,7 +18,7 @@ const DEFAULT_RELATIONS_PAGE = {
 /**
  * @return {function}
  */
-function ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter) {
+function loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter) {
     return (dispatch, getState) => {
         //which spatial data to load
 
@@ -153,7 +153,7 @@ function ensure(filter) {
         // uncomment after resolve attribute data
         // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
         if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
-            return dispatch(ensureMissingSpatialData(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter));
+            return dispatch(loadMissing(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter));
         } else {
             return dispatch(ensureDataAndRelations(spatialFilter, modifiers, layerTemplateKey, areaTreeLevelKey, styleKey, order, mergedFilter));
         }
