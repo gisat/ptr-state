@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import {createSelector} from "reselect";
 import common from "../../_common/selectors";
+import createCachedSelector from "re-reselect";
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
@@ -54,7 +55,7 @@ const getFiltered = createRecomputeSelector(filter => {
  * @param {*} order 
  * @param {*} level 
  */
-const getByFilteredIndexes =  createSelector([
+const getByFilteredIndexes = createCachedSelector([
 	getFilteredIndexes,
 	getAllAsObject,
     ],
@@ -66,7 +67,9 @@ const getByFilteredIndexes =  createSelector([
             return null;
         }
     }
-);
+)((state, filter, order) => {
+	return `${JSON.stringify(filter)}${JSON.stringify(order)}`
+})
 
 
 export default {

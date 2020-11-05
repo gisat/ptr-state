@@ -88,10 +88,22 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
         const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers) // TODO remove "|| {}" after fix on BE
         if (layerTemplateKey || areaTreeLevelKey) {
+            let mergedFilter = {};
+            if(areaTreeLevelKey) {
+                mergedFilter = {...modifiers, areaTreeLevelKey};
+            }
+            
+            let spatialRelationsIndex = null;
+            if(layerTemplateKey) {
+                mergedFilter = {...modifiers, layerTemplateKey};
+            }
+
+
             if(layerTemplateKey) {
                 //TODO determinate what is better aproach
                 // const spatialDataSource = Select.data.spatialDataSources.getFilteredIndexes(state, {layerTemplateKey, ...modifiers}, null);
-                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndexes(state, {layerTemplateKey, ...modifiers}, null);
+                //todo
+                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndexes(state, mergedFilter, null);
                 const dataSourceType = spatialDataSource?.data?.type || null;
                 if(dataSourceType &&  dataSourceType !== 'vector') {
                     return
@@ -105,7 +117,8 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
                 styleKey: layer.styleKey || null,
                 data: {
                     spatialFilter
-                }
+                },
+                mergedFilter
             }));
         }
     }
