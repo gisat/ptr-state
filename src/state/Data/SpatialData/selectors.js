@@ -5,6 +5,7 @@ import {createSelector as createRecomputeSelector, createObserver as createRecom
 const getSubstate = (state) => state.data.spatialData;
 
 /**
+ * TODO - can be replaced by getIndex???
  * @param {*} state 
  * @param {*} filter 
  * @param {*} order 
@@ -15,9 +16,15 @@ const getFilteredIndexes =  createSelector([
     (state, filter) => filter,
     (state, filter, order) => order,
     (state, filter, order, level) => level],
-    (indexes, filter, order, level) => {
-        if(!_.isEmpty(indexes)) {
-            return indexes.filter(index => index.level === level);
+    (index, filter, order, level) => {
+        if(index) {
+			//fixme - by level???
+            // return indexes.filter(index => index.level === level);
+            if(index.level === level) {
+				return index
+			} else {
+				return null
+			}
         } else {
             return null;
         }

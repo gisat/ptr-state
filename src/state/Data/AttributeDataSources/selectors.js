@@ -14,8 +14,6 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
 
 const getIndex = common.getIndex(getSubstate);
 
-const getFilteredIndexes = common.getFilteredIndexes(getSubstate);
-
 const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getIndexesObserver = createRecomputeObserver(state => {
@@ -57,12 +55,14 @@ const getFiltered = createRecomputeSelector(filter => {
  * @param {*} level 
  */
 const getByFilteredIndexes =  createSelector([
-	getFilteredIndexes,
+	getIndex,
 	getAllAsObject,
     ],
-    (indexes, dataSources) => {
-        if(!_.isEmpty(indexes)) {
-			const dataSourceKey = indexes[0].index[0];
+    (index, dataSources) => {
+        if(index) {
+			//fixme index.index[0]???
+			//rename to get first datasource???
+			const dataSourceKey = index.index[0];
 			return dataSources[dataSourceKey];
         } else {
             return null;
@@ -74,6 +74,5 @@ const getByFilteredIndexes =  createSelector([
 export default {
 	getFiltered,
 	getIndex,
-	getFilteredIndexes,
 	getByFilteredIndexes,
 };
