@@ -46,7 +46,11 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
         }
 
         if (layers) {
-            layers.forEach(layer => dispatch(layerUse(componentId, activeKeys, layer, spatialFilter)));
+            layers.forEach(layer => 
+                // apply layerUse asynchronous on each leyer
+                // it cause better FPS and prevent long synchronous tasks
+                setTimeout(() => {dispatch(layerUse(componentId, activeKeys, layer, spatialFilter))}, 0)
+            );
         }
     }
 }
