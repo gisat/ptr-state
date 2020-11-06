@@ -473,6 +473,25 @@ const setMapLayers = (state, mapKey, layers) => {
 	return {...state, maps: {...state.maps, [mapKey]: {...mapState, data: {...mapState.data, layers}}}};
 };
 
+const setMapViewport = (state, mapKey, width, height) => {
+	return {
+		...state,
+		maps: {
+			...state.maps,
+			[mapKey]: {
+				...state.maps[mapKey],
+				data: {
+					...state.maps[mapKey].data,
+					viewport: {
+						width,
+						height
+					}
+				}
+			}
+		}
+	};
+};
+
 const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	return {
 		...state,
@@ -619,6 +638,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return setMapView(state, action.mapKey, action.view);
 		case ActionTypes.MAPS.MAP.VIEW.UPDATE:
 			return updateMapView(state, action.mapKey, action.update);
+		case ActionTypes.MAPS.MAP.VIEWPORT.SET:
+			return setMapViewport(state, action.mapKey, action.width, action.height);
 		case ActionTypes.MAPS.LAYERS.LAYER.ADD:
 			return addLayer(state, action.mapKey, action.layer, action.index);
 		case ActionTypes.MAPS.LAYERS.LAYER.REMOVE:

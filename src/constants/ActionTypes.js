@@ -388,6 +388,9 @@ export default utils.deepKeyMirror({
 			VIEW: {
 				SET: null,
 				UPDATE: null
+			},
+			VIEWPORT: {
+				SET: null
 			}
 		},
         UPDATE: null,
