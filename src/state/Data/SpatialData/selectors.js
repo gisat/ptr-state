@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import common from '../../_common/selectors';
 import {createSelector} from "reselect";
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
@@ -23,6 +24,17 @@ const getFilteredIndexes =  createSelector([
         }
     }
 );
+
+const getIndexesObserver = createRecomputeObserver(common.getIndexes(getSubstate));
+
+const getIndexByFilter = createRecomputeSelector((filter) => {
+	const indexes = getIndexesObserver();
+	if (filter && indexes) {
+		return _.find(indexes, filter) || null;
+	} else {
+		return null;
+	}
+});
 
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	return state.data.spatialData.byDataSourceKey?.[key];
@@ -56,5 +68,6 @@ const getGeometriesByDataSourceKey = createRecomputeSelector((dataSourceKey, fid
 
 export default {
 	getGeometriesByDataSourceKey,
-    getFilteredIndexes
+    getFilteredIndexes,
+	getIndexByFilter
 };

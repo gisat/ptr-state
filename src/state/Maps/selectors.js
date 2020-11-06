@@ -13,6 +13,8 @@ import selectorHelpers from "./selectorHelpers";
 import DataSelectors from "../Data/selectors";
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
+import Select from '../Select';
+import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
 
@@ -135,6 +137,8 @@ const getViewByMapKey = createCachedSelector(
 	selectorHelpers.getView
 )((state, mapKey) => mapKey);
 
+const getViewByMapKeyObserver = createRecomputeObserver(getViewByMapKey);
+
 /**
  * @param state {Object}
  * @param mapKey {string}
@@ -147,10 +151,12 @@ const getViewportByMapKey = createCachedSelector(
         if(!_.isEmpty(map)) {
             return map?.data?.viewport;
         } else {
-            null
+            return null;
         }
     }
 )((state, mapKey) => mapKey);
+
+const getViewportByMapKeyObserver = createRecomputeObserver(getViewportByMapKey);
 
 /**
  * @param state {Object}
@@ -527,13 +533,18 @@ const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) =>
 	}
 });
 
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs) => {
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey) => {
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
-	let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
+	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
 
 	layerKey = layerKey || key;
+
+	// TODO temporary for development. Next, could be data source type rewritten in layer state (e.g. vector -> tiled-vector?)
+	if (renderAsType) {
+		type = renderAsType;
+	}
 
 	let options = {};
 	if (dataSourceOptions && layerStateOptions) {
@@ -559,8 +570,19 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			singleTile,
 			url
 		}
-	} else if (type === "vector") {
-		let features = DataSelectors.getFeatures(dataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
+	} else if (type === "vector" || type === "tiled-vector" ) {
+		let features, tiles = null;
+
+		if (type === "vector") {
+			features = DataSelectors.getFeatures(dataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
+		} else if (type === "tiled-vector") {
+			const view = getViewByMapKeyObserver(mapKey);
+			const viewport = getViewportByMapKeyObserver(mapKey);
+			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
+			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
+			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList);
+		}
+
 		let selected = null;
 		let style = options?.style;
 
@@ -572,12 +594,12 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			style = StylesSelectors.getDefinitionByKey(styleKey);
 		}
 
-
 		options = {
 			...options,
 			...(selected && {selected}),
 			...(style && {style}),
-			features,
+			...(features && {features}),
+			...(tiles && {tiles}),
 			fidColumnName,
 			geometryColumnName
 		};
@@ -606,7 +628,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			const layerKey = 'pantherBackgroundLayer';
 			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
 			if (spatialDataSources) {
-				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, dataSource, layerKey));
+				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, layerState, layerKey));
 			} else {
 				return null;
 			}
@@ -645,7 +667,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, (dataSource, index) => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs));
+						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey));
 					});
 				}
 			}
