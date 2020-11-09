@@ -1443,6 +1443,15 @@ const actionUpdate = (data) => {
 	}
 };
 
+const actionSetMapViewport = (mapKey, width, height) => {
+	return {
+		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
+		mapKey,
+		width,
+		height
+	}
+};
+
 /* ==================================================
  * DEPRECATED ACTIONS
  * ================================================== */
@@ -1520,6 +1529,7 @@ export default {
 	setMapScenario,
 	setMapScope,
 	setMapView,
+	setMapViewport: actionSetMapViewport,
 
 	setMapSetActiveMapKey,
 	setSetBackgroundLayer,

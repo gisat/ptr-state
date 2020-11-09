@@ -57,6 +57,19 @@ const getActiveMap = createSelector(
     }
 );
 
+const getActiveMapViewport = createSelector(
+	[
+		getActiveMap
+	],
+	(map) => {
+		if(!_.isEmpty(map)) {
+			return map?.data?.viewport;
+		} else {
+			return null;
+		}
+	}
+);
+
 const getMaps = createSelector(
 	[getMapsAsObject],
 	(maps) => {
@@ -767,6 +780,24 @@ const getMapLayers = (state, mapKey) => {
 };
 
 
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewportByMapKey = createCachedSelector(
+	[
+		getMapByKey,
+	],
+	(map) => {
+		if(!_.isEmpty(map)) {
+			return map?.data?.viewport;
+		} else {
+			return null;
+		}
+	}
+)((state, mapKey) => mapKey);
+
+
 
 
 
@@ -1147,6 +1178,7 @@ function getFiltersForUse_deprecated(layer, activeKeys, useMetadata) {
 export default {
     getActiveMap,
 	getActiveMapKey,
+	getActiveMapViewport,
 	getActiveSetKey,
 	getAllLayersStateByMapKey,
 
@@ -1180,6 +1212,8 @@ export default {
 
 	getView,
 	getViewLimits,
+	getViewportByMapKey,
+
 
 	// Deprecated
 	getAllLayersStateByMapKey_deprecated,

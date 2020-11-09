@@ -10,6 +10,7 @@ const mapStateToProps = (state, ownProps) => {
             layers: Select.maps.getMapLayers(state, ownProps.stateMapKey),
             view: Select.maps.getView(state, ownProps.stateMapKey),
             viewLimits: Select.maps.getViewLimits(state, ownProps.stateMapKey),
+			viewport: Select.maps.getViewportByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
@@ -26,8 +27,9 @@ const mapDispatchToPropsFactory = () => {
     return (dispatch, ownProps) => {
         if (ownProps.stateMapKey) {
             return {
-                onMount: () => {
+                onMount: (mapWidth, mapHeight) => {
                     dispatch(Action.maps.use(ownProps.stateMapKey));
+					dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
                 },
 
                 onUnmount: () => {
@@ -41,6 +43,10 @@ const mapDispatchToPropsFactory = () => {
                 onViewChange: (update) => {
                     dispatch(Action.maps.updateMapAndSetView(ownProps.stateMapKey, update));
                 },
+
+				onPropViewChange: (update, mapWidth, mapHeight) => {
+					dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
+				},
 
                 resetHeading: () => {
                     dispatch(Action.maps.resetViewHeading(ownProps.stateMapKey));
