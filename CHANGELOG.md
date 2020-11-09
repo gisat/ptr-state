@@ -1,3 +1,15 @@
+# v1.5.11 (Mon Nov 09 2020)
+
+#### 🐾 Patch
+
+- Set/get map viewport to/from state [#57](https://github.com/gisat-panther/ptr-state/pull/57) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.10 (Thu Oct 15 2020)
 
 #### 🐾 Patch
