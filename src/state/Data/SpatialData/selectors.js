@@ -4,32 +4,7 @@ import {createSelector as createRecomputeSelector, createObserver as createRecom
 
 const getSubstate = (state) => state.data.spatialData;
 
-/**
- * TODO - can be replaced by getIndex???
- * @param {*} state 
- * @param {*} filter 
- * @param {*} order 
- * @param {*} level 
- */
-const getFilteredIndexes =  createSelector([
-    common.getFilteredIndexes(getSubstate),
-    (state, filter) => filter,
-    (state, filter, order) => order,
-    (state, filter, order, level) => level],
-    (index, filter, order, level) => {
-        if(index) {
-			//fixme - by level???
-            // return indexes.filter(index => index.level === level);
-            if(index.level === level) {
-				return index
-			} else {
-				return null
-			}
-        } else {
-            return null;
-        }
-    }
-);
+const getIndex = common.getIndex(getSubstate);
 
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	const substate = getSubstate(state);
@@ -64,5 +39,5 @@ const getGeometriesByDataSourceKey = createRecomputeSelector((dataSourceKey, fid
 
 export default {
 	getGeometriesByDataSourceKey,
-    getFilteredIndexes
+	getIndex,
 };

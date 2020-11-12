@@ -1,16 +1,6 @@
 import createCachedSelector from "re-reselect";
 import _ from "lodash";
 
-function getIndex(indexes, filter, order) {
-	if (indexes){
-		// TODO re-reselect?
-		const index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
-		return index ? index : null;
-	} else {
-		return null;
-	}
-}
-
 /**
  * TODO tests
  * Returns all indexes that fits filter and order
@@ -18,15 +8,15 @@ function getIndex(indexes, filter, order) {
  * @param {*} filter 
  * @param {*} order 
  */
-const getIndexes = createCachedSelector([
+const getIndex = createCachedSelector([
 		(indexes) => indexes,
 		(indexes, filter) => filter,
 		(indexes, filter, order) => order,
 	],
 	(indexes, filter, order) => {
 		if (indexes){
-			const filteredIndexes = _.filter(indexes, (index) => isCorrespondingIndex(index, filter, order));
-			return _.isEmpty(filteredIndexes) ? null : filteredIndexes;
+			const index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
+			return index ? index : null;
 		} else {
 			return null;
 		}
@@ -217,7 +207,6 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 export default {
     convertModifiersToRequestFriendlyFormat,
 	getIndex,
-	getIndexes,
 	getUniqueIndexes,
 	mergeFilters,
     mergeMetadataKeys,

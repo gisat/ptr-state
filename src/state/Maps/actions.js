@@ -100,11 +100,9 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
 
 
             if(layerTemplateKey) {
-                //TODO determinate what is better aproach
-                // const spatialDataSource = Select.data.spatialDataSources.getFilteredIndexes(state, {layerTemplateKey, ...modifiers}, null);
-                //todo
-                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndexes(state, mergedFilter, null);
+                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, null);
                 const dataSourceType = spatialDataSource?.data?.type || null;
+                // load only vector dataSources
                 if(dataSourceType &&  dataSourceType !== 'vector') {
                     return
                 }

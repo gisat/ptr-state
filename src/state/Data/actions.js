@@ -23,7 +23,7 @@ function loadMissing(spatialFilter, styleKey, order, mergedFilter) {
         //which spatial data to load
 
         //get spatial data index with loaded and loading data
-        const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  mergedFilter, order, spatialFilter.level) || [];
+        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedFilter, order) || [];
         
         //diff spatial data loaded/loading and to load
         const missingTiles = getMissingTiles(spatialDataIndex, spatialFilter) || [];
@@ -68,6 +68,11 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
         const spatialIndex = null;
         if(spatialFilter && !_.isEmpty(spatialFilter)) {
             return dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)).then((response) => {
+                if(response instanceof Error) {
+                    return;
+                    throw response;
+                }
+                
                 const promises = [];
 
                 //Check if some of returned spatialDataSources are type of vector. Otherwise theri is no reason to make further requests.
@@ -172,8 +177,9 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
         //check if indexes are loading (ds, dr, data - all)
         const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedFilter, order);
         const spatialDataSourceIndex = Select.data.spatialDataSources.getIndex(getState(), mergedFilter, order);
-        const spatialDataIndex = Select.data.spatialData.getFilteredIndexes(getState(),  mergedFilter, order, spatialFilter.level) || [];
-        const missingTiles = getMissingTiles(spatialDataIndex, spatialIndex) || [];
+        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedFilter, order) || [];
+        //if spatialIndex is not defined, then use all tiles from spatialFilter as a missing 
+        const missingTiles = getMissingTiles(spatialDataIndex, spatialIndex) || spatialFilter.tiles;
         if(spatialRelationsIndex && spatialDataSourceIndex && missingTiles?.length === 0) {
             //only on first render of map, when all maps tryes to load data
             return new Promise((r,rj) => {
@@ -185,18 +191,15 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
         ////
         // Spatial
         ////
-
         dispatch(spatialRelations.registerIndex(mergedFilter, order, relations.offset, spatialIndex));
-        //todo correct parameters
-        const limit = 1;
-        const spatialDataSourceKey = null
-        dispatch(spatialData.registerIndex(mergedFilter, spatialFilter.level, order, spatialDataSourceKey, spatialIndex?.tiles || null, limit));
+        dispatch(spatialData.registerIndex(mergedFilter, order, spatialFilter.level, missingTiles));
 
 
         ////
         // Attribute
         ////
         dispatch(attributeRelations.registerIndex(mergedFilter, order, relations.offset, spatialIndex));
+
 		const payload = {
             modifiers,
 
@@ -272,8 +275,7 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                             //TODO add level to indexes on BE?
                             //TODO indexes
                             const changes = null;
-                            const level = spatialFilter.level
-                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedFilter, level, order, changes));
+                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedFilter, order, changes));
                         }
 
                         ////

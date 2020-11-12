@@ -55,13 +55,12 @@ const getFiltered = createRecomputeSelector(filter => {
  * @param {*} order 
  * @param {*} level 
  */
-const getByFilteredIndexes = createCachedSelector([
+const getByFilteredIndex = createCachedSelector([
 	getIndex,
 	getAllAsObject,
     ],
     (index, dataSources) => {
         if(!_.isEmpty(index)) {
-			debugger;
 			const dataSourceKey = index.index[0];
 			return dataSources[dataSourceKey];
         } else {
@@ -76,5 +75,5 @@ const getByFilteredIndexes = createCachedSelector([
 export default {
 	getFiltered,
 	getIndex,
-	getByFilteredIndexes,
+	getByFilteredIndex,
 };
