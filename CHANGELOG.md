@@ -1,3 +1,15 @@
+# v1.5.12 (Thu Nov 12 2020)
+
+#### 🐾 Patch
+
+- Maps actions - set viewport only if it was changed [#58](https://github.com/gisat-panther/ptr-state/pull/58) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.11 (Mon Nov 09 2020)
 
 #### 🐾 Patch
