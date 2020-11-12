@@ -10,7 +10,7 @@ const receiveIndexed = (data, filter, order, changedOn) => {
     return dispatch => {
         // add data to store
         if (data) {            
-            dispatch(addOrUpdateData(data));
+            dispatch(addData(data));
         }
 
         // add to index
@@ -37,33 +37,27 @@ function addIndex(filter, order, data, changedOn) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
 }
 
-function addOrUpdateData(data) {
+function addData(data) {
     return (dispatch, getState) => {
-        const state = getState();
         for(const key of Object.keys(data)) {
-            if(_.isEmpty(state.data.spatialData.byDataSourceKey[key])) {
-                dispatch(addDataAction(key, data[key].data));
-            } else {
-                dispatch(updateDataAction(key, data[key].data));
+            if(!_.isEmpty(data[key].data)) {
+                //data should be only from one level
+                const levels = Object.keys(data[key].spatialIndex);
+                for (const level of levels) {
+                    dispatch(addDataAction(key, data[key].data, level));
+                }
             }
         }
     }
 }
 
 // ============ actions ============
-function addDataAction(key, data) {
+function addDataAction(key, data, level) {
     return {
         type: actionTypes.ADD,
         key,
         data,
-    }
-}
-
-function updateDataAction(key, data) {
-    return {
-        type: actionTypes.UPDATE,
-        key,
-        data,
+        level,
     }
 }
 

@@ -13,12 +13,13 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 
 
 const getGeometriesByDataSourceKey = createRecomputeSelector((dataSourceKey, fidColumnName) => {
-	const geometries = getByDataSourceKeyObserver(dataSourceKey);
-	if (geometries && !_.isEmpty(geometries)) {
-		return geometries;
-	} else {
-		return null;
-	}
+	return [];
+	// const geometries = getByDataSourceKeyObserver(dataSourceKey);
+	// if (geometries && !_.isEmpty(geometries)) {
+	// 	return geometries;
+	// } else {
+	// 	return null;
+	// }
 	//
 	// const data = getByDataSourceKeyObserver(dataSourceKey);
 	// if (data) {
