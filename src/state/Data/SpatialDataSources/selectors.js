@@ -2,23 +2,24 @@ import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import {createSelector} from "reselect";
 import common from "../../_common/selectors";
-
-const getByKeyObserver = createRecomputeObserver((state, key) => {
-	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	return state.data.spatialDataSources.byKey?.[key];
-});
+import createCachedSelector from "re-reselect";
 
 const getSubstate = state => state.data.spatialDataSources;
 
-const getIndex = common.getIndex(getSubstate);
+const getByKeyObserver = createRecomputeObserver((state, key) => {
+	// console.log("SpatialDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
+	const substate = getSubstate(state);
+	return substate.byKey?.[key];
+});
 
-const getFilteredIndexes = common.getFilteredIndexes(getSubstate);
+const getIndex = common.getIndex(getSubstate);
 
 const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getIndexesObserver = createRecomputeObserver(state => {
 	// console.log("SpatialDataSources/selectors#getIndexesObserver", ((new Date()).getMilliseconds()));
-	return state.data.spatialDataSources.indexes;
+	const substate = getSubstate(state);
+	return substate.indexes;
 });
 
 const getByKeys = createRecomputeSelector(keys => {
@@ -54,24 +55,25 @@ const getFiltered = createRecomputeSelector(filter => {
  * @param {*} order 
  * @param {*} level 
  */
-const getByFilteredIndexes =  createSelector([
-	getFilteredIndexes,
+const getByFilteredIndex = createCachedSelector([
+	getIndex,
 	getAllAsObject,
     ],
-    (indexes, dataSources) => {
-        if(!_.isEmpty(indexes)) {
-			const dataSourceKey = indexes[0].index[0];
+    (index, dataSources) => {
+        if(!_.isEmpty(index)) {
+			const dataSourceKey = index.index[0];
 			return dataSources[dataSourceKey];
         } else {
             return null;
         }
     }
-);
+)((state, filter, order) => {
+	return `${JSON.stringify(filter)}${JSON.stringify(order)}`
+})
 
 
 export default {
 	getFiltered,
 	getIndex,
-	getFilteredIndexes,
-	getByFilteredIndexes,
+	getByFilteredIndex,
 };

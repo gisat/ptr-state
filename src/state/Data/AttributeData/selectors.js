@@ -1,8 +1,11 @@
 import common from '../../_common/selectors';
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 
+const getSubstate = state => state.data.attributeData;
+
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
-	return state.data.attributeData.byDataSourceKey?.[key];
+	const substate = getSubstate(state);
+	return substate.byDataSourceKey?.[key];
 });
 
 

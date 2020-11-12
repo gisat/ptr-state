@@ -1,81 +1,81 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import _ from "lodash";
+import common from '../../_common/actions';
+import {tileAsString} from '../helpers';
+
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
 // ============ creators ===========
-const receiveIndexed = (result, filter, level, order, changedOn) => {
+const receiveIndexed = (data, filter, order, changedOn) => {
     return dispatch => {
         // add data to store
-        if (result) {            
-            dispatch(addOrUpdateData(result));
+        if (data) {            
+            dispatch(addData(data));
         }
 
         // add to index
-        dispatch(addIndex(filter, level, order, result, changedOn));
+        dispatch(addIndex(filter, order, data, changedOn));
     }
 }
 
-function addIndex(filter, level, order, result, changedOn) {
-    return (dispatch, getState) => {
-        for(const key of Object.keys(result)) {
-            dispatch(addIndexesAction(key, filter, level, order, result[key].spatialIndex, changedOn));
+function addIndex(filter, order, data, changedOn) {
+    const count = null;
+    const start = 0;
+    const transformedData = {};
+    for (const [sdKey, datasource] of Object.entries(data)) {
+        for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
+            if(!transformedData[level]) {
+                transformedData[level] = {};
+            }
+            for (const [tile, tileData] of Object.entries(tiles)) {
+                transformedData[level][tile] = {
+                    [sdKey]: tileData
+                }
+            }
         }
     }
+    return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
 }
 
-function addOrUpdateData(result) {
+function addData(data) {
     return (dispatch, getState) => {
-        const state = getState();
-        for(const key of Object.keys(result)) {
-            if(_.isEmpty(state.data.spatialData.byDataSourceKey[key])) {
-                dispatch(addDataAction(key, result[key].data));
-            } else {
-                dispatch(updateDataAction(key, result[key].data));
+        for(const key of Object.keys(data)) {
+            if(!_.isEmpty(data[key].data)) {
+                //data should be only from one level
+                const levels = Object.keys(data[key].spatialIndex);
+                for (const level of levels) {
+                    dispatch(addDataAction(key, data[key].data, level));
+                }
             }
         }
     }
 }
 
 // ============ actions ============
-function addDataAction(key, data) {
+function addDataAction(key, data, level) {
     return {
         type: actionTypes.ADD,
         key,
         data,
-    }
-}
-
-function updateDataAction(key, data) {
-    return {
-        type: actionTypes.UPDATE,
-        key,
-        data,
-    }
-}
-
-function registerIndex(filter, level, order, spatialDataSourceKey, tile, limit) {
-    return {
-        type: actionTypes.INDEX.REGISTER,
-        count: null,
-        filter,
         level,
-        order,
-        spatialDataSourceKey,
-        limit,
-        tile,
+    }
+}
+
+function registerIndex(filter, order, level, tiles) {
+    const count = null;
+    const start = 0;
+    const changedOn = null;
+    
+    //create index with tiles value "true" that indicates loading state
+    const loadingTiles = tiles.reduce((acc, tile) => {
+        const tileId = tileAsString(tile);
+        acc[tileId] = true; 
+        return acc
+    }, {})
+    const index = {
+        [level]: loadingTiles
     };
-}
-
-function addIndexesAction(spatialDataSourceKey, filter, level, order, index, changedOn) {
-    return {
-        type: actionTypes.INDEX.ADD,
-        filter,
-        order,
-        spatialDataSourceKey,
-        level,
-        changedOn,
-        index,
-    }
+    return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
 }
 
 // ============ export ===========
