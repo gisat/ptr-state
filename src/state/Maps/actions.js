@@ -383,6 +383,19 @@ const setMapView = (mapKey, view) => {
 	};
 };
 
+const setMapViewport = (mapKey, width, height) => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const mapByKey = Select.maps.getMapByKey(state, mapKey);
+		const viewport = mapByKey?.data?.viewport;
+
+		// set viewport only if was really changed
+		if (viewport?.width !== width || viewport?.height !== height) {
+			return dispatch(actionSetMapViewport(mapKey, width, height));
+		}
+	};
+};
+
 const addLayer = (mapKey, layer, index, useActiveMetadataKeys) => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -1529,7 +1542,7 @@ export default {
 	setMapScenario,
 	setMapScope,
 	setMapView,
-	setMapViewport: actionSetMapViewport,
+	setMapViewport,
 
 	setMapSetActiveMapKey,
 	setSetBackgroundLayer,
