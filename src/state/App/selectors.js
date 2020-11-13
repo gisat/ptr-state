@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
+import path from 'path';
 
 const getKey = state => state.app.key;
 const getCompleteConfiguration = state => state.app.configuration;
@@ -21,10 +22,19 @@ const getLocalConfiguration = createSelector(
 	(localConfiguration, path) => _.get(localConfiguration, path, null)
 );
 
+const getBackendUrl = createSelector(
+	[
+		getCompleteLocalConfiguration,
+		(state, path) => path
+	],
+	(localConfiguration, urlPath) => localConfiguration.apiBackendProtocol + '://' + path.join(localConfiguration.apiBackendHost, localConfiguration.apiBackendPath, '/backend', urlPath)
+)
+
 export default {
 	getKey,
 	getConfiguration,
 	getCompleteConfiguration,
 	getLocalConfiguration,
-	getCompleteLocalConfiguration
+	getCompleteLocalConfiguration,
+	getBackendUrl
 };
