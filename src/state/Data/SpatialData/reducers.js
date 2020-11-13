@@ -20,7 +20,6 @@ const add = (state, action) => {
     let stateDataByDataSourceKey = state.byDataSourceKey[action.key] || {};
     const dataFeatures = action.data;
     const dataFeaturesKeys = Object.keys(dataFeatures);
-    debugger
     dataFeaturesKeys.forEach((featureKey) => {
         if (stateDataByDataSourceKey.hasOwnProperty(featureKey)) {
             //add just level geometry to existing feature
