@@ -13,7 +13,6 @@ import selectorHelpers from "./selectorHelpers";
 import DataSelectors from "../Data/selectors";
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
-import Select from '../Select';
 import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
@@ -533,7 +532,7 @@ const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) =>
 	}
 });
 
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey) => {
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, relationsFilter) => {
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
@@ -580,7 +579,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			const viewport = getViewportByMapKeyObserver(mapKey);
 			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
 			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
-			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList);
+			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, relationsFilter);
 		}
 
 		let selected = null;
@@ -667,7 +666,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, (dataSource, index) => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey));
+						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, relationsFilter));
 					});
 				}
 			}

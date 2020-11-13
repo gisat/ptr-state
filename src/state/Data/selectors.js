@@ -47,36 +47,38 @@ const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attri
 	}
 });
 
-const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, level, tile) => {
-	const geometries = spatialData.getGeometriesByDataSourceKey(spatialDataSourceKey); // TODO here or pass as parameter?
+const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, level, tile, relationsFilter) => {
+	const dataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey); // TODO here or pass as parameter?
 
-	const tileAsString = `${tile[0]},${tile[1]}`;
-	const filter = {
-		spatialDataSourceKey,
-		tile: tileAsString,
-		level
-	};
-	const index = spatialData.getIndexByFilter(filter);
+	if (dataForDataSource) {
+		const tileAsString = `${tile[0]},${tile[1]}`;
+		const cacheParams = {
+			relationsFilter,
+			level,
+			tileAsString,
+			spatialDataSourceKey
+		};
+		const indexedFeatureKeys = spatialData.getIndexedFeatureKeys(...Object.values(cacheParams));
+		const cacheKey = JSON.stringify({...cacheParams, indexedFeatureKeys}); // TODO is index enough as cache key?
+		const cache = tilesCache.findByKey(cacheKey);
+		if (cache) {
+			return cache.data;
+		} else {
+			let features = null;
 
-	const cacheKey = JSON.stringify(index); // TODO is index enough as cache key?
-	const cache = tilesCache.findByKey(cacheKey);
-	if (cache) {
-		return cache.data;
-	} else {
-		let features = null;
-
-		if (index?.index?.length) {
-			const featureKeys = Object.values(index.index);
-			if (featureKeys.length) {
-				features = featureKeys.map(key => {
+			if (indexedFeatureKeys?.length) {
+				features = indexedFeatureKeys.map(key => {
 					let properties = {
 						[fidColumnName]: key
 					}
 
+					// TODO what if some geometries is missing
+					const geometry = dataForDataSource[key]?.geometry || dataForDataSource[key]?.geometries[level];
+
 					return {
 						type: "Feature",
 						key,
-						geometry: geometries[key], // TODO what if some geometries is missing
+						geometry,
 						properties
 					}
 				});
@@ -96,17 +98,17 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 			} else {
 				return null;
 			}
-		} else {
-			return null;
 		}
+	} else {
+		return null;
 	}
 });
 
-const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, tiles) => {
+const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, tiles, relationsFilter) => {
 	if (tiles?.length) {
 		let populatedTiles = [];
 		_.forEach(tiles, tile => {
-			const populatedTile = getTile(dataSourceKey, fidColumnName, level, tile);
+			const populatedTile = getTile(dataSourceKey, fidColumnName, level, tile, relationsFilter);
 			if (populatedTile) {
 				populatedTiles.push(populatedTile);
 			}
