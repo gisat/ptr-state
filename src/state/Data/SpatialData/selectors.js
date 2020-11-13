@@ -37,7 +37,8 @@ const getIndexByFilter = createRecomputeSelector((filter) => {
 });
 
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
-	return state.data.spatialData.byDataSourceKey?.[key];
+	const substate = getSubstate(state);
+	return substate.byDataSourceKey?.[key];
 });
 
 
