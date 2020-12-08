@@ -3,18 +3,16 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
-const registerIndex = common.registerIndex(actionTypes);
-
 // ============ creators ===========
-function receiveIndexed(data, filter, order, start, total, changes) {
+function receiveIndexed(attributeRelations, filter, order, start, total, changes) {
     return dispatch => {
-        // add data to store
-        if (data.length) {
-            dispatch(common.add(actionTypes)(data, filter));
+        // add attributeRelations to store
+        if (attributeRelations.length) {
+            dispatch(common.add(actionTypes)(attributeRelations, filter));
         }
 
         // add to index
-        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, data, changes));
+        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, attributeRelations, changes));
     }
 }
 
@@ -24,5 +22,4 @@ function receiveIndexed(data, filter, order, start, total, changes) {
 
 export default {
     receiveIndexed,
-    registerIndex,
 }

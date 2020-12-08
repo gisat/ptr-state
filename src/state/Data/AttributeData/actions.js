@@ -3,14 +3,12 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
-const registerIndex = common.registerIndex(actionTypes);
-
 // ============ creators ===========
-const receiveIndexed = (data, filter, order, changedOn) => {
+const receiveIndexed = (attributeData, filter, order, changedOn) => {
     return dispatch => {
-        // add data to store
-        if (data) {            
-            dispatch(addOrUpdateData(data));
+        // add attributeData to store
+        if (attributeData) {            
+            dispatch(addOrUpdateData(attributeData));
         }
         // attribute data index is same like spatial data index
         // add to index
@@ -18,24 +16,24 @@ const receiveIndexed = (data, filter, order, changedOn) => {
     }
 }
 
-function addOrUpdateData(data) {
+function addOrUpdateData(attributeData) {
     return (dispatch, getState) => {
         const state = getState();
-        for(const key of Object.keys(data)) {
+        for(const key of Object.keys(attributeData)) {
             if(_.isEmpty(state.data.attributeData.byDataSourceKey[key])) {
-                dispatch(addDataAction(key, data[key]));
+                dispatch(addDataAction(key, attributeData[key]));
             } else {
-                dispatch(updateDataAction(key, data[key]));
+                dispatch(updateDataAction(key, attributeData[key]));
             }
         }
     }
 }
 
 
-function addIndex(filter, order, data, changedOn) {
+function addIndex(filter, order, attributeData, changedOn) {
     return (dispatch) => {
-        for(const key of Object.keys(data)) {
-            dispatch(addIndexesAction(key, filter, order, data[key], changedOn));
+        for(const key of Object.keys(attributeData)) {
+            dispatch(addIndexesAction(key, filter, order, attributeData[key], changedOn));
         }
     }
 }
@@ -63,5 +61,4 @@ function updateDataAction(key, data) {
 
 export default {
     receiveIndexed,
-    registerIndex,
 }

@@ -959,7 +959,6 @@ export default {
 	useIndexed,
 	clearIndex: creator(actionClearIndex),
 
-	registerIndex: creator(actionRegisterIndex),
 	useIndexedRegister: actionUseIndexedRegister,
 	useIndexedClear: creator(actionUseIndexedClear),
 	useIndexedClearAll: creator(actionUseIndexedClearAll),

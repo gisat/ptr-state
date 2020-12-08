@@ -47,32 +47,7 @@ const getFiltered = createRecomputeSelector(filter => {
 	}
 });
 
-
-/**
- * @param {*} state 
- * @param {*} filter 
- * @param {*} order 
- * @param {*} level 
- */
-const getByFilteredIndexes =  createSelector([
-	getIndex,
-	getAllAsObject,
-    ],
-    (index, dataSources) => {
-        if(index) {
-			//fixme index.index[0]???
-			//rename to get first datasource???
-			const dataSourceKey = index.index[0];
-			return dataSources[dataSourceKey];
-        } else {
-            return null;
-        }
-    }
-);
-
-
 export default {
 	getFiltered,
 	getIndex,
-	getByFilteredIndexes,
 };

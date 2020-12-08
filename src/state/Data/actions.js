@@ -191,14 +191,14 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
         ////
         // Spatial
         ////
-        dispatch(spatialRelations.registerIndex(mergedFilter, order, relations.offset, spatialIndex));
-        dispatch(spatialData.registerIndex(mergedFilter, order, spatialFilter.level, missingTiles));
+        // TODO register loading index on spatialRelations ?
+        dispatch(spatialData.addLoadingIndex(mergedFilter, order, spatialFilter.level, missingTiles));
 
 
         ////
         // Attribute
         ////
-        dispatch(attributeRelations.registerIndex(mergedFilter, order, relations.offset, spatialIndex));
+        // TODO register loading index on attributeRelations ?
 
 		const payload = {
             modifiers,
