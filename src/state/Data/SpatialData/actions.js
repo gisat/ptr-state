@@ -6,23 +6,23 @@ import {tileAsString} from '../helpers';
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
 // ============ creators ===========
-const receiveIndexed = (data, filter, order, changedOn) => {
+const receiveIndexed = (spatialData, filter, order, changedOn) => {
     return dispatch => {
-        // add data to store
-        if (data) {            
-            dispatch(addData(data));
+        // add spatialData to store
+        if (spatialData) {            
+            dispatch(addData(spatialData));
         }
 
         // add to index
-        dispatch(addIndex(filter, order, data, changedOn));
+        dispatch(addIndex(filter, order, spatialData, changedOn));
     }
 }
 
-function addIndex(filter, order, data, changedOn) {
+function addIndex(filter, order, spatialData, changedOn) {
     const count = null;
     const start = 0;
     const transformedData = {};
-    for (const [sdKey, datasource] of Object.entries(data)) {
+    for (const [sdKey, datasource] of Object.entries(spatialData)) {
         for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
             if(!transformedData[level]) {
                 transformedData[level] = {};
@@ -37,14 +37,14 @@ function addIndex(filter, order, data, changedOn) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
 }
 
-function addData(data) {
+function addData(spatialData) {
     return (dispatch, getState) => {
-        for(const key of Object.keys(data)) {
-            if(!_.isEmpty(data[key].data)) {
-                //data should be only from one level
-                const levels = Object.keys(data[key].spatialIndex);
+        for(const key of Object.keys(spatialData)) {
+            if(!_.isEmpty(spatialData[key].data)) {
+                //spatialData should be only from one level
+                const levels = Object.keys(spatialData[key].spatialIndex);
                 for (const level of levels) {
-                    dispatch(addDataAction(key, data[key].data, level));
+                    dispatch(addDataAction(key, spatialData[key].data, level));
                 }
             }
         }

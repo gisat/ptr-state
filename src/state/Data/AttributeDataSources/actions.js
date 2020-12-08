@@ -4,15 +4,15 @@ import common from '../../_common/actions';
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA_SOURCES;
 
 // ============ creators ===========
-function receiveIndexed(data, filter, order, start, total, changes) {
+function receiveIndexed(attributeDataSources, filter, order, start, total, changes) {
     return dispatch => {
-        // add data to store
-        if (data.length) {
-            dispatch(common.add(actionTypes)(data, filter));
+        // add attributeDataSources to store
+        if (attributeDataSources.length) {
+            dispatch(common.add(actionTypes)(attributeDataSources, filter));
         }
 
         // add to index
-        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, data, changes));
+        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, attributeDataSources, changes));
     }
 }
 
