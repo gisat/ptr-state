@@ -43,6 +43,7 @@ export default {
 	getAllAsObject,
 	getByKey,
 	getDefinitionByKey,
+	getIndexed: common.getIndexed(getSubstate),
 
 	getGroupedByLayerKey,
 	getSubstate
