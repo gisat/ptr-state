@@ -23,7 +23,7 @@ export const tileAsString = (tile) => {
  *  @param {number} filter.level
  */
 export const getMissingTiles = (index, filter) => {
-    if(index && index.index) {
+    if(filter && index && index.index) {
         if(index?.index[filter.level] && filter && filter.tiles) {
             const loadedTilesInIndex = Object.entries(index.index[filter.level]).reduce((acc, tile) => {
                 const tileKey = tile[0];
