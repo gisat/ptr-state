@@ -3,8 +3,6 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
-const registerIndex = common.registerIndex(actionTypes);
-
 // ============ creators ===========
 function receiveIndexed(data, filter, order, start, total, changes) {
     return dispatch => {
@@ -24,5 +22,4 @@ function receiveIndexed(data, filter, order, start, total, changes) {
 
 export default {
     receiveIndexed,
-    registerIndex,
 }

@@ -51,25 +51,6 @@ export default {
 		return {...state, byKey: newData}
 	},
 
-	registerIndex: (state, action) => {
-		const indexes = state.indexes || [];
-		const existingFilter = commonHelpers.getIndex(indexes, action.filter, action.order);
-
-		if(!existingFilter) {
-			const index = {
-				filter: action.filter,
-				order: action.order,
-				count: null, //TODO
-				changedOn: null,
-				index: [new Array(action.limit).fill(true)] //TODO
-			};
-
-			return {...state, indexes: [...indexes, index]};
-		} else {
-			return state;
-		}
-	},
-
 	addIndex: (state, action) => {
 		let indexes = [];
 		let selectedIndex = {};

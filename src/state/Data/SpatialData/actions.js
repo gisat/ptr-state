@@ -61,7 +61,7 @@ function addDataAction(key, data, level) {
     }
 }
 
-function registerIndex(filter, order, level, tiles) {
+function addLoadingIndex(filter, order, level, tiles) {
     const count = null;
     const start = 0;
     const changedOn = null;
@@ -82,5 +82,5 @@ function registerIndex(filter, order, level, tiles) {
 
 export default {
     receiveIndexed,
-    registerIndex,
+    addLoadingIndex,
 }

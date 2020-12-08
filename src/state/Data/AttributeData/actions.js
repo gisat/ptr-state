@@ -3,8 +3,6 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
-const registerIndex = common.registerIndex(actionTypes);
-
 // ============ creators ===========
 const receiveIndexed = (data, filter, order, changedOn) => {
     return dispatch => {
@@ -63,5 +61,4 @@ function updateDataAction(key, data) {
 
 export default {
     receiveIndexed,
-    registerIndex,
 }
