@@ -579,7 +579,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			const viewport = getViewportByMapKeyObserver(mapKey);
 			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
 			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
-			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, relationsFilter);
+			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, relationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
 		}
 
 		let selected = null;
