@@ -47,16 +47,17 @@ const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attri
 	}
 });
 
-const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, level, tile, relationsFilter) => {
-	const dataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey); // TODO here or pass as parameter?
+const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, level, tile, relationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey) => {
+	const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey); // TODO here or pass as parameter?
 
-	if (dataForDataSource) {
+	if (spatialDataForDataSource) {
 		const tileAsString = `${tile[0]},${tile[1]}`;
 		const cacheParams = {
 			relationsFilter,
 			level,
 			tileAsString,
-			spatialDataSourceKey
+			spatialDataSourceKey,
+			styleKey
 		};
 		const indexedFeatureKeys = spatialData.getIndexedFeatureKeys(...Object.values(cacheParams));
 		const cacheKey = JSON.stringify({...cacheParams, indexedFeatureKeys}); // TODO is index enough as cache key?
@@ -73,7 +74,14 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 					}
 
 					// TODO what if some geometries is missing
-					const geometry = dataForDataSource[key]?.geometry || dataForDataSource[key]?.geometries[level];
+					const geometry = spatialDataForDataSource[key]?.geometry || spatialDataForDataSource[key]?.geometries[level];
+
+					if (attributeDataSourceKeyAttributeKeyPairs) {
+						const attributes = attributeData.getAttributesByDataSourceKeysByFeatureKey(attributeDataSourceKeyAttributeKeyPairs, key);
+						if (attributes) {
+							properties = {...properties, ...attributes};
+						}
+					}
 
 					return {
 						type: "Feature",
@@ -104,11 +112,11 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 	}
 });
 
-const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, tiles, relationsFilter) => {
+const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, tiles, relationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey) => {
 	if (tiles?.length) {
 		let populatedTiles = [];
 		_.forEach(tiles, tile => {
-			const populatedTile = getTile(dataSourceKey, fidColumnName, level, tile, relationsFilter);
+			const populatedTile = getTile(dataSourceKey, fidColumnName, level, tile, relationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
 			if (populatedTile) {
 				populatedTiles.push(populatedTile);
 			}

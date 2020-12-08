@@ -253,6 +253,28 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
                     if(result.data) {
+						////
+						// Attributes
+						////
+						if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
+							//TODO relations.offset
+							const changes = null;
+							dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
+						}
+
+						if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
+							//TODO relations.offset
+							//TODO result.total.spatialRelations ?
+							const changes = null;
+							dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
+						}
+
+						if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
+							//TODO add level to indexes on BE?
+							//TODO indexes
+							const changes = null;
+							dispatch(attributeData.receiveIndexed(result.data.attributeData, mergedFilter, order, changes));
+						}
 
                         ////
                         // Spatial data
@@ -277,30 +299,6 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                             const changes = null;
                             dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedFilter, order, changes));
                         }
-
-                        ////
-                        // Attributes
-                        ////
-                        if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
-                            //TODO relations.offset
-                            const changes = null;
-                            dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
-                        }
-
-                        if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
-                            //TODO relations.offset
-                            //TODO result.total.spatialRelations ?
-                            const changes = null;
-                            dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
-                        }
-
-                        if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
-                            //TODO add level to indexes on BE?
-                            //TODO indexes
-                            const changes = null;
-                            dispatch(attributeData.receiveIndexed(result.data.attributeData, mergedFilter, order, changes));
-                        }
-
 
                         return result;
                     } else {
