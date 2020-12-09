@@ -389,6 +389,9 @@ export default utils.deepKeyMirror({
             }
         },
         MAP: {
+	    	LAYERS: {
+	    		SET_STYLE_KEY: null
+			},
 	    	VIEWPORT: {
 	    		SET: null,
 			},

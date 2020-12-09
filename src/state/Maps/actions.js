@@ -133,6 +133,12 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
 	}
 }
 
+function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
+	return (dispatch) => {
+		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+	}
+}
+
 function setMapSetActiveMapKey(mapKey) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
@@ -220,6 +226,15 @@ function updateStateFromView(data) {
  * ACTIONS
  * ================================================== */
 
+const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY,
+		mapKey,
+		layerKey,
+		styleKey
+	}
+};
+
 const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
     return {
         type: ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY,
@@ -275,6 +290,7 @@ const actionUpdateSetView = (setKey, update) => {
 export default {
 	refreshMapSetUse,
 	setLayerSelectedFeatureKeys,
+	setMapLayerStyleKey,
     setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
 	setMapViewport: actionSetMapViewport,

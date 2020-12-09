@@ -8,6 +8,37 @@ const INITIAL_STATE = {
     sets: {}
 };
 
+const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
+	const updatedLayers = state.maps[mapKey]?.data?.layers?.map((item) => {
+		if (item.key === layerKey) {
+			return {
+				...item,
+				styleKey
+			};
+		} else {
+			return item;
+		}
+	});
+
+	if (updatedLayers) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						layers: updatedLayers
+					}
+				}
+			}
+		};
+	} else {
+		return state;
+	}
+};
+
 const setMapViewport = (state, mapKey, width, height) => {
 	return {
 		...state,
@@ -100,6 +131,8 @@ const updateSetView = (state, setKey, updates) => {
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
+		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY:
+			return setMapLayerStyleKey(state, action.mapKey, action.layerKey, action.styleKey);
         case ActionTypes.MAPS.MAP.VIEW.UPDATE:
             return updateMapView(state, action.mapKey, action.update);
 		case ActionTypes.MAPS.MAP.VIEWPORT.SET:
