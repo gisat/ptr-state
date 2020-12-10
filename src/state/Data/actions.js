@@ -15,20 +15,83 @@ const DEFAULT_RELATIONS_PAGE = {
     limit: 100,
 }
 
+const isSpatialDataEmpty = (spatialData) => {
+    if(spatialData && !_.isEmpty(spatialData) ) {
+        const sd = Object.values(spatialData);
+        return !sd.some(data => data?.data && !_.isEmpty(data.data));
+    } else {
+        return true;
+    }
+}
+
 /**
  * @return {function}
  */
-function loadMissing(spatialFilter, styleKey, order, mergedFilter) {
+//FIXME - load missing attribute data?
+function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
+    return (dispatch, getState) => {
+        const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+        const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+
+        //which spatial data to load
+
+        //get spatial data index with loaded and loading data
+        const attributeDataIndex = Select.data.attributeData.getIndex(getState(),  mergedAttributeFilter, order) || [];
+        
+        //diff spatial data loaded/loading and to load
+        const missingAttributeDataTiles = getMissingTiles(attributeDataIndex, spatialFilter) || [];
+        const promises = [];
+
+        //if no relations or ds, then load them in first request
+        const attributeRelations = Select.data.attributeRelations.getIndex(getState(),  mergedAttributeFilter, order);
+        const attributeDataSources = Select.data.attributeDataSources.getIndex(getState(),  mergedAttributeFilter, order);
+        let loadRelationsAndDS = !(!_.isEmpty(attributeRelations) && !_.isEmpty(attributeDataSources));
+
+        for (const tile of missingAttributeDataTiles) {
+            const spatialIndex = {
+                tiles: [tile],
+            }
+
+            // TODO
+            // relations:false
+            const relations = {
+                // start: 0,
+                // length: 1000,
+                offset: 0,
+                limit: PAGE_SIZE,
+            };
+            const attributeFilter = null;
+            const loadGeometry = false;
+
+            //only if missing on first request
+            let loadRelations = false;
+            if(loadRelationsAndDS) {
+                loadRelations = true;
+                loadRelationsAndDS = false;
+            };
+
+            const dataSourceKeys = null;
+            const featureKeys = null;
+            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter))) 
+        }
+        return Promise.all(promises);
+    }
+}
+
+/**
+ * @return {function}
+ */
+function loadMissingSpatialData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
     return (dispatch, getState) => {
         //which spatial data to load
 
         //get spatial data index with loaded and loading data
-        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedFilter, order) || [];
+        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedSpatialFilter, order) || [];
         
         //diff spatial data loaded/loading and to load
-        const missingTiles = getMissingTiles(spatialDataIndex, spatialFilter) || [];
+        const missingSpatialDataTiles = getMissingTiles(spatialDataIndex, spatialFilter) || [];
         const promises = [];
-        for (const tile of missingTiles) {
+        for (const tile of missingSpatialDataTiles) {
             const spatialIndex = {
                 tiles: [tile],
             }
@@ -41,7 +104,7 @@ function loadMissing(spatialFilter, styleKey, order, mergedFilter) {
             const loadRelations = false;
             const dataSourceKeys = null;
             const featureKeys = null;
-            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter))) 
+            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter))) 
         }
         return Promise.all(promises);
     }
@@ -49,7 +112,7 @@ function loadMissing(spatialFilter, styleKey, order, mergedFilter) {
 /**
  * @return {function}
  */
-function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
+function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
     return (dispatch, getState) => {
         const localConfig = Select.app.getCompleteLocalConfiguration(getState());
         const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
@@ -67,7 +130,7 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
         const featureKeys = null;
         const spatialIndex = null;
         if(spatialFilter && !_.isEmpty(spatialFilter)) {
-            return dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)).then((response) => {
+            return dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)).then((response) => {
                 if(response instanceof Error) {
                     return;
                     throw response;
@@ -96,7 +159,7 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
                     const spatialIndex = {
                         tiles: [spatialFilter.tiles[tilesPagination]],
                     };
-                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter)))
+                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
                 }
 
                 //load rest tiles
@@ -109,7 +172,7 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
 
                     const relations = {};
                     const loadRestTilesRelations = false;
-                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedFilter)))
+                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
                 }
 
                 return Promise.all(promises);
@@ -125,6 +188,37 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter) {
         }
     }
 }
+
+const hasMissingAttributesData = (attributeDataIndex, spatialFilter) => {
+    const missingAttributeDataTiles = getMissingTiles(attributeDataIndex, spatialFilter) || spatialFilter.tiles;
+    return (missingAttributeDataTiles && missingAttributeDataTiles.length && missingAttributeDataTiles.length > 0) ? true : false;
+}
+
+const hasMissingSpatialData = (spatialDataIndex, spatialFilter) => {
+    const missingSpatialDataTiles = getMissingTiles(spatialDataIndex, spatialFilter) || spatialFilter.tiles;
+    return (missingSpatialDataTiles && missingSpatialDataTiles.length && missingSpatialDataTiles.length > 0) ? true : false;
+}
+
+const hasSpatialOrAreaRelations = (state, areaTreeLevelKey, layerTemplateKey, mergedSpatialFilter, order) => {
+    let spatialRelationsIndex = null;
+    let areaRelationsIndex = null;
+
+    if(layerTemplateKey) {
+        spatialRelationsIndex = Select.data.spatialRelations.getIndex(state,  mergedSpatialFilter, order);
+    }
+
+    // FIXME
+    if(areaTreeLevelKey) {
+        //FIXME - attributeRelations why?
+        // areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), mergedSpatialFilter, order);
+    }
+    
+
+    
+    return spatialRelationsIndex !== null || areaRelationsIndex !== null
+
+}
+
 /**
  * @param filter {Object}
  * @return {function}
@@ -136,51 +230,57 @@ function ensure(filter) {
         const {styleKey, data, mergedFilter} = filter;
         const {spatialFilter} = data;
         const {areaTreeLevelKey, layerTemplateKey} = mergedFilter;
-
+        const mergedSpatialFilter = mergedFilter;
+        const mergedAttributeFilter = {...mergedFilter, styleKey};
         // select indexes
         const order = null;
-        let areaRelationsIndex = null;
-        if(areaTreeLevelKey) {
-            //FIXME - attributeRelations why?
-            areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), mergedFilter, order);
-        }
-        
-        let spatialRelationsIndex = null;
-        if(layerTemplateKey) {
-            spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(),  mergedFilter, order);
+
+        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedSpatialFilter, order) || [];
+        const attributeDataIndex = Select.data.attributeData.getIndex(getState(),  mergedAttributeFilter, order) || [];
+
+        const missingAttributesData = hasMissingAttributesData(attributeDataIndex, spatialFilter);
+        const missingSpatialData = hasMissingSpatialData(spatialDataIndex, spatialFilter);
+        const filterHasSpatialOrAreaRelations = hasSpatialOrAreaRelations(getState(), areaTreeLevelKey, layerTemplateKey, mergedSpatialFilter, order);
+
+        if(!filterHasSpatialOrAreaRelations) {
+            return dispatch(ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter));
         }
 
-        //FIXME
-        const attributeRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedFilter, order);
-        //corectly identify if missing spatialData or attributeData or all
-        //fixme ensure missing attribute data?
-        // uncomment after resolve attribute data
-        // if ((spatialRelationsIndex !== null || areaRelationsIndex !== null) && attributeRelationsIndex !== null) {
-        if ((spatialRelationsIndex !== null || areaRelationsIndex !== null)) {
-            return dispatch(loadMissing(spatialFilter, styleKey, order, mergedFilter));
-        } else {
-            return dispatch(ensureDataAndRelations(spatialFilter, styleKey, order, mergedFilter));
+        if(missingSpatialData) {
+            return dispatch(loadMissingSpatialData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter));
         }
+
+        if(missingAttributesData) {
+            return dispatch(loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter));
+        }
+
     }
 }
 
 
 
-function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedFilter) {
+function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = 'backend/rest/data/filtered';
 
-        const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedFilter
+        const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedSpatialFilter
         //what if we have already some DS or DR?
         //check if indexes are loading (ds, dr, data - all)
-        const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedFilter, order);
-        const spatialDataSourceIndex = Select.data.spatialDataSources.getIndex(getState(), mergedFilter, order);
-        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedFilter, order) || [];
+        const spatialRelationsIndex = Select.data.spatialRelations.getIndex(getState(), mergedSpatialFilter, order);
+        const spatialDataSourceIndex = Select.data.spatialDataSources.getIndex(getState(), mergedSpatialFilter, order);
+        const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedSpatialFilter, order) || [];
+        const attributeDataIndex = Select.data.attributeData.getIndex(getState(),  mergedAttributeFilter, order) || [];
         //if spatialIndex is not defined, then use all tiles from spatialFilter as a missing 
-        const missingTiles = getMissingTiles(spatialDataIndex, spatialIndex) || spatialFilter.tiles;
-        if(spatialRelationsIndex && spatialDataSourceIndex && missingTiles?.length === 0) {
+        const missingSpatialDataTiles = getMissingTiles(spatialDataIndex, spatialIndex) || spatialFilter.tiles;
+        
+        //if spatialIndex is not defined, then use all tiles from spatialFilter as a missing 
+        const missingAttributeDataTiles = getMissingTiles(attributeDataIndex, spatialIndex) || spatialFilter.tiles;
+
+        //deside if we need load only attributes data
+
+        if(spatialRelationsIndex && spatialDataSourceIndex && missingSpatialDataTiles?.length === 0 && missingAttributeDataTiles?.length === 0) {
             //only on first render of map, when all maps tryes to load data
             return new Promise((r,rj) => {
             });
@@ -192,7 +292,9 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
         // Spatial
         ////
         // TODO register loading index on spatialRelations ?
-        dispatch(spatialData.addLoadingIndex(mergedFilter, order, spatialFilter.level, missingTiles));
+        if(loadGeometry) {
+            dispatch(spatialData.addLoadingIndex(mergedSpatialFilter, order, spatialFilter.level, missingSpatialDataTiles));
+        }
 
 
         ////
@@ -259,21 +361,21 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 						if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
 							//TODO relations.offset
 							const changes = null;
-							dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
+							dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedAttributeFilter, order, relations.offset, result.total.attributeRelations, changes));
 						}
 
 						if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
 							//TODO relations.offset
 							//TODO result.total.spatialRelations ?
 							const changes = null;
-							dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedFilter, order, relations.offset, result.total.attributeRelations, changes));
+							dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedAttributeFilter, order, relations.offset, result.total.attributeRelations, changes));
 						}
 
-						if(result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
+						if(result.data.spatialData && result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
 							//TODO add level to indexes on BE?
 							//TODO indexes
 							const changes = null;
-							dispatch(attributeData.receiveIndexed(result.data.attributeData, mergedFilter, order, changes));
+							dispatch(attributeData.receiveIndexed(result.data.attributeData, result.data.spatialData, mergedAttributeFilter, order, changes));
 						}
 
                         ////
@@ -283,21 +385,22 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                         if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
                             //TODO relations.offset
                             const changes = null;
-                            dispatch(spatialRelations.receiveIndexed(result.data.spatialRelations, mergedFilter, order, relations.offset, result.total.spatialRelations, changes));
+                            dispatch(spatialRelations.receiveIndexed(result.data.spatialRelations, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
                         if(result.data.spatialDataSources && !_.isEmpty(result.data.spatialDataSources)) {
                             //TODO relations.offset
                             //TODO result.total.spatialRelations ?
                             const changes = null;
-                            dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedFilter, order, relations.offset, result.total.spatialRelations, changes));
+                            dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
-                        if(result.data.spatialData && !_.isEmpty(result.data.spatialData)) {
+                        const spatialDataEmpty = isSpatialDataEmpty(result.data.spatialData);
+                        if(!spatialDataEmpty) {
                             //TODO add level to indexes on BE?
                             //TODO indexes
                             const changes = null;
-                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedFilter, order, changes));
+                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedSpatialFilter, order, changes));
                         }
 
                         return result;
@@ -326,6 +429,6 @@ export default {
     spatialRelations,
 
     ensure, //todo TESTS
-    loadMissing, //todo TESTS
+    loadMissingSpatialData, //todo TESTS
     ensureDataAndRelations, //todo TESTS
 }

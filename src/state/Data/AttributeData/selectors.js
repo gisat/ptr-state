@@ -1,7 +1,19 @@
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
-
+import common from "../../_common/selectors";
 const getSubstate = state => state.data.attributeData;
 
+const getIndex = common.getIndex(getSubstate);
+
+const getIndexesObserver = createRecomputeObserver(common.getIndexes(getSubstate));
+
+const getIndexByFilter = createRecomputeSelector((filter) => {
+	const indexes = getIndexesObserver();
+	if (filter && indexes) {
+		return _.find(indexes, (index) => _.isMatch(index.filter, filter))?.index || null;
+	} else {
+		return null;
+	}
+});
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	const substate = getSubstate(state);
 	return substate.byDataSourceKey?.[key];
@@ -43,7 +55,20 @@ const getAttributesByDataSourceKeysByFeatureKey = createRecomputeSelector((attri
 	}
 });
 
+const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, level, tile) => {
+	const index = getIndexByFilter(filter);
+	if (index) {
+		const featureKeysByDataSourceKeys = index[level]?.[tile];
+		return featureKeysByDataSourceKeys || null;
+	} else {
+		return null;
+	}
+});
+
+
 export default {
+	getIndex,
 	getDataByDataSourceKeys,
-	getAttributesByDataSourceKeysByFeatureKey
+	getAttributesByDataSourceKeysByFeatureKey,
+	getIndexedFeatureKeysByDataSourceKeys
 };

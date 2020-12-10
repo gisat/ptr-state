@@ -502,7 +502,7 @@ const getAllLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
-const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
+const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
 	if (layerState) {
 		// TODO at least a part is the same as in Maps/actions/layerUse?
 		const layer = layerState;
@@ -525,14 +525,28 @@ const getRelationsFilterFromLayerState = createRecomputeSelector((layerState) =>
 		} else if (layer.areaTreeLevelKey) {
 			relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
 		}
-
 		return relationsFilter;
 	} else {
 		return null;
 	}
 });
 
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, relationsFilter) => {
+const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
+    const spatialFilter = getSpatialRelationsFilterFromLayerState(layerState);
+    if(spatialFilter) {
+        const attributeFilter = {...spatialFilter};
+        if(layerState.styleKey) {
+            // add styleKey
+            attributeFilter.styleKey = layerState.styleKey;
+        }
+        return attributeFilter;
+    } else {
+        return null;
+    }
+})
+
+
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
@@ -579,7 +593,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 			const viewport = getViewportByMapKeyObserver(mapKey);
 			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
 			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
-			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, relationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
+			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
 		}
 
 		let selected = null;
@@ -660,13 +674,13 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 
 				finalLayers.push(layerState);
 			} else {
-				const relationsFilter = getRelationsFilterFromLayerState(layerState);
-				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(relationsFilter);
-				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(relationsFilter);
-
+				const spatialRelationsFilter = getSpatialRelationsFilterFromLayerState(layerState);
+				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(layerState);
+				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(spatialRelationsFilter);
+				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(attributeRelationsFilter);
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, (dataSource, index) => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, relationsFilter));
+						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
 					});
 				}
 			}

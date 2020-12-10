@@ -18,7 +18,9 @@ export default (state = INITIAL_STATE, action) => {
         case ActionTypes.DATA.ATTRIBUTE_DATA.ADD:
 			return add(state, action);
         case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
-			return update(state, action);
+            return update(state, action);
+        case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
+            return common.addIndex(state, action)
         default:
             return state;
     }
