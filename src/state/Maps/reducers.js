@@ -9,18 +9,20 @@ const INITIAL_STATE = {
 };
 
 const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
-	const updatedLayers = state.maps[mapKey]?.data?.layers?.map((item) => {
-		if (item.key === layerKey) {
-			return {
-				...item,
-				styleKey
-			};
-		} else {
-			return item;
-		}
-	});
+	const layers = state.maps[mapKey]?.data?.layers;
 
-	if (updatedLayers) {
+	if (layers) {
+		const updatedLayers = layers.map((item) => {
+			if (item.key === layerKey) {
+				return {
+					...item,
+					styleKey
+				};
+			} else {
+				return item;
+			}
+		});
+
 		return {
 			...state,
 			maps: {
