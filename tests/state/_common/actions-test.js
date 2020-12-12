@@ -162,7 +162,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -260,7 +260,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -337,7 +337,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {},
@@ -413,7 +413,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -487,7 +487,7 @@ describe('state/_common/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				sub: {
@@ -529,7 +529,7 @@ describe('state/_common/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				sub: {
@@ -642,7 +642,7 @@ describe('state/_common/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				sub: {
@@ -744,7 +744,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -855,7 +855,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -937,7 +937,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 		});
@@ -1011,7 +1011,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 		});
@@ -1087,7 +1087,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {activeKey: 's1'},
@@ -1191,7 +1191,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 		});
@@ -1283,7 +1283,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 		});
@@ -1521,7 +1521,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -1631,7 +1631,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -1740,7 +1740,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -1787,7 +1787,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			sub: {
@@ -1832,7 +1832,7 @@ describe('state/_common/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},

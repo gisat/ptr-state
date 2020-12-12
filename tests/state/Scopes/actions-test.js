@@ -58,7 +58,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
@@ -132,7 +132,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {},
@@ -205,7 +205,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
@@ -310,7 +310,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
@@ -414,7 +414,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
@@ -500,7 +500,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
@@ -532,14 +532,13 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
 			scopes: {activeKey: 'k1'},
 			periods: {activeKey: 'k1'},
 			places: {activeKey: 'k1'},
-			scopes: {},
 		});
 		const dispatch = (action) => {
 			if (typeof action === 'function') {
@@ -657,7 +656,7 @@ describe('state/Scopes/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {
