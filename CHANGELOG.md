@@ -1,3 +1,15 @@
+# v1.5.13 (Mon Dec 14 2020)
+
+#### 🐾 Patch
+
+- remove "backend" from paths [#61](https://github.com/gisat-panther/ptr-state/pull/61) ([@mbabic84](https://github.com/mbabic84))
+
+#### Authors: 1
+
+- [@mbabic84](https://github.com/mbabic84)
+
+---
+
 # v1.5.12 (Thu Nov 12 2020)
 
 #### 🐾 Patch
