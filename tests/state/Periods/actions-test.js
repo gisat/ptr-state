@@ -58,7 +58,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {
@@ -134,7 +134,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {},
@@ -207,7 +207,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {
@@ -312,7 +312,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {
@@ -416,7 +416,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {
@@ -502,7 +502,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {
@@ -556,7 +556,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
@@ -680,7 +680,7 @@ describe('state/Periods/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			periods: {

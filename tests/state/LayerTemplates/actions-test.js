@@ -73,7 +73,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {
@@ -151,7 +151,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {},
@@ -224,7 +224,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {
@@ -329,7 +329,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {
@@ -415,7 +415,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {
@@ -447,7 +447,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
@@ -572,7 +572,7 @@ describe('state/LayerTemplates/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			layerTemplates: {

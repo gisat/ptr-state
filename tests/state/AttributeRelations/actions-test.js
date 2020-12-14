@@ -48,7 +48,7 @@ describe('state/AttributeRelations/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
@@ -184,7 +184,7 @@ describe('state/AttributeRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				attributeRelations: {
@@ -221,7 +221,7 @@ describe('state/AttributeRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				attributeRelations: {
@@ -329,7 +329,7 @@ describe('state/AttributeRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				attributeRelations: {
@@ -426,7 +426,7 @@ describe('state/AttributeRelations/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributeRelations: {
@@ -531,7 +531,7 @@ describe('state/AttributeRelations/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributeRelations: {

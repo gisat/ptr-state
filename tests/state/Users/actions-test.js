@@ -58,7 +58,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			users: {},
@@ -153,7 +153,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			users: {inUse: {}, groups: {inUse: {}}},
@@ -309,7 +309,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			users: {
@@ -421,7 +421,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			users: {
@@ -456,7 +456,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
@@ -560,7 +560,7 @@ describe('state/Users/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},

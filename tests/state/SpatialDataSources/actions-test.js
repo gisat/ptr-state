@@ -71,7 +71,7 @@ describe('state/SpatialDataSources/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			spatialDataSources: {

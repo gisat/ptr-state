@@ -190,7 +190,7 @@ function load(caseKey) {
 			let query = {
 				scenario_case_id: caseKey
 			};
-			dispatch(common.request(localConfig, 'backend/rest/metadata/scenarios', "GET", query, null, loadReceive, actionLoadError));
+			dispatch(common.request(localConfig, 'rest/metadata/scenarios', "GET", query, null, loadReceive, actionLoadError));
 		}
 	}
 }
@@ -239,7 +239,7 @@ function loadCases(ttl) {
 
 			if (activePlaceKey) {
 
-				let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/metadata/scenario_cases');
+				let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/metadata/scenario_cases');
 				let query = queryString.stringify({
 					place_id: activePlaceKey
 				});
@@ -336,7 +336,7 @@ function apiCreateCases(cases, scenarios, placeKey, ttl) {
 		dispatch(actionApiCreateCasesRequest(_.map(cases, 'key')));
 
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/metadata');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/metadata');
 
 		let payload = {
 			data: {
@@ -420,7 +420,7 @@ function apiUpdateCases(updates, editedScenarios, ttl) {
 		let state = getState();
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/metadata');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/metadata');
 
 		let payload = {
 			data: {
@@ -531,7 +531,7 @@ function apiDeleteCases(cases, ttl) {
 		dispatch(actionApiDeleteCasesRequest(_.map(cases, 'key')));
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/metadata');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/metadata');
 
 		let payload = {
 			data: {
@@ -594,7 +594,7 @@ function apiDeleteCasesError(message){
 function apiUploadScenarioFiles(scenarios) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/importer/upload');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/importer/upload');
 
 		let promises = [];
 		let scenarioKeys = [];
@@ -703,7 +703,7 @@ function processMatlabProcessRequestResults(results, dispatch) {
 
 function executeMatlabProcessRequest(body, localConfig) {
 	return fetch(
-		localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/pucs/publish'),
+		localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/pucs/publish'),
 		{
 			method: "POST",
 			credentials: 'include',
@@ -739,7 +739,7 @@ function getBodyForMatlabProcessesRequest(processes) {
 function apiExecutePucsMatlabProcessOnUploadedScenarioFiles(uploads) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/pucs/execute_matlab');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/pucs/execute_matlab');
 		let state = getState();
 
 		let scenarioKeys = [];
@@ -795,7 +795,7 @@ function apiExecutePucsMatlabProcessOnUploadedScenarioFiles(uploads) {
 function apiCreateRelationsForScenarioProcessResults(results) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'backend/rest/relations');
+		let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, 'rest/relations');
 
 		let activePlace = Select.places.getActive(getState());
 

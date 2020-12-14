@@ -58,7 +58,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {
@@ -132,7 +132,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {},
@@ -205,7 +205,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {
@@ -311,7 +311,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {
@@ -415,7 +415,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {
@@ -517,7 +517,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {
@@ -549,14 +549,13 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			attributes: {activeKey: 'k1'},
 			scopes: {activeKey: 'k1'},
 			periods: {activeKey: 'k1'},
 			places: {activeKey: 'k1'},
-			places: {},
 		});
 		const dispatch = (action) => {
 			if (typeof action === 'function') {
@@ -674,7 +673,7 @@ describe('state/Places/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			places: {

@@ -89,7 +89,7 @@ describe('state/SpatialRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				spatialRelations: {
@@ -126,7 +126,7 @@ describe('state/SpatialRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				spatialRelations: {
@@ -234,7 +234,7 @@ describe('state/SpatialRelations/actions', function () {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
-						apiBackendPath: '',
+						apiBackendPath: 'backend',
 					},
 				},
 				spatialRelations: {
@@ -331,7 +331,7 @@ describe('state/SpatialRelations/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			spatialRelations: {

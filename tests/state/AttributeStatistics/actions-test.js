@@ -44,7 +44,7 @@ describe('state/AttributeStatistics/actions', function () {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+					apiBackendPath: 'backend',
 				},
 			},
 			scopes: {activeKey: 's1'},
