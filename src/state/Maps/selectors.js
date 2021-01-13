@@ -147,11 +147,7 @@ const getViewportByMapKey = createCachedSelector(
         getMapByKey,
     ],
 	(map) => {
-        if(!_.isEmpty(map)) {
-            return map?.data?.viewport;
-        } else {
-            return null;
-        }
+    	return map?.data?.viewport || null;
     }
 )((state, mapKey) => mapKey);
 
