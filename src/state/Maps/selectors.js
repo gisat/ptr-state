@@ -545,11 +545,20 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
     }
 })
 
-
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
+/**
+ * @param index {number}
+ * @param spatialDataSource {Object}
+ * @param layerState {Object} layer definition from state or passed to the Map component
+ * @param layerKey {string} layer unique identifier
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
+ * @param mapKey {string} map unique identifier
+ * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
+ * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
+ */
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
 	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
 
-	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = dataSource?.data;
+	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = spatialDataSource?.data;
 	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
 
 	layerKey = layerKey || key;
@@ -587,13 +596,13 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 		let features, tiles = null;
 
 		if (type === "vector") {
-			features = DataSelectors.getFeatures(dataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
+			features = DataSelectors.getFeatures(spatialDataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
 		} else if (type === "tiled-vector") {
 			const view = getViewByMapKeyObserver(mapKey);
 			const viewport = getViewportByMapKeyObserver(mapKey);
 			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
 			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
-			tiles = DataSelectors.getTiles(dataSource.key, fidColumnName, level, tileList, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
+			tiles = DataSelectors.getTiles(spatialDataSource.key, fidColumnName, level, tileList, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
 		}
 
 		let selected = null;
@@ -629,8 +638,8 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 });
 
 /**
- * mapKey {string} map unique identifier
- * layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ * @param mapKey {string} map unique identifier
+ * @param layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
  */
 const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	if (!layerState) {
@@ -645,6 +654,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			const layerKey = 'pantherBackgroundLayer';
 			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
 			if (spatialDataSources) {
+				// TODO currently only wms or wmts is supported
 				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, layerState, layerKey));
 			} else {
 				return null;
