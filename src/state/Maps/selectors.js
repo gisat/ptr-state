@@ -628,6 +628,10 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, dataSo
 	};
 });
 
+/**
+ * mapKey {string} map unique identifier
+ * layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ */
 const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	if (!layerState) {
 		layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
