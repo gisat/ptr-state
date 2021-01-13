@@ -48,6 +48,8 @@ const getAttributesByDataSourceKeysByFeatureKey = createRecomputeSelector((attri
 			});
 
 			return !_.isEmpty(attributes) ? attributes : null;
+		} else {
+			return null;
 		}
 	} else {
 		return null;
