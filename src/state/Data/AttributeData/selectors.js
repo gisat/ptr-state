@@ -15,8 +15,7 @@ const getIndexByFilter = createRecomputeSelector((filter) => {
 	}
 });
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
-	const substate = getSubstate(state);
-	return substate.byDataSourceKey?.[key];
+	return getSubstate(state)?.byDataSourceKey?.[key] || null;
 });
 
 
