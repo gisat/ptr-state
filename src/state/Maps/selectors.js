@@ -636,6 +636,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, spatia
 /**
  * @param mapKey {string} map unique identifier
  * @param layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ * @return {Array} It returns a list of end format definitions of the background layer (per data source). See: https://gisat.github.io/ > Architecture > System data types > Layers
  */
 const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	if (!layerState) {
@@ -661,6 +662,11 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	}
 });
 
+/**
+ * @param mapKey {string} map unique identifier
+ * @param layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ * @return {Array} It returns a list of end format definitions of the background layer (per data source). See: https://gisat.github.io/ > Architecture > System data types > Layers
+ */
 const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	// console.log("Maps # getMapLayers", ((new Date()).getMilliseconds()), mapKey);
 	if (!layersState) {
