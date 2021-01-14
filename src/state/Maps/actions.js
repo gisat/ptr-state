@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import {map as mapUtils} from "@gisatcz/ptr-utils";
+
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../../state/Select';
-import commonActions from '../_common/actions';
 import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
@@ -9,14 +10,19 @@ import DataActions from "../Data/actions";
 import StylesActions from "../Styles/actions";
 
 import helpers from "./selectorHelpers";
-import {map as mapUtils} from "@gisatcz/ptr-utils";
 import SelectionsAction from '../Selections/actions';
-
-const {actionGeneralError} = commonActions;
 
 /* ==================================================
  * CREATORS
  * ================================================== */
+
+/**
+ * @param mapKey {string}
+ * @param backgroundLayer {Object} background layer definition
+ * @param layers {Object} layers definition
+ * @param mapWidth {number} width of map component in px
+ * @param mapHeight {number} height of map component in px
+ */
 function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
     return (dispatch, getState) => {
         // TODO clear use for given mapKey, if exists
@@ -55,29 +61,35 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
     }
 }
 
-function layerUse(componentId, activeKeys, layer, spatialFilter) {
+/**
+ * @param componentId {string}
+ * @param activeKeys {Object} active metadata keys (such as activeApplicationKey, activeScopeKey etc.)
+ * @param layerState {Object} layer definition
+ * @param spatialFilter {{level: number}, {tiles: Array}}
+ */
+function layerUse(componentId, activeKeys, layerState, spatialFilter) {
     return (dispatch, getState) => {
         const state = getState();
 
 		// TODO ensure style here for now
-		if (layer.styleKey) {
-			dispatch(StylesActions.useKeys([layer.styleKey], "layerUse"));
+		if (layerState.styleKey) {
+			dispatch(StylesActions.useKeys([layerState.styleKey], layerState.key + "_layerUse"));
 		}
 
         // modifiers defined by key
-        let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
+        let metadataDefinedByKey = layerState.metadataModifiers ? {...layerState.metadataModifiers} : {};
 
         // add layerTemplate od areaTreeLevelKey
-        if (layer.layerTemplateKey) {
-            metadataDefinedByKey.layerTemplateKey = layer.layerTemplateKey;
+        if (layerState.layerTemplateKey) {
+            metadataDefinedByKey.layerTemplateKey = layerState.layerTemplateKey;
             // TODO use layerTemplate here?
-        } else if (layer.areaTreeLevelKey) {
-            metadataDefinedByKey.areaTreeLevelKey = layer.areaTreeLevelKey;
+        } else if (layerState.areaTreeLevelKey) {
+            metadataDefinedByKey.areaTreeLevelKey = layerState.areaTreeLevelKey;
             // TODO use areaTreeLevelKey here?
         }
 
         // Get actual metadata keys defined by filterByActive
-        const activeMetadataKeys = commonSelectors.getActiveKeysByFilterByActive(state, layer.filterByActive);
+        const activeMetadataKeys = commonSelectors.getActiveKeysByFilterByActive(state, layerState.filterByActive);
 
         // Merge metadata, metadata defined by key have priority
         const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
@@ -86,14 +98,13 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
         const {areaTreeLevelKey, layerTemplateKey, applicationKey, ...modifiers} = mergedMetadataKeys;
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers) // TODO remove "|| {}" after fix on BE
+        const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers);
         if (layerTemplateKey || areaTreeLevelKey) {
             let mergedFilter = {};
             if(areaTreeLevelKey) {
                 mergedFilter = {...modifiersForRequest, areaTreeLevelKey};
             }
-            
-            let spatialRelationsIndex = null;
+
             if(layerTemplateKey) {
                 mergedFilter = {...modifiersForRequest, layerTemplateKey};
             }
@@ -103,13 +114,13 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
                 const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, null);
                 const dataSourceType = spatialDataSource?.data?.type || null;
                 // load only vector dataSources
-                if(dataSourceType &&  dataSourceType !== 'vector') {
-                    return
+                if (dataSourceType &&  dataSourceType !== 'vector') {
+                    return;
                 }
             }
             // TODO register use?
             dispatch(DataActions.ensure({
-                styleKey: layer.styleKey || null,
+                styleKey: layerState.styleKey || null,
                 data: {
                     spatialFilter
                 },
@@ -119,12 +130,18 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
     }
 }
 
+/**
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param selectedFeatureKeys {Array}
+ */
 function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
 	return (dispatch, getState) => {
 		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(getState(), mapKey, layerKey);
 		if (layer?.options?.selectable) {
 			const activeSelectionKey = Select.selections.getActiveKey(getState());
 			if (activeSelectionKey && layer.options.selected?.hasOwnProperty(activeSelectionKey)) {
+				// TODO possible conflicts if features with same key from different layers are selected
 				dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
 			} else {
 				// TODO what if there is no active selection?
@@ -133,12 +150,20 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
 	}
 }
 
+/**
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param styleKey {string}
+ */
 function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
 	return (dispatch) => {
 		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
 	}
 }
 
+/**
+ * @param mapKey {string}
+ */
 function setMapSetActiveMapKey(mapKey) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
@@ -148,6 +173,10 @@ function setMapSetActiveMapKey(mapKey) {
     };
 }
 
+/**
+ * @param setKey {string}
+ * @param backgroundLayer {Object} background layer definition
+ */
 function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 	return (dispatch, getState) => {
 		dispatch(actionSetMapSetBackgroundLayer(setKey, backgroundLayer));
@@ -161,6 +190,9 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 	};
 }
 
+/**
+ * @param setKey {string}
+ */
 function refreshMapSetUse(setKey) {
 	return (dispatch, getState) => {
 		const maps = Select.maps.getMapSetMaps(getState(), setKey);
@@ -173,11 +205,14 @@ function refreshMapSetUse(setKey) {
 	};
 }
 
+/**
+ * @param mapKey {string}
+ * @param update {Object} map view fragment
+ */
 function updateMapAndSetView(mapKey, update) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
-        let forSet = null;
-        let forMap = null;
+        let forSet, forMap;
 
         if (set && set.sync) {
             // pick key-value pairs that are synced for set
@@ -206,6 +241,10 @@ function updateMapAndSetView(mapKey, update) {
     }
 }
 
+/**
+ * @param setKey {string}
+ * @param update {Object} map view fragment
+ */
 function updateSetView(setKey, update) {
     return (dispatch, getState) => {
         let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
@@ -213,6 +252,10 @@ function updateSetView(setKey, update) {
     };
 }
 
+/**
+ * Update whole maps state from view definition
+ * @param data {Object}
+ */
 function updateStateFromView(data) {
     return dispatch => {
         if (data) {
