@@ -1,21 +1,10 @@
-import _ from 'lodash';
 import common from '../../_common/selectors';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 
 const getSubstate = (state) => state.data.spatialData;
 
 const getIndex = common.getIndex(getSubstate);
-
-const getIndexesObserver = createRecomputeObserver(common.getIndexes(getSubstate));
-
-const getIndexByFilter = createRecomputeSelector((filter) => {
-	const indexes = getIndexesObserver();
-	if (filter && indexes) {
-		return _.find(indexes, (index) => _.isMatch(index.filter, filter))?.index || null;
-	} else {
-		return null;
-	}
-});
+const getIndex_recompute = common.getIndex_recompute(getSubstate);
 
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	const substate = getSubstate(state);
@@ -23,9 +12,9 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 });
 
 const getIndexedFeatureKeys = createRecomputeSelector((filter, level, tile, dataSourceKey) => {
-	const index = getIndexByFilter(filter);
-	if (index) {
-		const featureKeys = index[level]?.[tile]?.[dataSourceKey];
+	const index = getIndex_recompute(filter, null);
+	if (index?.index) {
+		const featureKeys = index.index[level]?.[tile]?.[dataSourceKey];
 		return featureKeys?.length ? featureKeys : null;
 	} else {
 		return null;
@@ -34,7 +23,6 @@ const getIndexedFeatureKeys = createRecomputeSelector((filter, level, tile, data
 
 export default {
 	getByDataSourceKeyObserver,
-	getIndexByFilter,
 	getIndex,
 	getIndexedFeatureKeys
 };

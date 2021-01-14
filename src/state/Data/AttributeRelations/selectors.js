@@ -5,35 +5,21 @@ import _ from 'lodash';
 const getSubstate = (state) => state.data.attributeRelations;
 
 const getIndex = common.getIndex(getSubstate);
+const getIndex_recompute = common.getIndex_recompute(getSubstate);
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
-	// console.log("AttributeDataSources/selectors#getByKeyObserver", ((new Date()).getMilliseconds()));
-	const substate = getSubstate(state);
-	return substate.byKey?.[key];
-});
-
-const getIndexesObserver = createRecomputeObserver(state => {
-	const substate = getSubstate(state);
-	return substate.indexes;
+	return getSubstate(state)?.byKey?.[key] || null;
 });
 
 const getByKeys = createRecomputeSelector(keys => {
-	// console.log("AttributeDataSources/selectors#getByKeys", ((new Date()).getMilliseconds()));
 	return keys.map(key => getByKeyObserver(key));
 });
 
-const getIndexByFilter = createRecomputeSelector(filter => {
-	// console.log("AttributeDataSources/selectors#getIndex", ((new Date()).getMilliseconds()));
-	const indexes = getIndexesObserver();
-	return _.find(indexes, (index) => _.isMatch(index.filter, filter))?.index || null;
-});
-
 const getFiltered = createRecomputeSelector(filter => {
-	// console.log("AttributeDataSources/selectors#getFiltered", ((new Date()).getMilliseconds()));
-	const index = getIndexByFilter(filter);
-	if (index) {
+	const index = getIndex_recompute(filter, null);
+	if (index?.index) {
 		// filter only uuids (not true or false values of index)
-		const keys = _.filter(Object.values(index), (key) => typeof key === "string");
+		const keys = _.filter(Object.values(index.index), (key) => typeof key === "string");
 		if (keys?.length) {
 			return getByKeys(keys);
 		} else {

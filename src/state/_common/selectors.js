@@ -397,6 +397,9 @@ const getIndexes = (getSubstate) => {
 	return (state) => getSubstate(state).indexes;
 };
 
+
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) => getIndexes(getSubstate)(state));
+
 /**
  * Get whole index by given filter and order
  * @param getSubstate
@@ -410,6 +413,17 @@ const getIndex = (getSubstate) => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
 	);
+};
+
+const getIndex_recompute = (getSubstate) => {
+	return createRecomputeSelector((filter, order) => {
+		const indexes = getIndexesObserver(getSubstate);
+		if (indexes) {
+			return commonHelpers.getIndex(indexes, filter, order);
+		} else {
+			return null;
+		}
+	});
 };
 
 const getIndexChangedOn = (getSubstate) => {
@@ -904,6 +918,7 @@ export default {
 	getEditedKeys,
 
 	getIndex,
+	getIndex_recompute,
 	getIndexed,
 	getIndexes,
 	getIndexChangedOn,
