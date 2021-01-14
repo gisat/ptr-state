@@ -649,12 +649,19 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 		if (layerState.type) {
 			return layerState;
 		} else {
-			// TODO filterByActive & metadata modifiers?
 			const layerKey = 'pantherBackgroundLayer';
 			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
 			if (spatialDataSources) {
-				// TODO currently only wms or wmts is supported
-				return spatialDataSources.map(dataSource => getLayerByDataSourceAndLayerState(dataSource, layerState, layerKey));
+				return spatialDataSources.map(dataSource => {
+					const dataSourceType = dataSource?.data?.type;
+
+					// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
+					if (dataSourceType === "wmts" || dataSourceType === "wms") {
+						return getLayerByDataSourceAndLayerState(dataSource, layerState, layerKey);
+					} else {
+						return null;
+					}
+				});
 			} else {
 				return null;
 			}
