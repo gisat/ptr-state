@@ -462,7 +462,7 @@ const getLayersStateByMapKeyObserver = createRecomputeObserver(getLayersStateByM
  * @param state {Object}
  * @param mapKey {string}
  * @param layerKey {string}
- * @return {Object}
+ * @return {Object | null}
  */
 const getLayerStateByLayerKeyAndMapKey = createSelector(
 	[
@@ -497,6 +497,9 @@ const getAllLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
+/**
+ * @param layerState {Object}
+ */
 const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
 	if (layerState) {
 		// TODO at least a part is the same as in Maps/actions/layerUse?
@@ -526,6 +529,9 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerSt
 	}
 });
 
+/**
+ * @param layerState {Object}
+ */
 const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
     const spatialFilter = getSpatialRelationsFilterFromLayerState(layerState);
     if(spatialFilter) {
@@ -541,7 +547,6 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
 })
 
 /**
- * @param index {number}
  * @param spatialDataSource {Object}
  * @param layerState {Object} layer definition from state or passed to the Map component
  * @param layerKey {string} layer unique identifier
@@ -550,7 +555,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
  * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
  */
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
+const getLayerByDataSourceAndLayerState = createRecomputeSelector((spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = spatialDataSource?.data;
 	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
 
@@ -621,7 +626,7 @@ const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, spatia
 	}
 
 	return {
-		key: layerKey + '_' + index,
+		key: layerKey + '_' + spatialDataSource.key,
 		layerKey,
 		opacity: opacity || 1,
 		name,
@@ -649,7 +654,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
 			if (spatialDataSources) {
 				// TODO currently only wms or wmts is supported
-				return spatialDataSources.map((dataSource, index) => getLayerByDataSourceAndLayerState(index, dataSource, layerState, layerKey));
+				return spatialDataSources.map(dataSource => getLayerByDataSourceAndLayerState(dataSource, layerState, layerKey));
 			} else {
 				return null;
 			}
@@ -691,8 +696,8 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(spatialRelationsFilter);
 				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(attributeRelationsFilter);
 				if (spatialDataSources) {
-					_.forEach(spatialDataSources, (dataSource, index) => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(index, dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
+					_.forEach(spatialDataSources, dataSource => {
+						finalLayers.push(getLayerByDataSourceAndLayerState(dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
 					});
 				}
 			}
