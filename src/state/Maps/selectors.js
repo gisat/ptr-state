@@ -555,7 +555,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
  * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
  */
-const getLayerByDataSourceAndLayerState = createRecomputeSelector((spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
+const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector((spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = spatialDataSource?.data;
 	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
 
@@ -657,7 +657,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 
 					// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
 					if (dataSourceType === "wmts" || dataSourceType === "wms") {
-						return getLayerByDataSourceAndLayerState(dataSource, layerState, layerKey);
+						return getFinalLayerByDataSourceAndLayerState(dataSource, layerState, layerKey);
 					} else {
 						return null;
 					}
@@ -685,6 +685,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 		let finalLayers = [];
 
 		_.forEach(layersState, layerState => {
+			// layer is already defined by the end format suitable for presentational map component
 			if (layerState.type) {
 				if (layerState.type === "vector" && layerState.options?.selected) {
 					layerState = {
@@ -697,14 +698,16 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 				}
 
 				finalLayers.push(layerState);
-			} else {
+			}
+			// necessary to assemble data for the end format
+			else {
 				const spatialRelationsFilter = getSpatialRelationsFilterFromLayerState(layerState);
 				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(layerState);
 				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(spatialRelationsFilter);
 				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(attributeRelationsFilter);
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, dataSource => {
-						finalLayers.push(getLayerByDataSourceAndLayerState(dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
+						finalLayers.push(getFinalLayerByDataSourceAndLayerState(dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
 					});
 				}
 			}
