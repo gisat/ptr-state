@@ -444,7 +444,6 @@ const getLayersStateByMapKey = createCachedSelector(
         getMapLayersStateWithModifiersByMapKey
     ],
     (setLayers, mapLayers) => {
-    	// console.log("Maps # getLayersStateByMapKey", ((new Date()).getMilliseconds()));
         if (mapLayers && setLayers) {
             return [...setLayers, ...mapLayers]
         } else if (mapLayers) {
@@ -552,8 +551,6 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
  */
 const getLayerByDataSourceAndLayerState = createRecomputeSelector((index, spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
-	// console.log("Maps # getLayerByDataSourceAndLayerState", ((new Date()).getMilliseconds()), layerKey || layerState?.key);
-
 	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = spatialDataSource?.data;
 	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
 
@@ -668,7 +665,6 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
  * @return {Array} It returns a list of end format definitions of the background layer (per data source). See: https://gisat.github.io/ > Architecture > System data types > Layers
  */
 const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
-	// console.log("Maps # getMapLayers", ((new Date()).getMilliseconds()), mapKey);
 	if (!layersState) {
 		layersState = getLayersStateByMapKeyObserver(mapKey);
 	}
