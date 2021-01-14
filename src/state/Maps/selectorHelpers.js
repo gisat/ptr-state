@@ -46,7 +46,14 @@ const mergeBackgroundLayerWithLayers = createCachedSelector(
     }
 )((backgroundLayer, layers) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(layers)}`);
 
-
+/**
+ * Merge given modifiers with layer's modifiers & given filterByActive with layer's filter by active and add it to the layer state
+ *
+ * @param layers {Object} layers state
+ * @param metadataModifiers {Object} modifiers like scopeKey, placeKey
+ * @param filterByActive {{scope: bool, place: bool, period: bool,  scenario: bool, case: bool}}
+ * @return {Object} Final layer state definition
+ */
 const mergeModifiersAndFilterByActiveToLayerStructure = (layers, metadataModifiers, filterByActive) => {
     return layers.map(layer => {
         let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : (metadataModifiers || layer.metadataModifiers || null);
@@ -56,6 +63,12 @@ const mergeModifiersAndFilterByActiveToLayerStructure = (layers, metadataModifie
     });
 }
 
+/**
+ * It returns merged view from map and associated map set based on synced params
+ * @param map {Object}
+ * @param set {Object}
+ * @return {Object|unknown} final map view
+ */
 const getView = (map, set) => {
     if (map) {
         if (set) {
@@ -92,8 +105,7 @@ const getZoomLevel = createCachedSelector(
     (mapWidth, mapHeight, boxRange) => {
         const viewportRange = mapUtils.view.getMapViewportRange(mapWidth, mapHeight);
 		const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(mapWidth, mapHeight, boxRange);
-        const level = grid.getLevelByViewport(levelBoxRange, viewportRange);
-        return level
+        return grid.getLevelByViewport(levelBoxRange, viewportRange)
     }
 )((mapWidth, mapHeight, boxRange) => `${mapWidth}${mapHeight}${boxRange}`);
 
