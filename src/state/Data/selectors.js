@@ -8,7 +8,6 @@ import spatialDataSources from './SpatialDataSources/selectors';
 import spatialData from './SpatialData/selectors';
 import {CacheFifo} from '@gisatcz/ptr-utils';
 import _ from 'lodash';
-import mapHelpers from '../_deprecatedMaps/helpers';
 
 let tilesCache = new CacheFifo(1000);
 

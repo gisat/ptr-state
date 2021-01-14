@@ -1,9 +1,8 @@
-import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
 import _ from 'lodash';
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
-import {utils as tileGridUtils, grid} from "@gisatcz/ptr-tile-grid";
+import {grid} from "@gisatcz/ptr-tile-grid";
 
 /* === HELPERS ======================================================================= */
 
