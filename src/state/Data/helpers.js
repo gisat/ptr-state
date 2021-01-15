@@ -1,12 +1,3 @@
-export const tileAsArray = (tile) => {
-    if(typeof tile === 'string') {
-        const coords = tile.split(',');
-        return [parseFloat(coords[0]), parseFloat(coords[1])]
-    } else {
-        return tile;
-    }
-}
-
 export const tileAsString = (tile) => {
     if(typeof tile === 'string') {
         return tile;
