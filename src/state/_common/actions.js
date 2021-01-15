@@ -834,10 +834,6 @@ function actionClearIndex(actionTypes, filter, order) {
 	return action(actionTypes, 'INDEX.CLEAR_INDEX', {filter, order});
 }
 
-function actionRegisterIndex(actionTypes, filter, order, offset, limit) {
-	return action(actionTypes, 'INDEX.REGISTER', {filter, order, offset, limit});
-}
-
 const actionMarkAsDeleted = (actionTypes, key, date) => {
 	return action(actionTypes, 'MARK_DELETED', {key, date});
 }
