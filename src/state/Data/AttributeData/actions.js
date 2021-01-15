@@ -29,20 +29,33 @@ function addOrUpdateData(attributeData) {
     }
 }
 
-
+/**
+ * Create and add spatial index for given attribute data based on related spatial data index.
+ * @param {*} filter 
+ * @param {*} order 
+ * @param {*} attributeData 
+ * @param {*} spatialData SpatialData indexes are used as a templete for attribute data indexes.
+ * @param {*} changedOn 
+ */
 function addIndex(filter, order, attributeData, spatialData, changedOn) {
     const count = null;
     const start = 0;
     const transformedData = {};
 
+    //Attribute data indexes are stored in related spatial index
+    //for all spatial data keys in spatialData
     for (const [sdKey, datasource] of Object.entries(spatialData)) {
+        //for all levels in spatial data source
         for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
             if(!transformedData[level]) {
                 transformedData[level] = {};
             }
+            //for all tiles in tiles
             for (const [tile, tileData] of Object.entries(tiles)) {
                 transformedData[level][tile] = {};
+                //for all attribute data source keys in attributeData
                 for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
+                    // Save only tileData that are incuded in attribute data keys
                     transformedData[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
                 }
             }
