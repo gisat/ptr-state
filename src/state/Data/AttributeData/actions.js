@@ -35,8 +35,6 @@ function addIndex(filter, order, attributeData, spatialData, changedOn) {
     const start = 0;
     const transformedData = {};
 
-    attributeData
-
     for (const [sdKey, datasource] of Object.entries(spatialData)) {
         for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
             if(!transformedData[level]) {
