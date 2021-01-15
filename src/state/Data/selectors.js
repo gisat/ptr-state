@@ -51,8 +51,21 @@ const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attri
 	}
 });
 
+/**
+ * Assemble vector data for single tile
+ * @param dataSourceKey {string} uuid
+ * @param fidColumnName {string} name of property used as feature identifier
+ * @param level {number}
+ * @param tile {Array} tile definition point
+ * @param spatialRelationsFilter {Object} getSpatialRelationsFilterFromLayerState
+ * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
+ * @param styleKey {string} uuid
+ * @return {Object} populated tile (with feature's geometries and attributes)
+ */
 const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, level, tile, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey) => {
-	const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey); // TODO here or pass as parameter?
+	// Get all data for given key. It caused performance issues when the data was passed as a parameter
+	const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey);
 
 	if (spatialDataForDataSource) {
 		const tileAsString = `${tile[0]},${tile[1]}`;
@@ -117,6 +130,18 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 	}
 });
 
+/**
+ * Assemble vector data for all tiles
+ * @param dataSourceKey {string} uuid
+ * @param fidColumnName {string} name of property used as feature identifier
+ * @param level {number}
+ * @param tiles {Array} list of tiles definition points
+ * @param spatialRelationsFilter {Object} getSpatialRelationsFilterFromLayerState
+ * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
+ * @param styleKey {string} uuid
+ * @return {Array} a collection of populated tiles (with feature's geometries and attributes)
+ */
 const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, tiles, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey) => {
 	if (tiles?.length) {
 		let populatedTiles = [];
