@@ -7,8 +7,7 @@ const getIndex = common.getIndex(getSubstate);
 const getIndex_recompute = common.getIndex_recompute(getSubstate);
 
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
-	const substate = getSubstate(state);
-	return substate.byDataSourceKey?.[key] || null;
+	return getSubstate(state)?.byDataSourceKey?.[key] || null;
 });
 
 const getIndexedFeatureKeys = createRecomputeSelector((filter, level, tile, dataSourceKey) => {

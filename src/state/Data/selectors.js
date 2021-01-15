@@ -11,16 +11,21 @@ import _ from 'lodash';
 
 let tilesCache = new CacheFifo(1000);
 
+/**
+ * @param dataSourceKey {string} uuid
+ * @param fidColumnName {string} name of property used as feature identifier
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
+ */
 const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attributeDataSourceKeyAttributeKeyPairs) => {
-	const geometries = spatialData.getGeometriesByDataSourceKey(dataSourceKey);
+	const data = spatialData.getByDataSourceKeyObserver(dataSourceKey);
 	let attributesByDataSourceKey = null;
 
 	if (attributeDataSourceKeyAttributeKeyPairs) {
 		attributesByDataSourceKey = attributeData.getDataByDataSourceKeys(Object.keys(attributeDataSourceKeyAttributeKeyPairs));
 	}
 
-	if (geometries) {
-		return _.map(geometries, (geometry, key) => {
+	if (data) {
+		return _.map(data, (feature, key) => {
 			let properties = {
 				[fidColumnName]: key // TODO fix dependency on this in ptr-maps
 			}
@@ -37,7 +42,7 @@ const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attri
 			return {
 				type: "Feature",
 				key,
-				geometry,
+				geometry: feature.geometry,
 				properties
 			}
 		});
