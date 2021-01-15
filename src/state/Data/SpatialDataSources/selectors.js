@@ -45,6 +45,7 @@ const getByFilteredIndex = createCachedSelector([
     ],
     (index, dataSources) => {
         if(!_.isEmpty(index)) {
+			//Each SpatialDataSource index targets to one entry in "byKey"
 			const dataSourceKey = index.index[0];
 			return dataSources[dataSourceKey];
         } else {
