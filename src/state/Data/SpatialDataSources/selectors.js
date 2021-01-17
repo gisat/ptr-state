@@ -2,20 +2,30 @@ import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import common from "../../_common/selectors";
 import createCachedSelector from "re-reselect";
+import commonHelpers from '../../_common/helpers';
 
 const getSubstate = state => state.data.spatialDataSources;
-const getIndex_recompute = common.getIndex_recompute(getSubstate);
+
+const getIndex = common.getIndex(getSubstate);
+const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byKey?.[key] || null;
 });
 
-const getIndex = common.getIndex(getSubstate);
-
-const getAllAsObject = common.getAllAsObject(getSubstate);
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) => common.getIndexes(getSubstate)(state));
 
 const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
+});
+
+const getIndex_recompute = createRecomputeSelector((filter, order) => {
+	const indexes = getIndexesObserver(getSubstate);
+	if (indexes) {
+		return commonHelpers.getIndex(indexes, filter, order);
+	} else {
+		return null;
+	}
 });
 
 const getFiltered = createRecomputeSelector(filter => {
