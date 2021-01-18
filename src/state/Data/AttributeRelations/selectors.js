@@ -7,15 +7,30 @@ const getSubstate = (state) => state.data.attributeRelations;
 const getIndex = common.getIndex(getSubstate);
 const getIndex_recompute = common.getIndex_recompute(getSubstate);
 
+/**
+ * It returns relation model for given key, if exists
+ * @param key {string} relation key
+ * @return {Object} attribute relation
+ */
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byKey?.[key] || null;
 });
 
+/**
+ * It returns relation models for given keys
+ * @param keys {Array} relation keys
+ * @return {Array} A collection of relations
+ */
 const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
 });
 
-const getFiltered = createRecomputeSelector(filter => {
+/**
+ * It returns a collection of indexed relations for given filter
+ * @param filter {Object}
+ * @return {Array}
+ */
+const getIndexed = createRecomputeSelector(filter => {
 	const index = getIndex_recompute(filter, null);
 	if (index?.index) {
 		// filter only uuids (not true or false values of index)
@@ -30,8 +45,13 @@ const getFiltered = createRecomputeSelector(filter => {
 	}
 });
 
+/**
+ * It returns key-value pairs, where the key is attribute data source key and the value is attribute key
+ * @param filter {Object} attribute relation filter
+ * @return {Object}
+ */
 const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelector(filter => {
-	const relations = getFiltered(filter);
+	const relations = getIndexed(filter);
 	if (relations) {
 		const pairs = {};
 		_.forEach(relations, relation => {
