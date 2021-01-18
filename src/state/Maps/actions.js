@@ -182,7 +182,7 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 		dispatch(actionSetMapSetBackgroundLayer(setKey, backgroundLayer));
 		const maps = Select.maps.getMapSetMaps(getState(), setKey);
 		if (maps) {
-			maps.map(map => {
+			maps.forEach(map => {
 				// TODO is viewport always defined?
 				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
 			});
@@ -197,7 +197,7 @@ function refreshMapSetUse(setKey) {
 	return (dispatch, getState) => {
 		const maps = Select.maps.getMapSetMaps(getState(), setKey);
 		if (maps) {
-			maps.map(map => {
+			maps.forEach(map => {
 				// TODO is viewport always defined?
 				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
 			});

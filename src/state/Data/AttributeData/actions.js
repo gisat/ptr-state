@@ -1,5 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
+import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
@@ -81,9 +82,27 @@ function updateDataAction(key, data) {
     }
 }
 
+function addLoadingIndex(filter, order, level, tiles) {
+    const count = null;
+    const start = 0;
+    const changedOn = null;
+    
+    //create index with tiles value "true" that indicates loading state
+    const loadingTiles = tiles.reduce((acc, tile) => {
+        const tileId = tileAsString(tile);
+        acc[tileId] = true; 
+        return acc
+    }, {})
+    const index = {
+        [level]: loadingTiles
+    };
+    return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
+}
+
 
 // ============ export ===========
 
 export default {
     receiveIndexed,
+    addLoadingIndex,
 }
