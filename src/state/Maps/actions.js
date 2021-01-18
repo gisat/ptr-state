@@ -89,7 +89,7 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
         }
 
         // Get actual metadata keys defined by filterByActive
-        const activeMetadataKeys = commonSelectors.getActiveKeysByFilterByActive(state, layerState.filterByActive);
+        const activeMetadataKeys = layerState.filterByActive ? commonSelectors.getActiveKeysByFilterByActive(state, layerState.filterByActive) : null;
 
         // Merge metadata, metadata defined by key have priority
         const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
