@@ -1,16 +1,42 @@
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 import common from "../../_common/selectors";
+import commonHelpers from '../../_common/helpers';
 
 const getSubstate = state => state.data.attributeData;
 
 const getIndex = common.getIndex(getSubstate);
-const getIndex_recompute = common.getIndex_recompute(getSubstate);
 
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) => common.getIndexes(getSubstate)(state));
+
+/**
+ * It returns all data for given datasource key
+ * @param key {string} data source key
+ * @returns {Object} Features as object (by feature key)
+ */
 const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byDataSourceKey?.[key] || null;
 });
 
+/**
+ * It returns whole index for given filter & order
+ * @param {Object} filter
+ * @param {Array} order
+ * @return {Object} index
+ */
+const getIndex_recompute = createRecomputeSelector((filter, order) => {
+	const indexes = getIndexesObserver(getSubstate);
+	if (indexes) {
+		return commonHelpers.getIndex(indexes, filter, order);
+	} else {
+		return null;
+	}
+});
 
+/**
+ * It returns attributes data (an object containing featureKey-attributeValue pairs) grouped by data source key
+ * @param dataSourceKeys {Array}
+ * @return {Object}
+ */
 const getDataByDataSourceKeys = createRecomputeSelector((dataSourceKeys) => {
 	if (dataSourceKeys) {
 		let data = {};
@@ -27,7 +53,13 @@ const getDataByDataSourceKeys = createRecomputeSelector((dataSourceKeys) => {
 	}
 });
 
-const getAttributesByDataSourceKeysByFeatureKey = createRecomputeSelector((attributeDataSourceKeyAttributeKeyPairs, featureKey) => {
+/**
+ * It returns attribute values for given feature key grouped by data source key
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where the key is attribute data source key and the value is matching attribute key
+ * @param featureKey {string | number}
+ * @return {Object} attributeDataSource key - attribute value pairs
+ */
+const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector((attributeDataSourceKeyAttributeKeyPairs, featureKey) => {
 	if (attributeDataSourceKeyAttributeKeyPairs && featureKey) {
 		const dataSourceKeys = Object.keys(attributeDataSourceKeyAttributeKeyPairs);
 		const dataByDataSourceKey = getDataByDataSourceKeys(dataSourceKeys);
@@ -48,6 +80,13 @@ const getAttributesByDataSourceKeysByFeatureKey = createRecomputeSelector((attri
 	}
 });
 
+/**
+ * It returns indexed feature keys grouped by attribute data source keys
+ * @param {Object} filter
+ * @param {number} level
+ * @param {string} tile
+ * @return {Object}
+ */
 const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, level, tile) => {
 	const index = getIndex_recompute(filter, null);
 	if (index?.index) {
@@ -62,6 +101,6 @@ const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, l
 export default {
 	getIndex,
 	getDataByDataSourceKeys,
-	getAttributesByDataSourceKeysByFeatureKey,
+	getAttributesByDataSourceKeysForFeatureKey,
 	getIndexedFeatureKeysByDataSourceKeys
 };

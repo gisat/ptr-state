@@ -95,7 +95,7 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 					const geometry = spatialDataForDataSource[key]?.geometry || spatialDataForDataSource[key]?.geometries[level];
 
 					if (attributeDataSourceKeyAttributeKeyPairs) {
-						const attributes = attributeData.getAttributesByDataSourceKeysByFeatureKey(attributeDataSourceKeyAttributeKeyPairs, key);
+						const attributes = attributeData.getAttributesByDataSourceKeysForFeatureKey(attributeDataSourceKeyAttributeKeyPairs, key);
 						if (attributes) {
 							properties = {...properties, ...attributes};
 						}
