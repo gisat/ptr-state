@@ -7,6 +7,7 @@ import spatialRelations from './SpatialRelations/selectors';
 import spatialDataSources from './SpatialDataSources/selectors';
 import spatialData from './SpatialData/selectors';
 import {CacheFifo} from '@gisatcz/ptr-utils';
+import {tileAsString} from './helpers';
 import _ from 'lodash';
 
 let tilesCache = new CacheFifo(1000);
@@ -68,12 +69,12 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 	const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(spatialDataSourceKey);
 
 	if (spatialDataForDataSource) {
-		const tileAsString = `${tile[0]},${tile[1]}`;
+		const tileString = tileAsString(tile);
 		const cacheParams = {
 			attributeRelationsFilter,
 			spatialRelationsFilter, 
 			level,
-			tileAsString,
+			tileAsString: tileString,
 			spatialDataSourceKey,
 			styleKey
 		};
@@ -111,7 +112,7 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 
 				const data = {
 					features,
-					tile: tileAsString,
+					tile: tileString,
 					level
 				};
 
