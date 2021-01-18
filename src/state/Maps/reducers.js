@@ -8,6 +8,14 @@ const INITIAL_STATE = {
     sets: {}
 };
 
+/**
+ * Set styleKey to the specific layer of the specific map
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param styleKey {string} uuid
+ * @return {Object} state
+ */
 const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 	const layers = state.maps[mapKey]?.data?.layers;
 
@@ -41,6 +49,14 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 	}
 };
 
+/**
+ * Set map width and height
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param width {number} map width in px
+ * @param height {number} map height in px
+ * @return {Object} state
+ */
 const setMapViewport = (state, mapKey, width, height) => {
 	return {
 		...state,
@@ -60,6 +76,13 @@ const setMapViewport = (state, mapKey, width, height) => {
 	};
 };
 
+/**
+ * Set active map of the map set
+ * @param state {Object}
+ * @param setKey {string}
+ * @param mapKey {string}
+ * @return {Object} state
+ */
 const setSetActiveMapKey = (state, setKey, mapKey) => {
     return {
         ...state,
@@ -73,6 +96,13 @@ const setSetActiveMapKey = (state, setKey, mapKey) => {
     };
 };
 
+/**
+ * Set map set background layer state
+ * @param state {Object}
+ * @param setKey {string}
+ * @param backgroundLayer {Object} background layer state
+ * @return {Object} state
+ */
 const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	return {
 		...state,
@@ -89,10 +119,23 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	};
 };
 
+/**
+ * Update whole map state
+ * @param state {Object}
+ * @param data {Object}
+ * @return {Object}
+ */
 const update = (state, data) => {
     return {...state, ...data};
 };
 
+/**
+ * Update map view
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param updates {Object} map view updates
+ * @return {Object} state
+ */
 const updateMapView = (state, mapKey, updates) => {
     return {
         ...state,
@@ -110,6 +153,13 @@ const updateMapView = (state, mapKey, updates) => {
     };
 };
 
+/**
+ * Update map set view
+ * @param state {Object}
+ * @param setKey {string}
+ * @param updates {Object} map view updates
+ * @return {Object} state
+ */
 const updateSetView = (state, setKey, updates) => {
     if (updates && !_.isEmpty(updates)) {
         return {
