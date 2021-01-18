@@ -650,7 +650,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			return layerState;
 		} else {
 			const layerKey = 'pantherBackgroundLayer';
-			const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(layerState);
+			const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(layerState);
 			if (spatialDataSources) {
 				return spatialDataSources.map(dataSource => {
 					const dataSourceType = dataSource?.data?.type;
@@ -703,7 +703,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 			else {
 				const spatialRelationsFilter = getSpatialRelationsFilterFromLayerState(layerState);
 				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(layerState);
-				const spatialDataSources = DataSelectors.spatialDataSources.getFiltered(spatialRelationsFilter);
+				const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(spatialRelationsFilter);
 				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(attributeRelationsFilter);
 				if (spatialDataSources) {
 					_.forEach(spatialDataSources, dataSource => {
