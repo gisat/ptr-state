@@ -261,7 +261,7 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 		const apiPath = 'backend/rest/data/filtered';
 
         const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedSpatialFilter
-
+        const usedRelations = relations ? {relations} : DEFAULT_RELATIONS_PAGE;
         //register indexes
 
         ////
@@ -290,7 +290,7 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
             ...(styleKey && {styleKey}),
 
             // pagination for relations (& data sources)
-            ...(relations && {relations} || DEFAULT_RELATIONS_PAGE),
+            relations: usedRelations,
 
             data: {
                 // list of features you want
@@ -343,14 +343,11 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 
 						if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
 							//TODO relations.offset
-							//TODO result.total.spatialRelations ?
 							const changes = null;
 							dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedAttributeFilter, order, relations.offset, result.total.attributeRelations, changes));
 						}
 
 						if(result.data.spatialData && result.data.attributeData && !_.isEmpty(result.data.attributeData)) {
-							//TODO add level to indexes on BE?
-							//TODO indexes
 							const changes = null;
 							dispatch(attributeData.receiveIndexed(result.data.attributeData, result.data.spatialData, mergedAttributeFilter, order, changes));
 						}
@@ -358,7 +355,6 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                         ////
                         // Spatial data
                         ////
-
                         if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
                             //TODO relations.offset
                             const changes = null;
@@ -367,15 +363,12 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 
                         if(result.data.spatialDataSources && !_.isEmpty(result.data.spatialDataSources)) {
                             //TODO relations.offset
-                            //TODO result.total.spatialRelations ?
                             const changes = null;
                             dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
                         const spatialDataEmpty = isSpatialDataEmpty(result.data.spatialData);
                         if(!spatialDataEmpty) {
-                            //TODO add level to indexes on BE?
-                            //TODO indexes
                             const changes = null;
                             dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedSpatialFilter, order, changes));
                         }
@@ -386,8 +379,6 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                         dispatch(commonActions.actionGeneralError(error));        
                         return error;
                     }
-
-					// dispatch(receiveIndexedAttribute(result, filter, order, start));
 				}
 			})
 			.catch(error => {
