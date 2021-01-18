@@ -27,7 +27,6 @@ const isSpatialDataEmpty = (spatialData) => {
 /**
  * @return {function}
  */
-//FIXME - load missing attribute data?
 function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
     return (dispatch, getState) => {
         const localConfig = Select.app.getCompleteLocalConfiguration(getState());
@@ -52,8 +51,6 @@ function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialF
                 tiles: [tile],
             }
 
-            // TODO
-            // relations:false
             const relations = {
                 // start: 0,
                 // length: 1000,
@@ -96,8 +93,6 @@ function loadMissingSpatialData(spatialFilter, styleKey, order, mergedSpatialFil
                 tiles: [tile],
             }
 
-            // TODO
-            // relations:false
             const relations = {};
             const attributeFilter = null;
             const loadGeometry = true;
@@ -123,6 +118,9 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFil
             offset: 0,
             limit: PAGE_SIZE,
         };
+
+        // FIXME - add attributeFilter support
+        // attributeFilter is null at the moment
         const attributeFilter = null;
         const loadGeometry = true;
         const loadRelations = true;
@@ -207,10 +205,9 @@ const hasSpatialOrAreaRelations = (state, areaTreeLevelKey, layerTemplateKey, me
         spatialRelationsIndex = Select.data.spatialRelations.getIndex(state,  mergedSpatialFilter, order);
     }
 
-    // FIXME
+    // FIXME - add support for areaTreeLevels
     if(areaTreeLevelKey) {
-        //FIXME - attributeRelations why?
-        // areaRelationsIndex = Select.data.attributeRelations.getIndex(getState(), mergedSpatialFilter, order);
+        // areaRelationsIndex = Select.data.areaRelations.getIndex(getState(), mergedSpatialFilter, order);
     }
     
 
@@ -262,7 +259,6 @@ function ensure(filter) {
 function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
 		const apiPath = 'backend/rest/data/filtered';
 
         const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedSpatialFilter
