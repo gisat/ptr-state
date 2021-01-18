@@ -5,18 +5,30 @@ import {tileAsString} from '../helpers';
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
 // ============ creators ===========
+/**
+ * It ensure adding index and adding or updating recieved data from BE.
+ * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value]. 
+ * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
+ * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {Array?} order
+ * @param {string?} changedOn 
+ */
 const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) => {
     return dispatch => {
         // add attributeData to store
         if (attributeData) {            
             dispatch(addOrUpdateData(attributeData));
         }
-        // attribute data index is same like spatial data index
+        // attribute data index has same structure like spatial data index
         // add to index
         dispatch(addIndex(filter, order, attributeData, spatialData, changedOn));
     }
 }
 
+/**
+ * If given attributeDataKey is alredy in state update its date otherwise add data to state.
+ * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
+ */
 function addOrUpdateData(attributeData) {
     return (dispatch, getState) => {
         const state = getState();
@@ -31,11 +43,11 @@ function addOrUpdateData(attributeData) {
 }
 
 /**
- * Create and add spatial index for given attribute data based on related spatial data index.
- * @param {*} filter 
- * @param {*} order 
- * @param {*} attributeData 
- * @param {*} spatialData SpatialData indexes are used as a templete for attribute data indexes.
+ * Create and add index for given attribute data based on related spatial data index.
+ * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Array?} order
+ * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
  * @param {*} changedOn 
  */
 function addIndex(filter, order, attributeData, spatialData, changedOn) {
@@ -65,23 +77,13 @@ function addIndex(filter, order, attributeData, spatialData, changedOn) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
 }
 
-// ============ actions ============
-function addDataAction(key, data) {
-    return {
-        type: actionTypes.ADD,
-        key,
-        data,
-    }
-}
-
-function updateDataAction(key, data) {
-    return {
-        type: actionTypes.UPDATE,
-        key,
-        data,
-    }
-}
-
+/**
+ * Create new index based on given level and tiles with loading indicator.
+ * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Array?} order
+ * @param {Number} level 
+ * @param {Array.[Array]} tiles
+ */
 function addLoadingIndex(filter, order, level, tiles) {
     const count = null;
     const start = 0;
@@ -99,6 +101,22 @@ function addLoadingIndex(filter, order, level, tiles) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
 }
 
+// ============ actions ============
+function addDataAction(key, data) {
+    return {
+        type: actionTypes.ADD,
+        key,
+        data,
+    }
+}
+
+function updateDataAction(key, data) {
+    return {
+        type: actionTypes.UPDATE,
+        key,
+        data,
+    }
+}
 
 // ============ export ===========
 
