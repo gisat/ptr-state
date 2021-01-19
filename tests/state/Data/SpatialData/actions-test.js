@@ -42,7 +42,7 @@ describe('state/Data/SpatialData/actions', function () {
 		clearDispatchedActions();
 	});
 
-	it('receiveIndexed', function () {
+	it('Dispatch nothing if recieved data are empty', function () {
 		const getState = () => ({
 			data: {
 				spatialData: {
@@ -69,19 +69,7 @@ describe('state/Data/SpatialData/actions', function () {
 		const changes = null;
 		dispatch(actions.receiveIndexed(result, filter, order, changes));
 
-		const expectedResult = [
-				{
-				  "changedOn": null,
-				  "count": null,
-				  "data": [
-				    {}
-				  ],
-				  "filter": {},
-				  "order": null,
-				  "start": 0,
-				  "type": "DATA.SPATIAL_DATA.INDEX.ADD",
-				}
-		]
+		const expectedResult = [];
 
 		//empty array because of empty results
 		return runFunctionActions({dispatch, getState}).then(() => {
@@ -146,25 +134,13 @@ describe('state/Data/SpatialData/actions', function () {
 				    "data": {
 						citizens: 1
 					},
-				    "key": "key1",
 				    "level": "2",
-				    "type": "DATA.SPATIAL_DATA.ADD",  
-				},
-				{
-				    "data": {
-						citizens: 2
-					},
-					"key": "key2",
-					"level": "2",
-				    "type": "DATA.SPATIAL_DATA.ADD",  
-				},
-				{
-					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					start: 0,
-                    filter,
-					order,
-					"count": null,
-                    data: [
+				    "dataSourceKey": "key1",
+					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
+					"order": null,
+					"spatialFilter": {},
+					"changedOn": null,
+					"indexesData": [
 						{
 				        "2": {
 				          "0,0": {
@@ -179,8 +155,35 @@ describe('state/Data/SpatialData/actions', function () {
 				            ]
 				          }
 				        }
-				      }],
-                    changedOn: changes,
+				      }]
+				},
+				{
+				    "data": {
+						citizens: 2
+					},
+					"dataSourceKey": "key2",
+					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
+					"changedOn": null,
+					"order": null,
+					"spatialFilter": {},
+					"level": "2",
+					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",  
+					"indexesData": [
+						{
+				        "2": {
+				          "0,0": {
+				            "key1": [
+				              1
+				            ]
+				          },
+				        
+				          "0,1": {
+				            "key2": [
+				              2
+				            ]
+				          }
+				        }
+				      }]
 				}
 			]);
 		});
@@ -243,27 +246,16 @@ describe('state/Data/SpatialData/actions', function () {
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
+					"changedOn": null,
 				    "data": {
 						citizens: 1
 					},
-					"key": "key1",
 					"level": "2",
-				    "type": "DATA.SPATIAL_DATA.ADD",  
-				},
-				{
-				    "data": {
-						citizens: 2
-					},
-					"key": "key2",
-					"level": "2",
-				    "type": "DATA.SPATIAL_DATA.ADD",  
-				},
-				{
-					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-                    filter,
-					order,
-					count: null,
-					data: [
+					"order": null,
+					"dataSourceKey": "key1",
+					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
+					"spatialFilter": {},
+					"indexesData": [
 						{
 				        "2": {
 				          "0,0": {
@@ -278,9 +270,34 @@ describe('state/Data/SpatialData/actions', function () {
 				          }
 				        }
 				      }
-					],
-					changedOn: changes,
-					"start": 0,
+					]
+				},
+				{
+					"changedOn": null,
+				    "data": {
+						citizens: 2
+					},
+					"level": "2",
+					"order": null,
+					"dataSourceKey": "key2",
+					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
+					"spatialFilter": {},
+					"indexesData": [
+						{
+				        "2": {
+				          "0,0": {
+				            "key1": [
+				              1
+				            ]
+				          },
+				          "0,1": {
+				            "key2": [
+				              2
+				            ]
+				          }
+				        }
+				      }
+					]
 				}
 			]);
 		});

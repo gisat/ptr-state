@@ -17,10 +17,10 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
     return dispatch => {
 		// NEW WAY
 		if (spatialData) {
-			dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
+			return dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
 		} else {
 			// add to index
-			dispatch(addIndex(filter, order, spatialData, changedOn));
+			return dispatch(addIndex(filter, order, spatialData, changedOn));
 		}
     }
 }
