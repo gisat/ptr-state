@@ -109,7 +109,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 /**
  * Get data for indexing
  * @param spatialDataByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
- * @return {{count: null, start: number, indexByLevelByTileByDataSourceKey: Object}}
+ * @return {Object}
  */
 function getIndexData(spatialDataByDataSourceKey) {
 	const indexByLevelByTileByDataSourceKey = {};

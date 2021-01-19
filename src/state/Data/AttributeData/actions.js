@@ -15,14 +15,32 @@ const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
  */
 const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) => {
     return dispatch => {
-        // add attributeData to store
-        if (attributeData) {            
-            dispatch(addOrUpdateData(attributeData));
-        }
-        // attribute data index has same structure like spatial data index
-        // add to index
-        dispatch(addIndex(filter, order, attributeData, spatialData, changedOn));
+		if (spatialData) {
+			dispatch(addDataAndIndex(filter, order, attributeData, spatialData, changedOn));
+		} else {
+			// add to index
+			dispatch(addIndex(filter, order, attributeData, spatialData, changedOn));
+		}
     }
+}
+
+/**
+ * Add data and index at the same time
+ *
+ * @param spatialFilter {Object}
+ * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
+ * @param order {Array}
+ * @param changedOn {string}
+ */
+function addDataAndIndex(spatialFilter, order, attributeData, spatialData, changedOn) {
+	return (dispatch) => {
+		const indexData = getIndexData(spatialData, attributeData)
+
+		for(const attributeDataSourceKey of Object.keys(attributeData)) {
+			dispatch(addDataAndIndexAction(attributeDataSourceKey, attributeData[attributeDataSourceKey], spatialFilter, order, [indexData], changedOn));
+		}
+	}
 }
 
 /**
@@ -51,30 +69,8 @@ function addOrUpdateData(attributeData) {
  * @param {*} changedOn 
  */
 function addIndex(filter, order, attributeData, spatialData, changedOn) {
-    const count = null;
-    const start = 0;
-    const transformedData = {};
-
-    //Attribute data indexes are stored in related spatial index
-    //for all spatial data keys in spatialData
-    for (const [sdKey, datasource] of Object.entries(spatialData)) {
-        //for all levels in spatial data source
-        for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
-            if(!transformedData[level]) {
-                transformedData[level] = {};
-            }
-            //for all tiles in tiles
-            for (const [tile, tileData] of Object.entries(tiles)) {
-                transformedData[level][tile] = {};
-                //for all attribute data source keys in attributeData
-                for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
-                    // Save only tileData that are incuded in attribute data keys
-                    transformedData[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
-                }
-            }
-        }
-    }
-    return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
+	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData, attributeData);
+	return common.actionAddIndex(actionTypes, filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -101,6 +97,40 @@ function addLoadingIndex(filter, order, level, tiles) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
 }
 
+// ============ helpers ============
+
+/**
+ * Get data for indexing
+ * @param {Object} spatialData
+ * @param {Object} attributeData
+ * @return {Object}
+ */
+function getIndexData(spatialData, attributeData) {
+	const indexByLevelByTileByDataSourceKey = {};
+
+	//Attribute data indexes are stored in related spatial index
+	//for all spatial data keys in spatialData
+	for (const [sdKey, datasource] of Object.entries(spatialData)) {
+		//for all levels in spatial data source
+		for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
+			if(!indexByLevelByTileByDataSourceKey[level]) {
+				indexByLevelByTileByDataSourceKey[level] = {};
+			}
+			//for all tiles in tiles
+			for (const [tile, tileData] of Object.entries(tiles)) {
+				indexByLevelByTileByDataSourceKey[level][tile] = {};
+				//for all attribute data source keys in attributeData
+				for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
+					// Save only tileData that are incuded in attribute data keys
+					indexByLevelByTileByDataSourceKey[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
+				}
+			}
+		}
+	}
+
+	return indexByLevelByTileByDataSourceKey;
+}
+
 // ============ actions ============
 function addDataAction(key, data) {
     return {
@@ -116,6 +146,18 @@ function updateDataAction(key, data) {
         key,
         data,
     }
+}
+
+function addDataAndIndexAction(attributeDataSourceKey, data, spatialFilter, order, indexesData, changedOn) {
+	return {
+		type: actionTypes.ADD_WITH_INDEX,
+		attributeDataSourceKey,
+		data,
+		spatialFilter,
+		order,
+		indexesData,
+		changedOn
+	}
 }
 
 // ============ export ===========

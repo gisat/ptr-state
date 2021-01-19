@@ -226,6 +226,7 @@ export default utils.deepKeyMirror({
     DATA: {
         ATTRIBUTE_DATA: {
 			ADD: null,
+			ADD_WITH_INDEX: null,
 			UPDATE: null,
 			INDEX: {
 				ADD: null,
