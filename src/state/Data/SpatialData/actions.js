@@ -43,6 +43,8 @@ function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, chang
 				//spatialData should be only from one level
 				const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
 				for (const level of levels) {
+                    // It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
+                    // Multiple datasources in one response is edge case at the moment.
 					dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
 				}
 			}
