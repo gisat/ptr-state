@@ -41,6 +41,60 @@ function getUniqueIndexes(indexes) {
 	}
 }
 
+/**
+ * @param state {Object}
+ * @param filter {Object}
+ * @param order {Array}
+ * @param indexesData {Array}
+ * @param changedOn {string}
+ */
+function getUpdatedIndexes(state, filter, order, indexesData, changedOn) {
+	let indexes = [];
+	let selectedIndex = {};
+
+	if (state.indexes){
+		state.indexes.forEach(index => {
+			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)){
+				selectedIndex = index;
+			} else {
+				indexes.push(index);
+			}
+		});
+	}
+
+	let index;
+	if (indexesData.length){
+		index = {...selectedIndex.index};
+		indexesData.forEach((model, i) => {
+			if(model.key) {
+				index[i] = model.key;
+			} else {
+				//spatial data by spatialDataSourceKey, levels and tiles
+				//update spatialDataSourceKey
+				for(const [level, dataByTiles] of Object.entries(model)) {
+					if(index.hasOwnProperty(level) && index[level]) {
+						//update data on level
+						index[level] =  {...index[level], ...dataByTiles}
+					} else {
+						index[level] =  {...dataByTiles}
+					}
+				}
+			}
+
+		});
+	}
+
+	selectedIndex = {
+		filter: selectedIndex.filter || filter,
+		order: selectedIndex.order || order,
+		changedOn: changedOn,
+		index: index || selectedIndex.index
+	};
+	indexes.push(selectedIndex);
+
+	return indexes;
+}
+
 function isCorrespondingIndex(index, filter, order) {
 	return _.isEqual(index.filter, filter) && _.isEqual(index.order, order);
 }
@@ -208,6 +262,7 @@ export default {
     convertModifiersToRequestFriendlyFormat,
 	getIndex,
 	getUniqueIndexes,
+	getUpdatedIndexes,
 	mergeFilters,
     mergeMetadataKeys,
 	isCorrespondingIndex,
