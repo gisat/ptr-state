@@ -1,3 +1,8 @@
+/**
+ * Returns string representing given tile
+ * @param {Array|string} tile 
+ * @returns {string}
+ */
 export const tileAsString = (tile) => {
     if(typeof tile === 'string') {
         return tile;
@@ -10,8 +15,8 @@ export const tileAsString = (tile) => {
  * Compare wanted tiles from filter with already loaded or loading tiles and give array of missing tiles
  * @param {Object} index Already loaded index
  * @param {Object} filter Required filter
- *  @param {Array.<string|Array.<number>>} filter.tiles
- *  @param {number} filter.level
+ * @param {Array.<string|Array.<number>>} filter.tiles
+ * @param {number} filter.level
  */
 export const getMissingTiles = (index, filter) => {
     if(index && index.index && filter) {
