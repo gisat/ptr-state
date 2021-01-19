@@ -9,7 +9,7 @@ const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
  * It ensure adding index and adding or updating recieved data from BE.
  * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value]. 
  * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
- * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
  * @param {string?} changedOn 
  */
