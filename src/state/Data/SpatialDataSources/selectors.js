@@ -32,7 +32,7 @@ const getByKeys = createRecomputeSelector(keys => {
 
 /**
  * It returns whole index for given filter and order
- * @param filter {Object}
+ * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param order {Array}
  * @return {Object} index
  */
@@ -47,7 +47,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
 
 /**
  * It returns a collection of indexed data sources for given filter
- * @param filter {Object}
+ * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @return {Array}
  */
 const getIndexed = createRecomputeSelector(filter => {
@@ -66,10 +66,10 @@ const getIndexed = createRecomputeSelector(filter => {
 
 
 /**
- * @param {*} state 
- * @param {*} filter 
- * @param {*} order 
- * @param {*} level 
+ * Select array of SpatialDataSources based on given filter.
+ * @param {Object} state 
+ * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @return {Array?}
  */
 const getByFilteredIndex = createCachedSelector([
 	getIndex,
@@ -77,15 +77,27 @@ const getByFilteredIndex = createCachedSelector([
     ],
     (index, dataSources) => {
         if(!_.isEmpty(index)) {
-			//Each SpatialDataSource index targets to one entry in "byKey"
-			const dataSourceKey = index.index[0];
-			return dataSources[dataSourceKey];
+			const dataSourceKeys = index.index;
+			if(!_.isEmpty(dataSourceKeys)) {
+				const filteredDataSources = [];
+				for (const dataSourceKey of Object.values(dataSourceKeys)) {
+					filteredDataSources.push(dataSources[dataSourceKey]);
+				}
+
+				if(filteredDataSources.length > 0) {
+					return filteredDataSources
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
         } else {
             return null;
         }
     }
-)((state, filter, order) => {
-	return `${JSON.stringify(filter)}${JSON.stringify(order)}`
+)((state, filter) => {
+	return `${JSON.stringify(filter)}`
 })
 
 

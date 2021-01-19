@@ -111,10 +111,11 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 
 
             if(layerTemplateKey) {
-                const spatialDataSource = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, null);
-                const dataSourceType = spatialDataSource?.data?.type || null;
-                // load only vector dataSources
-                if (dataSourceType &&  dataSourceType !== 'vector') {
+                const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter);
+                const sdsContainsVector = spatialDataSources?.some(spatialDataSource => spatialDataSource?.data?.type === 'vector') || false;
+
+                // load only dataSources that contains some of vector type
+                if (spatialDataSources && !sdsContainsVector) {
                     return;
                 }
             }
