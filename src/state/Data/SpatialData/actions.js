@@ -15,14 +15,39 @@ const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
  */
 const receiveIndexed = (spatialData, filter, order, changedOn) => {
     return dispatch => {
-        // add spatialData to store
-        if (spatialData) {            
-            dispatch(addData(spatialData));
-        }
-
-        // add to index
-        dispatch(addIndex(filter, order, spatialData, changedOn));
+		// NEW WAY
+		if (spatialData) {
+			dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
+		} else {
+			// add to index
+			dispatch(addIndex(filter, order, spatialData, changedOn));
+		}
     }
+}
+
+/**
+ * Add data and index at the same time
+ *
+ * @param spatialDataByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
+ * @param spatialFilter {Object}
+ * @param order {Array}
+ * @param changedOn {string}
+ */
+function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, changedOn) {
+	return (dispatch) => {
+		const indexByLevelByTileByDataSourceKey = getIndexData(spatialDataByDataSourceKey);
+
+		for(const dataSourceKey of Object.keys(spatialDataByDataSourceKey)) {
+			if(!_.isEmpty(spatialDataByDataSourceKey[dataSourceKey].data)) {
+
+				//spatialData should be only from one level
+				const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
+				for (const level of levels) {
+					dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -33,22 +58,8 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
  * @param {string?} changedOn 
  */
 function addIndex(filter, order, spatialData, changedOn) {
-    const count = null;
-    const start = 0;
-    const transformedData = {};
-    for (const [sdKey, datasource] of Object.entries(spatialData)) {
-        for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
-            if(!transformedData[level]) {
-                transformedData[level] = {};
-            }
-            for (const [tile, tileData] of Object.entries(tiles)) {
-                transformedData[level][tile] = {
-                    [sdKey]: tileData
-                }
-            }
-        }
-    }
-    return common.actionAddIndex(actionTypes, filter, order, count, start, [transformedData], changedOn);
+	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData);
+    return common.actionAddIndex(actionTypes, filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -93,6 +104,32 @@ function addLoadingIndex(filter, order, level, tiles) {
     return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
 }
 
+// ============ helpers ============
+
+/**
+ * Get data for indexing
+ * @param spatialDataByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
+ * @return {{count: null, start: number, indexByLevelByTileByDataSourceKey: Object}}
+ */
+function getIndexData(spatialDataByDataSourceKey) {
+	const indexByLevelByTileByDataSourceKey = {};
+	for (const [sdKey, datasource] of Object.entries(spatialDataByDataSourceKey)) {
+		for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
+			if(!indexByLevelByTileByDataSourceKey[level]) {
+				indexByLevelByTileByDataSourceKey[level] = {};
+			}
+			for (const [tile, tileData] of Object.entries(tiles)) {
+				indexByLevelByTileByDataSourceKey[level][tile] = {
+					[sdKey]: tileData
+				}
+			}
+		}
+	}
+
+	return indexByLevelByTileByDataSourceKey;
+}
+
+
 // ============ actions ============
 function addDataAction(key, data, level) {
     return {
@@ -101,6 +138,13 @@ function addDataAction(key, data, level) {
         data,
         level,
     }
+}
+
+function addDataAndIndexAction(dataSourceKey, data, level, spatialFilter, order, indexesData, changedOn) {
+	return {
+		type: actionTypes.ADD_WITH_INDEX,
+		dataSourceKey, data, level, spatialFilter, order, indexesData, changedOn
+	}
 }
 
 // ============ export ===========
