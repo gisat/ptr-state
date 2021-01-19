@@ -26,6 +26,7 @@
     "@jvitela/recompute": "0.3.3",
     "@manaflair/redux-batch": "1.0.0",
     "@taskworld.com/rereselect": "0.3.0",
+    "fast-stringify": "2.0.0",
     "isomorphic-fetch": "2.2.1",
     "lodash": "4.17.20",
     "minimist": "1.2.5",
