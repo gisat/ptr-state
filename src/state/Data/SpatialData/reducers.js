@@ -35,7 +35,7 @@ const addWithIndex = (state, action) => {
 	const dataSourceKey = action.dataSourceKey;
 
 	const updatedDataForDataSourceKey = getUpdatedDataForDataSourceKey(state, dataSourceKey, action.data, action.level);
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexesData, action.changedOn);
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
 
 	return {
 		...state,

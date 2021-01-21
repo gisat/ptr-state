@@ -20,8 +20,8 @@ export const tileAsString = (tile) => {
  */
 export const getMissingTiles = (index, filter) => {
     if(index && index.index && filter) {
-        if(index?.index[filter.level] && filter && filter.tiles) {
-            const loadedTilesInIndex = Object.entries(index.index[filter.level]).reduce((acc, tile) => {
+        if(index.index?.[filter.level] && filter && filter.tiles) {
+            const loadedTilesInIndex = _.reduce(index.index[filter.level], (acc, tile) => {
                 const tileKey = tile[0];
                 const tileData = tile[1];
                 //tileData === true means it is loading, so we mark them as not missing

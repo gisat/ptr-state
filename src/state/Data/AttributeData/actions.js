@@ -4,6 +4,8 @@ import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
+const addIndex = common.addIndex(actionTypes);
+
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
@@ -19,7 +21,7 @@ const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) =>
 			dispatch(addDataAndIndex(filter, order, attributeData, spatialData, changedOn));
 		} else {
 			// add to index
-			dispatch(addIndex(filter, order, attributeData, spatialData, changedOn));
+			dispatch(createAndAddIndex(filter, order, attributeData, spatialData, changedOn));
 		}
     }
 }
@@ -68,9 +70,9 @@ function addOrUpdateData(attributeData) {
  * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
  * @param {*} changedOn 
  */
-function addIndex(filter, order, attributeData, spatialData, changedOn) {
+function createAndAddIndex(filter, order, attributeData, spatialData, changedOn) {
 	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData, attributeData);
-	return common.actionAddIndex(actionTypes, filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
+	return addIndex(filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -86,7 +88,7 @@ function addLoadingIndex(filter, order, level, tiles) {
     const changedOn = null;
     
     //create index with tiles value "true" that indicates loading state
-    const loadingTiles = tiles.reduce((acc, tile) => {
+    const loadingTiles = _.reduce(tiles, (acc, tile) => {
         const tileId = tileAsString(tile);
         acc[tileId] = true; 
         return acc
@@ -94,7 +96,7 @@ function addLoadingIndex(filter, order, level, tiles) {
     const index = {
         [level]: loadingTiles
     };
-    return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
+    return addIndex(filter, order, count, start, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -148,14 +150,14 @@ function updateDataAction(key, data) {
     }
 }
 
-function addDataAndIndexAction(attributeDataSourceKey, data, spatialFilter, order, indexesData, changedOn) {
+function addDataAndIndexAction(attributeDataSourceKey, data, spatialFilter, order, indexData, changedOn) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
 		attributeDataSourceKey,
 		data,
 		spatialFilter,
 		order,
-		indexesData,
+		indexData,
 		changedOn
 	}
 }

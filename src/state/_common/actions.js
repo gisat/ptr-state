@@ -923,6 +923,7 @@ export default {
 	action,
 	actionAdd,
 	actionAddIndex,
+	addIndex: creator(actionAddIndex),
 	actionGeneralError,
 	apiUpdate,
 	creator,

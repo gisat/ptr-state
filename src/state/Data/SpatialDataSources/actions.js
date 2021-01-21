@@ -3,6 +3,9 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA_SOURCES;
 
+const addIndex = common.addIndex(actionTypes);
+const add = common.add(actionTypes);
+
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved spatialDataSources from BE.
@@ -17,11 +20,11 @@ function receiveIndexed(spatialDataSources, filter, order, start, total, changed
     return dispatch => {
         // add spatialDataSources to store
         if (spatialDataSources.length) {
-            dispatch(common.add(actionTypes)(spatialDataSources, filter));
+            dispatch(add(spatialDataSources, filter));
         }
 
         // add to index
-        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, spatialDataSources, changedOn));
+        dispatch(addIndex(filter, order, total, start, spatialDataSources, changedOn));
     }
 }
 
@@ -30,6 +33,6 @@ function receiveIndexed(spatialDataSources, filter, order, start, total, changed
 // ============ export ===========
 
 export default {
-	add: common.add(actionTypes),
+	add,
     receiveIndexed,
 }

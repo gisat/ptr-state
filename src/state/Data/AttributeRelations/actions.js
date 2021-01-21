@@ -3,6 +3,8 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
+const add = common.add(actionTypes);
+const addIndex = common.addIndex(actionTypes);
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
@@ -17,11 +19,11 @@ function receiveIndexed(attributeRelations, filter, order, start, total, changed
     return dispatch => {
         // add attributeRelations to store
         if (attributeRelations.length) {
-            dispatch(common.add(actionTypes)(attributeRelations, filter));
+            dispatch(add(attributeRelations, filter));
         }
 
         // add to index
-        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, attributeRelations, changedOn));
+        dispatch(addIndex(filter, order, total, start, attributeRelations, changedOn));
     }
 }
 

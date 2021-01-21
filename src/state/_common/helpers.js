@@ -45,10 +45,10 @@ function getUniqueIndexes(indexes) {
  * @param state {Object}
  * @param filter {Object}
  * @param order {Array}
- * @param indexesData {Array}
+ * @param indexData {Array}
  * @param changedOn {string}
  */
-function getUpdatedIndexes(state, filter, order, indexesData, changedOn) {
+function getUpdatedIndexes(state, filter, order, indexData, changedOn) {
 	let indexes = [];
 	let selectedIndex = {};
 
@@ -63,9 +63,9 @@ function getUpdatedIndexes(state, filter, order, indexesData, changedOn) {
 	}
 
 	let index;
-	if (indexesData.length){
+	if (indexData.length){
 		index = {...selectedIndex.index};
-		indexesData.forEach((model, i) => {
+		indexData.forEach((model, i) => {
 			if(model.key) {
 				index[i] = model.key;
 			} else {

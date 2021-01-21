@@ -5,6 +5,8 @@ import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
+const addIndex = common.addIndex(actionTypes);
+
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved data from BE.
@@ -20,7 +22,7 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
 			return dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
 		} else {
 			// add to index
-			return dispatch(addIndex(filter, order, spatialData, changedOn));
+			return dispatch(createAndAddIndex(filter, order, spatialData, changedOn));
 		}
     }
 }
@@ -59,9 +61,9 @@ function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, chang
  * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @param {string?} changedOn 
  */
-function addIndex(filter, order, spatialData, changedOn) {
+function createAndAddIndex(filter, order, spatialData, changedOn) {
 	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData);
-    return common.actionAddIndex(actionTypes, filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
+    return addIndex(filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -95,7 +97,7 @@ function addLoadingIndex(filter, order, level, tiles) {
     const changedOn = null;
     
     //create index with tiles value "true" that indicates loading state
-    const loadingTiles = tiles.reduce((acc, tile) => {
+    const loadingTiles = _.reduce(tiles, (acc, tile) => {
         const tileId = tileAsString(tile);
         acc[tileId] = true; 
         return acc
@@ -103,7 +105,7 @@ function addLoadingIndex(filter, order, level, tiles) {
     const index = {
         [level]: loadingTiles
     };
-    return common.actionAddIndex(actionTypes, filter, order, count, start, [index], changedOn);
+    return addIndex(filter, order, count, start, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -115,14 +117,14 @@ function addLoadingIndex(filter, order, level, tiles) {
  */
 function getIndexData(spatialDataByDataSourceKey) {
 	const indexByLevelByTileByDataSourceKey = {};
-	for (const [sdKey, datasource] of Object.entries(spatialDataByDataSourceKey)) {
+	for (const [dsKey, datasource] of Object.entries(spatialDataByDataSourceKey)) {
 		for (const [level, tiles] of Object.entries(datasource.spatialIndex)) {
 			if(!indexByLevelByTileByDataSourceKey[level]) {
 				indexByLevelByTileByDataSourceKey[level] = {};
 			}
 			for (const [tile, tileData] of Object.entries(tiles)) {
 				indexByLevelByTileByDataSourceKey[level][tile] = {
-					[sdKey]: tileData
+					[dsKey]: tileData
 				}
 			}
 		}
@@ -142,10 +144,10 @@ function addDataAction(key, data, level) {
     }
 }
 
-function addDataAndIndexAction(dataSourceKey, data, level, spatialFilter, order, indexesData, changedOn) {
+function addDataAndIndexAction(dataSourceKey, data, level, spatialFilter, order, indexData, changedOn) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
-		dataSourceKey, data, level, spatialFilter, order, indexesData, changedOn
+		dataSourceKey, data, level, spatialFilter, order, indexData, changedOn
 	}
 }
 

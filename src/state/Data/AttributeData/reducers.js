@@ -39,7 +39,7 @@ const update = (state, action) => {
  * @param action.data {Object} attribute data
  * @param action.spatialFilter {Object}
  * @param action.order {Array}
- * @param action.indexesData {Object}
+ * @param action.indexData {Array}
  * @param action.changedOn {string}
  * @return {Object}
  */
@@ -52,7 +52,7 @@ const addWithIndex = (state, action) => {
 		} : action.data,
 	};
 
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexesData, action.changedOn);
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
 
 	return {...state, byDataSourceKey, indexes: updatedIndexes}
 }

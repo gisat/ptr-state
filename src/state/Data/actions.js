@@ -258,7 +258,7 @@ const hasSpatialOrAreaRelations = (state, areaTreeLevelKey, layerTemplateKey, me
     let areaRelationsIndex = null;
 
     if(layerTemplateKey) {
-        spatialRelationsIndex = Select.data.spatialRelations.getIndex(state,  mergedSpatialFilter, order);
+        spatialRelationsIndex = Select.data.spatialRelations.getIndex(state, mergedSpatialFilter, order);
     }
 
     // FIXME - add support for areaTreeLevels

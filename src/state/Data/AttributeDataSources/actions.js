@@ -3,6 +3,9 @@ import common from '../../_common/actions';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA_SOURCES;
 
+const addIndex = common.addIndex(actionTypes);
+const add = common.add(actionTypes);
+
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
@@ -17,11 +20,11 @@ function receiveIndexed(attributeDataSources, filter, order, start, total, chang
     return dispatch => {
         // add attributeDataSources to store
         if (attributeDataSources.length) {
-            dispatch(common.add(actionTypes)(attributeDataSources, filter));
+            dispatch(add(attributeDataSources, filter));
         }
 
         // add to index
-        dispatch(common.actionAddIndex(actionTypes, filter, order, total, start, attributeDataSources, changedOn));
+        dispatch(addIndex(filter, order, total, start, attributeDataSources, changedOn));
     }
 }
 
@@ -30,6 +33,6 @@ function receiveIndexed(attributeDataSources, filter, order, start, total, chang
 // ============ export ===========
 
 export default {
-	add: common.add(actionTypes),
+	add,
     receiveIndexed,
 }

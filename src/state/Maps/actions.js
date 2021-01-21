@@ -138,9 +138,10 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
  */
 function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
 	return (dispatch, getState) => {
-		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(getState(), mapKey, layerKey);
+        const state = getState();
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(state, mapKey, layerKey);
 		if (layer?.options?.selectable) {
-			const activeSelectionKey = Select.selections.getActiveKey(getState());
+			const activeSelectionKey = Select.selections.getActiveKey(state);
 			if (activeSelectionKey && layer.options.selected?.hasOwnProperty(activeSelectionKey)) {
 				// TODO possible conflicts if features with same key from different layers are selected
 				dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));

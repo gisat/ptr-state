@@ -13,7 +13,6 @@ import selectorHelpers from "./selectorHelpers";
 import DataSelectors from "../Data/selectors";
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
-import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
 
@@ -598,8 +597,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector((spatialD
 		} else if (type === "tiled-vector") {
 			const view = getViewByMapKeyObserver(mapKey);
 			const viewport = getViewportByMapKeyObserver(mapKey);
-			const tileList = helpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
-			const level = helpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
+			const tileList = selectorHelpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
+			const level = selectorHelpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
 			tiles = DataSelectors.getTiles(spatialDataSource.key, fidColumnName, level, tileList, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
 		}
 
