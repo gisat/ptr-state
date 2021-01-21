@@ -565,14 +565,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector((spatialD
 		type = renderAsType;
 	}
 
-	let options = {};
-	if (dataSourceOptions && layerStateOptions) {
-		options = {...dataSourceOptions, ...layerStateOptions};
-	} else if (layerStateOptions) {
-		options = {...layerStateOptions}
-	} else if (dataSourceOptions) {
-		options = {...dataSourceOptions};
-	}
+	let options = {...null, ...dataSourceOptions, ...layerStateOptions};
 
 	if (type === 'wmts') {
 		options.url = dataSourceOptions.url || dataSourceOptions.urls[0];
