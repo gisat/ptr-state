@@ -44,7 +44,7 @@ function addDataAndIndex(spatialFilter, order, attributeData, spatialData, chang
 }
 
 /**
- * If given attributeDataKey is alredy in state update its date otherwise add data to state.
+ * If given attributeDataKey is already in state update its data otherwise add data to state.
  * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
  */
 function addOrUpdateData(attributeData) {
