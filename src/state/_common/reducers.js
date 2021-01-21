@@ -69,21 +69,7 @@ export default {
 		if (action.data.length){
 			index = {...selectedIndex.index};
 			action.data.forEach((model, i) => {
-				if(model.key) {
-					index[action.start + i] = model.key;
-				} else {
-					//spatial data by spatialDataSourceKey, levels and tiles
-					//update spatialDataSourceKey
-					for(const [level, dataByTiles] of Object.entries(model)) {
-						if(index.hasOwnProperty(level) && index[level]) {
-							//update data on level
-							index[level] =  {...index[level], ...dataByTiles}
-						} else {
-							index[level] =  {...dataByTiles}
-						}
-					}
-				}
-
+				index[action.start + i] = model.key;
 			});
 		}
 
