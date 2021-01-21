@@ -140,7 +140,7 @@ describe('state/Data/SpatialData/actions', function () {
 					"order": null,
 					"spatialFilter": {},
 					"changedOn": null,
-					"indexesData": [
+					"indexeData": [
 						{
 				        "2": {
 				          "0,0": {
@@ -168,7 +168,7 @@ describe('state/Data/SpatialData/actions', function () {
 					"spatialFilter": {},
 					"level": "2",
 					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",  
-					"indexesData": [
+					"indexeData": [
 						{
 				        "2": {
 				          "0,0": {
@@ -255,7 +255,7 @@ describe('state/Data/SpatialData/actions', function () {
 					"dataSourceKey": "key1",
 					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
 					"spatialFilter": {},
-					"indexesData": [
+					"indexeData": [
 						{
 				        "2": {
 				          "0,0": {
@@ -282,7 +282,7 @@ describe('state/Data/SpatialData/actions', function () {
 					"dataSourceKey": "key2",
 					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
 					"spatialFilter": {},
-					"indexesData": [
+					"indexeData": [
 						{
 				        "2": {
 				          "0,0": {
