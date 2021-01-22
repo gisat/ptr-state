@@ -109,34 +109,6 @@ describe('state/_common/actions', function () {
 		});
 	});
 
-	describe('actionAdd', function () {
-		const tests = [
-			{
-				name: 'single data',
-				actionTypes: {ADD: 'ADD'},
-				data: 'data',
-				filter: 'filter',
-				expectedAction: {type: 'ADD', data: ['data'], filter: 'filter'},
-			},
-			{
-				name: 'multiple data',
-				actionTypes: {ADD: 'ADD'},
-				data: ['data'],
-				filter: 'filter',
-				expectedAction: {type: 'ADD', data: ['data'], filter: 'filter'},
-			},
-		];
-
-		tests.forEach((test) => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					actions.actionAdd(test.actionTypes, test.data, test.filter),
-					test.expectedAction
-				);
-			});
-		});
-	});
-
 	it('actionGeneralError', function () {
 		assert.deepStrictEqual(actions.actionGeneralError(new Error()), {
 			type: 'ERROR',
