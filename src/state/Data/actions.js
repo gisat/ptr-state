@@ -414,13 +414,11 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
 						// Attributes
 						////
 						if(result.data.attributeRelations && !_.isEmpty(result.data.attributeRelations)) {
-							//TODO relations.offset
 							const changes = null;
 							dispatch(attributeRelations.receiveIndexed(result.data.attributeRelations, mergedAttributeFilter, order, relations.offset, result.total.attributeRelations, changes));
 						}
 
 						if(result.data.attributeDataSources && !_.isEmpty(result.data.attributeDataSources)) {
-							//TODO relations.offset
 							const changes = null;
 							dispatch(attributeDataSources.receiveIndexed(result.data.attributeDataSources, mergedAttributeFilter, order, relations.offset, result.total.attributeRelations, changes));
 						}
@@ -434,13 +432,11 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                         // Spatial data
                         ////
                         if(result.data.spatialRelations && !_.isEmpty(result.data.spatialRelations)) {
-                            //TODO relations.offset
                             const changes = null;
                             dispatch(spatialRelations.receiveIndexed(result.data.spatialRelations, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
                         if(result.data.spatialDataSources && !_.isEmpty(result.data.spatialDataSources)) {
-                            //TODO relations.offset
                             const changes = null;
                             dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
