@@ -1,3 +1,4 @@
+import _ from 'lodash';
 /**
  * Returns string representing given tile
  * @param {Array|string} tile 
@@ -21,7 +22,8 @@ export const tileAsString = (tile) => {
 export const getMissingTiles = (index, filter) => {
     if(index && index.index && filter) {
         if(index.index?.[filter.level] && filter && filter.tiles) {
-            const loadedTilesInIndex = _.reduce(index.index[filter.level], (acc, tile) => {
+            const loadedTilesInIndex = Object.entries(index.index[filter.level]).reduce((acc, tile) => {
+            // const loadedTilesInIndex = _.reduce(index.index[filter.level], (acc, tile) => {
                 const tileKey = tile[0];
                 const tileData = tile[1];
                 //tileData === true means it is loading, so we mark them as not missing

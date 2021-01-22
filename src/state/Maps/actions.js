@@ -111,9 +111,9 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 
 
             if(layerTemplateKey) {
-                const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter);
+                const order = null;
+                const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, order);
                 const sdsContainsVector = spatialDataSources?.some(spatialDataSource => spatialDataSource?.data?.type === 'vector') || false;
-
                 // load only dataSources that contains some of vector type
                 if (spatialDataSources && !sdsContainsVector) {
                     return;
