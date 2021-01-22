@@ -18,7 +18,7 @@ const addIndex = common.addIndex(actionTypes);
  */
 const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) => {
     return dispatch => {
-		if (_.isEmpty(attributeData)) {
+		if (!_.isEmpty(attributeData)) {
 			dispatch(addDataAndIndex(filter, order, attributeData, spatialData, changedOn));
 		} else {
 			// add to index
