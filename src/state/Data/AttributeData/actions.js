@@ -1,6 +1,7 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
 import {tileAsString} from '../helpers';
+import _ from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
@@ -17,7 +18,7 @@ const addIndex = common.addIndex(actionTypes);
  */
 const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) => {
     return dispatch => {
-		if (spatialData) {
+		if (_.isEmpty(attributeData)) {
 			dispatch(addDataAndIndex(filter, order, attributeData, spatialData, changedOn));
 		} else {
 			// add to index
