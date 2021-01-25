@@ -42,17 +42,20 @@ function getUniqueIndexes(indexes) {
 }
 
 /**
+ * Create set of updated indexes state based on current state and given indexUpdate.
+ * It produce updated indexes state in case of existing index for given filter and order.
+ * If index with filter and orde is not in the state yet, its add to indexes state.
  * @param state {Object}
  * @param filter {Object}
  * @param order {Array}
- * @param indexData {Array}
+ * @param indexUpdate {Array}
  * @param changedOn {string}
  */
-function getUpdatedIndexes(state, filter, order, indexData, changedOn) {
+function getUpdatedIndexes(state, filter, order, indexUpdate, changedOn) {
 	let indexes = [];
 	let selectedIndex = {};
 
-	if (state.indexes){
+	if (state.indexes) {
 		state.indexes.forEach(index => {
 			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)){
 				selectedIndex = index;
@@ -63,9 +66,9 @@ function getUpdatedIndexes(state, filter, order, indexData, changedOn) {
 	}
 
 	let index;
-	if (indexData.length){
+	if (indexUpdate.length) {
 		index = {...selectedIndex.index};
-		indexData.forEach((model, i) => {
+		indexUpdate.forEach((model, i) => {
 			if(model.key) {
 				index[i] = model.key;
 			} else {

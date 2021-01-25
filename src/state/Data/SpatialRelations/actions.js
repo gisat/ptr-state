@@ -9,6 +9,7 @@ const add = common.add(actionTypes);
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved spatialRelations from BE.
+ * Add relations to state only when spatialRelations recieved, in case of empty spatialRelations it adds only index.
  * @param {Object} spatialRelations Object recieved from BE. 
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order

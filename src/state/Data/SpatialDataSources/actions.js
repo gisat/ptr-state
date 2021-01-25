@@ -9,6 +9,7 @@ const add = common.add(actionTypes);
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved spatialDataSources from BE.
+ * Add dataSources to state only when spatialDataSources recieved, in case of empty spatialDataSources it adds only index.
  * @param {Object} spatialDataSources Object recieved from BE. 
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order

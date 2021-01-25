@@ -8,6 +8,7 @@ const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved data from BE.
+ * Add data to state only when spatialData recieved, in case of empty spatialData it adds only index.
  * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order

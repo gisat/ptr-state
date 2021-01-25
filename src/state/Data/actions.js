@@ -244,7 +244,7 @@ const hasMissingSpatialData = (spatialDataIndex, spatialFilter) => {
 }
 
 /**
- * Check if given parameters are stored as a identifiers of some spatialRelations or areaTree index.
+ * It find out if for given ltKey/atlKey and mergedSpatialFilter exists relations index.
  * The Existence of index means it is loading or loaded.
  * TODO - add support of areaTrees
  * @param {Object} state App state object

@@ -8,6 +8,7 @@ const addIndex = common.addIndex(actionTypes);
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
+ * Add relations to state only when attributeRelations recieved, in case of empty attributeRelations it adds only index.
  * @param {Array} attributeRelations Array recieved from BE contains attributeRelations.
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order

@@ -9,6 +9,7 @@ const add = common.add(actionTypes);
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
+ * Add dataSources to state only when attributeDataSources recieved, in case of empty attributeDataSources it adds only index.
  * @param {Array} attributeDataSources Array recieved from BE contains attributeDataSource definitions.
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
