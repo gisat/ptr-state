@@ -5,8 +5,6 @@ import _ from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
-const addIndex = common.addIndex(actionTypes);
-
 // ============ creators ===========
 /**
  * It ensure adding index and adding or updating recieved data from BE.
@@ -73,7 +71,7 @@ function addOrUpdateData(attributeData) {
  */
 function createAndAddIndex(filter, order, attributeData, spatialData, changedOn) {
 	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData, attributeData);
-	return addIndex(filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
+	return addIndexAction(filter, order, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -84,8 +82,6 @@ function createAndAddIndex(filter, order, attributeData, spatialData, changedOn)
  * @param {Array.[Array]} tiles
  */
 function addLoadingIndex(filter, order, level, tiles) {
-    const count = null;
-    const start = 0;
     const changedOn = null;
     
     //create index with tiles value "true" that indicates loading state
@@ -97,7 +93,8 @@ function addLoadingIndex(filter, order, level, tiles) {
     const index = {
         [level]: loadingTiles
     };
-    return addIndex(filter, order, count, start, [index], changedOn);
+
+	return addIndexAction(filter, order, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -159,6 +156,16 @@ function addDataAndIndexAction(attributeDataSourceKey, data, spatialFilter, orde
 		spatialFilter,
 		order,
 		indexData,
+		changedOn
+	}
+}
+
+function addIndexAction(filter, order, index, changedOn) {
+	return {
+		type: actionTypes.INDEX.ADD,
+		spatialFilter: filter,
+		order,
+		indexData: index,
 		changedOn
 	}
 }

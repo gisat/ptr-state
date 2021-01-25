@@ -97,25 +97,20 @@ describe('state/Data/SpatialData', function () {
 		const tile = '15,51';
 		const data = [{[level]: {[tile]:{dsKey: [1,2,3]}}}];
 		const changedOn = null;
-		const count = null;
-		const start = 0;
 		assert.deepStrictEqual(
 			reducer(
 				{},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					filter,
+					spatialFilter: filter,
 					order,
-					data,
+					indexData: data,
 					changedOn,
-					count,
-					start,
 				}
 			),
 			{
 				indexes: [
 					{
-						count:null,
 						filter,
 						order,
 						changedOn,
@@ -139,25 +134,20 @@ describe('state/Data/SpatialData', function () {
 			[tile2]:[1,2,5,6]
 		}}];
 		const changedOn = null;
-		const count = null;
-		const start = null;
 		assert.deepStrictEqual(
 			reducer(
 				{},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					filter,
+					spatialFilter: filter,
 					order,
-					data,
+					indexData: data,
 					changedOn,
-					count,
-					start,
 				}
 			),
 			{
 				indexes: [
 					{
-						count,
 						filter,
 						order,
 						index: {[level]: {
@@ -187,14 +177,11 @@ describe('state/Data/SpatialData', function () {
 			[tile2]:[1,9,11,10,89],
 		}}];
 		const changedOn = null;
-		const count = null;
-		const start = null;
 		assert.deepStrictEqual(
 			reducer(
 				{
 					indexes: [
 						{
-							count,
 							filter,
 							order,
 							index: index,
@@ -204,18 +191,15 @@ describe('state/Data/SpatialData', function () {
 				},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					start,
-					count,
-					filter,
+					spatialFilter: filter,
 					order,
-					data: updateIndex,
+					indexData: updateIndex,
 					changedOn,
 				}
 			),
 			{
 				indexes: [
 					{
-						count,
 						filter,
 						order,
 						index: {[level]: {

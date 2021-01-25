@@ -5,8 +5,6 @@ import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
-const addIndex = common.addIndex(actionTypes);
-
 // ============ creators ===========
 /**
  * It ensure adding index and adding recieved data from BE.
@@ -63,7 +61,7 @@ function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, chang
  */
 function createAndAddIndex(filter, order, spatialData, changedOn) {
 	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData);
-    return addIndex(filter, order, null, 0, [indexByLevelByTileByDataSourceKey], changedOn);
+    return addIndexAction(filter, order, [indexByLevelByTileByDataSourceKey], changedOn);
 }
 
 /**
@@ -92,8 +90,6 @@ function addData(spatialData) {
  * @param {Array.[Array]} tiles
  */
 function addLoadingIndex(filter, order, level, tiles) {
-    const count = null;
-    const start = 0;
     const changedOn = null;
     
     //create index with tiles value "true" that indicates loading state
@@ -105,7 +101,7 @@ function addLoadingIndex(filter, order, level, tiles) {
     const index = {
         [level]: loadingTiles
     };
-    return addIndex(filter, order, count, start, [index], changedOn);
+    return addIndexAction(filter, order, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -148,6 +144,16 @@ function addDataAndIndexAction(dataSourceKey, data, level, spatialFilter, order,
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
 		dataSourceKey, data, level, spatialFilter, order, indexData, changedOn
+	}
+}
+
+function addIndexAction(filter, order, index, changedOn) {
+	return {
+		type: actionTypes.INDEX.ADD,
+		spatialFilter: filter,
+		order,
+		indexData: index,
+		changedOn
 	}
 }
 

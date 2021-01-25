@@ -47,6 +47,15 @@ const addWithIndex = (state, action) => {
 	}
 }
 
+const addIndex = (state, action) => {
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
+
+	return {
+		...state,
+		indexes: updatedIndexes
+	}
+}
+
 // helpers
 
 /**
@@ -83,7 +92,7 @@ export default (state = INITIAL_STATE, action) => {
 		case ActionTypes.DATA.SPATIAL_DATA.ADD_WITH_INDEX:
 			return addWithIndex(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA.INDEX.ADD:
-            return common.addIndex(state, action)
+            return addIndex(state, action);
         default:
             return state;
     }

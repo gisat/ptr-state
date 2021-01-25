@@ -57,6 +57,17 @@ const addWithIndex = (state, action) => {
 	return {...state, byDataSourceKey, indexes: updatedIndexes}
 }
 
+
+const addIndex = (state, action) => {
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
+
+	return {
+		...state,
+		indexes: updatedIndexes
+	}
+}
+
+
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ActionTypes.DATA.ATTRIBUTE_DATA.ADD:
@@ -66,7 +77,7 @@ export default (state = INITIAL_STATE, action) => {
         case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
             return update(state, action);
         case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
-            return common.addIndex(state, action)
+            return addIndex(state, action)
         default:
             return state;
     }
