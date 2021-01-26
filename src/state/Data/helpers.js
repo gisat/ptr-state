@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 /**
  * Returns string representing given tile
  * @param {Array|string} tile 
@@ -9,6 +10,21 @@ export const tileAsString = (tile) => {
         return tile;
     } else {
         return `${tile[0]},${tile[1]}`;
+    }
+}
+
+/**
+ * Converts tile as a string to array
+ * @param {Array|string} tile 
+ * @returns {string}
+ */
+export const tileAsArray = (tile) => {
+    if(typeof tile === 'string') {
+        return tile.split(',');
+    } else if(_.isArray(tile)){
+        return tile;
+    } else {
+        return null;
     }
 }
 

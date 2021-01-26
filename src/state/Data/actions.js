@@ -6,9 +6,10 @@ import spatialDataSources from './SpatialDataSources/actions';
 import spatialData from './SpatialData/actions';
 import request from '../_common/request';
 import commonActions from '../_common/actions';
+import {configDefaults} from "@gisatcz/ptr-core";
 
 import Select from "../Select";
-import {getMissingTiles} from './helpers';
+import {getMissingTiles, tileAsArray} from './helpers';
 
 const DEFAULT_RELATIONS_PAGE = {
     offset: 0,
@@ -30,6 +31,81 @@ const isSpatialDataEmpty = (spatialData) => {
 }
 
 /**
+ * Centered place for getting PAGE_SIZE from state or configDefaults.
+ * @param {Object} state App state
+ * @return {Number}
+ */
+const getPageSize = (state) => {
+    const localConfig = Select.app.getCompleteLocalConfiguration(state);
+    const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+    return PAGE_SIZE;
+}
+
+/**
+ * Helper function. Usually second step in requesting data.
+ * Calculate if relations requests are missing based on attributeRelationsCount and spatialRelationsCount.
+ * Each relations request loads one next tile from spatialFilter.
+ * Rest tiles are loaded without relatiions.
+ * @param {bool} loadGeometry Whether response should contain geometry
+ * @param {Object} spatialFilter Spatial defined filter of level and its tiles
+ * @param {string?} styleKey UUID
+ * @param {Array?} order
+ * @param {Object} mergedSpatialFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Number} attributeRelationsCount Count of known attribute relations. Used for determinate further requests.
+ * @param {Number} spatialRelationsCount Count of known spatial relations. Used for determinate further requests.
+ * @return {function} Return promise. 
+ */
+function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount) {
+    return (dispatch, getState) => {
+        const PAGE_SIZE = getPageSize(getState());
+
+        // FIXME - add attributeFilter support
+        // attributeFilter is null at the moment
+        const attributeFilter = null;
+        const dataSourceKeys = null;
+        const featureKeys = null;
+        const promises = [];
+
+        // load remaining relations pages
+        // What is higer to load? attributeRelations or spatialRelations
+        const remainingRelationsPageCount = Math.ceil((Math.max(attributeRelationsCount, spatialRelationsCount) - PAGE_SIZE) / PAGE_SIZE);
+        let tilesPagination = 0;
+        const loadRelations = true;
+        for (let i = 0; i < remainingRelationsPageCount; i++) {
+            const relations = {
+                offset: (i + 1) * PAGE_SIZE,
+                limit: PAGE_SIZE
+            };
+
+            tilesPagination = i + 1;
+            const spatialIndex = {
+                tiles: [spatialFilter.tiles[tilesPagination]],
+            };
+            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
+        }
+        
+        // 
+        //load rest of tiles
+        // 
+        const remainingTilesPageCount = spatialFilter.tiles.length;
+        
+        //first tile was loaded before loadMissingRelationsAndData first request
+        for (let i = (tilesPagination + 1); i < remainingTilesPageCount; i++) {
+            const spatialIndex = {
+                tiles: [spatialFilter.tiles[i]],
+            };
+
+            const relations = {};
+            const loadRestTilesRelations = false;
+            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
+        }
+
+        return Promise.all(promises);
+    }
+}
+
+/**
  * Ensure load missing attribute data for tiles defined in spatialFilter that are not loaded or loading in state.
  * 
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
@@ -41,8 +117,14 @@ const isSpatialDataEmpty = (spatialData) => {
  */
 function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
     return (dispatch, getState) => {
-        const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-        const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+        const PAGE_SIZE = getPageSize(getState());
+
+        const relations = {
+            // start: 0,
+            // length: 1000,
+            offset: 0,
+            limit: PAGE_SIZE,
+        };
 
         //
         // which attribute data to load
@@ -53,43 +135,54 @@ function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialF
         
         //diff loaded attribute data from index with wanted spatial data
         const missingAttributeDataTiles = getMissingTiles(attributeDataIndex, spatialFilter) || [];
-        const promises = [];
+        const missingAttributeDataTilesAsArrays = missingAttributeDataTiles.map(tileAsArray);
 
         // Load relations and data sources in first request if they are not already loaded.
         const attributeRelations = Select.data.attributeRelations.getIndex(getState(),  mergedAttributeFilter, order);
         const attributeDataSources = Select.data.attributeDataSources.getIndex(getState(),  mergedAttributeFilter, order);
         let loadRelationsAndDS = !(!_.isEmpty(attributeRelations) && !_.isEmpty(attributeDataSources));
 
-        for (const tile of missingAttributeDataTiles) {
-            const spatialIndex = {
-                tiles: [tile],
-            }
+        //load only attribute data
+        const loadGeometry = false;
+        
+        //FIXME - add support for attributeFilter
+        const attributeFilter = null;
 
-            const relations = {
-                // start: 0,
-                // length: 1000,
-                offset: 0,
-                limit: PAGE_SIZE,
-            };
-            //FIXME - add support for attributeFilter
-            const attributeFilter = null;
-            
-            //load only attribute data
-            const loadGeometry = false;
+        const dataSourceKeys = null;
+        const featureKeys = null;
 
-            //load relations only if missing on first request
-            //FIXME - what if relations needs pagination??
-            let loadRelations = false;
-            if(loadRelationsAndDS) {
-                loadRelations = true;
-                loadRelationsAndDS = false;
-            };
-
-            const dataSourceKeys = null;
-            const featureKeys = null;
-            promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter))) 
+        // Modified spatial filter with only missing attribute data tiles
+        const spatialFilterWithMissingTiles = {
+            ...spatialFilter,
+            tiles: missingAttributeDataTilesAsArrays,
         }
-        return Promise.all(promises);
+
+        // Relations for given filters are missing
+        if(loadRelationsAndDS) {
+            const spatialIndex = null;
+            const loadRelations = true;
+            // Load relations 
+            return dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilterWithMissingTiles, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)).then((response) => {
+                if(response instanceof Error) {
+                    return;
+                    throw response;
+                }
+                const attributeRelationsCount = response.total.attributeRelations;
+                const spatialRelationsCount = response.total.spatialRelations;
+                return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilterWithMissingTiles, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount));
+            })
+        } else {
+            const promises = [];
+            const loadRelations = false;
+            for (const tile of missingAttributeDataTiles) {
+                const spatialIndex = {
+                    tiles: [tile],
+                }
+
+                promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter))) 
+            }
+            return Promise.all(promises);
+        }
     }
 }
 
@@ -144,8 +237,7 @@ function loadMissingSpatialData(spatialFilter, styleKey, order, mergedSpatialFil
  */
 function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter) {
     return (dispatch, getState) => {
-        const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-        const PAGE_SIZE = localConfig.requestPageSize || configDefaults.requestPageSize;
+        const PAGE_SIZE = getPageSize(getState());
 
         const relations = {
             // start: 0,
@@ -168,48 +260,18 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFil
                     return;
                     throw response;
                 }
-                
-                const promises = [];
 
                 //Check if some of returned spatialDataSources are type of vector. Otherwise theri is no reason to make further requests.
                 const spatialDataSources = response?.data?.spatialDataSources || [];
                 const allSourcesAreVectors = spatialDataSources.every(ds => ds.data?.type === 'vector');
                 if(!allSourcesAreVectors) {
+                    //FIXME
                     //todo - clear its indexes
                     return
                 }
-
-                // load remaining relations pages
-                // What is higer to load? attributeRelations or spatialRelations
-                const remainingRelationsPageCount = Math.ceil((Math.max(response.total.attributeRelations, response.total.spatialRelations) - PAGE_SIZE) / PAGE_SIZE);
-                let tilesPagination = 0;
-                for (let i = 0; i < remainingRelationsPageCount; i++) {
-                    const relations = {
-                        offset: (i + 1) * PAGE_SIZE,
-                        limit: PAGE_SIZE
-                    };
-
-                    tilesPagination = i + 1;
-                    const spatialIndex = {
-                        tiles: [spatialFilter.tiles[tilesPagination]],
-                    };
-                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
-                }
-
-                //load rest tiles
-                const remainingTilesPageCount = spatialFilter.tiles.length;
-                //first tile is loaded while first request
-                for (let i = (tilesPagination + 1); i < remainingTilesPageCount; i++) {
-                    const spatialIndex = {
-                        tiles: [spatialFilter.tiles[i]],
-                    };
-
-                    const relations = {};
-                    const loadRestTilesRelations = false;
-                    promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
-                }
-
-                return Promise.all(promises);
+                const attributeRelationsCount = response.total.attributeRelations;
+                const spatialRelationsCount = response.total.spatialRelations;
+                return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount));
             }).catch((err)=>{
                 if (err?.message === 'Index outdated'){
                     dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));
