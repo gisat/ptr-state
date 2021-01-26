@@ -456,10 +456,10 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                 ...(attributeFilter && {attributeFilter}),
                 
                 //request for geometry
-                geometry: loadGeometry === false ? false : true,
+                geometry: !!loadGeometry,
                 
                 //request for relations
-                relations: loadRelations === false ? false : true,
+                relations: !!loadRelations,
                 
                 // use data source keys as filter or add them to filter
                 ...(dataSourceKeys && {dataSourceKeys}),
