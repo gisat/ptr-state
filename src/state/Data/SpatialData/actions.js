@@ -120,8 +120,15 @@ function getIndexData(spatialDataByDataSourceKey) {
 				indexByLevelByTileByDataSourceKey[level] = {};
 			}
 			for (const [tile, tileData] of Object.entries(tiles)) {
-				indexByLevelByTileByDataSourceKey[level][tile] = {
-					[dsKey]: tileData
+				if(indexByLevelByTileByDataSourceKey?.[level]?.[tile]) {
+					indexByLevelByTileByDataSourceKey[level][tile] = {
+						...indexByLevelByTileByDataSourceKey[level][tile],
+						[dsKey]: tileData,
+					}
+				} else {
+					indexByLevelByTileByDataSourceKey[level][tile] = {
+						[dsKey]: tileData
+					}
 				}
 			}
 		}
