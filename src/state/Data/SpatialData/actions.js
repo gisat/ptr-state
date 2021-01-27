@@ -28,7 +28,7 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
 
 /**
  * Add data and index at the same time
- *
+ * Add data, even if data are empty, for replacing loading indicator.
  * @param spatialDataByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
  * @param spatialFilter {Object}
  * @param order {Array}
@@ -37,17 +37,13 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
 function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, changedOn) {
 	return (dispatch) => {
 		const indexByLevelByTileByDataSourceKey = getIndexData(spatialDataByDataSourceKey);
-
 		for(const dataSourceKey of Object.keys(spatialDataByDataSourceKey)) {
-			if(!_.isEmpty(spatialDataByDataSourceKey[dataSourceKey].data)) {
-
-				//spatialData should be only from one level
-				const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
-				for (const level of levels) {
-                    // It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
-                    // Multiple datasources in one response is edge case at the moment.
-					dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
-				}
+			//spatialData should be only from one level
+			const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
+			for (const level of levels) {
+				// It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
+				// Multiple datasources in one response is edge case at the moment.
+				dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
 			}
 		}
 	}
@@ -120,12 +116,14 @@ function getIndexData(spatialDataByDataSourceKey) {
 				indexByLevelByTileByDataSourceKey[level] = {};
 			}
 			for (const [tile, tileData] of Object.entries(tiles)) {
+				//Add to existing index
 				if(indexByLevelByTileByDataSourceKey?.[level]?.[tile]) {
 					indexByLevelByTileByDataSourceKey[level][tile] = {
 						...indexByLevelByTileByDataSourceKey[level][tile],
 						[dsKey]: tileData,
 					}
 				} else {
+					//Create new tile and insert dsKey index data
 					indexByLevelByTileByDataSourceKey[level][tile] = {
 						[dsKey]: tileData
 					}

@@ -18,20 +18,6 @@ const DEFAULT_RELATIONS_PAGE = {
 }
 
 /**
- * Check if given spatialData are defined and if contains data inside
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
- * @return {bool}
- */
-const isSpatialDataEmpty = (spatialData) => {
-    if(spatialData && !_.isEmpty(spatialData) ) {
-        const sd = Object.values(spatialData);
-        return !sd.some(data => data?.data && !_.isEmpty(data.data));
-    } else {
-        return true;
-    }
-}
-
-/**
  * Centered place for getting PAGE_SIZE from state or configDefaults.
  * @param {Object} state App state
  * @return {Number}
@@ -514,12 +500,11 @@ function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatial
                             dispatch(spatialDataSources.receiveIndexed(result.data.spatialDataSources, mergedSpatialFilter, order, relations.offset, result.total.spatialRelations, changes));
                         }
 
-                        const spatialDataEmpty = isSpatialDataEmpty(result.data.spatialData);
-                        if(!spatialDataEmpty) {
-                            const changes = null;
-                            dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedSpatialFilter, order, changes));
-                        }
-
+                        // Add data even if data are empty.
+                        // Override loading indicator in state index    
+                        const changes = null;
+                        dispatch(spatialData.receiveIndexed(result.data.spatialData, mergedSpatialFilter, order, changes));
+                    
                         return result;
                     } else {
                         const error = new Error('no data');
