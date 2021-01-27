@@ -28,6 +28,17 @@ const getPageSize = (state) => {
     return PAGE_SIZE;
 }
 
+const getRestRelationsPages = (attributeRelationsCount, spatialRelationsCount, PAGE_SIZE) => {
+    // What is higer to load? attributeRelations or spatialRelations
+    const maxCountValue = Math.max(attributeRelationsCount, spatialRelationsCount);
+    if(maxCountValue === 0) {
+        return 0;
+    } else {
+        const remainingPageCount = Math.ceil((maxCountValue - PAGE_SIZE) / PAGE_SIZE);
+        return remainingPageCount;
+    }
+}
+
 /**
  * Helper function. Usually second step in requesting data.
  * Calculate if relations requests are missing based on attributeRelationsCount and spatialRelationsCount.
