@@ -7,6 +7,7 @@ import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
 import DataActions from "../Data/actions";
+import {TILED_LAYERS_TYPES} from "../Data/constants";
 import StylesActions from "../Styles/actions";
 
 import helpers from "./selectorHelpers";
@@ -113,8 +114,8 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
             if(layerTemplateKey) {
                 const order = null;
                 const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, order);
-                const sdsContainsVector = spatialDataSources?.some(spatialDataSource => spatialDataSource?.data?.type === 'vector') || false;
-                // load only dataSources that contains some of vector type
+                const sdsContainsVector = spatialDataSources?.some(spatialDataSource => TILED_LAYERS_TYPES.includes(spatialDataSource?.data?.type)) || false;
+                // load only dataSources that are supported type
                 if (spatialDataSources && !sdsContainsVector) {
                     return;
                 }

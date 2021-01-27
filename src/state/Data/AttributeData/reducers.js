@@ -67,6 +67,21 @@ const addIndex = (state, action) => {
 	}
 }
 
+/**
+ * Remove index that fit to filter and order from state.
+ * @param {Object} state 
+ * @param {Object} action 
+ * @return {Object}
+ */
+const removeIndex = (state, action) => {
+	const updatedIndexes = commonHelpers.removeIndex(state.indexes, action.filter, action.order);
+
+	return {
+		...state,
+		indexes: updatedIndexes
+	}
+}
+
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
@@ -78,6 +93,8 @@ export default (state = INITIAL_STATE, action) => {
             return update(state, action);
         case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
             return addIndex(state, action)
+        case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
+            return removeIndex(state, action)
         default:
             return state;
     }

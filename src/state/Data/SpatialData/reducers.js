@@ -56,6 +56,21 @@ const addIndex = (state, action) => {
 	}
 }
 
+/**
+ * Remove index that fit to filter and order from state.
+ * @param {Object} state 
+ * @param {Object} action 
+ * @return {Object}
+ */
+const removeIndex = (state, action) => {
+	const updatedIndexes = commonHelpers.removeIndex(state.indexes, action.filter, action.order);
+	return {
+		...state,
+		indexes: updatedIndexes
+	}
+}
+
+
 // helpers
 
 /**
@@ -92,7 +107,9 @@ export default (state = INITIAL_STATE, action) => {
 		case ActionTypes.DATA.SPATIAL_DATA.ADD_WITH_INDEX:
 			return addWithIndex(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA.INDEX.ADD:
-            return addIndex(state, action);
+			return addIndex(state, action);
+		case ActionTypes.DATA.SPATIAL_DATA.INDEX.REMOVE:
+			return removeIndex(state, action)
         default:
             return state;
     }

@@ -141,6 +141,14 @@ function addDataAction(key, data) {
     }
 }
 
+function removeIndexAction (filter, order) {
+	return {
+        type: actionTypes.INDEX.REMOVE,
+        filter,
+        order,
+    }
+}
+
 function updateDataAction(key, data) {
     return {
         type: actionTypes.UPDATE,
@@ -174,6 +182,7 @@ function addIndexAction(filter, order, index, changedOn) {
 // ============ export ===========
 
 export default {
+	addLoadingIndex,
+	removeIndex: removeIndexAction,
     receiveIndexed,
-    addLoadingIndex,
 }

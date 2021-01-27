@@ -42,6 +42,25 @@ function getUniqueIndexes(indexes) {
 }
 
 /**
+ * Remove index from given indexes that fit to filter and order.
+ * @param indexes {Array} Array of indexes
+ * @param filter {Object} 
+ * @param order {Array}
+ * @return {Array} New instance of indexes
+ */
+function removeIndex(indexes = [], filter, order) {
+	const cleardIndexes = _.reduce(indexes, (acc, index) => {
+		const indexToBeCleared = isCorrespondingIndex(index, filter, order);
+		if(indexToBeCleared) {
+			return acc
+		} else {
+			return [...acc, index];
+		}
+	}, [])
+	return cleardIndexes || [];
+}
+
+/**
  * Create set of updated indexes state based on current state and given indexUpdate.
  * It produce updated indexes state in case of existing index for given filter and order.
  * If index with filter and orde is not in the state yet, its add to indexes state.
@@ -262,7 +281,8 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 }
 
 export default {
-    convertModifiersToRequestFriendlyFormat,
+	convertModifiersToRequestFriendlyFormat,
+	removeIndex,
 	getIndex,
 	getUniqueIndexes,
 	getUpdatedIndexes,

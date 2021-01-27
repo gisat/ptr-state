@@ -1,3 +1,4 @@
+import {configDefaults} from "@gisatcz/ptr-core";
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';
 import attributeData from './AttributeData/actions';
@@ -6,10 +7,10 @@ import spatialDataSources from './SpatialDataSources/actions';
 import spatialData from './SpatialData/actions';
 import request from '../_common/request';
 import commonActions from '../_common/actions';
-import {configDefaults} from "@gisatcz/ptr-core";
 
 import Select from "../Select";
 import {getMissingTiles, tileAsArray} from './helpers';
+import {TILED_LAYERS_TYPES} from './constants';
 
 const DEFAULT_RELATIONS_PAGE = {
     offset: 0,
@@ -261,17 +262,27 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFil
                     throw response;
                 }
 
-                //Check if some of returned spatialDataSources are type of vector. Otherwise theri is no reason to make further requests.
-                const spatialDataSources = response?.data?.spatialDataSources || [];
-                const allSourcesAreVectors = spatialDataSources.every(ds => ds.data?.type === 'vector');
-                if(!allSourcesAreVectors) {
-                    //FIXME
-                    //todo - clear its indexes
-                    return
-                }
                 const attributeRelationsCount = response.total.attributeRelations;
                 const spatialRelationsCount = response.total.spatialRelations;
-                return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount));
+
+                const restRelationsPages = getRestRelationsPages(attributeRelationsCount, spatialRelationsCount, PAGE_SIZE);
+
+                const spatialDataSources = response?.data?.spatialDataSources || [];
+                const preloadSpatialDataSources = spatialDataSources.map(sds => ({type: sds.data.type, key: sds.key}));
+                const allSourcesAreUnsupported = spatialDataSources.every(ds => !TILED_LAYERS_TYPES.includes(ds.data?.type));
+                
+                // Check if all of returned spatialDataSources are unsupported type.
+                // If so, is no reason to make further requests.
+                // Indexes for unsupported layers can be cleared.
+                if((restRelationsPages === 0) && allSourcesAreUnsupported) {
+                    // AttributeData and spatialData index represented by mergedSpatialFilter, mergedAttributeFilter and order can be deleted
+                    dispatch(spatialData.removeIndex(mergedSpatialFilter, order))
+                    dispatch(attributeData.removeIndex(mergedAttributeFilter, order))
+                    return
+                } else {
+                    return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount, preloadSpatialDataSources));
+                }
+            
             }).catch((err)=>{
                 if (err?.message === 'Index outdated'){
                     dispatch(refreshIndex(getSubstate, dataType, filter, order, actionTypes, categoryPath));

@@ -138,7 +138,16 @@ function getIndexData(spatialDataByDataSourceKey) {
 }
 
 
+
 // ============ actions ============
+function removeIndexAction (filter, order) {
+	return {
+        type: actionTypes.INDEX.REMOVE,
+        filter,
+        order,
+    }
+}
+
 function addDataAction(key, data, level) {
     return {
         type: actionTypes.ADD,
@@ -168,6 +177,7 @@ function addIndexAction(filter, order, index, changedOn) {
 // ============ export ===========
 
 export default {
+	addLoadingIndex,
+	removeIndex: removeIndexAction,
     receiveIndexed,
-    addLoadingIndex,
 }
