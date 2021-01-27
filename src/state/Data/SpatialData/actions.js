@@ -29,23 +29,36 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
 /**
  * Add data and index at the same time
  * Add data, even if data are empty, for replacing loading indicator.
- * @param spatialDataByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
+ * @param spatialDataAndIndexByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
  * @param spatialFilter {Object}
  * @param order {Array}
  * @param changedOn {string}
  */
-function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, changedOn) {
+function addDataAndIndex(spatialDataAndIndexByDataSourceKey, spatialFilter, order, changedOn) {
 	return (dispatch) => {
-		const indexByLevelByTileByDataSourceKey = getIndexData(spatialDataByDataSourceKey);
-		for(const dataSourceKey of Object.keys(spatialDataByDataSourceKey)) {
-			//spatialData should be only from one level
-			const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
-			for (const level of levels) {
-				// It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
-				// Multiple datasources in one response is edge case at the moment.
-				dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
-			}
-		}
+		const indexByLevelByTileByDataSourceKey = getIndexData(spatialDataAndIndexByDataSourceKey);
+
+		// spatialData should be only from one level
+		const level = Object.keys(indexByLevelByTileByDataSourceKey)[0];
+
+		let spatialDataByDataSourceKey = {};
+		_.forIn(spatialDataAndIndexByDataSourceKey, (value, spatialDataSourceKey) => {
+			spatialDataByDataSourceKey[spatialDataSourceKey] = value.data;
+		});
+
+
+		dispatch(addDataAndIndexAction(spatialDataByDataSourceKey, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
+
+
+		// for(const dataSourceKey of Object.keys(spatialDataByDataSourceKey)) {
+		// 	//spatialData should be only from one level
+		// 	const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
+		// 	for (const level of levels) {
+		// 		// It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
+		// 		// Multiple datasources in one response is edge case at the moment.
+		// 		dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
+		// 	}
+		// }
 	}
 }
 
@@ -155,10 +168,10 @@ function addDataAction(key, data, level) {
     }
 }
 
-function addDataAndIndexAction(dataSourceKey, data, level, spatialFilter, order, indexData, changedOn) {
+function addDataAndIndexAction(dataByDataSourceKey, level, spatialFilter, order, indexData, changedOn) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
-		dataSourceKey, data, level, spatialFilter, order, indexData, changedOn
+		dataByDataSourceKey, level, spatialFilter, order, indexData, changedOn
 	}
 }
 

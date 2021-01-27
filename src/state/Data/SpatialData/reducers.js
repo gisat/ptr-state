@@ -32,17 +32,12 @@ const add = (state, action) => {
 }
 
 const addWithIndex = (state, action) => {
-	const dataSourceKey = action.dataSourceKey;
-
-	const updatedDataForDataSourceKey = getUpdatedDataForDataSourceKey(state, dataSourceKey, action.data, action.level);
+	const updatedByDataSourceKey = getUpdatedByDataSourceKey(state, action.dataByDataSourceKey, action.level);
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
 
 	return {
 		...state,
-		byDataSourceKey: {
-			...state.byDataSourceKey,
-			[dataSourceKey]: updatedDataForDataSourceKey
-		},
+		byDataSourceKey: updatedByDataSourceKey,
 		indexes: updatedIndexes
 	}
 }
@@ -95,6 +90,31 @@ function getUpdatedDataForDataSourceKey(state, dataSourceKey, featuresAsObject, 
 			newFeature.geometries[level] = featuresAsObject[featureKey]
 			updatedData = {...updatedData, [featureKey]: {...newFeature}};
 		}
+	});
+
+	return updatedData;
+}
+
+function getUpdatedByDataSourceKey(state, dataByDataSourceKey, level) {
+	let updatedData = {...state.byDataSourceKey};
+
+	_.forIn(dataByDataSourceKey, (data, dataSourceKey) => {
+		if (!updatedData.hasOwnProperty(dataSourceKey)) {
+			updatedData[dataSourceKey] = {};
+		}
+
+		_.forIn(data, (geometry, featureKey) => {
+			const existingFeature = updatedData[dataSourceKey].hasOwnProperty(featureKey);
+			if (existingFeature) {
+				//add just level geometry to existing feature
+				updatedData[dataSourceKey][featureKey].geometries[level] = geometry;
+			} else {
+				//create new feature with geometry and add to state
+				const newFeature = getEmptyFeature();
+				newFeature.geometries[level] = geometry;
+				updatedData[dataSourceKey] = {...updatedData[dataSourceKey], [featureKey]: newFeature};
+			}
+		});
 	});
 
 	return updatedData;
