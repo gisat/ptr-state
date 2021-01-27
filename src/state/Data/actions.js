@@ -19,7 +19,7 @@ const DEFAULT_RELATIONS_PAGE = {
 
 /**
  * Check if given spatialData are defined and if contains data inside
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @return {bool}
  */
 const isSpatialDataEmpty = (spatialData) => {

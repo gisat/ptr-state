@@ -7,9 +7,9 @@ const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
 // ============ creators ===========
 /**
- * It ensure adding index and adding recieved data from BE.
- * Add data to state only when spatialData recieved, in case of empty spatialData it adds only index.
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
+ * It ensure adding index and adding received data from BE.
+ * Add data to state only when spatialData received, in case of empty spatialData it adds only index.
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order
  * @param {string?} changedOn 
@@ -57,7 +57,7 @@ function addDataAndIndex(spatialDataByDataSourceKey, spatialFilter, order, chang
  * Create and add spatial index based on spatialDataSourceKey, level and tiles.
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @param {string?} changedOn 
  */
 function createAndAddIndex(filter, order, spatialData, changedOn) {
@@ -67,7 +67,7 @@ function createAndAddIndex(filter, order, spatialData, changedOn) {
 
 /**
  * Dispatch addDataAction for each given spatialDataKey and its level.
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.  
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.  
  */
 function addData(spatialData) {
     return (dispatch, getState) => {

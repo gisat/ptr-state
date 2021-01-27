@@ -7,10 +7,10 @@ const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
 // ============ creators ===========
 /**
- * It ensure adding index and adding or updating recieved data from BE.
- * Add data to state only when attributeData recieved, in case of empty attributeData it adds only index.
- * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value]. 
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
+ * It ensure adding index and adding or updating received data from BE.
+ * Add data to state only when attributeData received, in case of empty attributeData it adds only index.
+ * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value]. 
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. 
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
  * @param {string?} changedOn 
@@ -30,8 +30,8 @@ const receiveIndexed = (attributeData, spatialData, filter, order, changedOn) =>
  * Add data and index at the same time
  *
  * @param spatialFilter {Object}
- * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
+ * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
  * @param order {Array}
  * @param changedOn {string}
  */
@@ -47,7 +47,7 @@ function addDataAndIndex(spatialFilter, order, attributeData, spatialData, chang
 
 /**
  * If given attributeDataKey is already in state update its data otherwise add data to state.
- * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
  */
 function addOrUpdateData(attributeData) {
     return (dispatch, getState) => {
@@ -66,8 +66,8 @@ function addOrUpdateData(attributeData) {
  * Create and add index for given attribute data based on related spatial data index.
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
- * @param {Object} attributeData Object recieved from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object recieved from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
+ * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
  * @param {*} changedOn 
  */
 function createAndAddIndex(filter, order, attributeData, spatialData, changedOn) {
