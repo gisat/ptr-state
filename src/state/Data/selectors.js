@@ -86,9 +86,10 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 		if (cache) {
 			return cache.data;
 		} else {
-			let features = null;
 			if (indexedFeatureKeys?.length) {
-				features = indexedFeatureKeys.map(key => {
+				let features = [];
+
+				indexedFeatureKeys.forEach(key => {
 					let properties = {
 						[fidColumnName]: key
 					}
@@ -103,16 +104,18 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 						}
 					}
 
-					return {
-						type: "Feature",
-						key,
-						geometry,
-						properties
+					if (geometry) {
+						features.push({
+							type: "Feature",
+							key,
+							geometry,
+							properties
+						})
 					}
 				});
 
 				const data = {
-					features,
+					features: features.length ? features : null,
 					tile: tileString,
 					level
 				};
