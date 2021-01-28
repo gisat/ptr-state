@@ -20,6 +20,7 @@ const add = common.add(actionTypes);
 function receiveIndexed(spatialRelations, filter, order, start, total, changes) {
     return dispatch => {
         // add spatialRelations to store
+        // There should be check if relation is already in the store.
         if (spatialRelations.length) {
             dispatch(add(spatialRelations, filter));
         }

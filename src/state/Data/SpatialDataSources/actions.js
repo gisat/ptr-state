@@ -20,6 +20,7 @@ const add = common.add(actionTypes);
 function receiveIndexed(spatialDataSources, filter, order, start, total, changedOn) {
     return dispatch => {
         // add spatialDataSources to store
+        // There should be check if spatialDataSources is already in the store.
         if (spatialDataSources.length) {
             dispatch(add(spatialDataSources, filter));
         }

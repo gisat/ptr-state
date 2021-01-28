@@ -52,9 +52,10 @@ const getRestRelationsPages = (attributeRelationsCount, spatialRelationsCount, P
  * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Number} attributeRelationsCount Count of known attribute relations. Used for determinate further requests.
  * @param {Number} spatialRelationsCount Count of known spatial relations. Used for determinate further requests.
+ * @param {Array} preloadedSpatialDataSources SpatialDataSources loaded by previous request.
  * @return {function} Return promise. 
  */
-function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount) {
+function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount, preloadedSpatialDataSources = []) {
     return (dispatch, getState) => {
         const PAGE_SIZE = getPageSize(getState());
 
@@ -66,8 +67,7 @@ function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, orde
         const promises = [];
 
         // load remaining relations pages
-        // What is higer to load? attributeRelations or spatialRelations
-        const remainingRelationsPageCount = Math.ceil((Math.max(attributeRelationsCount, spatialRelationsCount) - PAGE_SIZE) / PAGE_SIZE);
+        const remainingRelationsPageCount = getRestRelationsPages(attributeRelationsCount, spatialRelationsCount, PAGE_SIZE);
         let tilesPagination = 0;
         const loadRelations = true;
         for (let i = 0; i < remainingRelationsPageCount; i++) {
@@ -99,7 +99,23 @@ function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, orde
             promises.push(dispatch(loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRestTilesRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter)))
         }
 
-        return Promise.all(promises);
+        return Promise.all(promises).then((response = []) => {
+            // All relations are loaded at this moment. 
+            // Check if all spatialDataSources relations from response and preloadedSpatialDataSources are type of "unsupported" like raster/wms/wmts.
+            // If all spatialDataSources are unsupported, then received data are empty and indexes needs to be removed.
+            // If only some of spatialDataSources relations are unsupported, then loading status on index will be replaced by data.
+            const spatialDataSourcesTypes = _.flattenDeep(response.map(r => r?.data?.spatialDataSources?.map(sds => ({type: sds.data.type, key: sds.key}))));
+            const spatialDataSourcesPairs = [...spatialDataSourcesTypes, ...preloadedSpatialDataSources];
+            const allSourcesAreUnsupported = spatialDataSourcesPairs.every(ds => !TILED_LAYERS_TYPES.includes(ds.type));
+                
+            // Check if all of returned spatialDataSources are unsupported type.
+            // Indexes for unsupported layers can be cleared.
+            if(allSourcesAreUnsupported) {
+                // AttributeData and spatialData index represented by mergedSpatialFilter, mergedAttributeFilter and order can be deleted
+                dispatch(spatialData.removeIndex(mergedSpatialFilter, order))
+                dispatch(attributeData.removeIndex(mergedAttributeFilter, order))
+                }
+        });
     }
 }
 
@@ -154,7 +170,6 @@ function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialF
             ...spatialFilter,
             tiles: missingAttributeDataTilesAsArrays,
         }
-
         // Relations for given filters are missing
         if(loadRelationsAndDS) {
             const spatialIndex = null;
@@ -165,9 +180,13 @@ function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialF
                     return;
                     throw response;
                 }
+
+                const spatialDataSources = response?.data?.spatialDataSources || [];
+                const preloadSpatialDataSources = spatialDataSources.map(sds => ({type: sds.data.type, key: sds.key}));
+
                 const attributeRelationsCount = response.total.attributeRelations;
                 const spatialRelationsCount = response.total.spatialRelations;
-                return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilterWithMissingTiles, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount));
+                return dispatch(loadMissingRelationsAndData(loadGeometry, spatialFilterWithMissingTiles, styleKey, order, mergedSpatialFilter, mergedAttributeFilter, attributeRelationsCount, spatialRelationsCount, preloadSpatialDataSources));
             })
         } else {
             const promises = [];
