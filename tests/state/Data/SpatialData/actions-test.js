@@ -42,7 +42,7 @@ describe('state/Data/SpatialData/actions', function () {
 		clearDispatchedActions();
 	});
 
-	it('Dispatch nothing if recieved data are empty', function () {
+	it('Dispatch empty data if recieved data are empty', function () {
 		const getState = () => ({
 			data: {
 				spatialData: {
@@ -69,7 +69,19 @@ describe('state/Data/SpatialData/actions', function () {
 		const changes = null;
 		dispatch(actions.receiveIndexed(result, filter, order, changes));
 
-		const expectedResult = [];
+		const expectedResult = [
+			{
+			  "changedOn": null,
+			  "dataByDataSourceKey": {},
+			  "indexData": [
+			    {}
+			  ],
+			  "level": undefined,
+			  "order": null,
+			  "spatialFilter": {},
+			  "type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
+			}
+		];
 
 		//empty array because of empty results
 		return runFunctionActions({dispatch, getState}).then(() => {
@@ -77,7 +89,7 @@ describe('state/Data/SpatialData/actions', function () {
 		});
 	});
 
-	it('receiveIndexed and addDataAction', function () {
+	it('receiveIndexed and addDataWithIndex', function () {
 		const getState = () => ({
 			data: {
 				spatialData: {
@@ -131,43 +143,19 @@ describe('state/Data/SpatialData/actions', function () {
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-				    "data": {
-						citizens: 1
+				    "dataByDataSourceKey": {
+						"key1": {
+							"citizens": 1
+						},
+						"key2": {
+							"citizens": 2
+						}
 					},
 				    "level": "2",
-				    "dataSourceKey": "key1",
 					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
 					"order": null,
 					"spatialFilter": {},
 					"changedOn": null,
-					"indexData": [
-						{
-				        "2": {
-				          "0,0": {
-				            "key1": [
-				              1
-				            ]
-				          },
-				        
-				          "0,1": {
-				            "key2": [
-				              2
-				            ]
-				          }
-				        }
-				      }]
-				},
-				{
-				    "data": {
-						citizens: 2
-					},
-					"dataSourceKey": "key2",
-					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
-					"changedOn": null,
-					"order": null,
-					"spatialFilter": {},
-					"level": "2",
-					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",  
 					"indexData": [
 						{
 				        "2": {
@@ -247,39 +235,16 @@ describe('state/Data/SpatialData/actions', function () {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
 					"changedOn": null,
-				    "data": {
-						citizens: 1
+					"dataByDataSourceKey": {
+						"key1": {
+							"citizens": 1
+						},
+						"key2": {
+							"citizens": 2
+						}
 					},
 					"level": "2",
 					"order": null,
-					"dataSourceKey": "key1",
-					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
-					"spatialFilter": {},
-					"indexData": [
-						{
-				        "2": {
-				          "0,0": {
-				            "key1": [
-				              1
-				            ]
-				          },
-				          "0,1": {
-				            "key2": [
-				              2
-				            ]
-				          }
-				        }
-				      }
-					]
-				},
-				{
-					"changedOn": null,
-				    "data": {
-						citizens: 2
-					},
-					"level": "2",
-					"order": null,
-					"dataSourceKey": "key2",
 					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
 					"spatialFilter": {},
 					"indexData": [
