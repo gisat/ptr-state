@@ -54,7 +54,7 @@ const addWithIndex = (state, action) => {
 
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
 
-	return {...state, byDataSourceKey, indexes: updatedIndexes}
+	return {...state, byDataSourceKey, spatialIndexes: updatedIndexes}
 }
 
 
@@ -63,7 +63,7 @@ const addIndex = (state, action) => {
 
 	return {
 		...state,
-		indexes: updatedIndexes
+		spatialIndexes: updatedIndexes
 	}
 }
 
@@ -74,11 +74,11 @@ const addIndex = (state, action) => {
  * @return {Object}
  */
 const removeIndex = (state, action) => {
-	const updatedIndexes = commonHelpers.removeIndex(state.indexes, action.filter, action.order);
+	const updatedIndexes = commonHelpers.removeIndex(state.spatialIndexes, action.filter, action.order);
 
 	return {
 		...state,
-		indexes: updatedIndexes
+		spatialIndexes: updatedIndexes
 	}
 }
 

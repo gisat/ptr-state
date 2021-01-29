@@ -145,7 +145,7 @@ function loadMissingAttributeData(spatialFilter, styleKey, order, mergedSpatialF
         //
 
         //get attribute data index with loaded and loading data
-        const attributeDataIndex = Select.data.attributeData.getIndex(getState(),  mergedAttributeFilter, order) || [];
+        const attributeDataIndex = Select.data.attributeData.getIndex(getState(), "spatialIndexes",  mergedAttributeFilter, order) || [];
         
         //diff loaded attribute data from index with wanted spatial data
         const missingAttributeDataTiles = getMissingTiles(attributeDataIndex, spatialFilter) || [];
@@ -379,8 +379,7 @@ function ensure(filter) {
         const order = null;
 
         const spatialDataIndex = Select.data.spatialData.getIndex(getState(),  mergedSpatialFilter, order) || [];
-        const attributeDataIndex = Select.data.attributeData.getIndex(getState(),  mergedAttributeFilter, order) || [];
-
+        const attributeDataIndex = Select.data.attributeData.getIndex(getState(), "spatialIndexes", mergedAttributeFilter, order) || [];
         const missingAttributesData = hasMissingAttributesData(attributeDataIndex, spatialFilter);
         const missingSpatialData = hasMissingSpatialData(spatialDataIndex, spatialFilter);
         const filterHasSpatialOrAreaRelations = hasSpatialOrAreaRelations(getState(), areaTreeLevelKey, layerTemplateKey, mergedSpatialFilter, order);

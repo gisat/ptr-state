@@ -4,9 +4,9 @@ import commonHelpers from '../../_common/helpers';
 
 const getSubstate = state => state.data.attributeData;
 
-const getIndex = common.getIndex(getSubstate);
+const getIndex = common.getIndexByPath(getSubstate);
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) => common.getIndexes(getSubstate)(state));
+const getSpatialIndexesObserver = createRecomputeObserver((state, getSubstate) => getSubstate(state).spatialIndexes);
 
 /**
  * It returns all data for given datasource key
@@ -24,7 +24,7 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
  * @return {Object} index
  */
 const getIndex_recompute = createRecomputeSelector((filter, order) => {
-	const indexes = getIndexesObserver(getSubstate);
+	const indexes = getSpatialIndexesObserver(getSubstate);
 	if (indexes) {
 		return commonHelpers.getIndex(indexes, filter, order);
 	} else {

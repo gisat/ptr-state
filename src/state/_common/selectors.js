@@ -397,7 +397,6 @@ const getIndexes = (getSubstate) => {
 	return (state) => getSubstate(state).indexes;
 };
 
-
 const getIndexesObserver = createRecomputeObserver((state, getSubstate) => getIndexes(getSubstate)(state));
 
 /**
@@ -409,6 +408,29 @@ const getIndex = (getSubstate) => {
 		getIndexes(getSubstate),
 		(state, filter) => filter,
 		(state, filter, order) => order],
+		(indexes, filter, order) => {
+			return commonHelpers.getIndex(indexes, filter, order);
+		}
+	);
+};
+
+/**
+ * Get indexes value from given state on given path.
+ * Optional param indexPath has default value "indexes"
+ */
+const getIndexesByPath = (getSubstate) => {
+	return (state, indexPath = 'indexes') =>  _.get(getSubstate(state), indexPath);
+};
+
+/**
+ * Get whole index by given filter and order and optional indexPath
+ * Beside getIndex indexPath is first optional parameter, filter and order folows.
+ */
+const getIndexByPath = (getSubstate) => {
+	return createSelector([
+		getIndexesByPath(getSubstate),
+		(state, indexPath, filter) => filter,
+		(state, indexPath, filter, order) => order],
 		(indexes, filter, order) => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
@@ -918,6 +940,7 @@ export default {
 	getEditedKeys,
 
 	getIndex,
+	getIndexByPath,
 	getIndex_recompute,
 	getIndexed,
 	getIndexes,
