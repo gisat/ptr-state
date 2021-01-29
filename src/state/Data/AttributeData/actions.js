@@ -120,10 +120,14 @@ function getIndexData(spatialData, attributeData) {
 			//for all tiles in tiles
 			for (const [tile, tileData] of Object.entries(tiles)) {
 				indexByLevelByTileByDataSourceKey[level][tile] = {};
-				//for all attribute data source keys in attributeData
-				for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
-					// Save only tileData that are incuded in attribute data keys
-					indexByLevelByTileByDataSourceKey[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
+				if(_.isEmpty(attributeData)){
+					indexByLevelByTileByDataSourceKey[level][tile] = {};
+				} else {
+					//for all attribute data source keys in attributeData
+					for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
+						// Save only tileData that are incuded in attribute data keys
+						indexByLevelByTileByDataSourceKey[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
+					}
 				}
 			}
 		}
