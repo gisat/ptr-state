@@ -2,6 +2,7 @@ import {configDefaults} from "@gisatcz/ptr-core";
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';
 import attributeData from './AttributeData/actions';
+import components from './Components/actions';
 import spatialRelations from './SpatialRelations/actions';
 import spatialDataSources from './SpatialDataSources/actions';
 import spatialData from './SpatialData/actions';
@@ -555,6 +556,7 @@ export default {
     attributeData,
     attributeDataSources,
     attributeRelations,
+	components,
     spatialData,
     spatialDataSources,
     spatialRelations,
