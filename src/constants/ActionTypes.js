@@ -228,6 +228,7 @@ export default utils.deepKeyMirror({
 			ADD: null,
 			ADD_WITH_INDEX: null,
 			UPDATE: null,
+			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
 				REMOVE: null,
@@ -235,12 +236,14 @@ export default utils.deepKeyMirror({
 		},
         ATTRIBUTE_DATA_SOURCES: {
 			ADD: null,
+			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
 			},
 		},
         ATTRIBUTE_RELATIONS: {
 			ADD: null,
+			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
 			},
@@ -268,6 +271,7 @@ export default utils.deepKeyMirror({
 				ADD: null,
 			},
 		},
+		UPDATE: null,
     },
 
 	DATAVIEWS_REMOVE: 'DATAVIEWS_REMOVE',

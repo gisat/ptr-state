@@ -419,5 +419,15 @@ export default {
 		} else {
 			return state
 		}
+	},
+
+	/**
+	 * Update whole state
+	 * @param state {Object}
+	 * @param data {Object}
+	 * @return {Object}
+	 */
+	updateStore: (state, data) => {
+		return {...state, ...data};
 	}
 }

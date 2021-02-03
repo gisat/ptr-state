@@ -95,6 +95,8 @@ export default (state = INITIAL_STATE, action) => {
             return addIndex(state, action)
         case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
             return removeIndex(state, action)
+		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE_STORE:
+			return common.updateStore(state, action.data);
         default:
             return state;
     }

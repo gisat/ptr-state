@@ -30,8 +30,15 @@ function receiveIndexed(attributeRelations, filter, order, start, total, changed
 
 
 // ============ actions ============
+const actionUpdateStore = (data) => {
+	return {
+		type: ActionTypes.DATA.ATTRIBUTE_RELATIONS.UPDATE_STORE,
+		data
+	}
+};
 // ============ export ===========
 
 export default {
     receiveIndexed,
+	updateStore: actionUpdateStore
 }

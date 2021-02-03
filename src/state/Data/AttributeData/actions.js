@@ -183,10 +183,18 @@ function addIndexAction(filter, order, index, changedOn) {
 	}
 }
 
+function actionUpdateStore(data) {
+	return {
+		type: actionTypes.UPDATE_STORE,
+		data
+	}
+}
+
 // ============ export ===========
 
 export default {
 	addLoadingIndex,
 	removeIndex: removeIndexAction,
     receiveIndexed,
+	updateStore: actionUpdateStore
 }
