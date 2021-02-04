@@ -690,6 +690,51 @@ const getActiveKeysByFilterByActive = createCachedSelector(
 
 const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(getActiveKeysByFilterByActive);
 
+/**
+ * Merge metadata modifiers with filter by active
+ * @params metadataModifiers {Object} {placeKey: "uuid", scopeKey: "uuid", ...}
+ * @params filterByActive {Object} {place: true, case: true, ...}
+ */
+const getMergedModifiers = createRecomputeSelector((metadataModifiers, filterByActive) => {
+	// TODO at least a part is the same as in Maps/actions/layerUse?
+
+	// modifiers defined by key
+	let metadataDefinedByKey = metadataModifiers ? {...metadataModifiers} : {};
+
+	// Get actual metadata keys defined by filterByActive
+	const activeMetadataKeys = getActiveKeysByFilterByActiveObserver(filterByActive);
+
+	// Merge metadata, metadata defined by key have priority
+	return commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
+});
+
+/**
+ * Merge metadata modifiers with filter by active and return it in request-like format
+ * @params metadataModifiers {Object}
+ * @params filterByActive {Object}
+ */
+const getMergedModifiersInRequestFormat = createRecomputeSelector((metadataModifiers, filterByActive) => {
+	const mergedMetadataKeys = getMergedModifiers(metadataModifiers, filterByActive);
+
+	// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+	return commonHelpers.convertModifiersToRequestFriendlyFormat(mergedMetadataKeys);
+});
+
+/**
+ * @params componentState {Object}
+ */
+const getCommmonDataRelationsFilterFromComponentState = createRecomputeSelector((componentState) => {
+	let relationsFilter = getMergedModifiersInRequestFormat(componentState.metadataModifiers, componentState.filterByActive);
+
+	// add layerTemplate od areaTreeLevelKey
+	if (componentState.layerTemplateKey) {
+		relationsFilter.layerTemplateKey = componentState.layerTemplateKey;
+	} else if (componentState.areaTreeLevelKey) {
+		relationsFilter.areaTreeLevelKey = componentState.areaTreeLevelKey;
+	}
+	return relationsFilter;
+});
+
 const getUsedIndexPages = (getSubstate) => {
 	return createSelector([
 			getIndexedDataUses(getSubstate),
@@ -929,6 +974,8 @@ export default {
 	getByKeysAsObject,
 	getByKeys,
 
+	getCommmonDataRelationsFilterFromComponentState,
+
 	getDataByKey,
 	getDeletePermissionByKey,
 
@@ -951,6 +998,9 @@ export default {
 	getIndexesByFilteredItem,
 
 	getKeysToLoad,
+
+	getMergedModifiers,
+	getMergedModifiersInRequestFormat,
 
 	getStateToSave,
 

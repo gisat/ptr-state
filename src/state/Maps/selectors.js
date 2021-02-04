@@ -501,28 +501,7 @@ const getAllLayersStateByMapKey = createCachedSelector(
  */
 const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
 	if (layerState) {
-		// TODO at least a part is the same as in Maps/actions/layerUse?
-		const layer = layerState;
-
-		// modifiers defined by key
-		let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
-
-		// Get actual metadata keys defined by filterByActive
-		const activeMetadataKeys = common.getActiveKeysByFilterByActiveObserver(layer.filterByActive);
-
-		// Merge metadata, metadata defined by key have priority
-		const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
-
-		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-		let relationsFilter = commonHelpers.convertModifiersToRequestFriendlyFormat(mergedMetadataKeys);
-
-		// add layerTemplate od areaTreeLevelKey
-		if (layer.layerTemplateKey) {
-			relationsFilter.layerTemplateKey = layer.layerTemplateKey;
-		} else if (layer.areaTreeLevelKey) {
-			relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
-		}
-		return relationsFilter;
+		return common.getCommmonDataRelationsFilterFromComponentState(layerState);
 	} else {
 		return null;
 	}
@@ -532,12 +511,12 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerSt
  * @param layerState {Object}
  */
 const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
-    const spatialFilter = getSpatialRelationsFilterFromLayerState(layerState);
-    if(spatialFilter) {
-        const attributeFilter = {...spatialFilter};
+    const commonFilter = common.getCommmonDataRelationsFilterFromComponentState(layerState);
+    if (commonFilter) {
+    	let attributeFilter = {...commonFilter};
         if(layerState.styleKey) {
             // add styleKey
-            attributeFilter.styleKey = layerState.styleKey;
+			attributeFilter.styleKey = layerState.styleKey;
         }
         return attributeFilter;
     } else {
