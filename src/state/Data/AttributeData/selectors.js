@@ -6,6 +6,8 @@ const getSubstate = state => state.data.attributeData;
 
 const getIndex = common.getIndexByPath(getSubstate);
 
+const getAllAsObjectObserver = createRecomputeObserver((state, getSubstate) => getSubstate(state).byDataSourceKey);
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) => getSubstate(state).indexes);
 const getSpatialIndexesObserver = createRecomputeObserver((state, getSubstate) => getSubstate(state).spatialIndexes);
 
 /**
@@ -17,6 +19,8 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byDataSourceKey?.[key] || null;
 });
 
+const getAllAsObject_recompute = createRecomputeSelector(() => getAllAsObjectObserver(getSubstate));
+
 /**
  * It returns whole index for given filter & order
  * @param {Object} filter
@@ -24,6 +28,21 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
  * @return {Object} index
  */
 const getIndex_recompute = createRecomputeSelector((filter, order) => {
+	const indexes = getIndexesObserver(getSubstate);
+	if (indexes) {
+		return commonHelpers.getIndex(indexes, filter, order);
+	} else {
+		return null;
+	}
+});
+
+/**
+ * It returns whole spatial index for given filter & order
+ * @param {Object} filter
+ * @param {Array} order
+ * @return {Object} index
+ */
+const getSpatialIndex_recompute = createRecomputeSelector((filter, order) => {
 	const indexes = getSpatialIndexesObserver(getSubstate);
 	if (indexes) {
 		return commonHelpers.getIndex(indexes, filter, order);
@@ -87,8 +106,8 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector((attr
  * @param {string} tile
  * @return {Object}
  */
-const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, level, tile) => {
-	const index = getIndex_recompute(filter, null);
+const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, level, tile) => {
+	const index = getSpatialIndex_recompute(filter, null);
 	if (index?.index) {
 		const featureKeysByDataSourceKeys = index.index[level]?.[tile];
 		return featureKeysByDataSourceKeys || null;
@@ -99,8 +118,11 @@ const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, l
 
 
 export default {
+	getAllAsObject_recompute,
 	getIndex,
+	getIndex_recompute,
+	getSpatialIndex_recompute,
 	getDataByDataSourceKeys,
 	getAttributesByDataSourceKeysForFeatureKey,
-	getIndexedFeatureKeysByDataSourceKeys
+	getSpatiallyIndexedFeatureKeysByDataSourceKeys
 };

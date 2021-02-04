@@ -46,4 +46,5 @@ const getIndexed = createRecomputeSelector(filter => {
 export default {
 	getIndexed,
 	getIndex,
+	getIndex_recompute
 };

@@ -118,7 +118,7 @@ function getUpdatedIndexes(state, filter, order, indexUpdate, changedOn) {
 }
 
 function isCorrespondingIndex(index, filter, order) {
-	return _.isEqual(index.filter, filter) && _.isEqual(index.order, order);
+	return _.isEqual(index.filter || null, filter || null) && _.isEqual(index.order || null, order || null);
 }
 
 function itemFitFilter(filter, item) {

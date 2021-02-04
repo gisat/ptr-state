@@ -81,7 +81,7 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 			styleKey
 		};
 		const indexedFeatureKeys = spatialData.getIndexedFeatureKeys(spatialRelationsFilter, level, tileString, spatialDataSourceKey);
-		const indexedFeatureKeysByAttributeDataSourceKeys = attributeData.getIndexedFeatureKeysByDataSourceKeys(attributeRelationsFilter, level, tileString);
+		const indexedFeatureKeysByAttributeDataSourceKeys = attributeData.getSpatiallyIndexedFeatureKeysByDataSourceKeys(attributeRelationsFilter, level, tileString);
 		const cacheKey = stringify({cacheParams, indexedFeatureKeys, indexedFeatureKeysByAttributeDataSourceKeys}); // TODO is index enough as cache key?
 		const cache = tilesCache.findByKey(cacheKey);
 		if (cache) {
