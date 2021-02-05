@@ -119,14 +119,28 @@ function getIndexData(spatialData, attributeData) {
 			}
 			//for all tiles in tiles
 			for (const [tile, tileData] of Object.entries(tiles)) {
-				indexByLevelByTileByDataSourceKey[level][tile] = {};
-				if(_.isEmpty(attributeData)){
+				// If empty attributeData, then rewrite "loading" state
+				if(!indexByLevelByTileByDataSourceKey[level][tile] || _.isEmpty(attributeData)){
 					indexByLevelByTileByDataSourceKey[level][tile] = {};
-				} else {
+				}
+
+				if(!_.isEmpty(attributeData)) {
 					//for all attribute data source keys in attributeData
 					for (const [adKey, attributedatasource] of Object.entries(attributeData)) {
 						// Save only tileData that are incuded in attribute data keys
-						indexByLevelByTileByDataSourceKey[level][tile][adKey] = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
+
+						const indexes = tileData.filter((e => Object.keys(attributedatasource).includes(e.toString())));
+
+						//Add to existing index
+						if(indexByLevelByTileByDataSourceKey?.[level]?.[tile]?.[adKey]) {
+							indexByLevelByTileByDataSourceKey[level][tile][adKey] = [
+								...indexByLevelByTileByDataSourceKey[level][tile][adKey],
+								...indexes
+							]
+						} else {
+							//Create new tile and insert dsKey index data
+							indexByLevelByTileByDataSourceKey[level][tile][adKey] = indexes;
+						}
 					}
 				}
 			}
