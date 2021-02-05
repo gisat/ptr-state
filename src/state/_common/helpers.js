@@ -63,19 +63,21 @@ function removeIndex(indexes = [], filter, order) {
 /**
  * Create set of updated indexes state based on current state and given indexUpdate.
  * It produce updated indexes state in case of existing index for given filter and order.
- * If index with filter and orde is not in the state yet, its add to indexes state.
+ * If index with filter and order is not in the state yet, its add to indexes state.
  * @param state {Object}
  * @param filter {Object}
  * @param order {Array}
  * @param indexUpdate {Array}
  * @param changedOn {string}
+ * @param indexesPath {string} name of a property where indexes are stored
  */
-function getUpdatedIndexes(state, filter, order, indexUpdate, changedOn) {
+function getUpdatedIndexes(state, filter, order, indexUpdate, changedOn, indexesPath = "indexes") {
+
 	let indexes = [];
 	let selectedIndex = {};
 
-	if (state.indexes) {
-		state.indexes.forEach(index => {
+	if (state[indexesPath]) {
+		state[indexesPath].forEach(index => {
 			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)){
 				selectedIndex = index;
 			} else {

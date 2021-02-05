@@ -52,14 +52,14 @@ const addWithIndex = (state, action) => {
 		} : action.data,
 	};
 
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn, "spatialIndexes");
 
 	return {...state, byDataSourceKey, spatialIndexes: updatedIndexes}
 }
 
 
 const addIndex = (state, action) => {
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn);
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn, "spatialIndexes");
 
 	return {
 		...state,
