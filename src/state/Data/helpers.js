@@ -15,17 +15,17 @@ export const tileAsString = (tile) => {
 
 /**
  * Converts tile as a string to array
- * @param {Array|string} tile 
+ * @param {Array|string} tile
  * @returns {string}
  */
 export const tileAsArray = (tile) => {
-    if(typeof tile === 'string') {
-        return tile.split(',');
-    } else if(_.isArray(tile)){
-        return tile;
-    } else {
-        return null;
-    }
+	if(typeof tile === 'string') {
+		return tile.split(',').map(parseFloat);
+	} else if(_.isArray(tile)){
+		return tile.map(parseFloat);
+	} else {
+		return null;
+	}
 }
 
 /**
