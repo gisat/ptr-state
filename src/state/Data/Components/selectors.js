@@ -77,7 +77,20 @@ const getDataForBigNumber = createRecomputeSelector((componentKey) => {
 	return {title, value};
 });
 
+const getDataForColumnChart = createRecomputeSelector((componentKey) => {
+	const data = getData(componentKey);
+	if (data) {
+		return {
+			data,
+			ySourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[0]].join('.')
+		}
+	} else {
+		return null;
+	}
+});
+
 export default {
 	getData,
-	getDataForBigNumber
+	getDataForBigNumber,
+	getDataForColumnChart
 };
