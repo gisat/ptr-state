@@ -67,6 +67,17 @@ const getData = createRecomputeSelector((componentKey) => {
 	}
 });
 
+const getDataForBigNumber = createRecomputeSelector((componentKey) => {
+	const data = getData(componentKey);
+	const firstFeature = data?.[0];
+	const title = firstFeature?.key;
+	const attributes = firstFeature?.data;
+	const value = attributes && Object.values(attributes)?.[0];
+
+	return {title, value};
+});
+
 export default {
-	getData
+	getData,
+	getDataForBigNumber
 };
