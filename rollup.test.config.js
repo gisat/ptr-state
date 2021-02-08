@@ -62,6 +62,7 @@ export default {
 		'react-router',
 		'@gisatcz/ptr-utils',
 		'@gisatcz/ptr-core',
+		'@gisatcz/ptr-tile-grid',
 		'path',
 		'moment',
 		'reselect',
@@ -69,6 +70,8 @@ export default {
         'slash',
 		'isomorphic-fetch',
 		'query-string',
+		'@jvitela/recompute',
+		'fast-stringify',
 		...lodashExternal,
 	],
 	output: {

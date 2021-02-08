@@ -3,8 +3,8 @@ import {createObserver as createRecomputeObserver, createSelector as createRecom
 import createCachedSelector from 're-reselect';
 import _ from 'lodash';
 
-import attributeDataSelectors from '../attributeData/selectors';
-import attributeDataSourcesSelectors from '../attributeDataSources/selectors';
+import attributeDataSelectors from '../AttributeData/selectors';
+import attributeDataSourcesSelectors from '../AttributeDataSources/selectors';
 
 const getSubstate = (state) => state.data.components;
 const getComponentStateByKey = (state, key) => state.data.components.components[key];
