@@ -84,6 +84,7 @@ export default {
     'query-string',
 	'@tackworld.com/rereselct',
 	'@jvitela/recompute',
+	'fast-stringify',
     ...lodashExternal
   ],
   output: {
