@@ -1,5 +1,5 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
+import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import commonHelpers from '../../_common/helpers';
 
 const INITIAL_STATE = {
