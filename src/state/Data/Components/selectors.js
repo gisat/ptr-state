@@ -15,8 +15,6 @@ const getData = createRecomputeSelector((componentKey) => {
 
 	// TODO cached selector for data of only relevant data sources needed!!!
 	const data = attributeDataSelectors.getAllAsObject_recompute();
-
-	// TODO multiple attributes - sorting, indexes, etc...
 	const attributeKeys = componentState?.attributeKeys;
 
 	if (!_.isEmpty(data) && attributeKeys?.length) {
@@ -44,27 +42,36 @@ const getData = createRecomputeSelector((componentKey) => {
 			const indexedFeatureKeys = attributeDataIndex?.index;
 
 			if (indexedFeatureKeys) {
-				let finalFeatures = [];
+				let finalFeaturesAsObject = {};
 
 				// Loop through indexed features
 				_.forIn(indexedFeatureKeys, (featureKey) => {
 
 					// We don't know which feature is in which attribute DS
+					// also there could be more attributes for the feature
 					_.forIn(attributeDsKeyAttributeKeyPairs, (attributeKey, attributeDsKey) => {
 						const value = data[attributeDsKey]?.[featureKey];
-						if (value) {
-							// TODO format
-							finalFeatures.push({
-								key: featureKey,
-								data: {
-									[attributeKey]: value
+
+						if (value !== undefined) {
+							// existing feature
+							if (finalFeaturesAsObject[featureKey]) {
+								finalFeaturesAsObject[featureKey].data[attributeKey] = value;
+							}
+
+							// new feature
+							else {
+								// TODO format?
+								finalFeaturesAsObject[featureKey] = {
+									key: featureKey,
+									data: {
+										[attributeKey]: value
+									}
 								}
-							})
-							return false;
+							}
 						}
 					});
 				});
-				return finalFeatures;
+				return Object.values(finalFeaturesAsObject);
 			} else {
 				return null;
 			}
@@ -98,8 +105,22 @@ const getDataForColumnChart = createRecomputeSelector((componentKey) => {
 	}
 });
 
+const getDataForScatterChart = createRecomputeSelector((componentKey) => {
+	const data = getData(componentKey);
+	if (data) {
+		return {
+			data,
+			xSourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[0]].join('.'),
+			ySourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[1]].join('.'),
+		}
+	} else {
+		return null;
+	}
+});
+
 export default {
 	getData,
 	getDataForBigNumber,
-	getDataForColumnChart
+	getDataForColumnChart,
+	getDataForScatterChart,
 };
