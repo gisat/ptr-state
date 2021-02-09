@@ -122,6 +122,7 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,

@@ -8,6 +8,7 @@ const refreshUses = common.refreshUses(Select.attributes.getSubstate, `attribute
 const deleteItem = common.delete(Select.attributes.getSubstate, 'attributes', ActionTypes.ATTRIBUTES);
 const saveEdited = common.saveEdited(Select.attributes.getSubstate, 'attributes', ActionTypes.ATTRIBUTES);
 const updateEdited = common.updateEdited(Select.attributes.getSubstate, ActionTypes.ATTRIBUTES);
+const updateStore = common.updateStore(Select.attributes.getSubstate, ActionTypes.ATTRIBUTES);
 const useIndexed = common.useIndexed(Select.attributes.getSubstate, 'attributes', ActionTypes.ATTRIBUTES);
 const useIndexedClear = common.useIndexedClear(ActionTypes.ATTRIBUTES);
 const useKeys = common.useKeys(Select.attributes.getSubstate, 'attributes', ActionTypes.ATTRIBUTES);
@@ -44,6 +45,7 @@ export default {
 	setActiveKey,
 
 	updateEdited,
+	updateStore,
 	useIndexed,
 	useIndexedClear,
 	useKeys,

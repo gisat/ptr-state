@@ -114,6 +114,14 @@ const updateEdited = (getSubstate, actionTypes) => {
 	}
 };
 
+const updateStore = (getSubstate, actionTypes) => {
+	return (data) => {
+		return (dispatch) => {
+			dispatch(actionUpdateStore(actionTypes, data));
+		}
+	}
+}
+
 const removePropertyFromEdited = (actionTypes) => {
 	return (modelKey, key) => {
 		return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
@@ -886,6 +894,10 @@ function actionSetInitial(actionTypes) {
 	return action(actionTypes, 'SET_INITIAL');
 }
 
+function actionUpdateStore(actionTypes, data) {
+	return action(actionTypes, 'UPDATE_STORE', data);
+}
+
 function actionUseKeysClear(actionTypes, componentId) {
 	return action(actionTypes, 'USE.KEYS.CLEAR', {componentId});
 }
@@ -949,6 +961,7 @@ export default {
 	saveEdited,
 	updateSubstateFromView,
 	updateEdited,
+	updateStore,
 	useKeys,
 	useKeysClear: creator(actionUseKeysClear),
 	useIndexed,
