@@ -65,5 +65,6 @@ const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelect
 
 export default {
 	getFilteredAttributeDataSourceKeyAttributeKeyPairs,
+	getIndexed,
     getIndex
 };

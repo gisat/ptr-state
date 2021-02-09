@@ -1,10 +1,9 @@
 import common from '../../_common/selectors';
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
-import createCachedSelector from 're-reselect';
 import _ from 'lodash';
 
 import attributeDataSelectors from '../AttributeData/selectors';
-import attributeDataSourcesSelectors from '../AttributeDataSources/selectors';
+import attributeRelationsSelectors from '../AttributeRelations/selectors';
 
 const getSubstate = (state) => state.data.components;
 const getComponentStateByKey = (state, key) => state.data.components.components[key];
@@ -18,47 +17,57 @@ const getData = createRecomputeSelector((componentKey) => {
 	const data = attributeDataSelectors.getAllAsObject_recompute();
 
 	// TODO multiple attributes - sorting, indexes, etc...
-	const attributeKey = componentState?.attributeKeys?.[0];
+	const attributeKeys = componentState?.attributeKeys;
 
-	if (!_.isEmpty(data) && attributeKey) {
+	if (!_.isEmpty(data) && attributeKeys?.length) {
 		// Get common relations filter
 		let commonRelationsFilter = common.getCommmonDataRelationsFilterFromComponentState(componentState);
 
 		// Create final relations filter
-		const relationsFilter = {...commonRelationsFilter, attributeKey};
+		const relationsFilter = {...commonRelationsFilter, attributeKey: {in: attributeKeys}};
 
-		// Get keys of all relevant data sources (typically just one)
-		const attributeDataSourceIndex = attributeDataSourcesSelectors.getIndex_recompute(relationsFilter, null);
-		const attributeDataSourceKeys = attributeDataSourceIndex?.index && Object.values(attributeDataSourceIndex.index);
+		// Get relations
+		const attributeRelations = attributeRelationsSelectors.getIndexed(relationsFilter);
 
-		// Find data index
-		// TODO more sophisticated index with attributeFilter & attributeOrder
-		const attributeDataIndex = attributeDataSelectors.getIndex_recompute(relationsFilter, null);
-
-		// Get indexed features
-		const indexedFeatureKeys = attributeDataIndex?.index;
-
-		if (indexedFeatureKeys && attributeDataSourceKeys?.length) {
-			let finalFeatures = [];
-			_.forIn(indexedFeatureKeys, (featureKey) => {
-
-				// We don't know which feature is in which attribute DS
-				_.forEach(attributeDataSourceKeys, (attributeDataSourceKey) => {
-					const value = data[attributeDataSourceKey]?.[featureKey];
-					if (value) {
-
-						// TODO format
-						finalFeatures.push({
-							key: featureKey,
-							data: {
-								[attributeKey]: value
-							}
-						})
-						return false;
-					}
-				});
+		if (attributeRelations?.length) {
+			// Get from relations, which data source is associated with which attribute
+			let attributeDsKeyAttributeKeyPairs = {};
+			attributeRelations.forEach(relation => {
+				attributeDsKeyAttributeKeyPairs[relation.data.attributeDataSourceKey] = relation.data.attributeKey;
 			});
-			return finalFeatures;
+
+			// Find data index
+			// TODO more sophisticated index with attributeFilter & attributeOrder
+			const attributeDataIndex = attributeDataSelectors.getIndex_recompute(relationsFilter, null);
+
+			// Get indexed features
+			const indexedFeatureKeys = attributeDataIndex?.index;
+
+			if (indexedFeatureKeys) {
+				let finalFeatures = [];
+
+				// Loop through indexed features
+				_.forIn(indexedFeatureKeys, (featureKey) => {
+
+					// We don't know which feature is in which attribute DS
+					_.forIn(attributeDsKeyAttributeKeyPairs, (attributeKey, attributeDsKey) => {
+						const value = data[attributeDsKey]?.[featureKey];
+						if (value) {
+							// TODO format
+							finalFeatures.push({
+								key: featureKey,
+								data: {
+									[attributeKey]: value
+								}
+							})
+							return false;
+						}
+					});
+				});
+				return finalFeatures;
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
