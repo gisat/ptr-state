@@ -1,7 +1,10 @@
 import {createSelector} from 'reselect';
+import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 import _ from 'lodash';
 
+const getSubstate = state => state.components;
 const getAllByKey = (state) => state.components;
+const getAllByKeyObserver = createRecomputeObserver(getAllByKey);
 
 const getDataByComponentKey = createSelector(
 	[
@@ -17,6 +20,10 @@ const getDataByComponentKey = createSelector(
 	}
 );
 
+const getByComponentKey_recompute = createRecomputeSelector((componentKey) => {
+	return getAllByKeyObserver()?.[componentKey];
+});
+
 const get = createSelector(
 	[
 		getDataByComponentKey,
@@ -28,5 +35,9 @@ const get = createSelector(
 export default {
 	get,
 	getDataByComponentKey,
-	getStateToSave: getAllByKey
+	getStateToSave: getAllByKey,
+
+	getByComponentKey_recompute,
+
+	getSubstate
 }

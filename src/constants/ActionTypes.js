@@ -215,8 +215,9 @@ export default utils.deepKeyMirror({
 	},
 
 	COMPONENTS: {
-		UPDATE: null,
 		SET: null,
+		UPDATE: null,
+		UPDATE_STORE: null,
 	},
 
 	CHARTS: {

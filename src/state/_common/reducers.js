@@ -424,10 +424,11 @@ export default {
 	/**
 	 * Update whole state
 	 * @param state {Object}
-	 * @param data {Object}
+	 * @param action {Object}
 	 * @return {Object}
 	 */
-	updateStore: (state, data) => {
+	updateStore: (state, action) => {
+		const {type, ...data} = action;
 		return {...state, ...data};
 	}
 }

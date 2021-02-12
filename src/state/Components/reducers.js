@@ -1,4 +1,5 @@
 import ActionTypes from '../../constants/ActionTypes';
+import common from '../_common/reducers';
 
 const INITIAL_STATE = {
 };
@@ -25,6 +26,8 @@ export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case ActionTypes.COMPONENTS.UPDATE:
 			return update(state, action);
+		case ActionTypes.COMPONENTS.UPDATE_STORE:
+			return common.updateStore(state, action);
 		case ActionTypes.COMPONENTS.SET:
 			return set(state, action);
 		default:
