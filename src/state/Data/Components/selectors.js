@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import attributeDataSelectors from '../AttributeData/selectors';
 import attributeRelationsSelectors from '../AttributeRelations/selectors';
+import componentsSelectors from '../../Components/selectors';
 
 const getSubstate = (state) => state.data.components;
 const getComponentStateByKey = (state, key) => state.data.components.components[key];
@@ -83,38 +84,45 @@ const getData = createRecomputeSelector((componentKey) => {
 	}
 });
 
-const getDataForBigNumber = createRecomputeSelector((componentKey) => {
-	const data = getData(componentKey);
+const getDataForBigNumber = createRecomputeSelector((props) => {
+	const componentSettings = componentsSelectors.getByComponentKey_recompute(props.stateComponentKey);
+	const data = getData(props.stateComponentKey);
 	const firstFeature = data?.[0];
-	const title = firstFeature?.key;
-	const attributes = firstFeature?.data;
-	const value = attributes && Object.values(attributes)?.[0];
 
-	return {title, value};
+	return {
+		title: _.get(firstFeature, componentSettings?.titleSourcePath),
+		value: _.get(firstFeature, componentSettings?.valueSourcePath)
+	};
 });
 
-const getDataForColumnChart = createRecomputeSelector((componentKey) => {
-	const data = getData(componentKey);
+const getDataForColumnChart = createRecomputeSelector((props) => {
+	const componentSettings = componentsSelectors.getByComponentKey_recompute(props.stateComponentKey);
+	const chartSettings = {...componentSettings, ...props}
+	const data = getData(props.stateComponentKey);
+
 	if (data) {
 		return {
 			data,
-			ySourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[0]].join('.')
+			...chartSettings
 		}
 	} else {
-		return null;
+		return chartSettings;
 	}
 });
 
-const getDataForScatterChart = createRecomputeSelector((componentKey) => {
-	const data = getData(componentKey);
+const getDataForScatterChart = createRecomputeSelector((props) => {
+	// const componentState = getComponentStateByKeyObserver(stateComponentKey);
+	const componentSettings = componentsSelectors.getByComponentKey_recompute(props.stateComponentKey);
+	const chartSettings = {...componentSettings, ...props}
+	const data = getData(props.stateComponentKey);
+
 	if (data) {
 		return {
 			data,
-			xSourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[0]].join('.'),
-			ySourcePath: ['data', data[0].data && Object.keys(data[0].data)?.[1]].join('.'),
+			...chartSettings
 		}
 	} else {
-		return null;
+		return chartSettings;
 	}
 });
 
