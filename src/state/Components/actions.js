@@ -41,7 +41,7 @@ function actionSet(component, path, value) {
 
 export default {
 	update,
-	updateStateFromView,
+	updateStateFromView: updateStore,
 	updateStore,
 	set: actionSet
 }

@@ -58,22 +58,6 @@ describe('state/Components/actions', function () {
 		});
 	});
 
-	it('updateStateFromView', function () {
-		dispatch(actions.updateStateFromView({cmp: {k: 'v'}}));
-
-		return runFunctionActions({dispatch, getState: () => ({})}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
-				{
-					component: 'cmp',
-					type: 'COMPONENTS.UPDATE',
-					update: {
-						k: 'v',
-					},
-				},
-			]);
-		});
-	});
-
 	it('set', function () {
 		dispatch(actions.set('cmp', 'k', 'v'));
 
