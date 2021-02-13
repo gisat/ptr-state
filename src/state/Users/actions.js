@@ -61,7 +61,7 @@ function apiLoginUser(email, password) {
 			password: password
 		};
 
-		return request(localConfig, 'backend/api/login/login', 'POST', null, payload)
+		return request(localConfig, 'api/login/login', 'POST', null, payload)
 			.then(result => {
 				if (result.data.status === "ok") {
 					dispatch(onLogin());
@@ -127,7 +127,7 @@ function apiLoadCurrentUser() {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		dispatch(actionApiLoadCurrentUserRequest());
 
-		return request(localConfig,'backend/rest/user/current', 'GET', null, null)
+		return request(localConfig,'rest/user/current', 'GET', null, null)
 			.then(result => {
 				if (result.errors) { //todo how do we return errors here?
 					throw new Error(result.errors);
@@ -158,7 +158,7 @@ function apiLogoutUser(ttl) {
 		const apiBackendHost = Select.app.getLocalConfiguration(getState(), 'apiBackendHost');
 		dispatch(actionApiLogoutRequest());
 
-		let url = apiBackendProtocol + '://' + path.join(apiBackendHost, 'backend/api/login/logout');
+		let url = apiBackendProtocol + '://' + path.join(apiBackendHost, 'api/login/logout');
 
 		return fetch(url, {
 			method: 'POST',
