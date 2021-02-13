@@ -26,10 +26,10 @@ const updateStateFromViewWithData = (view) => {
 
 // ============ actions ===========
 function clearFeatureKeysFilter(key){
-	return {
-		type: ActionTypes.SELECTIONS.CLEAR.FEATURE_KEYS_FILTER,
-		key
-	}
+    return {
+        type: ActionTypes.SELECTIONS.CLEAR.FEATURE_KEYS_FILTER,
+        key
+    }
 }
 
 function setFeatureKeysFilterKeys(key, featureKeys){

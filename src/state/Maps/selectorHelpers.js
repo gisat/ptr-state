@@ -48,7 +48,7 @@ const mergeBackgroundLayerWithLayers = createCachedSelector(
 )((backgroundLayer, layers) => `${JSON.stringify(backgroundLayer)}_${JSON.stringify(layers)}`);
 
 
-const mergeModifiersWithFilterByActive = (layers, metadataModifiers, filterByActive) => {
+const mergeModifiersAndFilterByActiveToLayerStructure = (layers, metadataModifiers, filterByActive) => {
     return layers.map(layer => {
         let layerMetadataModifiers = (layer.metadataModifiers && metadataModifiers) ? {...metadataModifiers, ...layer.metadataModifiers} : (metadataModifiers || layer.metadataModifiers || null);
         let layerFilterByActive = (layer.filterByActive && filterByActive) ? {...filterByActive, ...layer.filterByActive} : (filterByActive || layer.filterByActive || null);
@@ -128,5 +128,5 @@ export default {
     getMapByKey,
     getZoomLevel,
     mergeBackgroundLayerWithLayers,
-    mergeModifiersWithFilterByActive
+	mergeModifiersAndFilterByActiveToLayerStructure
 }

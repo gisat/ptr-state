@@ -114,7 +114,7 @@ const getMapSetActiveMapView = createCachedSelector(
             return null;
         }
     }
-)((state, mapKey) => mapKey);
+)((state, setKey) => setKey);
 
 /**
  * @param state {Object}
@@ -282,7 +282,7 @@ const getMetadataModifiersByMapKey = createCachedSelector(
     ],
     (mapModifiers, setModifiers) => {
         if (mapModifiers && setModifiers) {
-            return {...mapModifiers, ...setModifiers};
+            return {...setModifiers, ...mapModifiers};
         } else {
             return setModifiers || mapModifiers || null;
         }
@@ -353,7 +353,7 @@ const getBackgroundLayerStateByMapKey = createSelector(
  * @param mapKey {string}
  * @return {Object} Merged mapSetState with metadataModifiers and filterByActive.
  */
-const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
+const getMapSetLayersStateWithModifiersByMapKey = createCachedSelector(
     [
         getMapSetLayersStateByMapKey,
         getMapSetMetadataModifiersByMapKey,
@@ -361,7 +361,7 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
     ],
     (setLayers, metadataModifiers, mapSetFilterByActive) => {
         if (setLayers?.length) {
-            return selectorHelpers.mergeModifiersWithFilterByActive(setLayers, metadataModifiers, mapSetFilterByActive);
+            return selectorHelpers.mergeModifiersAndFilterByActiveToLayerStructure(setLayers, metadataModifiers, mapSetFilterByActive);
         } else {
             return null;
         }
@@ -373,7 +373,7 @@ const getMapSetLayersStateByMapKeyWithModifiers = createCachedSelector(
  * @param mapKey {string}
  * @return {Object} Merged mapState with metadataModifiers and filterByActive.
  */
-const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
+const getMapLayersStateWithModifiersByMapKey = createCachedSelector(
     [
         getMapLayersStateByMapKey,
         getMetadataModifiersByMapKey,
@@ -381,7 +381,7 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
     ],
     (mapLayers, metadataModifiers, mapFilterByActive) => {
         if (mapLayers?.length) {
-            return selectorHelpers.mergeModifiersWithFilterByActive(mapLayers, metadataModifiers, mapFilterByActive);
+            return selectorHelpers.mergeModifiersAndFilterByActiveToLayerStructure(mapLayers, metadataModifiers, mapFilterByActive);
         } else {
             return null;
         }
@@ -395,8 +395,8 @@ const getMapLayersStateByMapKeyWithModifiers = createCachedSelector(
  */
 const getLayersStateByMapKey = createCachedSelector(
     [
-        getMapSetLayersStateByMapKeyWithModifiers,
-        getMapLayersStateByMapKeyWithModifiers
+        getMapSetLayersStateWithModifiersByMapKey,
+        getMapLayersStateWithModifiersByMapKey
     ],
     (setLayers, mapLayers) => {
         if (mapLayers && setLayers) {
@@ -460,7 +460,7 @@ export default {
     getMapByKey,
     getMapFilterByActiveByMapKey,
     getMapLayersStateByMapKey,
-    getMapLayersStateByMapKeyWithModifiers,
+    getMapLayersStateWithModifiersByMapKey,
     getMapMetadataModifiersByMapKey,
 
     getMapSetActiveMapKey,
@@ -470,7 +470,7 @@ export default {
     getMapSetByKey,
     getMapSetFilterByActiveByMapKey,
     getMapSetLayersStateByMapKey,
-    getMapSetLayersStateByMapKeyWithModifiers,
+    getMapSetLayersStateWithModifiersByMapKey,
     getMapSetMetadataModifiersByMapKey,
     getMapSetMapKeys,
     getMapSets,

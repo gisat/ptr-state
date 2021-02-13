@@ -6,18 +6,18 @@ const INITIAL_STATE = {
 };
 
 const clearFeatureKeysFilter = (state, key) => {
-	let updatedByKey = {
-		...state.byKey,
-		[key]: {
-			...state.byKey[key],
-			data: {
-				...state.byKey[key].data,
-				featureKeysFilter: null
-			}
-		}
-	};
+    let updatedByKey = {
+        ...state.byKey,
+        [key]: {
+            ...state.byKey[key],
+            data: {
+                ...state.byKey[key].data,
+                featureKeysFilter: null
+            }
+        }
+    };
 
-	return {...state, byKey: updatedByKey};
+    return {...state, byKey: updatedByKey};
 };
 
 const setFeatureKeysFilterKeys = (state, key, featureKeys) => {
