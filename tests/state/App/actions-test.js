@@ -78,7 +78,7 @@ describe('state/App/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/applications/filtered/configurations',
+				'http://localhost/rest/applications/filtered/configurations',
                 slash(url)
 			);
 			assert.deepStrictEqual(options, {
