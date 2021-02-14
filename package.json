@@ -25,7 +25,7 @@
     "@jvitela/recompute": "0.3.3",
     "@manaflair/redux-batch": "1.0.0",
     "fast-stringify": "2.0.0",
-    "isomorphic-fetch": "2.2.1",
+    "isomorphic-fetch": "3.0.0",
     "lodash": "4.17.20",
     "moment": "2.29.1",
     "path": "0.12.7",
