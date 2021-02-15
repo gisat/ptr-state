@@ -49,7 +49,7 @@ function getUniqueIndexes(indexes) {
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	const cleardIndexes = _.reduce(indexes, (acc, index) => {
+	const clearedIndexes = _.reduce(indexes, (acc, index) => {
 		const indexToBeCleared = isCorrespondingIndex(index, filter, order);
 		if(indexToBeCleared) {
 			return acc
@@ -57,7 +57,7 @@ function removeIndex(indexes = [], filter, order) {
 			return [...acc, index];
 		}
 	}, [])
-	return cleardIndexes || [];
+	return clearedIndexes || [];
 }
 
 /**
