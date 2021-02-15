@@ -18,7 +18,7 @@ const DEFAULT_RELATIONS_PAGE = {
 }
 
 /**
- * Centered place for getting PAGE_SIZE from state or configDefaults.
+ * Central method for getting PAGE_SIZE from state or configDefaults.
  * @param {Object} state App state
  * @return {Number}
  */
