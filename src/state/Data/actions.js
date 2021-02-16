@@ -70,7 +70,7 @@ function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, orde
         const remainingRelationsPageCount = getRestRelationsPages(attributeRelationsCount, spatialRelationsCount, PAGE_SIZE);
         let tilesPagination = 0;
         const loadRelations = true;
-        for (let i = 1; i < remainingRelationsPageCount; i++) {
+        for (let i = 1; i <= remainingRelationsPageCount; i++) {
             const relations = {
                 offset: (i) * PAGE_SIZE,
                 limit: PAGE_SIZE
