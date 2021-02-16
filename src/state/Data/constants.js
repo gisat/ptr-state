@@ -1,3 +1,4 @@
 // Layer data types that supports vector tiling.
 // Tiled vectors has spatial and attributes indexes with loading indication.
-export const TILED_LAYERS_TYPES = ['vector'];
+// TODO 'vector' is only temporary, remove it once it is modified on BE
+export const TILED_VECTOR_LAYER_TYPES = ['vector', 'tiled-vector'];
