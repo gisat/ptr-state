@@ -10,7 +10,7 @@ import commonActions from '../_common/actions';
 
 import Select from "../Select";
 import {getMissingTiles, tileAsArray} from './helpers';
-import {TILED_LAYERS_TYPES} from './constants';
+import {TILED_VECTOR_LAYER_TYPES} from './constants';
 
 const DEFAULT_RELATIONS_PAGE = {
     offset: 0,
@@ -106,7 +106,7 @@ function loadMissingRelationsAndData(loadGeometry, spatialFilter, styleKey, orde
             // If only some of spatialDataSources relations are unsupported, then loading status on index will be replaced by data.
             const spatialDataSourcesTypes = _.flattenDeep(response.map(r => r?.data?.spatialDataSources?.map(sds => ({type: sds.data.type, key: sds.key}))));
             const spatialDataSourcesPairs = [...spatialDataSourcesTypes, ...preloadedSpatialDataSources];
-            const allSourcesAreUnsupported = spatialDataSourcesPairs.every(ds => !TILED_LAYERS_TYPES.includes(ds.type));
+            const allSourcesAreUnsupported = spatialDataSourcesPairs.every(ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.type));
                 
             // Check if all of returned spatialDataSources are unsupported type.
             // Indexes for unsupported layers can be cleared.
@@ -285,7 +285,7 @@ function ensureDataAndRelations(spatialFilter, styleKey, order, mergedSpatialFil
 
                 const spatialDataSources = response?.data?.spatialDataSources || [];
                 const preloadSpatialDataSources = spatialDataSources.map(sds => ({type: sds.data.type, key: sds.key}));
-                const allSourcesAreUnsupported = spatialDataSources.every(ds => !TILED_LAYERS_TYPES.includes(ds.data?.type));
+                const allSourcesAreUnsupported = spatialDataSources.every(ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.data?.type));
                 
                 // Check if all of returned spatialDataSources are unsupported type.
                 // If so, is no reason to make further requests.
