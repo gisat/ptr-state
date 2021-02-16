@@ -50,8 +50,7 @@ function getUniqueIndexes(indexes) {
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	const index = indexes && !_.isEmpty(indexes) && getIndex(indexes, filter, order);
-	if(index) {
+	if(indexes && !_.isEmpty(indexes)) {
 		const clearedIndexes = _.reduce(indexes, (acc, index) => {
 			const indexToBeCleared = isCorrespondingIndex(index, filter, order);
 			if(indexToBeCleared) {
@@ -60,7 +59,12 @@ function removeIndex(indexes = [], filter, order) {
 				return [...acc, index];
 			}
 		}, [])
-		return clearedIndexes || [];
+
+		if(clearedIndexes.length === indexes.length) {
+			return indexes;
+		} else {
+			return clearedIndexes;
+		}
 	} else {
 		return indexes;
 	}
