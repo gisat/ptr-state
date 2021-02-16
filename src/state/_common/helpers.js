@@ -1,14 +1,30 @@
+import createCachedSelector from "re-reselect";
 import _ from "lodash";
 
-function getIndex(indexes, filter, order) {
-	if (indexes){
-		// TODO re-reselect?
-		const index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
-		return index ? index : null;
-	} else {
-		return null;
+/**
+ * TODO tests
+ * Returns all indexes that fits filter and order
+ * @param {*} indexes 
+ * @param {*} filter 
+ * @param {*} order 
+ */
+const getIndex = createCachedSelector([
+		(indexes) => indexes,
+		(indexes, filter) => filter,
+		(indexes, filter, order) => order,
+	],
+	(indexes, filter, order) => {
+		if (indexes){
+			const index = _.find(indexes, (index) => isCorrespondingIndex(index, filter, order));
+			return index ? index : null;
+		} else {
+			return null;
+		}
 	}
-}
+)((indexes, filter, order) => {
+	return `${JSON.stringify(filter)}${JSON.stringify(order)}`
+})
+
 
 // TODO Test
 function getUniqueIndexes(indexes) {
@@ -23,6 +39,94 @@ function getUniqueIndexes(indexes) {
 	} else {
 		return null;
 	}
+}
+
+/**
+ * Remove index from given indexes that fit to filter and order.
+ * If index does not exists under filter, same instance of indexes has return.
+ * @param indexes {Array} Array of indexes
+ * @param filter {Object} 
+ * @param order {Array}
+ * @return {Array} New instance of indexes
+ */
+function removeIndex(indexes = [], filter, order) {
+	if(indexes && !_.isEmpty(indexes)) {
+		const clearedIndexes = _.reduce(indexes, (acc, index) => {
+			const indexToBeCleared = isCorrespondingIndex(index, filter, order);
+			if(indexToBeCleared) {
+				return acc
+			} else {
+				return [...acc, index];
+			}
+		}, [])
+
+		if(clearedIndexes.length === indexes.length) {
+			return indexes;
+		} else {
+			return clearedIndexes;
+		}
+	} else {
+		return indexes;
+	}
+}
+
+/**
+ * Create set of updated indexes state based on current state and given indexUpdate.
+ * It produce updated indexes state in case of existing index for given filter and order.
+ * If index with filter and order is not in the state yet, its add to indexes state.
+ * @param state {Object}
+ * @param filter {Object}
+ * @param order {Array}
+ * @param indexUpdate {Array}
+ * @param changedOn {string}
+ * @param indexesPath {string} name of a property where indexes are stored
+ */
+function getUpdatedIndexes(state, filter, order, indexUpdate, changedOn, indexesPath = "indexes") {
+
+	let indexes = [];
+	let selectedIndex = {};
+
+	if (state[indexesPath]) {
+		state[indexesPath].forEach(index => {
+			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)){
+				selectedIndex = index;
+			} else {
+				indexes.push(index);
+			}
+		});
+	}
+
+	let index;
+	if (indexUpdate.length) {
+		index = {...selectedIndex.index};
+		indexUpdate.forEach((model, i) => {
+			if(model.key) {
+				index[i] = model.key;
+			} else {
+				//spatial data by spatialDataSourceKey, levels and tiles
+				//update spatialDataSourceKey
+				for(const [level, dataByTiles] of Object.entries(model)) {
+					if(index.hasOwnProperty(level) && index[level]) {
+						//update data on level
+						index[level] =  {...index[level], ...dataByTiles}
+					} else {
+						index[level] =  {...dataByTiles}
+					}
+				}
+			}
+
+		});
+	}
+
+	selectedIndex = {
+		filter: selectedIndex.filter || filter,
+		order: selectedIndex.order || order,
+		changedOn: changedOn,
+		index: index || selectedIndex.index
+	};
+	indexes.push(selectedIndex);
+
+	return indexes;
 }
 
 function isCorrespondingIndex(index, filter, order) {
@@ -189,9 +293,11 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 }
 
 export default {
-    convertModifiersToRequestFriendlyFormat,
+	convertModifiersToRequestFriendlyFormat,
+	removeIndex,
 	getIndex,
 	getUniqueIndexes,
+	getUpdatedIndexes,
 	mergeFilters,
     mergeMetadataKeys,
 	isCorrespondingIndex,

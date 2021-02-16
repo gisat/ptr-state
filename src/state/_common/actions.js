@@ -834,7 +834,6 @@ function actionClearIndex(actionTypes, filter, order) {
 	return action(actionTypes, 'INDEX.CLEAR_INDEX', {filter, order});
 }
 
-
 const actionMarkAsDeleted = (actionTypes, key, date) => {
 	return action(actionTypes, 'MARK_DELETED', {key, date});
 }
@@ -922,7 +921,7 @@ export default {
 	addBatch: creator(actionAddBatch),
 	addBatchIndex: creator(actionAddBatchIndex),
 	action,
-	actionAdd,
+	addIndex: creator(actionAddIndex),
 	actionGeneralError,
 	apiUpdate,
 	creator,

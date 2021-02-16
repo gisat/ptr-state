@@ -224,12 +224,46 @@ export default utils.deepKeyMirror({
 	},
 
     DATA: {
-        ATTRIBUTE_DATA: {},
-        ATTRIBUTE_DATA_SOURCES: {},
-        ATTRIBUTE_RELATIONS: {},
-        SPATIAL_DATA: {},
-        SPATIAL_DATA_SOURCES: {},
-        SPATIAL_RELATIONS: {},
+        ATTRIBUTE_DATA: {
+			ADD: null,
+			ADD_WITH_INDEX: null,
+			UPDATE: null,
+			INDEX: {
+				ADD: null,
+				REMOVE: null,
+			},
+		},
+        ATTRIBUTE_DATA_SOURCES: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+			},
+		},
+        ATTRIBUTE_RELATIONS: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+			},},
+        SPATIAL_DATA: {
+			ADD: null,
+			ADD_WITH_INDEX: null,
+			INDEX: {
+				ADD: null,
+				REMOVE: null,
+			},
+		},
+        SPATIAL_DATA_SOURCES: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+			},
+		},
+        SPATIAL_RELATIONS: {
+			ADD: null,
+			INDEX: {
+				ADD: null,
+			},
+		},
     },
 
 	DATAVIEWS_REMOVE: 'DATAVIEWS_REMOVE',
@@ -349,12 +383,19 @@ export default utils.deepKeyMirror({
     MAPS: {
 	    SET: {
             SET_ACTIVE_MAP_KEY: null,
+			SET_BACKGROUND_LAYER: null,
             VIEW: {
                 SET: null,
                 UPDATE: null
             }
         },
         MAP: {
+	    	LAYERS: {
+	    		SET_STYLE_KEY: null
+			},
+	    	VIEWPORT: {
+	    		SET: null,
+			},
             VIEW: {
                 SET: null,
                 UPDATE: null

@@ -2,11 +2,13 @@ import _ from "lodash";
 import common from "../_common/selectors";
 import StyleSelectors from "../Styles/selectors";
 import {createSelector} from "reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 
 const getSubstate = state => state.selections;
 const getActive = common.getActive(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
+const getAll = common.getAll(getSubstate);
 
 const getAllAsObjectWithStyles = createSelector(
 	[
@@ -48,10 +50,53 @@ const getAllAsObjectWithStyles = createSelector(
 	}
 );
 
+const getByKeyObserver = createRecomputeObserver((state, key) => state.selections.byKey[key]);
+
+const prepareSelectionByLayerStateSelected = createRecomputeSelector(
+	(layerStateSelected) => {
+		let populatedSelections = {};
+		_.forIn(layerStateSelected, (value, key) => {
+			let selection = getByKeyObserver(key);
+			let selectionData = selection?.data;
+
+			if (selectionData) {
+				const style = selectionData.style;
+				const hoveredStyle = selectionData.hoveredStyle || style;
+				const color = selectionData.color;
+				const hoveredColor = selectionData.hoveredColor || color;
+
+				if (selectionData.featureKeysFilter) {
+					populatedSelections[key] = {keys: selectionData.featureKeysFilter.keys};
+					if (style) {
+						populatedSelections[key].style = style;
+						populatedSelections[key].hoveredStyle = hoveredStyle;
+					} else {
+						populatedSelections[key].style = {
+							outlineColor: color,
+							outlineWidth: 2
+						};
+						populatedSelections[key].hoveredStyle = {
+							outlineColor: hoveredColor,
+							outlineWidth: 2
+						}
+					}
+				}
+
+				//TODO other selection types
+			}
+		});
+
+		return populatedSelections;
+	}
+);
+
 export default {
 	getActiveKey,
 	getActive,
+	getAll,
 	getAllAsObject,
 
-	getAllAsObjectWithStyles
+	getAllAsObjectWithStyles,
+
+	prepareSelectionByLayerStateSelected
 }

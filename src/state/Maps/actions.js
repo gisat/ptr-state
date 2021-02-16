@@ -1,26 +1,34 @@
 import _ from 'lodash';
+import {map as mapUtils} from "@gisatcz/ptr-utils";
+
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../../state/Select';
-import commonActions from '../_common/actions';
 import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
 import DataActions from "../Data/actions";
+import {TILED_VECTOR_LAYER_TYPES} from "../Data/constants";
+import StylesActions from "../Styles/actions";
 
 import helpers from "./selectorHelpers";
-import {map as mapUtils} from "@gisatcz/ptr-utils";
-
-const {actionGeneralError} = commonActions;
+import SelectionsAction from '../Selections/actions';
 
 /* ==================================================
  * CREATORS
  * ================================================== */
+
+/**
+ * @param mapKey {string}
+ * @param backgroundLayer {Object} background layer definition
+ * @param layers {Object} layers definition
+ * @param mapWidth {number} width of map component in px
+ * @param mapHeight {number} height of map component in px
+ */
 function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
     return (dispatch, getState) => {
         // TODO clear use for given mapKey, if exists
         const state = getState();
         const componentId = `map_${mapKey}`;
-        const activeKeys = commonSelectors.getAllActiveKeys(state);
         const spatialFilter = {};
         if(mapWidth && mapHeight) {
             const view = Select.maps.getViewByMapKey(state, mapKey);
@@ -28,7 +36,13 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
             const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
             spatialFilter.tiles = tiles;
             spatialFilter.level = level;
+        } else {
+            //spatial filter is required
+            return;
         }
+
+        const activeKeys = commonSelectors.getAllActiveKeys(state);
+
         // uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
         if (backgroundLayer || layers) {
             layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);
@@ -39,29 +53,44 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
         }
 
         if (layers) {
-            layers.forEach(layer => dispatch(layerUse(componentId, activeKeys, layer, spatialFilter)));
+            layers.forEach(layer => 
+                // apply layerUse asynchronous on each leyer
+                // it cause better FPS and prevent long synchronous tasks
+                setTimeout(() => {dispatch(layerUse(componentId, activeKeys, layer, spatialFilter))}, 0)
+            );
         }
     }
 }
 
-function layerUse(componentId, activeKeys, layer, spatialFilter) {
+/**
+ * @param componentId {string}
+ * @param activeKeys {Object} active metadata keys (such as activeApplicationKey, activeScopeKey etc.)
+ * @param layerState {Object} layer definition
+ * @param spatialFilter {{level: number}, {tiles: Array}}
+ */
+function layerUse(componentId, activeKeys, layerState, spatialFilter) {
     return (dispatch, getState) => {
         const state = getState();
 
+		// TODO ensure style here for now
+		if (layerState.styleKey) {
+			dispatch(StylesActions.useKeys([layerState.styleKey], layerState.key + "_layerUse"));
+		}
+
         // modifiers defined by key
-        let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
+        let metadataDefinedByKey = layerState.metadataModifiers ? {...layerState.metadataModifiers} : {};
 
         // add layerTemplate od areaTreeLevelKey
-        if (layer.layerTemplateKey) {
-            metadataDefinedByKey.layerTemplateKey = layer.layerTemplateKey;
+        if (layerState.layerTemplateKey) {
+            metadataDefinedByKey.layerTemplateKey = layerState.layerTemplateKey;
             // TODO use layerTemplate here?
-        } else if (layer.areaTreeLevelKey) {
-            metadataDefinedByKey.areaTreeLevelKey = layer.areaTreeLevelKey;
+        } else if (layerState.areaTreeLevelKey) {
+            metadataDefinedByKey.areaTreeLevelKey = layerState.areaTreeLevelKey;
             // TODO use areaTreeLevelKey here?
         }
 
         // Get actual metadata keys defined by filterByActive
-        const activeMetadataKeys = commonSelectors.getActiveKeysByFilterByActive(state, layer.filterByActive);
+        const activeMetadataKeys = layerState.filterByActive ? commonSelectors.getActiveKeysByFilterByActive(state, layerState.filterByActive) : null;
 
         // Merge metadata, metadata defined by key have priority
         const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
@@ -71,22 +100,73 @@ function layerUse(componentId, activeKeys, layer, spatialFilter) {
 
         // It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
         const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(modifiers);
-
         if (layerTemplateKey || areaTreeLevelKey) {
+            let mergedFilter = {};
+            if(areaTreeLevelKey) {
+                mergedFilter = {...modifiersForRequest, areaTreeLevelKey};
+            }
+
+            if(layerTemplateKey) {
+                mergedFilter = {...modifiersForRequest, layerTemplateKey};
+            }
+
+
+            if(layerTemplateKey) {
+                const order = null;
+                const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(state, mergedFilter, order);
+                const sdsContainsVector = spatialDataSources?.some(spatialDataSource => TILED_VECTOR_LAYER_TYPES.includes(spatialDataSource?.data?.type)) || false;
+                // load only dataSources that are supported type
+                if (spatialDataSources && !sdsContainsVector) {
+                    return;
+                }
+            }
             // TODO register use?
             dispatch(DataActions.ensure({
-                modifiers: modifiersForRequest,
-                areaTreeLevelKey,
-                layerTemplateKey,
-                styleKey: layer.styleKey || null,
+                styleKey: layerState.styleKey || null,
                 data: {
                     spatialFilter
-                }
+                },
+                mergedFilter
             }));
         }
     }
 }
 
+/**
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param selectedFeatureKeys {Array}
+ */
+function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
+	return (dispatch, getState) => {
+        const state = getState();
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(state, mapKey, layerKey);
+		if (layer?.options?.selectable) {
+			const activeSelectionKey = Select.selections.getActiveKey(state);
+			if (activeSelectionKey && layer.options.selected?.hasOwnProperty(activeSelectionKey)) {
+				// TODO possible conflicts if features with same key from different layers are selected
+				dispatch(SelectionsAction.setActiveSelectionFeatureKeysFilterKeys(selectedFeatureKeys));
+			} else {
+				// TODO what if there is no active selection?
+			}
+		}
+	}
+}
+
+/**
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param styleKey {string}
+ */
+function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
+	return (dispatch) => {
+		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+	}
+}
+
+/**
+ * @param mapKey {string}
+ */
 function setMapSetActiveMapKey(mapKey) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
@@ -96,11 +176,46 @@ function setMapSetActiveMapKey(mapKey) {
     };
 }
 
+/**
+ * @param setKey {string}
+ * @param backgroundLayer {Object} background layer definition
+ */
+function setMapSetBackgroundLayer(setKey, backgroundLayer) {
+	return (dispatch, getState) => {
+		dispatch(actionSetMapSetBackgroundLayer(setKey, backgroundLayer));
+		const maps = Select.maps.getMapSetMaps(getState(), setKey);
+		if (maps) {
+			maps.forEach(map => {
+				// TODO is viewport always defined?
+				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
+			});
+		}
+	};
+}
+
+/**
+ * @param setKey {string}
+ */
+function refreshMapSetUse(setKey) {
+	return (dispatch, getState) => {
+		const maps = Select.maps.getMapSetMaps(getState(), setKey);
+		if (maps) {
+			maps.forEach(map => {
+				// TODO is viewport always defined?
+				dispatch(use(map.key, null, null, map?.data?.viewport?.width, map?.data?.viewport?.height));
+			});
+		}
+	};
+}
+
+/**
+ * @param mapKey {string}
+ * @param update {Object} map view fragment
+ */
 function updateMapAndSetView(mapKey, update) {
     return (dispatch, getState) => {
         let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
-        let forSet = null;
-        let forMap = null;
+        let forSet, forMap;
 
         if (set && set.sync) {
             // pick key-value pairs that are synced for set
@@ -129,6 +244,10 @@ function updateMapAndSetView(mapKey, update) {
     }
 }
 
+/**
+ * @param setKey {string}
+ * @param update {Object} map view fragment
+ */
 function updateSetView(setKey, update) {
     return (dispatch, getState) => {
         let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
@@ -136,6 +255,10 @@ function updateSetView(setKey, update) {
     };
 }
 
+/**
+ * Update whole maps state from view definition
+ * @param data {Object}
+ */
 function updateStateFromView(data) {
     return dispatch => {
         if (data) {
@@ -149,12 +272,38 @@ function updateStateFromView(data) {
  * ACTIONS
  * ================================================== */
 
+const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY,
+		mapKey,
+		layerKey,
+		styleKey
+	}
+};
+
 const actionSetMapSetActiveMapKey = (setKey, mapKey) => {
     return {
         type: ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY,
         mapKey,
         setKey
     }
+};
+
+const actionSetMapSetBackgroundLayer = (setKey, backgroundLayer) => {
+	return {
+		type: ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER,
+		setKey,
+		backgroundLayer
+	}
+};
+
+const actionSetMapViewport = (mapKey, width, height) => {
+	return {
+		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
+		mapKey,
+		width,
+		height
+	}
 };
 
 const actionUpdate = (data) => {
@@ -185,7 +334,12 @@ const actionUpdateSetView = (setKey, update) => {
 
 // ============ export ===========
 export default {
+	refreshMapSetUse,
+	setLayerSelectedFeatureKeys,
+	setMapLayerStyleKey,
     setMapSetActiveMapKey,
+	setMapSetBackgroundLayer,
+	setMapViewport: actionSetMapViewport,
     updateMapAndSetView,
     updateSetView,
     updateStateFromView,

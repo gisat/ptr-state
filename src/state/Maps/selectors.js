@@ -1,11 +1,18 @@
 import {createSelector} from 'reselect';
 import createCachedSelector from "re-reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import _ from 'lodash';
 
-import helpers from "./selectorHelpers";
 import {map as mapUtils} from "@gisatcz/ptr-utils";
 import {mapConstants} from "@gisatcz/ptr-core";
+
+import common from "../_common/selectors";
+import commonHelpers from '../_common/helpers';
 import selectorHelpers from "./selectorHelpers";
+
+import DataSelectors from "../Data/selectors";
+import SelectionsSelectors from '../Selections/selectors';
+import StylesSelectors from '../Styles/selectors';
 
 /* === SELECTORS ======================================================================= */
 
@@ -109,7 +116,7 @@ const getMapSetActiveMapView = createCachedSelector(
     (mapKey, set, maps) => {
         let map = maps?.[mapKey];
         if (map) {
-            return helpers.getView(map, set);
+            return selectorHelpers.getView(map, set);
         } else {
             return null;
         }
@@ -125,8 +132,25 @@ const getViewByMapKey = createCachedSelector(
         getMapByKey,
         getMapSetByMapKey
     ],
-    helpers.getView
+	selectorHelpers.getView
 )((state, mapKey) => mapKey);
+
+const getViewByMapKeyObserver = createRecomputeObserver(getViewByMapKey);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ */
+const getViewportByMapKey = createCachedSelector(
+    [
+        getMapByKey,
+    ],
+	(map) => {
+    	return map?.data?.viewport || null;
+    }
+)((state, mapKey) => mapKey);
+
+const getViewportByMapKeyObserver = createRecomputeObserver(getViewportByMapKey);
 
 /**
  * @param state {Object}
@@ -161,6 +185,24 @@ const getMapSetMapKeys = createSelector(
     (set) => {
         return set?.maps?.length ? set.maps : null;
     }
+);
+
+/**
+ * @param state {Object}
+ * @param setKey {string}
+ */
+const getMapSetMaps = createSelector(
+	[
+		getMapsAsObject,
+		getMapSetMapKeys
+	],
+	(maps, mapKeys) => {
+		if (maps && mapKeys?.length) {
+			return mapKeys.map(key => maps[key]);
+		} else {
+			return null;
+		}
+	}
 );
 
 /**
@@ -338,7 +380,7 @@ const getFilterByActiveByMapKey = createCachedSelector(
  * @param state {Object}
  * @param mapKey {string}
  */
-const getBackgroundLayerStateByMapKey = createSelector(
+const getBackgroundLayerStateByMapKey = createCachedSelector(
     [
         getMapBackgroundLayerStateByMapKey,
         getMapSetBackgroundLayerStateByMapKey,
@@ -346,7 +388,9 @@ const getBackgroundLayerStateByMapKey = createSelector(
     (mapBackgroundLayer, setBackgroundLayer) => {
         return mapBackgroundLayer || setBackgroundLayer || null;
     }
-);
+)((state, mapKey) => mapKey);
+
+const getBackgroundLayerStateByMapKeyObserver = createRecomputeObserver(getBackgroundLayerStateByMapKey);
 
 /**
  * @param state {Object}
@@ -411,6 +455,29 @@ const getLayersStateByMapKey = createCachedSelector(
     }
 )((state, mapKey) => mapKey);
 
+const getLayersStateByMapKeyObserver = createRecomputeObserver(getLayersStateByMapKey);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @return {Object | null}
+ */
+const getLayerStateByLayerKeyAndMapKey = createSelector(
+	[
+		getLayersStateByMapKey,
+		(state, mapKey, layerKey) => layerKey
+	],
+	(layers, layerKey) => {
+		if (layers) {
+			const layer = _.find(layers, layer => layer.key === layerKey);
+			return layer || null;
+		} else {
+			return null;
+		}
+	}
+);
+
 /**
  * @param state {Object}
  * @param mapKey {string}
@@ -422,36 +489,233 @@ const getAllLayersStateByMapKey = createCachedSelector(
     ],
     (backgroundLayer, layers) => {
         if (layers || backgroundLayer) {
-            return helpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers);
+            return selectorHelpers.mergeBackgroundLayerWithLayers(backgroundLayer, layers);
         } else {
             return null;
         }
     }
 )((state, mapKey) => mapKey);
 
-// TODO add logic
-const getMapBackgroundLayer = createCachedSelector(
-    [
-        (state, mapKey) => getBackgroundLayerStateByMapKey(state, mapKey)
-    ],
-    (layerState) => {
-        if (layerState) {
-            if (layerState.type) {
-                return layerState;
-            } else {
-                // TODO
-                return null;
-            }
-        } else {
-            return null;
+/**
+ * @param layerState {Object}
+ */
+const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
+	if (layerState) {
+		// TODO at least a part is the same as in Maps/actions/layerUse?
+		const layer = layerState;
+
+		// modifiers defined by key
+		let metadataDefinedByKey = layer.metadataModifiers ? {...layer.metadataModifiers} : {};
+
+		// Get actual metadata keys defined by filterByActive
+		const activeMetadataKeys = common.getActiveKeysByFilterByActiveObserver(layer.filterByActive);
+
+		// Merge metadata, metadata defined by key have priority
+		const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(metadataDefinedByKey, activeMetadataKeys);
+
+		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+		let relationsFilter = commonHelpers.convertModifiersToRequestFriendlyFormat(mergedMetadataKeys);
+
+		// add layerTemplate od areaTreeLevelKey
+		if (layer.layerTemplateKey) {
+			relationsFilter.layerTemplateKey = layer.layerTemplateKey;
+		} else if (layer.areaTreeLevelKey) {
+			relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
+		}
+		return relationsFilter;
+	} else {
+		return null;
+	}
+});
+
+/**
+ * @param layerState {Object}
+ */
+const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layerState) => {
+    const spatialFilter = getSpatialRelationsFilterFromLayerState(layerState);
+    if(spatialFilter) {
+        const attributeFilter = {...spatialFilter};
+        if(layerState.styleKey) {
+            // add styleKey
+            attributeFilter.styleKey = layerState.styleKey;
         }
+        return attributeFilter;
+    } else {
+        return null;
     }
-)((state, mapKey) => mapKey);
+})
+
+/**
+ * @param spatialDataSource {Object}
+ * @param layerState {Object} layer definition from state or passed to the Map component
+ * @param layerKey {string} layer unique identifier
+ * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
+ * @param mapKey {string} map unique identifier
+ * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
+ * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
+ */
+const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector((spatialDataSource, layerState, layerKey, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter) => {
+	let {attribution, nameInternal, type, fidColumnName, geometryColumnName,  ...dataSourceOptions} = spatialDataSource?.data;
+	let {key, name, opacity, styleKey, renderAsType, options: layerStateOptions} = layerState;
+
+	layerKey = layerKey || key;
+
+	// TODO temporary for development. Next, could be data source type rewritten in layer state (e.g. vector -> tiled-vector?)
+	if (renderAsType) {
+		type = renderAsType;
+	}
+
+	let options = {...dataSourceOptions, ...layerStateOptions};
+
+	if (type === 'wmts') {
+		options.url = dataSourceOptions.url || dataSourceOptions.urls[0];
+	} else if (type === 'wms') {
+		const {url, params, configuration, ...rest} = dataSourceOptions;
+		const singleTile = configuration && configuration.hasOwnProperty('singleTile') ? configuration.singleTile : false;
+
+		options = {
+			params: {
+				...params,
+				layers: rest.layers,
+				styles: rest.styles,
+			},
+			singleTile,
+			url
+		}
+	} else if (type === "vector" || type === "tiled-vector" ) {
+		let features, tiles = null;
+
+		if (type === "vector") {
+			features = DataSelectors.getFeatures(spatialDataSource.key, fidColumnName, attributeDataSourceKeyAttributeKeyPairs);
+		} else if (type === "tiled-vector") {
+			const view = getViewByMapKeyObserver(mapKey);
+			const viewport = getViewportByMapKeyObserver(mapKey);
+			const tileList = selectorHelpers.getTiles(viewport.width, viewport.height, view.center, view.boxRange);
+			const level = selectorHelpers.getZoomLevel(viewport.width, viewport.height, view.boxRange);
+			tiles = DataSelectors.getTiles(spatialDataSource.key, fidColumnName, level, tileList, spatialRelationsFilter, attributeRelationsFilter, attributeDataSourceKeyAttributeKeyPairs, styleKey);
+		}
+
+		let selected = null;
+		let style = options?.style;
+
+		if (options?.selected) {
+			selected = SelectionsSelectors.prepareSelectionByLayerStateSelected(options.selected);
+		}
+
+		if (!style && styleKey) {
+			style = StylesSelectors.getDefinitionByKey(styleKey);
+		}
+
+		options = {
+			...options,
+			...(selected && {selected}),
+			...(style && {style}),
+			...(features && {features}),
+			...(tiles && {tiles}),
+			fidColumnName,
+			geometryColumnName
+		};
+	}
+
+	return {
+		key: layerKey + '_' + spatialDataSource.key,
+		layerKey,
+		opacity: opacity || 1,
+		name,
+		type,
+		options
+	};
+});
+
+/**
+ * @param mapKey {string} map unique identifier
+ * @param layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ * @return {Array} It returns a list of end format definitions of the background layer (per data source). See: https://gisat.github.io/ > Architecture > System data types > Layers
+ */
+const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
+	if (!layerState) {
+		layerState = getBackgroundLayerStateByMapKeyObserver(mapKey);
+	}
+
+	if (layerState) {
+		if (layerState.type) {
+			return layerState;
+		} else {
+			const layerKey = 'pantherBackgroundLayer';
+			const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(layerState);
+			if (spatialDataSources) {
+				return spatialDataSources.map(dataSource => {
+					const dataSourceType = dataSource?.data?.type;
+
+					// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
+					if (dataSourceType === "wmts" || dataSourceType === "wms") {
+						return getFinalLayerByDataSourceAndLayerState(dataSource, layerState, layerKey);
+					} else {
+						return null;
+					}
+				});
+			} else {
+				return null;
+			}
+		}
+	} else {
+		return null;
+	}
+});
+
+/**
+ * @param mapKey {string} map unique identifier
+ * @param layerState {Object} layer definition in state (see getBackgroundLayerState) or passed to the Map component
+ * @return {Array} It returns a list of end format definitions of the background layer (per data source). See: https://gisat.github.io/ > Architecture > System data types > Layers
+ */
+const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
+	if (!layersState) {
+		layersState = getLayersStateByMapKeyObserver(mapKey);
+	}
+
+	if (layersState) {
+		let finalLayers = [];
+
+		_.forEach(layersState, layerState => {
+			// layer is already defined by the end format suitable for presentational map component
+			if (layerState.type) {
+				if (layerState.type === "vector" && layerState.options?.selected) {
+					layerState = {
+						...layerState,
+						options: {
+							...layerState.options,
+							selected: SelectionsSelectors.prepareSelectionByLayerStateSelected(layerState.options.selected)
+						}
+					}
+				}
+
+				finalLayers.push(layerState);
+			}
+			// necessary to assemble data for the end format
+			else {
+				const spatialRelationsFilter = getSpatialRelationsFilterFromLayerState(layerState);
+				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(layerState);
+				const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(spatialRelationsFilter);
+				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(attributeRelationsFilter);
+				if (spatialDataSources) {
+					_.forEach(spatialDataSources, dataSource => {
+						finalLayers.push(getFinalLayerByDataSourceAndLayerState(dataSource, layerState, null, attributeDataSourceKeyAttributeKeyPairs, mapKey, spatialRelationsFilter, attributeRelationsFilter));
+					});
+				}
+			}
+		});
+
+		return finalLayers.length ? finalLayers : null;
+	} else {
+		return null;
+	}
+});
 
 export default {
     getAllLayersStateByMapKey,
     getBackgroundLayerStateByMapKey,
     getFilterByActiveByMapKey,
+	getLayerStateByLayerKeyAndMapKey,
     getLayersStateByMapKey,
     getMetadataModifiersByMapKey,
 
@@ -460,6 +724,7 @@ export default {
     getMapByKey,
     getMapFilterByActiveByMapKey,
     getMapLayersStateByMapKey,
+	getMapLayers,
     getMapLayersStateWithModifiersByMapKey,
     getMapMetadataModifiersByMapKey,
 
@@ -473,10 +738,12 @@ export default {
     getMapSetLayersStateWithModifiersByMapKey,
     getMapSetMetadataModifiersByMapKey,
     getMapSetMapKeys,
+    getMapSetMaps,
     getMapSets,
     getMapSetView,
     getMapSetViewLimits,
 
     getViewByMapKey,
+    getViewportByMapKey,
     getViewLimitsByMapKey
 };

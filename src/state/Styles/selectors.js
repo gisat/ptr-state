@@ -2,11 +2,20 @@ import _ from 'lodash';
 
 import common from "../_common/selectors";
 import createCachedSelector from "re-reselect";
+import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 
 const getSubstate = state => state.styles;
 
 const getAll = common.getAll(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
+const getByKey = common.getByKey(getSubstate);
+
+const getByKeyObserver = createRecomputeObserver(getByKey);
+
+const getDefinitionByKey = createRecomputeSelector((key) => {
+	const style = getByKeyObserver(key);
+	return style?.data?.definition || null;
+});
 
 const getGroupedByLayerKey = createCachedSelector(
 	[
@@ -32,7 +41,9 @@ const getGroupedByLayerKey = createCachedSelector(
 export default {
 	getAll,
 	getAllAsObject,
-	getByKey: common.getByKey(getSubstate),
+	getByKey,
+	getDefinitionByKey,
+	getIndexed: common.getIndexed(getSubstate),
 
 	getGroupedByLayerKey,
 	getSubstate

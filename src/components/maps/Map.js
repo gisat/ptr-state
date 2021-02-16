@@ -1,21 +1,25 @@
 import {connect} from 'react-redux';
+import {setState} from '@jvitela/recompute';
 import Action from '../../state/Action';
 import Select from '../../state/Select';
 import {utils} from '@gisatcz/ptr-utils';
 
 const mapStateToProps = (state, ownProps) => {
+	setState(state);
+
     if (ownProps.stateMapKey) {
         return {
-            backgroundLayer: Select.maps.getMapBackgroundLayer(state, ownProps.stateMapKey),
-            layers: null,
+            backgroundLayer: Select.maps.getMapBackgroundLayer(ownProps.stateMapKey),
+            layers: Select.maps.getMapLayers(ownProps.stateMapKey),
+            viewport: Select.maps.getViewportByMapKey(state, ownProps.stateMapKey),
             view: Select.maps.getViewByMapKey(state, ownProps.stateMapKey),
             viewLimits: Select.maps.getViewLimitsByMapKey(state, ownProps.stateMapKey),
             mapKey: ownProps.stateMapKey
         }
     } else {
         return {
-            backgroundLayer: null,
-            layers: null
+            backgroundLayer:  Select.maps.getMapBackgroundLayer(ownProps.mapKey, ownProps.backgroundLayer),
+            layers: Select.maps.getMapLayers(ownProps.mapKey, ownProps.layers)
         }
     }
 };
@@ -27,10 +31,12 @@ const mapDispatchToPropsFactory = () => {
         if (ownProps.stateMapKey) {
             return {
                 onMount: (mapWidth, mapHeight) => {
+					dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
                     dispatch(Action.maps.use(ownProps.stateMapKey, null, null, mapWidth, mapHeight));
                 },
 
                 onResize: (mapWidth, mapHeight) => {
+                	dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
                     dispatch(Action.maps.use(ownProps.stateMapKey, null, null, mapWidth, mapHeight));
                 },
 
@@ -47,6 +53,7 @@ const mapDispatchToPropsFactory = () => {
                 },
 
                 onPropViewChange: (update, mapWidth, mapHeight) => {
+					dispatch(Action.maps.setMapViewport(ownProps.stateMapKey, mapWidth, mapHeight));
                     dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined, mapWidth, mapHeight));
                 },
 
@@ -58,7 +65,7 @@ const mapDispatchToPropsFactory = () => {
                     dispatch(Action.maps.setMapSetActiveMapKey(ownProps.stateMapKey));
                 },
                 onLayerClick: (mapKey, layerKey, selectedFeatureKeys) => {
-
+					dispatch(Action.maps.setLayerSelectedFeatureKeys(ownProps.stateMapKey, layerKey, selectedFeatureKeys))
                 }
             }
         } else {

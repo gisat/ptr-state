@@ -82,6 +82,9 @@ export default {
     're-reselect',
     'isomorphic-fetch',
     'query-string',
+	'@tackworld.com/rereselct',
+	'@jvitela/recompute',
+	'fast-stringify',
     ...lodashExternal
   ],
   output: {

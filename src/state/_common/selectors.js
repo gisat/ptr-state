@@ -1,4 +1,5 @@
 import {createSelector} from "reselect";
+import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import createCachedSelector from "re-reselect";
 import _ from "lodash";
 import commonHelpers from './helpers';
@@ -396,6 +397,8 @@ const getIndexes = (getSubstate) => {
 	return (state) => getSubstate(state).indexes;
 };
 
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) => getIndexes(getSubstate)(state));
+
 /**
  * Get whole index by given filter and order
  * @param getSubstate
@@ -409,6 +412,40 @@ const getIndex = (getSubstate) => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
 	);
+};
+
+/**
+ * Get indexes value from given state on given path.
+ * Optional param indexPath has default value "indexes"
+ */
+const getIndexesByPath = (getSubstate) => {
+	return (state, indexPath = 'indexes') =>  _.get(getSubstate(state), indexPath);
+};
+
+/**
+ * Get whole index by given filter and order and optional indexPath
+ * Beside getIndex indexPath is first optional parameter, filter and order folows.
+ */
+const getIndexByPath = (getSubstate) => {
+	return createSelector([
+		getIndexesByPath(getSubstate),
+		(state, indexPath, filter) => filter,
+		(state, indexPath, filter, order) => order],
+		(indexes, filter, order) => {
+			return commonHelpers.getIndex(indexes, filter, order);
+		}
+	);
+};
+
+const getIndex_recompute = (getSubstate) => {
+	return createRecomputeSelector((filter, order) => {
+		const indexes = getIndexesObserver(getSubstate);
+		if (indexes) {
+			return commonHelpers.getIndex(indexes, filter, order);
+		} else {
+			return null;
+		}
+	});
 };
 
 const getIndexChangedOn = (getSubstate) => {
@@ -650,6 +687,8 @@ const getActiveKeysByFilterByActive = createCachedSelector(
         }
     }
 )((state, filterByActive) => JSON.stringify(filterByActive));
+
+const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(getActiveKeysByFilterByActive);
 
 const getUsedIndexPages = (getSubstate) => {
 	return createSelector([
@@ -901,6 +940,8 @@ export default {
 	getEditedKeys,
 
 	getIndex,
+	getIndexByPath,
+	getIndex_recompute,
 	getIndexed,
 	getIndexes,
 	getIndexChangedOn,
@@ -919,5 +960,8 @@ export default {
 	getUsedKeys,
 	getUsesWithActiveDependency,
 
-	_mergeIntervals
+	_mergeIntervals,
+
+	// recompute observers
+	getActiveKeysByFilterByActiveObserver
 }

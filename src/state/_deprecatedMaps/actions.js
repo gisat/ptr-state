@@ -186,7 +186,7 @@ const addMapToSet = (setKey, mapKey) => {
 		} else {
 			//check map exist
 			if (setByKey.maps && setByKey.maps.includes(mapKey)) {
-				return dispatch(actionGeneralError(`Set ${setKey} alredy contains map ${mapKey}.`));
+				return dispatch(actionGeneralError(`Set ${setKey} already contains map ${mapKey}.`));
 			} else {
 				dispatch(actionAddMapToSet(setKey, mapKey));
 				//if no map is active, set map as active

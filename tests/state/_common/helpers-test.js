@@ -249,4 +249,40 @@ describe('state/_common/helpers', function () {
 			});
 		});
 	});
+
+	describe('removeIndex', function () {
+		const indexes = [
+			{
+				filter: {},
+				order: null
+			},
+			{
+				filter: {
+					test: 1
+				},
+				order: []
+			}
+		]
+		
+		it('return new instance of indexes without filtered index', function () {
+			assert.deepStrictEqual(
+				helpers.removeIndex(indexes, {}, null),
+				[
+					{
+						filter: {
+							test: 1
+						},
+						order: []
+					}
+				]
+			);
+		});
+
+		it('return same instance of indexes', function () {
+			assert.equal(
+				helpers.removeIndex(indexes, {}, []),
+				indexes
+			);
+		});
+	});
 });
