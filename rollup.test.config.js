@@ -55,6 +55,7 @@ export default {
 		'redux-thunk',
 		'redux-logger',
 		'@manaflair/redux-batch',
+		'@jvitela/recompute',
 		'react-redux',
 		'chai',
 		'connected-react-router',
@@ -62,6 +63,7 @@ export default {
 		'react-router',
 		'@gisatcz/ptr-utils',
 		'@gisatcz/ptr-core',
+		'@gisatcz/ptr-tile-grid',
 		'path',
 		'moment',
 		'reselect',
@@ -69,6 +71,7 @@ export default {
         'slash',
 		'isomorphic-fetch',
 		'query-string',
+		'fast-stringify',
 		...lodashExternal,
 	],
 	output: {
