@@ -119,7 +119,9 @@ function getIndexData(spatialData, attributeData) {
 			}
 			//for all tiles in tiles
 			for (const [tile, tileData] of Object.entries(tiles)) {
-				// If empty attributeData, then rewrite "loading" state
+				// If empty attributeData, then rewrite "loading" state.
+				// or
+				// Prepare empty tile for new data if tile does not exists.
 				if(!indexByLevelByTileByDataSourceKey[level][tile] || _.isEmpty(attributeData)){
 					indexByLevelByTileByDataSourceKey[level][tile] = {};
 				}
