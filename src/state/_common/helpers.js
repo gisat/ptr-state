@@ -43,21 +43,31 @@ function getUniqueIndexes(indexes) {
 
 /**
  * Remove index from given indexes that fit to filter and order.
+ * If index does not exists under filter, same instance of indexes has return.
  * @param indexes {Array} Array of indexes
  * @param filter {Object} 
  * @param order {Array}
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	const cleardIndexes = _.reduce(indexes, (acc, index) => {
-		const indexToBeCleared = isCorrespondingIndex(index, filter, order);
-		if(indexToBeCleared) {
-			return acc
+	if(indexes && !_.isEmpty(indexes)) {
+		const clearedIndexes = _.reduce(indexes, (acc, index) => {
+			const indexToBeCleared = isCorrespondingIndex(index, filter, order);
+			if(indexToBeCleared) {
+				return acc
+			} else {
+				return [...acc, index];
+			}
+		}, [])
+
+		if(clearedIndexes.length === indexes.length) {
+			return indexes;
 		} else {
-			return [...acc, index];
+			return clearedIndexes;
 		}
-	}, [])
-	return cleardIndexes || [];
+	} else {
+		return indexes;
+	}
 }
 
 /**
