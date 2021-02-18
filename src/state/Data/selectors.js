@@ -1,4 +1,5 @@
 import {createSelector as createRecomputeSelector} from '@jvitela/recompute';
+import _ from 'lodash';
 import stringify from 'fast-stringify';
 
 import attributeRelations from './AttributeRelations/selectors';
@@ -9,7 +10,7 @@ import spatialDataSources from './SpatialDataSources/selectors';
 import spatialData from './SpatialData/selectors';
 import {CacheFifo} from '@gisatcz/ptr-utils';
 import {tileAsString} from './helpers';
-import _ from 'lodash';
+import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 
 let tilesCache = new CacheFifo(1000);
 
@@ -51,7 +52,7 @@ const getFeatures = createRecomputeSelector((dataSourceKey, fidColumnName, attri
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * Assemble vector data for single tile
@@ -133,7 +134,7 @@ const getTile = createRecomputeSelector((spatialDataSourceKey, fidColumnName, le
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * Assemble vector data for all tiles
@@ -161,7 +162,7 @@ const getTiles = createRecomputeSelector((dataSourceKey, fidColumnName, level, t
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 export default {
 	getFeatures,

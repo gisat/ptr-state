@@ -1,6 +1,7 @@
 import common from '../../_common/selectors';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import commonHelpers from '../../_common/helpers';
+import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = (state) => state.data.spatialData;
 
@@ -30,7 +31,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * @param {Object} filter
@@ -47,7 +48,7 @@ const getIndexedFeatureKeys = createRecomputeSelector((filter, level, tile, data
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 export default {
 	getByDataSourceKeyObserver,

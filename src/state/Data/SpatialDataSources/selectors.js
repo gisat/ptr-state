@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
+
 import common from "../../_common/selectors";
 import createCachedSelector from "re-reselect";
 import commonHelpers from '../../_common/helpers';
+import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = state => state.data.spatialDataSources;
 
@@ -28,7 +30,7 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
  */
 const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns whole index for given filter and order
@@ -43,7 +45,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns a collection of indexed data sources for given filter
@@ -62,7 +64,7 @@ const getIndexed = createRecomputeSelector(filter => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 
 /**
