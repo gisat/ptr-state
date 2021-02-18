@@ -85,7 +85,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/areaTreeLevels',
+				'http://localhost/rest/metadata/filtered/areaTreeLevels',
                 slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -195,7 +195,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/areaTreeLevels',
+				'http://localhost/rest/metadata/filtered/areaTreeLevels',
                 slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -295,7 +295,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/areaTreeLevels',
+				'http://localhost/rest/metadata/filtered/areaTreeLevels',
                 slash(url)
 			);
 			assert.deepStrictEqual(options, {

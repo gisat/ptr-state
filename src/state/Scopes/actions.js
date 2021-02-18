@@ -1,8 +1,6 @@
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../Select';
-
 import common from '../_common/actions';
-import attributeRelationsActions from '../AttributeRelations/actions';
 import _ from "lodash";
 
 // ============ creators ===========
@@ -23,17 +21,6 @@ const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(S
 function setActiveKey(key) {
 	return (dispatch, getState) => {
 		dispatch(setActiveKeyAndEnsureDependencies(key));
-
-		// TODO move somewhere else (probably after implementing areas)
-		let activeScope = Select.scopes.getActive(getState());
-		if (activeScope && activeScope.data && activeScope.data.configuration && activeScope.data.configuration.areaNameAttributeKey) {
-			dispatch(attributeRelationsActions.ensureIndexedSpecific({scopeKey: key, attributeKey: activeScope.data.configuration.areaNameAttributeKey}, null, 1, 10, 'scopes.actions#setActiveScope', true));
-		}
-
-		//load filter countries
-		if (activeScope && activeScope.data && activeScope.data.configuration && activeScope.data.configuration.countryCodeAttributeKey) {
-			dispatch(attributeRelationsActions.ensureIndexedSpecific({scopeKey: key, attributeKey: activeScope.data.configuration.countryCodeAttributeKey}, null, 1, 10, 'scopes.actions#setActiveScope', true));
-		}
 	};
 }
 

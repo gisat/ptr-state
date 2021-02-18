@@ -420,7 +420,7 @@ function ensure(filter) {
 function loadIndexedPage(styleKey, relations, featureKeys, spatialIndex, spatialFilter, attributeFilter, loadGeometry, loadRelations, dataSourceKeys, order, mergedSpatialFilter, mergedAttributeFilter) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const apiPath = 'backend/rest/data/filtered';
+		const apiPath = 'rest/data/filtered';
 
         const {areaTreeLevelKey, layerTemplateKey, ...modifiers} = mergedSpatialFilter
         const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;

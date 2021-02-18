@@ -19,18 +19,12 @@ import appReducers from './state/App/reducers';
 import areasReducers from './state/Areas/reducers';
 import areaRelationsReducers from './state/AreaRelations/reducers';
 import attributesReducers from './state/Attributes/reducers';
-import attributeDataReducers from './state/AttributeData/reducers';
-import attributeDataSourcesReducers from './state/AttributeDataSources/reducers';
-import attributeRelationsReducers from './state/AttributeRelations/reducers';
 import attributeSetsReducers from './state/AttributeSets/reducers';
 import casesReducers from './state/Cases/reducers';
 import componentsReducers from './state/Components/reducers';
-import chartsReducers from './state/Charts/reducers';
 import dataReducers from './state/Data/reducers';
-import layerPeriodsReducers from './state/LayerPeriods/reducers';
 import layerTemplatesReducers from './state/LayerTemplates/reducers';
 import layerTreesReducers from './state/LayerTrees/reducers';
-import _deprecatedMapsReducers from './state/_deprecatedMaps/reducers';
 import mapsReducers from './state/Maps/reducers';
 import periodsReducers from './state/Periods/reducers';
 import placesReducers from './state/Places/reducers';
@@ -38,13 +32,7 @@ import scenariosReducers from './state/Scenarios/reducers';
 import scopesReducers from './state/Scopes/reducers';
 import screensReducers from './state/Screens/reducers';
 import selectionsReducers from './state/Selections/reducers';
-import snapshotsReducers from './state/Snapshots/reducers';
-import spatialDataReducers from './state/SpatialData/reducers';
-import spatialDataSourcesReducers from './state/SpatialDataSources/reducers';
-import spatialVectorDataSourcesReducers from './state/SpatialDataSources/vector/reducers';
-import spatialRelationsReducers from './state/SpatialRelations/reducers';
 import stylesReducers from './state/Styles/reducers';
-import attributeStatisticsReducers from './state/AttributeStatistics/reducers';
 import tagsReducers from './state/Tags/reducers';
 import usersReducers from './state/Users/reducers';
 import viewsReducers from './state/Views/reducers';
@@ -56,19 +44,12 @@ const baseStores = {
 	areas: areasReducers,
 	areaRelations: areaRelationsReducers,
 	attributes: attributesReducers,
-	attributeRelations: attributeRelationsReducers,
-	attributeStatistics: attributeStatisticsReducers,
 	attributeSets: attributeSetsReducers,
-	attributeData: attributeDataReducers,
-	attributeDataSources: attributeDataSourcesReducers,
 	cases: casesReducers,
-	charts: chartsReducers,
 	components: componentsReducers,
 	data: dataReducers,
-	layerPeriods: layerPeriodsReducers,
 	layerTemplates: layerTemplatesReducers,
 	layerTrees: layerTreesReducers,
-	_deprecatedMaps: _deprecatedMapsReducers,
     maps: mapsReducers,
 	periods: periodsReducers,
 	places: placesReducers,
@@ -76,11 +57,6 @@ const baseStores = {
 	scopes: scopesReducers,
 	screens: screensReducers,
 	selections: selectionsReducers,
-	snapshots: snapshotsReducers,
-	spatialData: spatialDataReducers,
-	spatialDataSources: spatialDataSourcesReducers,
-	spatialVectorDataSources: spatialVectorDataSourcesReducers,
-	spatialRelations: spatialRelationsReducers,
 	styles: stylesReducers,
 	tags: tagsReducers,
 	users: usersReducers,
