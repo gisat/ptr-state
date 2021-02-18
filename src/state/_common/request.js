@@ -1,7 +1,7 @@
-import _ from "lodash";
-import _fetch from "isomorphic-fetch";
-import path from "path";
-import queryString from "query-string";
+import _ from 'lodash';
+import _fetch from 'isomorphic-fetch';
+import path from 'path';
+import queryString from 'query-string';
 
 const TTL = 5;
 
@@ -36,9 +36,19 @@ export function resetFetch() {
  * @param ttl - (optional) number of tries
  * @returns response or error
  */
-export default function request (localConfig, apiPath, method, query, payload, ttl) {
+export default function request(
+	localConfig,
+	apiPath,
+	method,
+	query,
+	payload,
+	ttl
+) {
 	if (_.isUndefined(ttl)) ttl = TTL;
-	let url = localConfig.apiBackendProtocol + '://' + path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, apiPath);
+	let url =
+		localConfig.apiBackendProtocol +
+		'://' +
+		path.join(localConfig.apiBackendHost, localConfig.apiBackendPath, apiPath);
 	if (query) {
 		url += '?' + queryString.stringify(query);
 	}
@@ -48,13 +58,17 @@ export default function request (localConfig, apiPath, method, query, payload, t
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
-			'Accept': 'application/json'
+			Accept: 'application/json',
 		},
-		body: payload ? JSON.stringify(payload) : null
+		body: payload ? JSON.stringify(payload) : null,
 	}).then(
 		response => {
 			let contentType = response.headers.get('Content-type');
-			if (response.ok && contentType && (contentType.indexOf('application/json') !== -1)) {
+			if (
+				response.ok &&
+				contentType &&
+				contentType.indexOf('application/json') !== -1
+			) {
 				return response.json().then(body => {
 					if (body.data) {
 						return body;

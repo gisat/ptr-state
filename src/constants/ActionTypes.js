@@ -1,7 +1,6 @@
-import {utils} from '@gisatcz/ptr-utils'
+import {utils} from '@gisatcz/ptr-utils';
 
 export default utils.deepKeyMirror({
-
 	INITIALIZE: 'INITIALIZE',
 
 	APP: {
@@ -9,7 +8,7 @@ export default utils.deepKeyMirror({
 		SET_BASE_URL: null,
 		SET_LOCAL_CONFIGURATION: null,
 		UPDATE_LOCAL_CONFIGURATION: null,
-		RECEIVE_CONFIGURATION: null
+		RECEIVE_CONFIGURATION: null,
 	},
 
 	AREAS: {
@@ -17,73 +16,73 @@ export default utils.deepKeyMirror({
 			ADD: null,
 			ADD_UNRECEIVED: null,
 			ENSURE: {
-				ERROR: null
+				ERROR: null,
 			},
 			INDEX: {
 				ADD: null,
-				CLEAR_ALL: null
+				CLEAR_ALL: null,
 			},
 			LOAD: {
 				ERROR: null,
-				REQUEST: null
+				REQUEST: null,
 			},
 			SET_ACTIVE_KEY: null,
 			USE: {
 				INDEXED: {
 					CLEAR: null,
-					REGISTER: null
+					REGISTER: null,
 				},
 				KEYS: {
 					CLEAR: null,
-					REGISTER: null
-				}
-			}
+					REGISTER: null,
+				},
+			},
 		},
 		AREA_TREES: {
 			ADD: null,
 			ADD_UNRECEIVED: null,
 			ENSURE: {
-				ERROR: null
+				ERROR: null,
 			},
 			INDEX: {
 				ADD: null,
-				CLEAR_ALL: null
+				CLEAR_ALL: null,
 			},
 			LOAD: {
 				ERROR: null,
-				REQUEST: null
+				REQUEST: null,
 			},
 			SET_ACTIVE_KEY: null,
 			USE: {
 				INDEXED: {
 					CLEAR: null,
-					REGISTER: null
+					REGISTER: null,
 				},
 				KEYS: {
 					CLEAR: null,
-					REGISTER: null
-				}
-			}
-		}
+					REGISTER: null,
+				},
+			},
+		},
 	},
 
 	AREA_RELATIONS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		USE: {
 			INDEXED: {
 				CLEAR: null,
 				CLEAR_ALL: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	ATTRIBUTES: {
@@ -97,7 +96,7 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
@@ -107,52 +106,52 @@ export default utils.deepKeyMirror({
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			INDEXED_BATCH: {
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	ATTRIBUTE_SETS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
-			ADD: null
+			ADD: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
-	
+
 	CASES: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
@@ -164,7 +163,7 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
@@ -173,30 +172,30 @@ export default utils.deepKeyMirror({
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	COMMON: {
 		DATA: {
 			CLEANUP_ON_LOGOUT: null,
-			SET_OUTDATED: null
+			SET_OUTDATED: null,
 		},
 		EDITED: {
-			REMOVE_PROPERTY_VALUES: null
-		}
+			REMOVE_PROPERTY_VALUES: null,
+		},
 	},
 
 	COMPONENTS: {
@@ -204,8 +203,8 @@ export default utils.deepKeyMirror({
 		SET: null,
 	},
 
-    DATA: {
-        ATTRIBUTE_DATA: {
+	DATA: {
+		ATTRIBUTE_DATA: {
 			ADD: null,
 			ADD_WITH_INDEX: null,
 			UPDATE: null,
@@ -214,18 +213,19 @@ export default utils.deepKeyMirror({
 				REMOVE: null,
 			},
 		},
-        ATTRIBUTE_DATA_SOURCES: {
+		ATTRIBUTE_DATA_SOURCES: {
 			ADD: null,
 			INDEX: {
 				ADD: null,
 			},
 		},
-        ATTRIBUTE_RELATIONS: {
+		ATTRIBUTE_RELATIONS: {
 			ADD: null,
 			INDEX: {
 				ADD: null,
-			},},
-        SPATIAL_DATA: {
+			},
+		},
+		SPATIAL_DATA: {
 			ADD: null,
 			ADD_WITH_INDEX: null,
 			INDEX: {
@@ -233,19 +233,19 @@ export default utils.deepKeyMirror({
 				REMOVE: null,
 			},
 		},
-        SPATIAL_DATA_SOURCES: {
+		SPATIAL_DATA_SOURCES: {
 			ADD: null,
 			INDEX: {
 				ADD: null,
 			},
 		},
-        SPATIAL_RELATIONS: {
+		SPATIAL_RELATIONS: {
 			ADD: null,
 			INDEX: {
 				ADD: null,
 			},
 		},
-    },
+	},
 
 	LAYER_TEMPLATES: {
 		ADD: null,
@@ -258,54 +258,54 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
-    MAPS: {
-	    SET: {
-            SET_ACTIVE_MAP_KEY: null,
+	MAPS: {
+		SET: {
+			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,
-            VIEW: {
-                SET: null,
-                UPDATE: null
-            }
-        },
-        MAP: {
-	    	LAYERS: {
-	    		SET_STYLE_KEY: null
+			VIEW: {
+				SET: null,
+				UPDATE: null,
 			},
-	    	VIEWPORT: {
-	    		SET: null,
+		},
+		MAP: {
+			LAYERS: {
+				SET_STYLE_KEY: null,
 			},
-            VIEW: {
-                SET: null,
-                UPDATE: null
-            }
-        },
-        UPDATE: null
-    },
+			VIEWPORT: {
+				SET: null,
+			},
+			VIEW: {
+				SET: null,
+				UPDATE: null,
+			},
+		},
+		UPDATE: null,
+	},
 
 	PERIODS: {
 		ADD: null,
@@ -318,7 +318,7 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
@@ -327,20 +327,20 @@ export default utils.deepKeyMirror({
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	PLACES: {
@@ -354,28 +354,28 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
+				REGISTER: null,
+			},
 		},
 	},
 
@@ -383,7 +383,7 @@ export default utils.deepKeyMirror({
 
 	SCENARIOS: {
 		ADD: null,
-		ADD_UNRECEIVED: null
+		ADD_UNRECEIVED: null,
 	},
 
 	SCOPES: {
@@ -397,28 +397,28 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	SCREENS: {
@@ -430,10 +430,10 @@ export default utils.deepKeyMirror({
 		RETRACT: null,
 		SETS: {
 			ADD: null,
-			REMOVE: null
+			REMOVE: null,
 		},
 		TOP_HISTORY: null,
-		UPDATE: null
+		UPDATE: null,
 	},
 
 	SELECTIONS: {
@@ -442,37 +442,36 @@ export default utils.deepKeyMirror({
 		SET_ACTIVE_KEY: null,
 		SET: {
 			FEATURE_KEYS_FILTER: {
-				KEYS: null
-			}
+				KEYS: null,
+			},
 		},
-        CLEAR: {
-		    FEATURE_KEYS_FILTER: null
-        }
+		CLEAR: {
+			FEATURE_KEYS_FILTER: null,
+		},
 	},
 
 	STYLES: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		USE: {
 			INDEXED: {
 				CLEAR: null,
 				CLEAR_ALL: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
-
 
 	TAGS: {
 		ADD: null,
@@ -485,27 +484,27 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	USERS: {
@@ -516,40 +515,40 @@ export default utils.deepKeyMirror({
 			ADD_UNRECEIVED: null,
 			INDEX: {
 				ADD: null,
-				CLEAR_ALL: null
+				CLEAR_ALL: null,
 			},
 			USE: {
 				INDEXED: {
 					CLEAR: null,
-					REGISTER: null
+					REGISTER: null,
 				},
 				KEYS: {
 					CLEAR: null,
-					REGISTER: null
-				}
-			}
+					REGISTER: null,
+				},
+			},
 		},
 		SET_ACTIVE_KEY: null,
 		CURRENT: {
-			REQUEST: null
+			REQUEST: null,
 		},
 		LOGIN: {
-			REQUEST: null
+			REQUEST: null,
 		},
 		INDEX: {
 			ADD: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	LAYER_TREES: {
@@ -563,26 +562,26 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
+				REGISTER: null,
+			},
 		},
 	},
 
@@ -597,29 +596,29 @@ export default utils.deepKeyMirror({
 			UPDATE: null,
 		},
 		ENSURE: {
-			ERROR: null
+			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
 			CLEAR_INDEX: null,
-			CLEAR_ALL: null
+			CLEAR_ALL: null,
 		},
 		LOAD: {
 			ERROR: null,
-			REQUEST: null
+			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
-				REGISTER: null
+				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null
-			}
-		}
+				REGISTER: null,
+			},
+		},
 	},
 
 	WINDOWS: {
@@ -628,11 +627,9 @@ export default utils.deepKeyMirror({
 		REMOVE: null,
 		SETS: {
 			ADD: null,
-			REMOVE: null
+			REMOVE: null,
 		},
 		TOP: null,
-		UPDATE: null
+		UPDATE: null,
 	},
 });
-
-

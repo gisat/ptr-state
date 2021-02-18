@@ -43,7 +43,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -80,7 +80,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -116,7 +116,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				reducer(test.state, test.action),
 				test.expectedResult
@@ -150,7 +150,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -243,7 +243,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -299,7 +299,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -368,7 +368,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -420,7 +420,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -524,7 +524,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -564,7 +564,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -592,7 +592,7 @@ describe('state/Cases/reducers', function () {
 				},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -621,7 +621,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				reducer(test.state, test.action),
 				test.expectedResult
@@ -659,7 +659,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -764,7 +764,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -808,7 +808,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -860,7 +860,7 @@ describe('state/Cases/reducers', function () {
 				},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -896,7 +896,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),
@@ -927,7 +927,7 @@ describe('state/Cases/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducer(test.state, test.action),

@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 const getSubstate = state => state.scopes;
 
@@ -22,12 +22,11 @@ const getIndexed = common.getIndexed(getSubstate);
 
 const getStateToSave = common.getStateToSave(getSubstate);
 
-const getActiveScopeConfiguration = createSelector(
-	[getActive],
-	(scope) => {
-		return scope && scope.data && scope.data.configuration ? scope.data.configuration : null;
-	}
-);
+const getActiveScopeConfiguration = createSelector([getActive], scope => {
+	return scope && scope.data && scope.data.configuration
+		? scope.data.configuration
+		: null;
+});
 
 export default {
 	getActive,

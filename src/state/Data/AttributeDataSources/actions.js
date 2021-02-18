@@ -15,18 +15,27 @@ const add = common.add(actionTypes);
  * @param {Array?} order
  * @param {Number} start
  * @param {Number} total
- * @param {string?} changedOn 
+ * @param {string?} changedOn
  */
-function receiveIndexed(attributeDataSources, filter, order, start, total, changedOn) {
-    return dispatch => {
-        // add attributeDataSources to store
-        if (attributeDataSources.length) {
-            dispatch(add(attributeDataSources, filter));
-        }
+function receiveIndexed(
+	attributeDataSources,
+	filter,
+	order,
+	start,
+	total,
+	changedOn
+) {
+	return dispatch => {
+		// add attributeDataSources to store
+		if (attributeDataSources.length) {
+			dispatch(add(attributeDataSources, filter));
+		}
 
-        // add to index
-        dispatch(addIndex(filter, order, total, start, attributeDataSources, changedOn));
-    }
+		// add to index
+		dispatch(
+			addIndex(filter, order, total, start, attributeDataSources, changedOn)
+		);
+	};
 }
 
 // ============ actions ============
@@ -35,5 +44,5 @@ function receiveIndexed(attributeDataSources, filter, order, start, total, chang
 
 export default {
 	add,
-    receiveIndexed,
-}
+	receiveIndexed,
+};

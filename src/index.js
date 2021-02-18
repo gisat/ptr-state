@@ -4,16 +4,16 @@ import logger from 'redux-logger';
 import {reduxBatch} from '@manaflair/redux-batch';
 import {connect, Provider} from 'react-redux';
 
-import connects from "./components/connects";
+import connects from './components/connects';
 
-import commonActionTypes from "./constants/ActionTypes";
-import Action from "./state/Action";
-import Select from "./state/Select";
+import commonActionTypes from './constants/ActionTypes';
+import Action from './state/Action';
+import Select from './state/Select';
 
-import commonActions from "./state/_common/actions";
-import commonHelpers from "./state/_common/helpers";
-import commonReducers, {DEFAULT_INITIAL_STATE} from "./state/_common/reducers";
-import commonSelectors from "./state/_common/selectors";
+import commonActions from './state/_common/actions';
+import commonHelpers from './state/_common/helpers';
+import commonReducers, {DEFAULT_INITIAL_STATE} from './state/_common/reducers';
+import commonSelectors from './state/_common/selectors';
 
 import appReducers from './state/App/reducers';
 import areasReducers from './state/Areas/reducers';
@@ -38,7 +38,6 @@ import usersReducers from './state/Users/reducers';
 import viewsReducers from './state/Views/reducers';
 import windowsReducers from './state/Windows/reducers';
 
-
 const baseStores = {
 	app: appReducers,
 	areas: areasReducers,
@@ -50,7 +49,7 @@ const baseStores = {
 	data: dataReducers,
 	layerTemplates: layerTemplatesReducers,
 	layerTrees: layerTreesReducers,
-    maps: mapsReducers,
+	maps: mapsReducers,
 	periods: periodsReducers,
 	places: placesReducers,
 	scenarios: scenariosReducers,
@@ -69,8 +68,19 @@ const createBaseStore = (specificStores, rootStores, middleware) => {
 	if (process.env.NODE_ENV === 'development') {
 		appliedMiddleware = applyMiddleware(thunk, logger, ...middleware);
 	}
-	let stores = specificStores ? {...baseStores, ...rootStores, specific: combineReducers(specificStores)} : {...baseStores, ...rootStores};
-	return createStore(combineReducers(stores), compose(reduxBatch, appliedMiddleware, reduxBatch, applyMiddleware(thunk), reduxBatch));
+	let stores = specificStores
+		? {...baseStores, ...rootStores, specific: combineReducers(specificStores)}
+		: {...baseStores, ...rootStores};
+	return createStore(
+		combineReducers(stores),
+		compose(
+			reduxBatch,
+			appliedMiddleware,
+			reduxBatch,
+			applyMiddleware(thunk),
+			reduxBatch
+		)
+	);
 };
 
 export {
@@ -78,30 +88,23 @@ export {
 	combineReducers,
 	applyMiddleware,
 	compose,
-
 	connect,
 	Provider,
-
 	baseStores,
 	createBaseStore,
-
 	connects,
-
 	commonActionTypes,
 	Action,
 	Select,
-
 	commonActions,
 	commonHelpers,
 	commonReducers,
 	commonSelectors,
-
 	DEFAULT_INITIAL_STATE,
-
 	thunk,
 	logger,
 	reduxBatch,
-}
+};
 
 // TODO remove?
 export default {
@@ -114,5 +117,5 @@ export default {
 	commonReducers,
 	commonSelectors,
 
-	DEFAULT_INITIAL_STATE
-}
+	DEFAULT_INITIAL_STATE,
+};

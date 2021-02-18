@@ -1,7 +1,10 @@
-import {createSelector} from "reselect";
-import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
-import createCachedSelector from "re-reselect";
-import _ from "lodash";
+import {createSelector} from 'reselect';
+import {
+	createSelector as createRecomputeSelector,
+	createObserver as createRecomputeObserver,
+} from '@jvitela/recompute';
+import createCachedSelector from 're-reselect';
+import _ from 'lodash';
 import commonHelpers from './helpers';
 
 const activeScopeKey = state => state.scopes.activeKey;
@@ -11,40 +14,34 @@ const activeScopeKey = state => state.scopes.activeKey;
  * @param {*} getSubstate
  * @returns {Object}
  */
-const getAllByKey = (getSubstate) => {
-	return (state) => {
+const getAllByKey = getSubstate => {
+	return state => {
 		return getSubstate(state).byKey;
-	}
+	};
 };
 
 /**
- * 
- * @param {*} getSubstate 
+ *
+ * @param {*} getSubstate
  * @returns {Object}
  */
-const getAllNotRemovedAsObject = (getSubstate) => {
-	return createSelector(
-		[getAllByKey(getSubstate)],
-		byKey => {
-			return _.pickBy(byKey, (item) => !item.hasOwnProperty('removed'));
-		}
-	);
+const getAllNotRemovedAsObject = getSubstate => {
+	return createSelector([getAllByKey(getSubstate)], byKey => {
+		return _.pickBy(byKey, item => !item.hasOwnProperty('removed'));
+	});
 };
 
 const getAllAsObject = getAllNotRemovedAsObject;
 
 /**
- * 
- * @param {*} getSubstate 
+ *
+ * @param {*} getSubstate
  * @returns {Array|null}
  */
-const getAll = (getSubstate) => {
-	return createSelector(
-		[getAllAsObject(getSubstate)],
-		byKey => {
-			return byKey ? Object.values(byKey) : null;
-		}
-	);
+const getAll = getSubstate => {
+	return createSelector([getAllAsObject(getSubstate)], byKey => {
+		return byKey ? Object.values(byKey) : null;
+	});
 };
 
 function modelsFromIndex(models, index) {
@@ -53,11 +50,11 @@ function modelsFromIndex(models, index) {
 	}
 
 	const indexedModels = [];
-	for (let i = 1; i <= index.count; i++){
+	for (let i = 1; i <= index.count; i++) {
 		const modelKey = index.index[i];
-		if (modelKey){
+		if (modelKey) {
 			const indexedModel = models[modelKey];
-			if (indexedModel){
+			if (indexedModel) {
 				indexedModels.push(indexedModel);
 			} else {
 				indexedModels.push({key: modelKey});
@@ -92,13 +89,18 @@ function modelsFromIndex2(models, index) {
 	return nonEmptyArray(indexedModels);
 }
 
-const getAllForActiveScope = (getSubstate) => {
+const getAllForActiveScope = getSubstate => {
 	return createSelector(
-		[getAllAsObject(getSubstate), getIndexes(getSubstate), activeScopeKey, (state, order) => order],
+		[
+			getAllAsObject(getSubstate),
+			getIndexes(getSubstate),
+			activeScopeKey,
+			(state, order) => order,
+		],
 		(models, indexes, activeScopeKey, order) => {
 			if (models && indexes && activeScopeKey) {
 				const filter = {
-					scopeKey: activeScopeKey
+					scopeKey: activeScopeKey,
 				};
 				const index = commonHelpers.getIndex(indexes, filter, order);
 
@@ -110,19 +112,19 @@ const getAllForActiveScope = (getSubstate) => {
 	);
 };
 
-const getActiveKey = (getSubstate) => {
-	return (state) => getSubstate(state).activeKey
+const getActiveKey = getSubstate => {
+	return state => getSubstate(state).activeKey;
 };
 
-const getActiveKeys = (getSubstate) => {
-	return (state) => getSubstate(state).activeKeys
+const getActiveKeys = getSubstate => {
+	return state => getSubstate(state).activeKeys;
 };
 
-const getActive = (getSubstate) => {
+const getActive = getSubstate => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getActiveKey(getSubstate)],
 		(models, activeKey) => {
-			if (models && models[activeKey]){
+			if (models && models[activeKey]) {
 				return models[activeKey];
 			} else {
 				return null;
@@ -131,31 +133,36 @@ const getActive = (getSubstate) => {
 	);
 };
 
-const getActiveModels = (getSubstate) => {
+const getActiveModels = getSubstate => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getActiveKeys(getSubstate)],
 		(models, activeKeys) => {
 			let activeModels = [];
-			if (models && !_.isEmpty(models) && activeKeys && !_.isEmpty(activeKeys)){
+			if (
+				models &&
+				!_.isEmpty(models) &&
+				activeKeys &&
+				!_.isEmpty(activeKeys)
+			) {
 				activeKeys.map(key => {
 					let model = models[key];
-					if (model){
+					if (model) {
 						activeModels.push(model);
 					}
 				});
 			}
 			return nonEmptyArray(activeModels);
 		}
-	)
+	);
 };
 
-const getByFilterOrder = (getSubstate) => {
+const getByFilterOrder = getSubstate => {
 	return createSelector(
 		[
 			getAllAsObject(getSubstate),
 			getIndexes(getSubstate),
 			(state, filter) => filter,
-			(state, filter, order) => order
+			(state, filter, order) => order,
 		],
 		(models, indexes, filter, order) => {
 			if (models && indexes) {
@@ -169,13 +176,13 @@ const getByFilterOrder = (getSubstate) => {
 	);
 };
 
-const getBatchByFilterOrder = (getSubstate) => {
+const getBatchByFilterOrder = getSubstate => {
 	return createSelector(
 		[
 			getAllAsObject(getSubstate),
 			getIndexes(getSubstate),
 			(state, filter) => filter,
-			(state, filter, order) => order
+			(state, filter, order) => order,
 		],
 		(models, indexes, filter, order) => {
 			if (models && indexes) {
@@ -188,7 +195,8 @@ const getBatchByFilterOrder = (getSubstate) => {
 	);
 };
 
-const getIndexed = (getSubstate) => { //todo proper memoization && unify with old getIndexedPage etc.
+const getIndexed = getSubstate => {
+	//todo proper memoization && unify with old getIndexedPage etc.
 	return createCachedSelector(
 		[
 			getAllAsObject(getSubstate),
@@ -200,18 +208,31 @@ const getIndexed = (getSubstate) => { //todo proper memoization && unify with ol
 			(state, filterByActive, filter, order, start) => start,
 			(state, filterByActive, filter, order, start, length) => length,
 		],
-		(models, indexes, activeKeys, filterByActive, filter, order, start, length) => {
+		(
+			models,
+			indexes,
+			activeKeys,
+			filterByActive,
+			filter,
+			order,
+			start,
+			length
+		) => {
 			if (models && indexes) {
-				let mergedFilter = commonHelpers.mergeFilters(activeKeys, filterByActive, filter);
+				let mergedFilter = commonHelpers.mergeFilters(
+					activeKeys,
+					filterByActive,
+					filter
+				);
 				let index = commonHelpers.getIndex(indexes, mergedFilter, order);
 				if (index && index.index) {
 					let indexedModels = [];
 					let end = Math.min(start + length - 1, index.count);
-					for (let i = start; i <= end; i++){
+					for (let i = start; i <= end; i++) {
 						let modelKey = index.index[i];
-						if (modelKey){
+						if (modelKey) {
 							let indexedModel = models[modelKey];
-							if (indexedModel){
+							if (indexedModel) {
 								indexedModels.push(indexedModel);
 							} else {
 								indexedModels.push({key: modelKey});
@@ -229,16 +250,15 @@ const getIndexed = (getSubstate) => { //todo proper memoization && unify with ol
 			}
 		}
 	)((state, filterByActive, filter, order, start, length) => {
-		return `${JSON.stringify(filterByActive)}:${JSON.stringify(filter)}:${JSON.stringify(order)}:${start}:${length}`
+		return `${JSON.stringify(filterByActive)}:${JSON.stringify(
+			filter
+		)}:${JSON.stringify(order)}:${start}:${length}`;
 	});
 };
 
-const getByKey = (getSubstate) => {
+const getByKey = getSubstate => {
 	return createCachedSelector(
-		[
-			getAllAsObject(getSubstate),
-			(state, key) => key
-		],
+		[getAllAsObject(getSubstate), (state, key) => key],
 		(allData, key) => {
 			if (key && allData && !_.isEmpty(allData) && allData[key]) {
 				return allData[key];
@@ -249,12 +269,9 @@ const getByKey = (getSubstate) => {
 	)((state, key) => key);
 };
 
-const getByKeysAsObject = (getSubstate) => {
+const getByKeysAsObject = getSubstate => {
 	return createCachedSelector(
-		[
-			getAllAsObject(getSubstate),
-			(state, keys) => keys,
-		],
+		[getAllAsObject(getSubstate), (state, keys) => keys],
 		(allData, keys) => {
 			if (keys && keys.length && allData && !_.isEmpty(allData)) {
 				let data = _.pick(allData, keys);
@@ -263,24 +280,19 @@ const getByKeysAsObject = (getSubstate) => {
 				return null;
 			}
 		}
-	)(
-		(state, keys) => `${keys}`
-	);
+	)((state, keys) => `${keys}`);
 };
 
 // TODO test + use getByKeysAsObject?
-const getByKeys = (getSubstate) => {
+const getByKeys = getSubstate => {
 	return createCachedSelector(
-		[
-			getAllAsObject(getSubstate),
-			(state, keys) => keys,
-		],
+		[getAllAsObject(getSubstate), (state, keys) => keys],
 		(allData, keys) => {
 			if (keys && keys.length && allData && !_.isEmpty(allData)) {
 				let data = [];
 				_.each(keys, key => {
 					if (allData[key]) {
-						data.push(allData[key])
+						data.push(allData[key]);
 					}
 				});
 
@@ -289,66 +301,61 @@ const getByKeys = (getSubstate) => {
 				return null;
 			}
 		}
-	)(
-		(state, keys) => `${keys}`
-	);
+	)((state, keys) => `${keys}`);
 };
 
-const getDataByKey = (getSubstate) => {
-	return createSelector(
-		[getByKey(getSubstate)],
-		(model) => {
-			if (model && model.data) {
-				return model.data;
-			} else {
-				return null;
-			}
+const getDataByKey = getSubstate => {
+	return createSelector([getByKey(getSubstate)], model => {
+		if (model && model.data) {
+			return model.data;
+		} else {
+			return null;
 		}
-	);
+	});
 };
 
-const getDeletePermissionByKey = (getSubstate) => {
-	return createSelector(
-		[getByKey(getSubstate)],
-		(model) => {
-			if (model && model.permissions) {
-				return (model.permissions.activeUser && model.permissions.activeUser.delete) || (model.permissions.guest && model.permissions.guest.delete);
-			} else {
-				return false;
-			}
+const getDeletePermissionByKey = getSubstate => {
+	return createSelector([getByKey(getSubstate)], model => {
+		if (model && model.permissions) {
+			return (
+				(model.permissions.activeUser && model.permissions.activeUser.delete) ||
+				(model.permissions.guest && model.permissions.guest.delete)
+			);
+		} else {
+			return false;
 		}
-	);
+	});
 };
 
-const getUpdatePermissionByKey = (getSubstate) => {
-	return createSelector(
-		[getByKey(getSubstate)],
-		(model) => {
-			if (model && model.permissions) {
-				return (model.permissions.activeUser && model.permissions.activeUser.update) || (model.permissions.guest && model.permissions.guest.update);
-			} else {
-				return false;
-			}
+const getUpdatePermissionByKey = getSubstate => {
+	return createSelector([getByKey(getSubstate)], model => {
+		if (model && model.permissions) {
+			return (
+				(model.permissions.activeUser && model.permissions.activeUser.update) ||
+				(model.permissions.guest && model.permissions.guest.update)
+			);
+		} else {
+			return false;
 		}
-	);
+	});
 };
 
-const getEditedAll = (getSubstate) => {
-	return (state) => {
+const getEditedAll = getSubstate => {
+	return state => {
 		let data = getSubstate(state).editedByKey;
 		return data ? Object.values(data) : null;
-	}
+	};
 };
 
-const getEditedAllAsObject = (getSubstate) => {
-	return (state) => getSubstate(state).editedByKey;
+const getEditedAllAsObject = getSubstate => {
+	return state => getSubstate(state).editedByKey;
 };
 
-const getEditedActive = (getSubstate) => {
+const getEditedActive = getSubstate => {
 	return createSelector(
 		[getEditedAllAsObject(getSubstate), getActiveKey(getSubstate)],
 		(models, activeKey) => {
-			if (models && models[activeKey]){
+			if (models && models[activeKey]) {
 				return models[activeKey];
 			} else {
 				return null;
@@ -357,57 +364,60 @@ const getEditedActive = (getSubstate) => {
 	);
 };
 
-const getEditedByKey = (getSubstate) => {
+const getEditedByKey = getSubstate => {
 	return (state, key) => {
 		let allEditedData = getEditedAllAsObject(getSubstate)(state);
-		if (key && allEditedData && !_.isEmpty(allEditedData) && allEditedData[key]) {
+		if (
+			key &&
+			allEditedData &&
+			!_.isEmpty(allEditedData) &&
+			allEditedData[key]
+		) {
 			return allEditedData[key];
 		} else {
 			return null;
 		}
-	}
+	};
 };
 
-const getEditedDataByKey = (getSubstate) => {
-	return createSelector(
-		[getEditedByKey(getSubstate)],
-		(model) => {
-			if (model && model.data) {
-				return model.data;
-			} else {
-				return null;
-			}
-		}
-	);
-};
-
-const getEditedKeys = (getSubstate) => {
-	return createSelector(
-		[getEditedAll(getSubstate)],
-		(edited) => {
-			if (edited && !_.isEmpty(edited)){
-				return edited.map(model => model.key);
-			}
+const getEditedDataByKey = getSubstate => {
+	return createSelector([getEditedByKey(getSubstate)], model => {
+		if (model && model.data) {
+			return model.data;
+		} else {
 			return null;
 		}
-	);
+	});
 };
 
-const getIndexes = (getSubstate) => {
-	return (state) => getSubstate(state).indexes;
+const getEditedKeys = getSubstate => {
+	return createSelector([getEditedAll(getSubstate)], edited => {
+		if (edited && !_.isEmpty(edited)) {
+			return edited.map(model => model.key);
+		}
+		return null;
+	});
 };
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) => getIndexes(getSubstate)(state));
+const getIndexes = getSubstate => {
+	return state => getSubstate(state).indexes;
+};
+
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
+	getIndexes(getSubstate)(state)
+);
 
 /**
  * Get whole index by given filter and order
  * @param getSubstate
  */
-const getIndex = (getSubstate) => {
-	return createSelector([
-		getIndexes(getSubstate),
-		(state, filter) => filter,
-		(state, filter, order) => order],
+const getIndex = getSubstate => {
+	return createSelector(
+		[
+			getIndexes(getSubstate),
+			(state, filter) => filter,
+			(state, filter, order) => order,
+		],
 		(indexes, filter, order) => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
@@ -418,26 +428,28 @@ const getIndex = (getSubstate) => {
  * Get indexes value from given state on given path.
  * Optional param indexPath has default value "indexes"
  */
-const getIndexesByPath = (getSubstate) => {
-	return (state, indexPath = 'indexes') =>  _.get(getSubstate(state), indexPath);
+const getIndexesByPath = getSubstate => {
+	return (state, indexPath = 'indexes') => _.get(getSubstate(state), indexPath);
 };
 
 /**
  * Get whole index by given filter and order and optional indexPath
  * Beside getIndex indexPath is first optional parameter, filter and order folows.
  */
-const getIndexByPath = (getSubstate) => {
-	return createSelector([
-		getIndexesByPath(getSubstate),
-		(state, indexPath, filter) => filter,
-		(state, indexPath, filter, order) => order],
+const getIndexByPath = getSubstate => {
+	return createSelector(
+		[
+			getIndexesByPath(getSubstate),
+			(state, indexPath, filter) => filter,
+			(state, indexPath, filter, order) => order,
+		],
 		(indexes, filter, order) => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
 	);
 };
 
-const getIndex_recompute = (getSubstate) => {
+const getIndex_recompute = getSubstate => {
 	return createRecomputeSelector((filter, order) => {
 		const indexes = getIndexesObserver(getSubstate);
 		if (indexes) {
@@ -448,28 +460,27 @@ const getIndex_recompute = (getSubstate) => {
 	});
 };
 
-const getIndexChangedOn = (getSubstate) => {
-	return createSelector(
-		[getIndex(getSubstate)],
-		(index) => {
-			if (index && index.changedOn){
-				return index.changedOn;
-			} else {
-				return null;
-			}
+const getIndexChangedOn = getSubstate => {
+	return createSelector([getIndex(getSubstate)], index => {
+		if (index && index.changedOn) {
+			return index.changedOn;
+		} else {
+			return null;
 		}
-	);
+	});
 };
 
-const getIndexPage = (getSubstate) => {
-	return createSelector([
-		getIndex(getSubstate),
-		(state, filter, order, start) => (start),
-		(state, filter, order, start, length) => (length)],
+const getIndexPage = getSubstate => {
+	return createSelector(
+		[
+			getIndex(getSubstate),
+			(state, filter, order, start) => start,
+			(state, filter, order, start, length) => length,
+		],
 		(index, start, length) => {
-			if (index && index.index){
+			if (index && index.index) {
 				let indexed = {};
-				for (let o = start; o < (start + length) && o <= index.count; o++){
+				for (let o = start; o < start + length && o <= index.count; o++) {
 					let key = index.index[o];
 					indexed[o] = key ? key : null;
 				}
@@ -485,14 +496,13 @@ const getIndexPage = (getSubstate) => {
  * Get a page of data
  * call with (state, filter, order, start, length)
  */
-const getIndexedPage = (getSubstate) => {
+const getIndexedPage = getSubstate => {
 	return createSelector(
-		[
-			getIndexPage(getSubstate),
-			getAllAsObject(getSubstate)
-		],
+		[getIndexPage(getSubstate), getAllAsObject(getSubstate)],
 		(page, models) => {
-			return page && page.length && page.map(key => (models[key] || null)) || null; //todo check loading
+			return (
+				(page && page.length && page.map(key => models[key] || null)) || null
+			); //todo check loading
 		}
 	);
 };
@@ -500,32 +510,29 @@ const getIndexedPage = (getSubstate) => {
 /**
  * call with (state, filter, order)
  */
-const getIndexTotal = (getSubstate) => {
-	return createSelector(
-		[getIndex(getSubstate)],
-		(index) => {
-			if (index && (index.count || index.count === 0)){
-				return index.count;
-			} else {
-				return null;
-			}
+const getIndexTotal = getSubstate => {
+	return createSelector([getIndex(getSubstate)], index => {
+		if (index && (index.count || index.count === 0)) {
+			return index.count;
+		} else {
+			return null;
 		}
-	);
+	});
 };
 
 /**
- * 
- * @param {func} getSubstate 
+ *
+ * @param {func} getSubstate
  * @return {Array}
  */
-const getIndexesByFilteredItem = (getSubstate) => {
-	return createSelector([
-		getIndexes(getSubstate),
-		(state, item) => item,
-		],
+const getIndexesByFilteredItem = getSubstate => {
+	return createSelector(
+		[getIndexes(getSubstate), (state, item) => item],
 		(indexes, item) => {
-			if(!_.isEmpty(indexes)){
-				return indexes.filter((index) => commonHelpers.itemFitFilter(index.filter, item));
+			if (!_.isEmpty(indexes)) {
+				return indexes.filter(index =>
+					commonHelpers.itemFitFilter(index.filter, item)
+				);
 			} else {
 				return null;
 			}
@@ -545,16 +552,17 @@ function nonEmptyArray(array) {
 /**
  * Compare keys with loaded models and return which keys need to be loaded
  */
-const getKeysToLoad = (getSubstate) => {
+const getKeysToLoad = getSubstate => {
 	return createSelector(
-		[getAllAsObject(getSubstate),
-			(state, keys) => (keys)],
+		[getAllAsObject(getSubstate), (state, keys) => keys],
 		(models, keys) => {
-			if (keys && keys.length){
-				if (!models){
+			if (keys && keys.length) {
+				if (!models) {
 					return keys;
 				} else {
-					return nonEmptyArray(keys.filter(key => !models[key] || models[key].outdated));
+					return nonEmptyArray(
+						keys.filter(key => !models[key] || models[key].outdated)
+					);
 				}
 			} else {
 				return null;
@@ -563,8 +571,8 @@ const getKeysToLoad = (getSubstate) => {
 	);
 };
 
-const getUsedKeys = (getSubstate) => {
-	return (state) => {
+const getUsedKeys = getSubstate => {
+	return state => {
 		let inUse = getSubstate(state).inUse.keys;
 		if (inUse) {
 			let keys = _.uniq(_.flatten(Object.values(inUse)));
@@ -572,11 +580,11 @@ const getUsedKeys = (getSubstate) => {
 		} else {
 			return null;
 		}
-	}
+	};
 };
 
-const getIndexedDataUses = (getSubstate) => {
-	return (state) => {
+const getIndexedDataUses = getSubstate => {
+	return state => {
 		if (getSubstate(state) && getSubstate(state).inUse) {
 			return getSubstate(state).inUse.indexes;
 		} else {
@@ -601,29 +609,45 @@ const getAllActiveKeys = createSelector(
 		state => state.layerTemplates && state.layerTemplates.activeKey,
 		state => state.areaTreeLevelKeys && state.areaTreeLevelKeys.activeKey,
 		state => state.specific && state.specific.apps,
-		state => state.app && state.app.key
+		state => state.app && state.app.key,
 	],
-	(activeScopeKey,activeCaseKey,activeCaseKeys,activeScenarioKey,activeScenarioKeys,activePlaceKey,activePlaceKeys,activePeriodKey,activePeriodKeys,activeAttributeKey,activeAttributeKeys, activeLayerTemplateKey, activeAreaTreeLevelKey, apps, appKey) => {
+	(
+		activeScopeKey,
+		activeCaseKey,
+		activeCaseKeys,
+		activeScenarioKey,
+		activeScenarioKeys,
+		activePlaceKey,
+		activePlaceKeys,
+		activePeriodKey,
+		activePeriodKeys,
+		activeAttributeKey,
+		activeAttributeKeys,
+		activeLayerTemplateKey,
+		activeAreaTreeLevelKey,
+		apps,
+		appKey
+	) => {
 		let activeKeys = {
-		    activeScopeKey: activeScopeKey || null,
-            activeCaseKey: activeCaseKey || null,
-            activeCaseKeys: activeCaseKeys || null,
-            activeScenarioKey: activeScenarioKey || null,
-            activeScenarioKeys: activeScenarioKeys || null,
-            activePlaceKey: activePlaceKey || null,
-            activePlaceKeys: activePlaceKeys || null,
-            activePeriodKey: activePeriodKey || null,
-            activePeriodKeys: activePeriodKeys || null,
-            activeAttributeKey: activeAttributeKey || null,
-            activeAttributeKeys: activeAttributeKeys || null,
-            activeLayerTemplateKey: activeLayerTemplateKey || null,
-            activeAreaTreeLevelKey: activeAreaTreeLevelKey || null
+			activeScopeKey: activeScopeKey || null,
+			activeCaseKey: activeCaseKey || null,
+			activeCaseKeys: activeCaseKeys || null,
+			activeScenarioKey: activeScenarioKey || null,
+			activeScenarioKeys: activeScenarioKeys || null,
+			activePlaceKey: activePlaceKey || null,
+			activePlaceKeys: activePlaceKeys || null,
+			activePeriodKey: activePeriodKey || null,
+			activePeriodKeys: activePeriodKeys || null,
+			activeAttributeKey: activeAttributeKey || null,
+			activeAttributeKeys: activeAttributeKeys || null,
+			activeLayerTemplateKey: activeLayerTemplateKey || null,
+			activeAreaTreeLevelKey: activeAreaTreeLevelKey || null,
 		};
 
 		// for BO usage
-		if (apps){
+		if (apps) {
 			activeKeys.activeApplicationKey = apps.activeKey;
-		} else if (appKey){
+		} else if (appKey) {
 			activeKeys.activeApplicationKey = appKey;
 		}
 
@@ -632,93 +656,99 @@ const getAllActiveKeys = createSelector(
 );
 
 const getActiveKeysByFilterByActive = createCachedSelector(
-    [
-        getAllActiveKeys,
-        (state, filterByActive) => filterByActive
-    ],
-    (activeKeys, filterByActive) => {
-        if (filterByActive && !_.isEmpty(filterByActive)) {
-            let keys = {};
+	[getAllActiveKeys, (state, filterByActive) => filterByActive],
+	(activeKeys, filterByActive) => {
+		if (filterByActive && !_.isEmpty(filterByActive)) {
+			let keys = {};
 
-            if (filterByActive.scope && activeKeys.activeScopeKey) {
-                keys.scopeKey = activeKeys.activeScopeKey;
-            }
-            if (filterByActive.place) {
-                if (activeKeys.activePlaceKey) {
-                    keys.placeKey = activeKeys.activePlaceKey;
-                } else if (activeKeys.activePlaceKeys) {
-                    keys.placeKeys = activeKeys.activePlaceKeys;
-                }
-            }
-            if (filterByActive.scenario){
-                if (activeKeys.activeScenarioKey) {
-                    keys.scenarioKey = activeKeys.activeScenarioKey;
-                } else if (activeKeys.activeScenarioKeys) {
-                    keys.scenarioKeys = activeKeys.activeScenarioKeys;
-                }
-            }
-            if (filterByActive.case) {
-                if (activeKeys.activeCaseKey) {
-                    keys.caseKey = activeKeys.activeCaseKey;
-                } else if (activeKeys.activeCaseKeys) {
-                    keys.caseKeys = activeKeys.activeCaseKeys;
-                }
-            }
-            if (filterByActive.period) {
-                if (activeKeys.activePeriodKey) {
-                    keys.periodKey = activeKeys.activePeriodKey;
-                } else if (activeKeys.activePeriodKeys) {
-                    keys.periodKeys = activeKeys.activePeriodKeys;
-                }
-            }
-            if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
-                keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
-            }
-            if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
-                keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
-            }
-            if (filterByActive.application && activeKeys.activeApplicationKey) {
-                keys.applicationKey = activeKeys.activeApplicationKey
-            }
+			if (filterByActive.scope && activeKeys.activeScopeKey) {
+				keys.scopeKey = activeKeys.activeScopeKey;
+			}
+			if (filterByActive.place) {
+				if (activeKeys.activePlaceKey) {
+					keys.placeKey = activeKeys.activePlaceKey;
+				} else if (activeKeys.activePlaceKeys) {
+					keys.placeKeys = activeKeys.activePlaceKeys;
+				}
+			}
+			if (filterByActive.scenario) {
+				if (activeKeys.activeScenarioKey) {
+					keys.scenarioKey = activeKeys.activeScenarioKey;
+				} else if (activeKeys.activeScenarioKeys) {
+					keys.scenarioKeys = activeKeys.activeScenarioKeys;
+				}
+			}
+			if (filterByActive.case) {
+				if (activeKeys.activeCaseKey) {
+					keys.caseKey = activeKeys.activeCaseKey;
+				} else if (activeKeys.activeCaseKeys) {
+					keys.caseKeys = activeKeys.activeCaseKeys;
+				}
+			}
+			if (filterByActive.period) {
+				if (activeKeys.activePeriodKey) {
+					keys.periodKey = activeKeys.activePeriodKey;
+				} else if (activeKeys.activePeriodKeys) {
+					keys.periodKeys = activeKeys.activePeriodKeys;
+				}
+			}
+			if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
+				keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+			}
+			if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
+				keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+			}
+			if (filterByActive.application && activeKeys.activeApplicationKey) {
+				keys.applicationKey = activeKeys.activeApplicationKey;
+			}
 
-            return !_.isEmpty(keys) ? keys : null;
-        } else {
-            return null;
-        }
-    }
+			return !_.isEmpty(keys) ? keys : null;
+		} else {
+			return null;
+		}
+	}
 )((state, filterByActive) => JSON.stringify(filterByActive));
 
-const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(getActiveKeysByFilterByActive);
+const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(
+	getActiveKeysByFilterByActive
+);
 
-const getUsedIndexPages = (getSubstate) => {
-	return createSelector([
-			getIndexedDataUses(getSubstate),
-			getAllActiveKeys
-		],
+const getUsedIndexPages = getSubstate => {
+	return createSelector(
+		[getIndexedDataUses(getSubstate), getAllActiveKeys],
 		(indexedDataUses, activeKeys) => {
 			let groupedUses = [];
 			let finalUsedIndexes = [];
-			if(!_.isEmpty(indexedDataUses)) {
-				_.each(indexedDataUses, (usedIndexes) => {
+			if (!_.isEmpty(indexedDataUses)) {
+				_.each(indexedDataUses, usedIndexes => {
 					usedIndexes.forEach(usedIndex => {
-						let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
-	
-						let existingIndex = _.find(groupedUses, (use) => {
-							return _.isEqual(use.filter, mergedFilter) && _.isEqual(use.order, usedIndex.order) ;
+						let mergedFilter = commonHelpers.mergeFilters(
+							activeKeys,
+							usedIndex.filterByActive,
+							usedIndex.filter
+						);
+
+						let existingIndex = _.find(groupedUses, use => {
+							return (
+								_.isEqual(use.filter, mergedFilter) &&
+								_.isEqual(use.order, usedIndex.order)
+							);
 						});
-						if (existingIndex){
+						if (existingIndex) {
 							existingIndex.inUse.push({
 								start: usedIndex.start,
-								length: usedIndex.length
+								length: usedIndex.length,
 							});
 						} else {
 							groupedUses.push({
 								filter: mergedFilter,
 								order: usedIndex.order,
-								inUse: [{
-									start: usedIndex.start,
-									length: usedIndex.length
-								}]
+								inUse: [
+									{
+										start: usedIndex.start,
+										length: usedIndex.length,
+									},
+								],
 							});
 						}
 					});
@@ -730,7 +760,7 @@ const getUsedIndexPages = (getSubstate) => {
 					finalUsedIndexes.push({
 						filter: index.filter,
 						order: index.order,
-						uses: _mergeIntervals(Object.values(index.inUse))
+						uses: _mergeIntervals(Object.values(index.inUse)),
 					});
 				}
 			});
@@ -739,7 +769,7 @@ const getUsedIndexPages = (getSubstate) => {
 	);
 };
 
-const getUsesForIndex = (getSubstate) => {
+const getUsesForIndex = getSubstate => {
 	return createCachedSelector(
 		getIndexedDataUses(getSubstate),
 		(state, filter) => filter,
@@ -747,25 +777,34 @@ const getUsesForIndex = (getSubstate) => {
 		getAllActiveKeys,
 		(indexedDataUses, filter, order, activeKeys) => {
 			let index = null;
-			if(!_.isEmpty(indexedDataUses)) {
-				_.each(indexedDataUses, (usedIndexes) => {
+			if (!_.isEmpty(indexedDataUses)) {
+				_.each(indexedDataUses, usedIndexes => {
 					_.each(usedIndexes, usedIndex => {
-						let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
+						let mergedFilter = commonHelpers.mergeFilters(
+							activeKeys,
+							usedIndex.filterByActive,
+							usedIndex.filter
+						);
 
-						if (_.isEqual(filter, mergedFilter) && _.isEqual(order, usedIndex.order)){
-							if (index){
+						if (
+							_.isEqual(filter, mergedFilter) &&
+							_.isEqual(order, usedIndex.order)
+						) {
+							if (index) {
 								index.inUse.push({
 									start: usedIndex.start,
-									length: usedIndex.length
+									length: usedIndex.length,
 								});
 							} else {
 								index = {
 									filter: filter,
 									order: usedIndex.order,
-									inUse: [{
-										start: usedIndex.start,
-										length: usedIndex.length
-									}]
+									inUse: [
+										{
+											start: usedIndex.start,
+											length: usedIndex.length,
+										},
+									],
 								};
 							}
 						}
@@ -773,36 +812,37 @@ const getUsesForIndex = (getSubstate) => {
 				});
 			}
 
-			if (index){
+			if (index) {
 				return {
 					filter: index.filter,
 					order: index.order,
-					uses: _mergeIntervals(Object.values(index.inUse))
-				}
+					uses: _mergeIntervals(Object.values(index.inUse)),
+				};
 			} else {
 				return null;
 			}
 		}
-	)(
-		(state, filter, order) => {
-			let stringOrder = JSON.stringify(order);
-			let stringFilter = JSON.stringify(_.map(filter, (value, key) => {
+	)((state, filter, order) => {
+		let stringOrder = JSON.stringify(order);
+		let stringFilter = JSON.stringify(
+			_.map(filter, (value, key) => {
 				return `${key}:${value}`;
-			}).sort());
-			return `${stringOrder}:${stringFilter}`;
-		}
-	);
+			}).sort()
+		);
+		return `${stringOrder}:${stringFilter}`;
+	});
 };
 
-const getUsesWithActiveDependency = (getSubstate) => {
+const getUsesWithActiveDependency = getSubstate => {
 	/**
 	 * @param state {Object}
 	 * @param filterByActive {Object} Something like {scope: true}
 	 */
-	return createSelector([
+	return createSelector(
+		[
 			getIndexedDataUses(getSubstate),
 			getAllActiveKeys,
-			(state, filterByActive) => filterByActive
+			(state, filterByActive) => filterByActive,
 		],
 		/**
 		 * @param indexedDataUses {Object} inUse.indexes
@@ -815,30 +855,49 @@ const getUsesWithActiveDependency = (getSubstate) => {
 
 			if (filterByActive && !_.isEmpty(indexedDataUses)) {
 				// loop through components
-				_.map(indexedDataUses, (componentUsedIndexes) => {
+				_.map(indexedDataUses, componentUsedIndexes => {
 					// loop through uses for component
-					_.map(componentUsedIndexes, (usedIndex) => {
-						if (_.reduce(filterByActive, (accumulator, value, index) => accumulator && value && usedIndex.filterByActive && usedIndex.filterByActive[index], true)) {
+					_.map(componentUsedIndexes, usedIndex => {
+						if (
+							_.reduce(
+								filterByActive,
+								(accumulator, value, index) =>
+									accumulator &&
+									value &&
+									usedIndex.filterByActive &&
+									usedIndex.filterByActive[index],
+								true
+							)
+						) {
 							// if usedIndex.filterByActive has all the properties of filterByActive
 
-							let mergedFilter = commonHelpers.mergeFilters(activeKeys, usedIndex.filterByActive, usedIndex.filter);
+							let mergedFilter = commonHelpers.mergeFilters(
+								activeKeys,
+								usedIndex.filterByActive,
+								usedIndex.filter
+							);
 
-							let existingIndex = _.find(groupedUses, (use) => {
-								return _.isEqual(use.filter, mergedFilter) && _.isEqual(use.order, usedIndex.order) ;
+							let existingIndex = _.find(groupedUses, use => {
+								return (
+									_.isEqual(use.filter, mergedFilter) &&
+									_.isEqual(use.order, usedIndex.order)
+								);
 							});
-							if (existingIndex){
+							if (existingIndex) {
 								existingIndex.inUse.push({
 									start: usedIndex.start,
-									length: usedIndex.length
+									length: usedIndex.length,
 								});
 							} else {
 								groupedUses.push({
 									filter: mergedFilter,
 									order: usedIndex.order,
-									inUse: [{
-										start: usedIndex.start,
-										length: usedIndex.length
-									}]
+									inUse: [
+										{
+											start: usedIndex.start,
+											length: usedIndex.length,
+										},
+									],
 								});
 							}
 						}
@@ -851,7 +910,7 @@ const getUsesWithActiveDependency = (getSubstate) => {
 						usedIndexes.push({
 							filter: index.filter,
 							order: index.order,
-							uses: _mergeIntervals(Object.values(index.inUse))
+							uses: _mergeIntervals(Object.values(index.inUse)),
 						});
 					}
 				});
@@ -863,8 +922,8 @@ const getUsesWithActiveDependency = (getSubstate) => {
 	);
 };
 
-const getStateToSave = (getSubstate) => {
-	return (state) => {
+const getStateToSave = getSubstate => {
+	return state => {
 		const activeKey = getSubstate(state).activeKey;
 		if (activeKey) {
 			return {activeKey};
@@ -875,8 +934,8 @@ const getStateToSave = (getSubstate) => {
 			return {activeKeys};
 		}
 
-		return {}
-	}
+		return {};
+	};
 };
 
 function isInterval(interval) {
@@ -884,32 +943,40 @@ function isInterval(interval) {
 }
 
 function intervalsOverlap(earlier, later) {
-	return later.start <= (earlier.start + earlier.length);
+	return later.start <= earlier.start + earlier.length;
 }
 
-const _mergeIntervals = (intervals) => {
-	const validIntervals = intervals.filter(isInterval)
+const _mergeIntervals = intervals => {
+	const validIntervals = intervals.filter(isInterval);
 	const sortedIntervals = _.sortBy(validIntervals, ['start', 'length']);
 	if (sortedIntervals.length === 0) {
 		return null;
 	}
 
 	//merge intervals
-	return _.tail(sortedIntervals)
-		.reduce((mergedIntervals, interval) => {
+	return _.tail(sortedIntervals).reduce(
+		(mergedIntervals, interval) => {
 			const last = mergedIntervals.pop();
 			if (intervalsOverlap(last, interval)) {
 				//merge last & current
-				const end = Math.max((last.start + last.length), (interval.start + interval.length));
-				return [...mergedIntervals, {
-					start: last.start,
-					length: (end - last.start)
-				}];
+				const end = Math.max(
+					last.start + last.length,
+					interval.start + interval.length
+				);
+				return [
+					...mergedIntervals,
+					{
+						start: last.start,
+						length: end - last.start,
+					},
+				];
 			} else {
 				//add both
 				return [...mergedIntervals, last, interval];
 			}
-	}, [_.head(sortedIntervals)]);
+		},
+		[_.head(sortedIntervals)]
+	);
 };
 
 export default {
@@ -917,7 +984,7 @@ export default {
 	getActiveModels,
 	getActiveKey,
 	getActiveKeys,
-    getActiveKeysByFilterByActive,
+	getActiveKeysByFilterByActive,
 	getAll,
 	getAllActiveKeys,
 	getAllAsObject,
@@ -963,5 +1030,5 @@ export default {
 	_mergeIntervals,
 
 	// recompute observers
-	getActiveKeysByFilterByActiveObserver
-}
+	getActiveKeysByFilterByActiveObserver,
+};

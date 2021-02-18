@@ -9,10 +9,7 @@ const getAllSetsAsObject = state => state.screens.sets;
  * @param key {string} set key
  */
 const getSetByKey = createSelector(
-	[
-		getAllSetsAsObject,
-		(state, key) => key
-	],
+	[getAllSetsAsObject, (state, key) => key],
 	/**
 	 * @param sets {Object} all sets as object
 	 * @param key {string} set key
@@ -32,10 +29,7 @@ const getSetByKey = createSelector(
  * @param key {string} set key
  */
 const getScreensBySetKey = createSelector(
-	[
-		getSetByKey,
-		getAllScreensAsObject
-	],
+	[getSetByKey, getAllScreensAsObject],
 	/**
 	 * @param set {Object} set
 	 * @param screens {Object} all screens as object
@@ -44,7 +38,7 @@ const getScreensBySetKey = createSelector(
 	(set, screens) => {
 		if (set) {
 			let setScreens = {};
-			_.each(set.orderBySpace, (lineage) => {
+			_.each(set.orderBySpace, lineage => {
 				setScreens[lineage] = screens[lineage];
 			});
 			return setScreens;
@@ -59,10 +53,7 @@ const getScreensBySetKey = createSelector(
  * @param screenLineage {string}
  */
 const getSetKeyByScreenLineage = createSelector(
-	[
-		getAllSetsAsObject,
-		(state, screenLineage) => screenLineage
-	],
+	[getAllSetsAsObject, (state, screenLineage) => screenLineage],
 	/**
 	 * @param sets {Object} all sets as object
 	 * @param lineage {string}
@@ -86,10 +77,7 @@ const getSetKeyByScreenLineage = createSelector(
  * @param screenLineage {string}
  */
 const getScreenByLineage = createSelector(
-	[
-		getAllScreensAsObject,
-		(state, lineage) => (lineage)
-	],
+	[getAllScreensAsObject, (state, lineage) => lineage],
 	/**
 	 * @param screens {object} all screens as object
 	 * @param lineage {string}
@@ -108,5 +96,5 @@ export default {
 	getScreenByLineage,
 	getScreensBySetKey,
 	getSetByKey,
-	getSetKeyByScreenLineage
-}
+	getSetKeyByScreenLineage,
+};

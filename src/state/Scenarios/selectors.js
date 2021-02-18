@@ -1,4 +1,4 @@
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 const getSubstate = state => state.scenarios;
 
@@ -31,4 +31,4 @@ export default {
 	getEditedKeys,
 
 	getSubstate,
-}
+};

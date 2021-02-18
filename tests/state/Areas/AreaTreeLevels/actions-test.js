@@ -30,7 +30,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -71,7 +71,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -86,7 +86,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTreeLevels',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -150,7 +150,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 	});
 
 	it('refreshUses', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -181,7 +181,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -196,7 +196,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTreeLevels',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -281,7 +281,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 				areaTreeLevels: {},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -296,7 +296,7 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTreeLevels',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -379,8 +379,8 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 	});
 
 	it('useKeys', function () {
-		const getSubState = (state) => state.sub;
-		const dispatch = (action) => {
+		const getSubState = state => state.sub;
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {

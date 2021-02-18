@@ -1,10 +1,9 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
 
-import common from "../_common/selectors";
-import ScopesSelectors from "../Scopes/selectors";
+import common from '../_common/selectors';
+import ScopesSelectors from '../Scopes/selectors';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
-
 
 const getSubstate = state => state.places;
 
@@ -26,24 +25,19 @@ const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 const getPlacesForActiveScope = createSelector(
 	[getAll, ScopesSelectors.getActiveScopeKey],
 	(models, activeScopeKey) => {
-		return _.filter(models, function(model){
-			return model.data && (model.data.dataset === activeScopeKey);
+		return _.filter(models, function (model) {
+			return model.data && model.data.dataset === activeScopeKey;
 		});
 	}
 );
 
-const getActiveView = createSelector(
-	[
-		getActive
-	],
-	(place) => {
-		if (place && place.data && place.data.bbox) {
-			return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
-		} else {
-			return null;
-		}
+const getActiveView = createSelector([getActive], place => {
+	if (place && place.data && place.data.bbox) {
+		return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
+	} else {
+		return null;
 	}
-);
+});
 
 export default {
 	getPlaces: getAll,
@@ -55,7 +49,7 @@ export default {
 	getActive,
 	getActivePlaces,
 	getActiveView,
-	
+
 	getByKey: common.getByKey(getSubstate),
 
 	getDataByKey,
@@ -65,5 +59,5 @@ export default {
 	getIndexed: common.getIndexed(getSubstate),
 	getPlacesForActiveScope,
 	getUpdatePermissionByKey,
-	getSubstate
+	getSubstate,
 };

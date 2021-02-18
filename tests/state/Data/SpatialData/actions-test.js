@@ -26,7 +26,7 @@ describe('state/Data/SpatialData/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a != null);
+			dispatchedActions = dispatchedActions.filter(a => a != null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -46,11 +46,11 @@ describe('state/Data/SpatialData/actions', function () {
 		const getState = () => ({
 			data: {
 				spatialData: {
-					byDataSourceKey: null
-				}
-			}
+					byDataSourceKey: null,
+				},
+			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -61,26 +61,24 @@ describe('state/Data/SpatialData/actions', function () {
 			}
 
 			dispatchedActions.push(action);
-        };
-        
-        const result = [];
-        const filter = {};
-        const order = null;
+		};
+
+		const result = [];
+		const filter = {};
+		const order = null;
 		const changes = null;
 		dispatch(actions.receiveIndexed(result, filter, order, changes));
 
 		const expectedResult = [
 			{
-			  "changedOn": null,
-			  "dataByDataSourceKey": {},
-			  "indexData": [
-			    {}
-			  ],
-			  "level": undefined,
-			  "order": null,
-			  "spatialFilter": {},
-			  "type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
-			}
+				changedOn: null,
+				dataByDataSourceKey: {},
+				indexData: [{}],
+				level: undefined,
+				order: null,
+				spatialFilter: {},
+				type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
+			},
 		];
 
 		//empty array because of empty results
@@ -93,12 +91,12 @@ describe('state/Data/SpatialData/actions', function () {
 		const getState = () => ({
 			data: {
 				spatialData: {
-					byDataSourceKey: {}
-				}
-			}
+					byDataSourceKey: {},
+				},
+			},
 		});
 
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -109,70 +107,67 @@ describe('state/Data/SpatialData/actions', function () {
 			}
 
 			dispatchedActions.push(action);
-        };
-        
-        const results = {
+		};
+
+		const results = {
 			key1: {
 				spatialIndex: {
 					2: {
-						'0,0': [1]
-					}
+						'0,0': [1],
+					},
 				},
 				data: {
-					citizens: 1
-				}
-			}, 
+					citizens: 1,
+				},
+			},
 			key2: {
 				spatialIndex: {
 					2: {
-						'0,1': [2]
-					}
+						'0,1': [2],
+					},
 				},
 				data: {
-					citizens: 2
-				}
-			}
+					citizens: 2,
+				},
+			},
 		};
 
-        const filter = {};
-        const order = null;
-        const level = 10;
-        const changes = null;
+		const filter = {};
+		const order = null;
+		const level = 10;
+		const changes = null;
 		dispatch(actions.receiveIndexed(results, filter, order, changes));
 
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-				    "dataByDataSourceKey": {
-						"key1": {
-							"citizens": 1
+					dataByDataSourceKey: {
+						key1: {
+							citizens: 1,
 						},
-						"key2": {
-							"citizens": 2
-						}
+						key2: {
+							citizens: 2,
+						},
 					},
-				    "level": "2",
-					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
-					"order": null,
-					"spatialFilter": {},
-					"changedOn": null,
-					"indexData": [
+					level: '2',
+					type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
+					order: null,
+					spatialFilter: {},
+					changedOn: null,
+					indexData: [
 						{
-				        "2": {
-				          "0,0": {
-				            "key1": [
-				              1
-				            ]
-				          },
-				        
-				          "0,1": {
-				            "key2": [
-				              2
-				            ]
-				          }
-				        }
-				      }]
-				}
+							2: {
+								'0,0': {
+									key1: [1],
+								},
+
+								'0,1': {
+									key2: [2],
+								},
+							},
+						},
+					],
+				},
 			]);
 		});
 	});
@@ -181,15 +176,15 @@ describe('state/Data/SpatialData/actions', function () {
 			data: {
 				spatialData: {
 					byDataSourceKey: {
-						"key1": {
-							citizens: 4
-						}
-					}
-				}
-			}
+						key1: {
+							citizens: 4,
+						},
+					},
+				},
+			},
 		});
 
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -200,70 +195,66 @@ describe('state/Data/SpatialData/actions', function () {
 			}
 
 			dispatchedActions.push(action);
-        };
-        
-        const results = {
+		};
+
+		const results = {
 			key1: {
 				spatialIndex: {
 					2: {
-						'0,0': [1]
-					}
+						'0,0': [1],
+					},
 				},
 				data: {
-					citizens: 1
-				}
-			}, 
+					citizens: 1,
+				},
+			},
 			key2: {
 				spatialIndex: {
 					2: {
-						'0,1': [2]
-					}
+						'0,1': [2],
+					},
 				},
 				data: {
-					citizens: 2
-				}
-			}
+					citizens: 2,
+				},
+			},
 		};
 
-        const filter = {};
-        const order = null;
-        const level = 10;
-        const changes = null;
+		const filter = {};
+		const order = null;
+		const level = 10;
+		const changes = null;
 		dispatch(actions.receiveIndexed(results, filter, order, changes));
 
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-					"changedOn": null,
-					"dataByDataSourceKey": {
-						"key1": {
-							"citizens": 1
+					changedOn: null,
+					dataByDataSourceKey: {
+						key1: {
+							citizens: 1,
 						},
-						"key2": {
-							"citizens": 2
-						}
+						key2: {
+							citizens: 2,
+						},
 					},
-					"level": "2",
-					"order": null,
-					"type": "DATA.SPATIAL_DATA.ADD_WITH_INDEX",
-					"spatialFilter": {},
-					"indexData": [
+					level: '2',
+					order: null,
+					type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
+					spatialFilter: {},
+					indexData: [
 						{
-				        "2": {
-				          "0,0": {
-				            "key1": [
-				              1
-				            ]
-				          },
-				          "0,1": {
-				            "key2": [
-				              2
-				            ]
-				          }
-				        }
-				      }
-					]
-				}
+							2: {
+								'0,0': {
+									key1: [1],
+								},
+								'0,1': {
+									key2: [2],
+								},
+							},
+						},
+					],
+				},
 			]);
 		});
 	});

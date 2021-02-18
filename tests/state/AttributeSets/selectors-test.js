@@ -3,7 +3,7 @@ import selectors from '../../../src/state/AttributeSets/selectors';
 
 describe('state/AttributeSets/selectors', function () {
 	describe('getActive', function () {
-		const createState = (activeKey) => ({
+		const createState = activeKey => ({
 			attributeSets: {
 				byKey: {
 					k1: {n: 1},
@@ -66,7 +66,7 @@ describe('state/AttributeSets/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAttributeSets(test.state),
@@ -143,7 +143,7 @@ describe('state/AttributeSets/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByTopics(test.state, test.topics),
@@ -172,7 +172,7 @@ describe('state/AttributeSets/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getStateToSave(test.state),
@@ -206,13 +206,10 @@ describe('state/AttributeSets/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getUniqueAttributeKeysForTopics(
-						test.state,
-						test.topics
-					),
+					selectors.getUniqueAttributeKeysForTopics(test.state, test.topics),
 					test.expectedResult
 				);
 			});

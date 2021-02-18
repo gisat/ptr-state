@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
 
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 const getSubstate = state => state.attributeSets;
 
@@ -13,9 +13,9 @@ const getStateToSave = common.getStateToSave(getSubstate);
 const getByTopics = createSelector(
 	[getAll, (state, topics) => topics],
 	(attributeSets, topics) => {
-		if (attributeSets && topics){
+		if (attributeSets && topics) {
 			if (!_.isArray(topics)) topics = [topics];
-			let filtered = _.filter(attributeSets, (attributeSet) => {
+			let filtered = _.filter(attributeSets, attributeSet => {
 				return _.includes(topics, attributeSet.data.topic);
 			});
 			return filtered.length ? filtered : null;
@@ -27,14 +27,13 @@ const getByTopics = createSelector(
 
 const getUniqueAttributeKeysForTopics = createSelector(
 	[getByTopics],
-	(attributeSets) => {
-		if (attributeSets && attributeSets.length){
-			let allAttributeKeys = attributeSets.map((attributeSet) => {
+	attributeSets => {
+		if (attributeSets && attributeSets.length) {
+			let allAttributeKeys = attributeSets.map(attributeSet => {
 				return attributeSet.data.attributes;
 			});
 			let uniqueAttributeKeys = _.compact(_.uniq(_.flatten(allAttributeKeys)));
 			return uniqueAttributeKeys.length ? uniqueAttributeKeys : null;
-
 		} else {
 			return null;
 		}
@@ -48,5 +47,5 @@ export default {
 
 	getByTopics,
 	getStateToSave,
-	getUniqueAttributeKeysForTopics
+	getUniqueAttributeKeysForTopics,
 };

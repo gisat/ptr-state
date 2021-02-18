@@ -1,5 +1,8 @@
-import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
-import common from "../../_common/selectors";
+import {
+	createObserver as createRecomputeObserver,
+	createSelector as createRecomputeSelector,
+} from '@jvitela/recompute';
+import common from '../../_common/selectors';
 import commonHelpers from '../../_common/helpers';
 import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
@@ -7,7 +10,9 @@ const getSubstate = state => state.data.attributeData;
 
 const getIndex = common.getIndexByPath(getSubstate);
 
-const getSpatialIndexesObserver = createRecomputeObserver((state, getSubstate) => getSubstate(state).spatialIndexes);
+const getSpatialIndexesObserver = createRecomputeObserver(
+	(state, getSubstate) => getSubstate(state).spatialIndexes
+);
 
 /**
  * It returns all data for given datasource key
@@ -38,7 +43,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
  * @param dataSourceKeys {Array}
  * @return {Object}
  */
-const getDataByDataSourceKeys = createRecomputeSelector((dataSourceKeys) => {
+const getDataByDataSourceKeys = createRecomputeSelector(dataSourceKeys => {
 	if (dataSourceKeys) {
 		let data = {};
 		_.forEach(dataSourceKeys, key => {
@@ -60,26 +65,32 @@ const getDataByDataSourceKeys = createRecomputeSelector((dataSourceKeys) => {
  * @param featureKey {string | number}
  * @return {Object} attributeDataSource key - attribute value pairs
  */
-const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector((attributeDataSourceKeyAttributeKeyPairs, featureKey) => {
-	if (attributeDataSourceKeyAttributeKeyPairs && featureKey) {
-		const dataSourceKeys = Object.keys(attributeDataSourceKeyAttributeKeyPairs);
-		const dataByDataSourceKey = getDataByDataSourceKeys(dataSourceKeys);
-		if (dataByDataSourceKey) {
-			let attributes = {};
-			_.forIn(dataByDataSourceKey, (dataSourceData, dataSourceKey) => {
-				const value = dataSourceData[featureKey];
-				const attributeKey = attributeDataSourceKeyAttributeKeyPairs[dataSourceKey];
-				attributes[attributeKey] = value;
-			});
+const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector(
+	(attributeDataSourceKeyAttributeKeyPairs, featureKey) => {
+		if (attributeDataSourceKeyAttributeKeyPairs && featureKey) {
+			const dataSourceKeys = Object.keys(
+				attributeDataSourceKeyAttributeKeyPairs
+			);
+			const dataByDataSourceKey = getDataByDataSourceKeys(dataSourceKeys);
+			if (dataByDataSourceKey) {
+				let attributes = {};
+				_.forIn(dataByDataSourceKey, (dataSourceData, dataSourceKey) => {
+					const value = dataSourceData[featureKey];
+					const attributeKey =
+						attributeDataSourceKeyAttributeKeyPairs[dataSourceKey];
+					attributes[attributeKey] = value;
+				});
 
-			return !_.isEmpty(attributes) ? attributes : null;
+				return !_.isEmpty(attributes) ? attributes : null;
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
-	} else {
-		return null;
-	}
-}, recomputeSelectorOptions);
+	},
+	recomputeSelectorOptions
+);
 
 /**
  * It returns indexed feature keys grouped by attribute data source keys
@@ -88,20 +99,22 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector((attr
  * @param {string} tile
  * @return {Object}
  */
-const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((filter, level, tile) => {
-	const index = getIndex_recompute(filter, null);
-	if (index?.index) {
-		const featureKeysByDataSourceKeys = index.index[level]?.[tile];
-		return featureKeysByDataSourceKeys || null;
-	} else {
-		return null;
-	}
-}, recomputeSelectorOptions);
-
+const getIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
+	(filter, level, tile) => {
+		const index = getIndex_recompute(filter, null);
+		if (index?.index) {
+			const featureKeysByDataSourceKeys = index.index[level]?.[tile];
+			return featureKeysByDataSourceKeys || null;
+		} else {
+			return null;
+		}
+	},
+	recomputeSelectorOptions
+);
 
 export default {
 	getIndex,
 	getDataByDataSourceKeys,
 	getAttributesByDataSourceKeysForFeatureKey,
-	getIndexedFeatureKeysByDataSourceKeys
+	getIndexedFeatureKeysByDataSourceKeys,
 };

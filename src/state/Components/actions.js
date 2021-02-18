@@ -1,7 +1,6 @@
 import ActionTypes from '../../constants/ActionTypes';
 import _ from 'lodash';
 
-
 // ============ creators ===========
 function update(component, data) {
 	return dispatch => {
@@ -25,23 +24,22 @@ function actionUpdate(component, data) {
 	return {
 		type: ActionTypes.COMPONENTS.UPDATE,
 		component: component,
-		update: data
-	}
+		update: data,
+	};
 }
 function actionSet(component, path, value) {
 	return {
 		type: ActionTypes.COMPONENTS.SET,
 		component,
 		path,
-		value
-	}
+		value,
+	};
 }
-
 
 // ============ export ===========
 
 export default {
 	update,
 	updateStateFromView,
-	set: actionSet
-}
+	set: actionSet,
+};

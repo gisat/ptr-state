@@ -64,7 +64,7 @@ describe('state/App/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -79,7 +79,7 @@ describe('state/App/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/applications/filtered/configurations',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
