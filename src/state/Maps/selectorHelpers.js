@@ -122,8 +122,7 @@ const getTiles = createCachedSelector(
     ],
     (mapWidth, mapHeight, center, boxRange) => {
 		const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(mapWidth, mapHeight, boxRange);
-		const lonLat = [center.lon, center.lat];
-        const tileGrid = grid.getTileGrid(mapWidth, mapHeight, levelBoxRange, lonLat, true);
+        const tileGrid = grid.getTileGrid(mapWidth, mapHeight, levelBoxRange, center, true);
         return tileGrid.flat(1);
     }
 )((mapWidth, mapHeight, center, boxRange) => `${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`);
