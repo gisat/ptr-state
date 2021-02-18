@@ -93,6 +93,7 @@
 		"build:babel:lib:es": "cross-env BABEL_ENV=es babel src -d lib",
 		"test": "cross-env TZ=utc mocha",
 		"test:watch": "cross-env TZ=utc mocha --watch",
-		"coverage": "cross-env NODE_ENV=test TZ=utc nyc --reporter=html --reporter=json npm run test"
+		"coverage": "cross-env NODE_ENV=test TZ=utc nyc --reporter=html --reporter=json npm run test",
+		"format": "prettier --write ."
 	}
 }
