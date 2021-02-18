@@ -14,13 +14,13 @@ function updateComponentsStateFromView(components) {
 }
 
 // Actions
-const actionUpdateComponents = (components) => {
+const actionUpdateComponents = components => {
 	return {
 		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
-		components
-	}
+		components,
+	};
 };
 
 export default {
-	updateComponentsStateFromView
-}
+	updateComponentsStateFromView,
+};

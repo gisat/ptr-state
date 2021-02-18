@@ -2,7 +2,10 @@ import ActionTypes from '../../constants/ActionTypes';
 import common from '../_common/actions';
 import Select from '../Select';
 
-const updateStore = common.updateStore(Select.components.getSubstate, ActionTypes.COMPONENTS);
+const updateStore = common.updateStore(
+	Select.components.getSubstate,
+	ActionTypes.COMPONENTS
+);
 
 // ============ creators ===========
 function update(component, data) {
@@ -24,18 +27,17 @@ function actionUpdate(component, data) {
 	return {
 		type: ActionTypes.COMPONENTS.UPDATE,
 		component: component,
-		update: data
-	}
+		update: data,
+	};
 }
 function actionSet(component, path, value) {
 	return {
 		type: ActionTypes.COMPONENTS.SET,
 		component,
 		path,
-		value
-	}
+		value,
+	};
 }
-
 
 // ============ export ===========
 
@@ -43,5 +45,5 @@ export default {
 	update,
 	updateStateFromView: updateStore,
 	updateStore,
-	set: actionSet
-}
+	set: actionSet,
+};

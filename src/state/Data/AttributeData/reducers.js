@@ -3,8 +3,8 @@ import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import commonHelpers from '../../_common/helpers';
 
 const INITIAL_STATE = {
-    ...DEFAULT_INITIAL_STATE,
-    byDataSourceKey: {},
+	...DEFAULT_INITIAL_STATE,
+	byDataSourceKey: {},
 };
 
 /**
@@ -16,8 +16,11 @@ const INITIAL_STATE = {
  * @return {Object}
  */
 const add = (state, action) => {
-    return {...state, byDataSourceKey: {...state.byDataSourceKey, [action.key]: {...action.data}}}
-}
+	return {
+		...state,
+		byDataSourceKey: {...state.byDataSourceKey, [action.key]: {...action.data}},
+	};
+};
 
 /**
  * update attribute data for given data source
@@ -28,8 +31,14 @@ const add = (state, action) => {
  * @return {Object}
  */
 const update = (state, action) => {
-    return {...state, byDataSourceKey: {...state.byDataSourceKey, [action.key]: {...state.byDataSourceKey[action.key], ...action.data}}}
-}
+	return {
+		...state,
+		byDataSourceKey: {
+			...state.byDataSourceKey,
+			[action.key]: {...state.byDataSourceKey[action.key], ...action.data},
+		},
+	};
+};
 
 /**
  * @param state {Object}
@@ -45,58 +54,78 @@ const update = (state, action) => {
 const addWithIndex = (state, action) => {
 	const byDataSourceKey = {
 		...state.byDataSourceKey,
-		[action.attributeDataSourceKey]: state.byDataSourceKey[action.attributeDataSourceKey] ? {
-			...state.byDataSourceKey[action.attributeDataSourceKey],
-			...action.data,
-		} : action.data,
+		[action.attributeDataSourceKey]: state.byDataSourceKey[
+			action.attributeDataSourceKey
+		]
+			? {
+					...state.byDataSourceKey[action.attributeDataSourceKey],
+					...action.data,
+			  }
+			: action.data,
 	};
 
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn, "spatialIndexes");
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(
+		state,
+		action.spatialFilter,
+		action.order,
+		action.indexData,
+		action.changedOn,
+		'spatialIndexes'
+	);
 
-	return {...state, byDataSourceKey, spatialIndexes: updatedIndexes}
-}
-
+	return {...state, byDataSourceKey, spatialIndexes: updatedIndexes};
+};
 
 const addIndex = (state, action) => {
-	const updatedIndexes = commonHelpers.getUpdatedIndexes(state, action.spatialFilter, action.order, action.indexData, action.changedOn, "spatialIndexes");
+	const updatedIndexes = commonHelpers.getUpdatedIndexes(
+		state,
+		action.spatialFilter,
+		action.order,
+		action.indexData,
+		action.changedOn,
+		'spatialIndexes'
+	);
 
 	return {
 		...state,
-		spatialIndexes: updatedIndexes
-	}
-}
+		spatialIndexes: updatedIndexes,
+	};
+};
 
 /**
  * Remove index that fit to filter and order from state.
- * @param {Object} state 
- * @param {Object} action 
+ * @param {Object} state
+ * @param {Object} action
  * @return {Object}
  */
 const removeIndex = (state, action) => {
-	const updatedIndexes = commonHelpers.removeIndex(state.spatialIndexes, action.filter, action.order);
+	const updatedIndexes = commonHelpers.removeIndex(
+		state.spatialIndexes,
+		action.filter,
+		action.order
+	);
 
 	return {
 		...state,
-		spatialIndexes: updatedIndexes
-	}
-}
-
+		spatialIndexes: updatedIndexes,
+	};
+};
 
 export default (state = INITIAL_STATE, action) => {
-    switch (action.type) {
-        case ActionTypes.DATA.ATTRIBUTE_DATA.ADD:
+	switch (action.type) {
+		case ActionTypes.DATA.ATTRIBUTE_DATA.ADD:
 			return add(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX:
 			return addWithIndex(state, action);
-        case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
-            return update(state, action);
-        case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
-            return addIndex(state, action)
-        case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
-            return removeIndex(state, action)
+		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
+			return update(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
+			return addIndex(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
+			return removeIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE_STORE:
 			return common.updateStore(state, action.data);
-        default:
-            return state;
-    }
-}
+		default:
+			return state;
+	}
+};

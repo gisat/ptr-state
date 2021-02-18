@@ -24,7 +24,7 @@ describe('state/_common/helpers', function () {
 				expectedResult: {filter: 'fil', order: 'asc'},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					helpers.getIndex(test.indexes, test.filter, test.order),
@@ -85,7 +85,7 @@ describe('state/_common/helpers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					helpers.getUniqueIndexes(test.indexes),
@@ -140,14 +140,10 @@ describe('state/_common/helpers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
-					helpers.isCorrespondingIndex(
-						test.index,
-						test.filter,
-						test.order
-					),
+					helpers.isCorrespondingIndex(test.index, test.filter, test.order),
 					test.expectedResult
 				);
 			});
@@ -240,7 +236,7 @@ describe('state/_common/helpers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					helpers.itemFitFilter(test.filter, test.item),
@@ -254,35 +250,29 @@ describe('state/_common/helpers', function () {
 		const indexes = [
 			{
 				filter: {},
-				order: null
+				order: null,
 			},
 			{
 				filter: {
-					test: 1
+					test: 1,
 				},
-				order: []
-			}
-		]
-		
+				order: [],
+			},
+		];
+
 		it('return new instance of indexes without filtered index', function () {
-			assert.deepStrictEqual(
-				helpers.removeIndex(indexes, {}, null),
-				[
-					{
-						filter: {
-							test: 1
-						},
-						order: []
-					}
-				]
-			);
+			assert.deepStrictEqual(helpers.removeIndex(indexes, {}, null), [
+				{
+					filter: {
+						test: 1,
+					},
+					order: [],
+				},
+			]);
 		});
 
 		it('return same instance of indexes', function () {
-			assert.equal(
-				helpers.removeIndex(indexes, {}, []),
-				indexes
-			);
+			assert.equal(helpers.removeIndex(indexes, {}, []), indexes);
 		});
 	});
 });

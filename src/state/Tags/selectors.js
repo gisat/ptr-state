@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
 
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 const getSubstate = state => state.tags;
 
@@ -18,7 +18,6 @@ const getIndexed = common.getIndexed(getSubstate);
 
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
-
 
 export default {
 	getAll,

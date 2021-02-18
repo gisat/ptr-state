@@ -1,4 +1,4 @@
-import {combineReducers} from "redux";
+import {combineReducers} from 'redux';
 
 import attributeRelations from './AttributeRelations/reducers';
 import attributeDataSources from './AttributeDataSources/reducers';
@@ -9,11 +9,11 @@ import spatialDataSources from './SpatialDataSources/reducers';
 import spatialData from './SpatialData/reducers';
 
 export default combineReducers({
-    attributeData,
-    attributeDataSources,
-    attributeRelations,
+	attributeData,
+	attributeDataSources,
+	attributeRelations,
 	components,
-    spatialData,
-    spatialDataSources,
-    spatialRelations
+	spatialData,
+	spatialDataSources,
+	spatialRelations,
 });

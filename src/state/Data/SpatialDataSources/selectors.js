@@ -1,8 +1,11 @@
 import _ from 'lodash';
-import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
+import {
+	createSelector as createRecomputeSelector,
+	createObserver as createRecomputeObserver,
+} from '@jvitela/recompute';
 
-import common from "../../_common/selectors";
-import createCachedSelector from "re-reselect";
+import common from '../../_common/selectors';
+import createCachedSelector from 're-reselect';
 import commonHelpers from '../../_common/helpers';
 import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
@@ -11,7 +14,9 @@ const getSubstate = state => state.data.spatialDataSources;
 const getIndex = common.getIndex(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) => common.getIndexes(getSubstate)(state));
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
+	common.getIndexes(getSubstate)(state)
+);
 
 /**
  * It returns data source model for given key, if exists
@@ -21,7 +26,6 @@ const getIndexesObserver = createRecomputeObserver((state, getSubstate) => commo
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byKey?.[key] || null;
 });
-
 
 /**
  * It returns data source models for given keys, if exist
@@ -66,42 +70,38 @@ const getIndexed = createRecomputeSelector(filter => {
 	}
 }, recomputeSelectorOptions);
 
-
 /**
  * Select array of SpatialDataSources based on given filter.
- * @param {Object} state 
+ * @param {Object} state
  * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @return {Array?}
  */
-const getByFilteredIndex = createCachedSelector([
-	getIndex,
-	getAllAsObject,
-    ],
-    (index, dataSources) => {
-        if(!_.isEmpty(index)) {
+const getByFilteredIndex = createCachedSelector(
+	[getIndex, getAllAsObject],
+	(index, dataSources) => {
+		if (!_.isEmpty(index)) {
 			const dataSourceKeys = index.index;
-			if(!_.isEmpty(dataSourceKeys)) {
+			if (!_.isEmpty(dataSourceKeys)) {
 				const filteredDataSources = [];
 				for (const dataSourceKey of Object.values(dataSourceKeys)) {
 					filteredDataSources.push(dataSources[dataSourceKey]);
 				}
 
-				if(filteredDataSources.length > 0) {
-					return filteredDataSources
+				if (filteredDataSources.length > 0) {
+					return filteredDataSources;
 				} else {
 					return null;
 				}
 			} else {
 				return null;
 			}
-        } else {
-            return null;
-        }
-    }
+		} else {
+			return null;
+		}
+	}
 )((state, filter) => {
-	return `${JSON.stringify(filter)}`
-})
-
+	return `${JSON.stringify(filter)}`;
+});
 
 export default {
 	getIndexed,

@@ -15,32 +15,41 @@ const add = common.add(actionTypes);
  * @param {Array?} order
  * @param {Number} start
  * @param {Number} total
- * @param {string?} changedOn 
+ * @param {string?} changedOn
  */
-function receiveIndexed(attributeDataSources, filter, order, start, total, changedOn) {
-    return dispatch => {
-        // add attributeDataSources to store
-        if (attributeDataSources.length) {
-            dispatch(add(attributeDataSources, filter));
-        }
+function receiveIndexed(
+	attributeDataSources,
+	filter,
+	order,
+	start,
+	total,
+	changedOn
+) {
+	return dispatch => {
+		// add attributeDataSources to store
+		if (attributeDataSources.length) {
+			dispatch(add(attributeDataSources, filter));
+		}
 
-        // add to index
-        dispatch(addIndex(filter, order, total, start, attributeDataSources, changedOn));
-    }
+		// add to index
+		dispatch(
+			addIndex(filter, order, total, start, attributeDataSources, changedOn)
+		);
+	};
 }
 
 // ============ actions ============
-const actionUpdateStore = (data) => {
+const actionUpdateStore = data => {
 	return {
 		type: ActionTypes.DATA.ATTRIBUTE_DATA_SOURCES.UPDATE_STORE,
-		data
-	}
+		data,
+	};
 };
 
 // ============ export ===========
 
 export default {
 	add,
-    receiveIndexed,
-	updateStore: actionUpdateStore
-}
+	receiveIndexed,
+	updateStore: actionUpdateStore,
+};

@@ -1,4 +1,4 @@
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 const getSubstate = state => state.layerTrees;
 
 const getAll = common.getAll(getSubstate);
@@ -13,12 +13,11 @@ const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 
-
 export default {
 	getAll,
 	getAllAsObject,
 	getAllForActiveScope,
-	
+
 	getByFilterOrder,
 
 	getDataByKey,
@@ -26,5 +25,5 @@ export default {
 
 	getEditedDataByKey,
 	getUpdatePermissionByKey,
-	getSubstate
+	getSubstate,
 };

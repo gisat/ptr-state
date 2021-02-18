@@ -2,8 +2,8 @@ import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/reducers';
 
 const INITIAL_STATE = {
-    components: {},
-	sets: {}
+	components: {},
+	sets: {},
 };
 
 /**
@@ -18,8 +18,8 @@ const updateComponents = (state, components) => {
 			...state,
 			components: {
 				...state.components,
-				...components
-			}
+				...components,
+			},
 		};
 	} else {
 		return null;
@@ -27,10 +27,10 @@ const updateComponents = (state, components) => {
 };
 
 export default (state = INITIAL_STATE, action) => {
-    switch (action.type) {
+	switch (action.type) {
 		case ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS:
 			return updateComponents(state, action.components);
-        default:
-            return state;
-    }
-}
+		default:
+			return state;
+	}
+};

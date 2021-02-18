@@ -1,16 +1,16 @@
 import {createSelector} from 'reselect';
-import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
+import {
+	createObserver as createRecomputeObserver,
+	createSelector as createRecomputeSelector,
+} from '@jvitela/recompute';
 import _ from 'lodash';
 
 const getSubstate = state => state.components;
-const getAllByKey = (state) => state.components;
+const getAllByKey = state => state.components;
 const getAllByKeyObserver = createRecomputeObserver(getAllByKey);
 
 const getDataByComponentKey = createSelector(
-	[
-		getAllByKey,
-		(state, key) => key
-	],
+	[getAllByKey, (state, key) => key],
 	(components, key) => {
 		if (components && key && components[key]) {
 			return components[key];
@@ -20,15 +20,12 @@ const getDataByComponentKey = createSelector(
 	}
 );
 
-const getByComponentKey_recompute = createRecomputeSelector((componentKey) => {
+const getByComponentKey_recompute = createRecomputeSelector(componentKey => {
 	return getAllByKeyObserver()?.[componentKey];
 });
 
 const get = createSelector(
-	[
-		getDataByComponentKey,
-		(state, key, path) => path,
-	],
+	[getDataByComponentKey, (state, key, path) => path],
 	(componentState, path) => _.get(componentState, path, null)
 );
 
@@ -39,5 +36,5 @@ export default {
 
 	getByComponentKey_recompute,
 
-	getSubstate
-}
+	getSubstate,
+};

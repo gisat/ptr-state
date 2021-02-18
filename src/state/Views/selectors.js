@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
 
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 import attributesSelectors from '../Attributes/selectors';
 import attributeSetsSelectors from '../AttributeSets/selectors';
@@ -37,8 +37,8 @@ const getStateToSave = createSelector(
 			attributes,
 			attributeSets,
 			components,
-			scopes
-		}
+			scopes,
+		};
 	}
 );
 

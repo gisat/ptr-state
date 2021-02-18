@@ -2,10 +2,10 @@ import ActionTypes from '../../constants/ActionTypes';
 import _ from 'lodash';
 
 const INITIAL_STATE = {
-    activeSetKey: null,
-    activeMapKey: null,
-    maps: {},
-    sets: {}
+	activeSetKey: null,
+	activeMapKey: null,
+	maps: {},
+	sets: {},
 };
 
 /**
@@ -20,11 +20,11 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 	const layers = state.maps[mapKey]?.data?.layers;
 
 	if (layers) {
-		const updatedLayers = layers.map((item) => {
+		const updatedLayers = layers.map(item => {
 			if (item.key === layerKey) {
 				return {
 					...item,
-					styleKey
+					styleKey,
 				};
 			} else {
 				return item;
@@ -39,10 +39,10 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 					...state.maps[mapKey],
 					data: {
 						...state.maps[mapKey].data,
-						layers: updatedLayers
-					}
-				}
-			}
+						layers: updatedLayers,
+					},
+				},
+			},
 		};
 	} else {
 		return state;
@@ -68,11 +68,11 @@ const setMapViewport = (state, mapKey, width, height) => {
 					...state.maps[mapKey].data,
 					viewport: {
 						width,
-						height
-					}
-				}
-			}
-		}
+						height,
+					},
+				},
+			},
+		},
 	};
 };
 
@@ -84,16 +84,16 @@ const setMapViewport = (state, mapKey, width, height) => {
  * @return {Object} state
  */
 const setSetActiveMapKey = (state, setKey, mapKey) => {
-    return {
-        ...state,
-        sets: {
-            ...state.sets,
-            [setKey]: {
-                ...state.sets[setKey],
-                activeMapKey: mapKey
-            }
-        }
-    };
+	return {
+		...state,
+		sets: {
+			...state.sets,
+			[setKey]: {
+				...state.sets[setKey],
+				activeMapKey: mapKey,
+			},
+		},
+	};
 };
 
 /**
@@ -112,10 +112,10 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 				...state.sets[setKey],
 				data: {
 					...state.sets[setKey].data,
-					backgroundLayer
-				}
-			}
-		}
+					backgroundLayer,
+				},
+			},
+		},
 	};
 };
 
@@ -126,7 +126,7 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
  * @return {Object}
  */
 const update = (state, data) => {
-    return {...state, ...data};
+	return {...state, ...data};
 };
 
 /**
@@ -137,20 +137,21 @@ const update = (state, data) => {
  * @return {Object} state
  */
 const updateMapView = (state, mapKey, updates) => {
-    return {
-        ...state,
-        maps: {
-            ...state.maps,
-            [mapKey]: {
-                ...state.maps[mapKey],
-                data: {
-                    ...state.maps[mapKey].data,
-                    view: state.maps[mapKey].data.view ?
-                        {...state.maps[mapKey].data.view, ...updates} : updates
-                }
-            }
-        }
-    };
+	return {
+		...state,
+		maps: {
+			...state.maps,
+			[mapKey]: {
+				...state.maps[mapKey],
+				data: {
+					...state.maps[mapKey].data,
+					view: state.maps[mapKey].data.view
+						? {...state.maps[mapKey].data.view, ...updates}
+						: updates,
+				},
+			},
+		},
+	};
 };
 
 /**
@@ -161,43 +162,53 @@ const updateMapView = (state, mapKey, updates) => {
  * @return {Object} state
  */
 const updateSetView = (state, setKey, updates) => {
-    if (updates && !_.isEmpty(updates)) {
-        return {
-            ...state,
-            sets: {
-                ...state.sets,
-                [setKey]: {
-                    ...state.sets[setKey],
-                    data: {
-                        ...state.sets[setKey].data,
-                        view: state.sets[setKey].data.view ?
-                            {...state.sets[setKey].data.view, ...updates} : updates
-                    }
-                }
-            }
-        };
-    } else {
-        return state;
-    }
+	if (updates && !_.isEmpty(updates)) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[setKey]: {
+					...state.sets[setKey],
+					data: {
+						...state.sets[setKey].data,
+						view: state.sets[setKey].data.view
+							? {...state.sets[setKey].data.view, ...updates}
+							: updates,
+					},
+				},
+			},
+		};
+	} else {
+		return state;
+	}
 };
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
-    switch (action.type) {
+	switch (action.type) {
 		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY:
-			return setMapLayerStyleKey(state, action.mapKey, action.layerKey, action.styleKey);
-        case ActionTypes.MAPS.MAP.VIEW.UPDATE:
-            return updateMapView(state, action.mapKey, action.update);
+			return setMapLayerStyleKey(
+				state,
+				action.mapKey,
+				action.layerKey,
+				action.styleKey
+			);
+		case ActionTypes.MAPS.MAP.VIEW.UPDATE:
+			return updateMapView(state, action.mapKey, action.update);
 		case ActionTypes.MAPS.MAP.VIEWPORT.SET:
 			return setMapViewport(state, action.mapKey, action.width, action.height);
-        case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
-            return setSetActiveMapKey(state, action.setKey, action.mapKey);
+		case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
+			return setSetActiveMapKey(state, action.setKey, action.mapKey);
 		case ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER:
-			return setSetBackgroundLayer(state, action.setKey, action.backgroundLayer);
-        case ActionTypes.MAPS.SET.VIEW.UPDATE:
-            return updateSetView(state, action.setKey, action.update);
-        case ActionTypes.MAPS.UPDATE:
-            return update(state, action.data);
-        default:
-            return state;
-    }
+			return setSetBackgroundLayer(
+				state,
+				action.setKey,
+				action.backgroundLayer
+			);
+		case ActionTypes.MAPS.SET.VIEW.UPDATE:
+			return updateSetView(state, action.setKey, action.update);
+		case ActionTypes.MAPS.UPDATE:
+			return update(state, action.data);
+		default:
+			return state;
+	}
 }

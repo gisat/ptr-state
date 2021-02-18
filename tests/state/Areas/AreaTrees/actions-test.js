@@ -30,7 +30,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -71,7 +71,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -86,7 +86,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTrees',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -180,7 +180,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -195,7 +195,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTrees',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -280,7 +280,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 				areaTrees: {},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -295,7 +295,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/metadata/filtered/areaTrees',
-                slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -378,8 +378,8 @@ describe('state/Areas/AreaTrees/actions', function () {
 	});
 
 	it('useKeys', function () {
-		const getSubState = (state) => state.sub;
-		const dispatch = (action) => {
+		const getSubState = state => state.sub;
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {

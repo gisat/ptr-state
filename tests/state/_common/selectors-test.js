@@ -2,10 +2,10 @@ import {assert} from 'chai';
 import selectors from '../../../src/state/_common/selectors';
 
 describe('state/_common/selectors', function () {
-	const getSubState = (state) => state.sub;
+	const getSubState = state => state.sub;
 
 	describe('getActive', function () {
-		const createState = (activeKey) => ({
+		const createState = activeKey => ({
 			sub: {
 				byKey: {
 					k1: {n: 1},
@@ -112,7 +112,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getActiveModels(getSubState)(test.state),
@@ -172,7 +172,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAll(getSubState)(test.state),
@@ -226,7 +226,7 @@ describe('state/_common/selectors', function () {
 					activeAttributeKey: 'attributesKey',
 					activeAttributeKeys: ['a1', 'a2'],
 					activeCaseKey: 'casesKey',
-                    activeCaseKeys: ['c1', 'c2'],
+					activeCaseKeys: ['c1', 'c2'],
 					activeLayerTemplateKey: 'layerTemplatesKey',
 					activePeriodKey: 'periodsKey',
 					activePeriodKeys: ['ps1', 'ps2'],
@@ -239,7 +239,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllActiveKeys(test.state),
@@ -287,7 +287,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllAsObject(getSubState)(test.state),
@@ -365,13 +365,10 @@ describe('state/_common/selectors', function () {
 		];
 		const order = 'asc';
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getAllForActiveScope(getSubState)(
-						test.state,
-						order
-					),
+					selectors.getAllForActiveScope(getSubState)(test.state, order),
 					test.expectedResult
 				);
 			});
@@ -430,14 +427,10 @@ describe('state/_common/selectors', function () {
 		const filter = {scopeKey: 'scopeK'};
 		const order = 'asc';
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getByFilterOrder(getSubState)(
-						test.state,
-						filter,
-						order
-					),
+					selectors.getByFilterOrder(getSubState)(test.state, filter, order),
 					test.expectedResult
 				);
 			});
@@ -496,7 +489,7 @@ describe('state/_common/selectors', function () {
 		const filter = {scopeKey: 'scopeK'};
 		const order = 'asc';
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getBatchByFilterOrder(getSubState)(
@@ -546,7 +539,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKey(getSubState)(test.state, test.key),
@@ -593,13 +586,10 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getByKeysAsObject(getSubState)(
-						test.state,
-						test.keys
-					),
+					selectors.getByKeysAsObject(getSubState)(test.state, test.keys),
 					test.expectedResult
 				);
 			});
@@ -658,7 +648,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKeys(getSubState)(test.state, test.keys),
@@ -692,7 +682,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getDataByKey(getSubState)(test.state, test.key),
@@ -747,13 +737,10 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
-					selectors.getDeletePermissionByKey(getSubState)(
-						test.state,
-						'k1'
-					),
+					selectors.getDeletePermissionByKey(getSubState)(test.state, 'k1'),
 					test.expectedResult
 				);
 			});
@@ -805,13 +792,10 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
-					selectors.getUpdatePermissionByKey(getSubState)(
-						test.state,
-						'k1'
-					),
+					selectors.getUpdatePermissionByKey(getSubState)(test.state, 'k1'),
 					test.expectedResult
 				);
 			});
@@ -842,7 +826,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getEditedActive(getSubState)(test.state),
@@ -883,7 +867,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getEditedAll(getSubState)(test.state),
@@ -915,7 +899,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getEditedAllAsObject(getSubState)(test.state),
@@ -959,7 +943,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getEditedByKey(getSubState)(test.state, test.key),
@@ -1003,13 +987,10 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
-					selectors.getEditedDataByKey(getSubState)(
-						test.state,
-						test.key
-					),
+					selectors.getEditedDataByKey(getSubState)(test.state, test.key),
 					test.expectedResult
 				);
 			});
@@ -1043,7 +1024,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getEditedKeys(getSubState)(test.state),
@@ -1089,14 +1070,10 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getIndex(getSubState)(
-						test.state,
-						test.filter,
-						test.order
-					),
+					selectors.getIndex(getSubState)(test.state, test.filter, test.order),
 					test.expectedResult
 				);
 			});
@@ -1150,7 +1127,7 @@ describe('state/_common/selectors', function () {
 
 	it('getIndexes', function () {
 		assert.strictEqual(
-			selectors.getIndexes((state) => state.sub)({
+			selectors.getIndexes(state => state.sub)({
 				sub: {indexes: 'indexes'},
 			}),
 			'indexes'
@@ -1211,13 +1188,7 @@ describe('state/_common/selectors', function () {
 		const expectedResult = {3: 'fourth', 4: 'fifth'};
 
 		assert.deepStrictEqual(
-			selectors.getIndexPage(getSubState)(
-				state,
-				filter,
-				order,
-				start,
-				length
-			),
+			selectors.getIndexPage(getSubState)(state, filter, order, start, length),
 			expectedResult
 		);
 	});
@@ -1343,7 +1314,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				selectors.getKeysToLoad(getSubState)(test.state, test.keys),
 				test.expectedResult
@@ -1355,25 +1326,25 @@ describe('state/_common/selectors', function () {
 		const tests = [
 			{
 				name: 'default state',
-				getSubState: (state) => state.sub,
+				getSubState: state => state.sub,
 				state: {sub: {}},
 				expectedResult: {},
 			},
 			{
 				name: 'active key',
-				getSubState: (state) => state.sub,
+				getSubState: state => state.sub,
 				state: {sub: {activeKey: 'actv'}},
 				expectedResult: {activeKey: 'actv'},
 			},
 			{
 				name: 'active keys',
-				getSubState: (state) => state.sub,
+				getSubState: state => state.sub,
 				state: {sub: {activeKeys: ['k1', 'k2']}},
 				expectedResult: {activeKeys: ['k1', 'k2']},
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getStateToSave(test.getSubState)(test.state),
@@ -1509,11 +1480,7 @@ describe('state/_common/selectors', function () {
 		];
 
 		assert.deepStrictEqual(
-			selectors.getUsesWithActiveDependency(getSubState)(
-				state,
-				filter,
-				order
-			),
+			selectors.getUsesWithActiveDependency(getSubState)(state, filter, order),
 			expectedResult
 		);
 	});
@@ -1618,7 +1585,7 @@ describe('state/_common/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors._mergeIntervals(test.intervals),

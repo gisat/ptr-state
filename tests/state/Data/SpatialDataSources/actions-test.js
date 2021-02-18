@@ -26,7 +26,7 @@ describe('state/Data/SpatialDataSources/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a != null);
+			dispatchedActions = dispatchedActions.filter(a => a != null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -44,7 +44,7 @@ describe('state/Data/SpatialDataSources/actions', function () {
 
 	it('receiveIndexed', function () {
 		const getState = () => ({});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -55,35 +55,37 @@ describe('state/Data/SpatialDataSources/actions', function () {
 			}
 
 			dispatchedActions.push(action);
-        };
-        
-        const result = [];
-        const filter = {};
-        const order = null;
-        const start = 0;
-        const total = 10;
-        const changes = null;
+		};
 
-		dispatch(actions.receiveIndexed(result, filter, order, start, total, changes));
+		const result = [];
+		const filter = {};
+		const order = null;
+		const start = 0;
+		const total = 10;
+		const changes = null;
+
+		dispatch(
+			actions.receiveIndexed(result, filter, order, start, total, changes)
+		);
 
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-                    type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
-                    filter,
-                    order,
-                    start,
-                    count: total,
-                    data: result,
-                    changedOn: changes,
-				}
+					type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
+					filter,
+					order,
+					start,
+					count: total,
+					data: result,
+					changedOn: changes,
+				},
 			]);
 		});
 	});
 
 	it('receiveIndexed with results', function () {
 		const getState = () => ({});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -94,33 +96,35 @@ describe('state/Data/SpatialDataSources/actions', function () {
 			}
 
 			dispatchedActions.push(action);
-        };
-        
-        const results = [{key:1}, {key:2}];
-        const filter = {};
-        const order = null;
-        const start = 0;
-        const total = 10;
-        const changes = null;
+		};
 
-		dispatch(actions.receiveIndexed(results, filter, order, start, total, changes));
+		const results = [{key: 1}, {key: 2}];
+		const filter = {};
+		const order = null;
+		const start = 0;
+		const total = 10;
+		const changes = null;
+
+		dispatch(
+			actions.receiveIndexed(results, filter, order, start, total, changes)
+		);
 
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
-                {
-                      "data": results,
-                      "filter": filter,
-                      "type": "DATA.SPATIAL_DATA_SOURCES.ADD",
-                },
 				{
-                    type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
-                    filter,
-                    order,
-                    start,
-                    count: total,
-                    data: results,
-                    changedOn: changes,
-				}
+					data: results,
+					filter: filter,
+					type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
+				},
+				{
+					type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
+					filter,
+					order,
+					start,
+					count: total,
+					data: results,
+					changedOn: changes,
+				},
 			]);
 		});
 	});

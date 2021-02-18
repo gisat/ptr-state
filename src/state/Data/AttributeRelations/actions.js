@@ -14,31 +14,39 @@ const addIndex = common.addIndex(actionTypes);
  * @param {Array?} order
  * @param {Number} start
  * @param {Number} total
- * @param {string?} changedOn 
+ * @param {string?} changedOn
  */
-function receiveIndexed(attributeRelations, filter, order, start, total, changedOn) {
-    return dispatch => {
-        // add attributeRelations to store
-        if (attributeRelations.length) {
-            dispatch(add(attributeRelations, filter));
-        }
+function receiveIndexed(
+	attributeRelations,
+	filter,
+	order,
+	start,
+	total,
+	changedOn
+) {
+	return dispatch => {
+		// add attributeRelations to store
+		if (attributeRelations.length) {
+			dispatch(add(attributeRelations, filter));
+		}
 
-        // add to index
-        dispatch(addIndex(filter, order, total, start, attributeRelations, changedOn));
-    }
+		// add to index
+		dispatch(
+			addIndex(filter, order, total, start, attributeRelations, changedOn)
+		);
+	};
 }
 
-
 // ============ actions ============
-const actionUpdateStore = (data) => {
+const actionUpdateStore = data => {
 	return {
 		type: ActionTypes.DATA.ATTRIBUTE_RELATIONS.UPDATE_STORE,
-		data
-	}
+		data,
+	};
 };
 // ============ export ===========
 
 export default {
-    receiveIndexed,
-	updateStore: actionUpdateStore
-}
+	receiveIndexed,
+	updateStore: actionUpdateStore,
+};

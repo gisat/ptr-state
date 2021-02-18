@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
 
-import common from "../../_common/selectors";
+import common from '../../_common/selectors';
 
 const getSubstate = state => state.areas.areaTrees;
 
@@ -21,5 +21,5 @@ export default {
 	getByKeys: common.getByKeys(getSubstate),
 	getByKeysAsObject: common.getByKeysAsObject(getSubstate),
 
-	getSubstate
+	getSubstate,
 };
