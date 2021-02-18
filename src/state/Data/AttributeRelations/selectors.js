@@ -1,6 +1,7 @@
 import common from '../../_common/selectors';
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 import _ from 'lodash';
+import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = (state) => state.data.attributeRelations;
 
@@ -23,7 +24,7 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
  */
 const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns a collection of indexed relations for given filter
@@ -43,7 +44,7 @@ const getIndexed = createRecomputeSelector(filter => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns key-value pairs, where the key is attribute data source key and the value is attribute key
@@ -61,7 +62,7 @@ const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelect
 	} else {
 		return null;
 	}
-})
+}, recomputeSelectorOptions)
 
 export default {
 	getFilteredAttributeDataSourceKeyAttributeKeyPairs,

@@ -68,7 +68,7 @@ describe('state/Cases/actions', function () {
 		});
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -151,7 +151,7 @@ describe('state/Cases/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -242,7 +242,7 @@ describe('state/Cases/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/cases',
+				'http://localhost/rest/metadata/filtered/cases',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -349,7 +349,7 @@ describe('state/Cases/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/cases',
+				'http://localhost/rest/metadata/filtered/cases',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -438,7 +438,7 @@ describe('state/Cases/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -579,7 +579,7 @@ describe('state/Cases/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/cases',
+				'http://localhost/rest/metadata/filtered/cases',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {

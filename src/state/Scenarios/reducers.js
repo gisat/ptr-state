@@ -1,9 +1,17 @@
-import {combineReducers} from "redux";
+import ActionTypes from '../../constants/ActionTypes';
+import common, {DEFAULT_INITIAL_STATE} from "../_common/reducers";
 
-import casesReducers from "./cases/reducers";
-import scenariosReducers from "./scenarios/reducers";
+const INITIAL_STATE = {
+	...DEFAULT_INITIAL_STATE
+};
 
-export default combineReducers({
-	cases: casesReducers,
-	scenarios: scenariosReducers
-});
+export default (state = INITIAL_STATE, action) => {
+	switch (action.type) {
+		case ActionTypes.SCENARIOS.ADD:
+			return common.add(state, action);
+		case ActionTypes.SCENARIOS.ADD_UNRECEIVED:
+			return common.addUnreceivedKeys(state, action);
+		default:
+			return state;
+	}
+}

@@ -103,6 +103,7 @@ function getUpdatedByDataSourceKey(state, dataByDataSourceKey, level) {
 			updatedData[dataSourceKey] = {};
 		}
 
+		const newFeatures = {};
 		_.forIn(data, (geometry, featureKey) => {
 			const existingFeature = updatedData[dataSourceKey].hasOwnProperty(featureKey);
 			if (existingFeature) {
@@ -112,9 +113,11 @@ function getUpdatedByDataSourceKey(state, dataByDataSourceKey, level) {
 				//create new feature with geometry and add to state
 				const newFeature = getEmptyFeature();
 				newFeature.geometries[level] = geometry;
-				updatedData[dataSourceKey] = {...updatedData[dataSourceKey], [featureKey]: newFeature};
+				newFeatures[featureKey] = newFeature;
 			}
 		});
+
+		updatedData[dataSourceKey] = {...updatedData[dataSourceKey], ...newFeatures};
 	});
 
 	return updatedData;

@@ -8,11 +8,13 @@ import {mapConstants} from "@gisatcz/ptr-core";
 
 import common from "../_common/selectors";
 import commonHelpers from '../_common/helpers';
+import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 import selectorHelpers from "./selectorHelpers";
 
 import DataSelectors from "../Data/selectors";
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
+
 
 /* === SELECTORS ======================================================================= */
 
@@ -505,7 +507,7 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector((layerSt
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * @param layerState {Object}
@@ -522,7 +524,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector((layer
     } else {
         return null;
     }
-})
+}, recomputeSelectorOptions)
 
 /**
  * @param spatialDataSource {Object}
@@ -604,7 +606,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector((spatialD
 		type,
 		options
 	};
-});
+}, recomputeSelectorOptions);
 
 /**
  * @param mapKey {string} map unique identifier
@@ -640,7 +642,7 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * @param mapKey {string} map unique identifier
@@ -688,7 +690,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 export default {
     getAllLayersStateByMapKey,

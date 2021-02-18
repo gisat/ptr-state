@@ -1,5 +1,6 @@
 import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
 import common from "../../_common/selectors";
+import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = state => state.data.attributeDataSources;
 
@@ -22,7 +23,7 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
  */
 const getByKeys = createRecomputeSelector(keys => {
 	return keys.map(key => getByKeyObserver(key));
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns a collection of indexed data sources for given filter
@@ -41,7 +42,7 @@ const getIndexed = createRecomputeSelector(filter => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 export default {
 	getIndexed,

@@ -57,7 +57,7 @@ describe('state/Attributes/actions', function () {
 		});
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -141,7 +141,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -233,7 +233,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/attributes',
+				'http://localhost/rest/metadata/filtered/attributes',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -362,7 +362,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/attributes',
+				'http://localhost/rest/metadata/filtered/attributes',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -451,7 +451,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata',
+				'http://localhost/rest/metadata',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -603,7 +603,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/metadata/filtered/attributes',
+				'http://localhost/rest/metadata/filtered/attributes',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -767,7 +767,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/data/filtered/attributes',
+				'http://localhost/rest/data/filtered/attributes',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
@@ -864,7 +864,7 @@ describe('state/Attributes/actions', function () {
 		};
 		setFetch(function (url, options) {
 			assert.strictEqual(
-				'http://localhost/backend/rest/data/filtered/attributes',
+				'http://localhost/rest/data/filtered/attributes',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {

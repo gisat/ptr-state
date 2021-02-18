@@ -37,7 +37,7 @@ const addIndex = (action) => {
 const apiDelete = (dataType, categoryPath, data) => {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const apiPath = 'backend/rest/' + categoryPath;
+		const apiPath = 'rest/' + categoryPath;
 		const payload = {
 			data: {
 				[dataType]: data
@@ -65,7 +65,7 @@ const apiDelete = (dataType, categoryPath, data) => {
 const apiUpdate = (getSubstate, dataType, actionTypes, categoryPath, editedData) => {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const apiPath = 'backend/rest/' + categoryPath;
+		const apiPath = 'rest/' + categoryPath;
 		const payload = {
 			data: {
 				[dataType]: editedData
@@ -328,7 +328,7 @@ function create(getSubstate, dataType, actionTypes, categoryPath = DEFAULT_CATEG
 	return (key, appKey) => {
 		return (dispatch, getState) => {
 			const state = getState();
-			const apiPath = path.join('backend/rest', categoryPath);
+			const apiPath = path.join('rest', categoryPath);
 			const localConfig = Select.app.getCompleteLocalConfiguration(state);
 
 			let applicationKey = null;
@@ -908,7 +908,7 @@ function actionUseKeysRegister(actionTypes, componentId, keys) {
 
 // ============ utilities ===========
 const getAPIPath = (categoryPath = DEFAULT_CATEGORY_PATH, dataType) => {
-	return path.join('backend/rest', categoryPath ,'filtered', dataType);
+	return path.join('rest', categoryPath ,'filtered', dataType);
 };
 
 const getCreatePayload = (datatype, key = utils.uuid(), applicationKey) => {

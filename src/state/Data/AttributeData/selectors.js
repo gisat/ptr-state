@@ -1,6 +1,7 @@
 import {createObserver as createRecomputeObserver, createSelector as createRecomputeSelector} from '@jvitela/recompute';
 import common from "../../_common/selectors";
 import commonHelpers from '../../_common/helpers';
+import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = state => state.data.attributeData;
 
@@ -49,7 +50,7 @@ const getSpatialIndex_recompute = createRecomputeSelector((filter, order) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns attributes data (an object containing featureKey-attributeValue pairs) grouped by data source key
@@ -70,7 +71,7 @@ const getDataByDataSourceKeys = createRecomputeSelector((dataSourceKeys) => {
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns attribute values for given feature key grouped by data source key
@@ -97,7 +98,7 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector((attr
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns indexed feature keys grouped by attribute data source keys
@@ -114,7 +115,7 @@ const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector((
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 
 export default {

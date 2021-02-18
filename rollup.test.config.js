@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel';
+import {babel} from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import multi from '@rollup/plugin-multi-entry';
 
@@ -55,6 +55,7 @@ export default {
 		'redux-thunk',
 		'redux-logger',
 		'@manaflair/redux-batch',
+		'@jvitela/recompute',
 		'react-redux',
 		'chai',
 		'connected-react-router',
@@ -70,7 +71,6 @@ export default {
         'slash',
 		'isomorphic-fetch',
 		'query-string',
-		'@jvitela/recompute',
 		'fast-stringify',
 		...lodashExternal,
 	],
