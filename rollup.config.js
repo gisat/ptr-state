@@ -1,98 +1,96 @@
-import babel from "rollup-plugin-babel";
+import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import filesize from "rollup-plugin-filesize";
-import postcss from 'rollup-plugin-postcss';
-import postcssUrl from './build/plugins/postcssUrl'
 
 const env = process.env.NODE_ENV;
 const pkg = require("./package.json");
 
-const CWD = process.cwd()
+const CWD = process.cwd();
 const Paths = {
   SRC: `${CWD}/src`,
   DIST: `${CWD}/dist`,
-  NODE_MODULES: `${CWD}/node_modules`
-}
+  NODE_MODULES: `${CWD}/node_modules`,
+};
 Object.assign(Paths, {
-  INPUT: Paths.SRC + '/index.js',
-  OUTPUT: Paths.DIST + '/index.js'
-})
+  INPUT: Paths.SRC + "/index.js",
+  OUTPUT: Paths.DIST + "/index.js",
+});
 
 const lodashExternal = [
-  'lodash/isObject',
-  'lodash/isEqual',
-  'lodash/find',
-  'lodash/map',
-  'lodash/remove',
-  'lodash/forIn',
-  'lodash/chunk',
-  'lodash/flatten',
-  'lodash/each',
-  'lodash/isArray',
-  'lodash/difference',
-  'lodash/includes',
-  'lodash/omit',
-  'lodash/union',
-  'lodash/sortBy',
-  'lodash/reduce',
-  'lodash/uniq',
-  'lodash/pick',
-  'lodash/pickBy',
-  'lodash/forEach',
-  'lodash/without',
-  'lodash/isNumber',
-  'lodash/cloneDeep',
-  'lodash/merge',
-  'lodash/reject',
-  'lodash/filter',
-  'lodash/isUndefined',
-  'lodash/omitBy',
-  'lodash/orderBy',
-  'lodash/compact',
-  'lodash/values',
-  'lodash/get',
-  'lodash/isMatch',
-  'lodash/uniqBy',
-  'lodash/intersection',
-  'lodash/isEmpty',
-  'lodash/head',
-  'lodash/tail',
-  'lodash/flatMap'
-]
+  "lodash/isObject",
+  "lodash/isEqual",
+  "lodash/find",
+  "lodash/map",
+  "lodash/remove",
+  "lodash/forIn",
+  "lodash/chunk",
+  "lodash/flatten",
+  "lodash/each",
+  "lodash/isArray",
+  "lodash/difference",
+  "lodash/includes",
+  "lodash/omit",
+  "lodash/union",
+  "lodash/sortBy",
+  "lodash/reduce",
+  "lodash/uniq",
+  "lodash/pick",
+  "lodash/pickBy",
+  "lodash/forEach",
+  "lodash/without",
+  "lodash/isNumber",
+  "lodash/cloneDeep",
+  "lodash/merge",
+  "lodash/reject",
+  "lodash/filter",
+  "lodash/isUndefined",
+  "lodash/omitBy",
+  "lodash/orderBy",
+  "lodash/compact",
+  "lodash/values",
+  "lodash/get",
+  "lodash/isMatch",
+  "lodash/uniqBy",
+  "lodash/intersection",
+  "lodash/isEmpty",
+  "lodash/head",
+  "lodash/tail",
+  "lodash/flatMap",
+];
 
 export default {
   input: "src/index.js",
   external: [
-    'react',
-    'prop-types',
-    'redux',
-    'redux-thunk',
-    'redux-logger',
-    '@manaflair/redux-batch',
-    'react-redux',
-    'connected-react-router',
-    'react-router-dom',
-    'react-router',
-    '@gisatcz/ptr-utils',
-    '@gisatcz/ptr-core',
-    'path',
-    'moment',
-    'reselect',
-    're-reselect',
-    'isomorphic-fetch',
-    'query-string',
-    ...lodashExternal
+    "react",
+    "prop-types",
+    "redux",
+    "redux-thunk",
+    "redux-logger",
+    "@manaflair/redux-batch",
+    "react-redux",
+    "connected-react-router",
+    "react-router-dom",
+    "react-router",
+    "@gisatcz/ptr-utils",
+    "@gisatcz/ptr-core",
+    "path",
+    "moment",
+    "reselect",
+    "re-reselect",
+    "isomorphic-fetch",
+    "query-string",
+    ...lodashExternal,
   ],
   output: {
     file: {
       es: pkg.module,
-      cjs: pkg.main
+      cjs: pkg.main,
     }[env],
     format: env,
     globals: {
       // 'lodash/random': '_.random'
     },
-    exports: 'named', /** Disable warning for default imports */
+    exports: "named" /** Disable warning for default imports */,
     sourcemap: true,
   },
   plugins: [
@@ -100,19 +98,8 @@ export default {
       plugins: ["lodash"],
     }),
     commonjs({
-        include: 'node_modules/**',
-    }),
-    postcss({
-      // modules: true,
-      extract: 'dist/style.css',
-      plugins: [
-        ...postcssUrl({
-          basePath: [Paths.SRC, Paths.NODE_MODULES],
-          assetsPath: Paths.DIST + '/assets',
-          dest: Paths.DIST
-        })
-      ]
+      include: "node_modules/**",
     }),
     filesize(),
-  ]
+  ],
 };
