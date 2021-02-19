@@ -152,6 +152,7 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 });
 
 export default {
+	getComponentStateByKey,
 	getData,
 	getDataForBigNumber,
 	getDataForColumnChart,
