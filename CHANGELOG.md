@@ -1,3 +1,15 @@
+# v1.5.14 (Fri Feb 19 2021)
+
+#### 🐾 Patch
+
+- upgrade & cleanup dependencies, change tests settings [#67](https://github.com/gisat-panther/ptr-state/pull/67) ([@vlach1989](https://github.com/vlach1989))
+
+#### Authors: 1
+
+- Pavel Vlach ([@vlach1989](https://github.com/vlach1989))
+
+---
+
 # v1.5.13 (Mon Dec 14 2020)
 
 #### 🐾 Patch
