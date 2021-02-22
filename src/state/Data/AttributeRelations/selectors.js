@@ -26,7 +26,18 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
  * @return {Array} A collection of relations
  */
 const getByKeys = createRecomputeSelector(keys => {
-	return keys.map(key => getByKeyObserver(key));
+	if (keys?.length) {
+		let relations = [];
+		keys.forEach(key => {
+			const relation = getByKeyObserver(key);
+			if (relation) {
+				relations.push(relation);
+			}
+		});
+		return relations.length ? relations : null;
+	} else {
+		return null;
+	}
 }, recomputeSelectorOptions);
 
 /**
@@ -75,6 +86,8 @@ const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelect
 );
 
 export default {
+	getByKeyObserver,
+	getByKeys,
 	getFilteredAttributeDataSourceKeyAttributeKeyPairs,
 	getIndexed,
 	getIndex,
