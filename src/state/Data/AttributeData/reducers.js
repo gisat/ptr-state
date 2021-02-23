@@ -51,7 +51,7 @@ const update = (state, action) => {
  * @param action.changedOn {string}
  * @return {Object}
  */
-const addWithIndex = (state, action) => {
+const addWithSpatialIndex = (state, action) => {
 	const byDataSourceKey = {
 		...state.byDataSourceKey,
 		[action.attributeDataSourceKey]: state.byDataSourceKey[
@@ -115,12 +115,16 @@ export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case ActionTypes.DATA.ATTRIBUTE_DATA.ADD:
 			return add(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.ADD_WITH_SPATIAL_INDEX:
+			return addWithSpatialIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX:
 			return addWithIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
 			return update(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
-			return addIndex(state, action);
+			return common.add(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL:
+			return addIndexWithSpatial(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
 			return removeIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE_STORE:

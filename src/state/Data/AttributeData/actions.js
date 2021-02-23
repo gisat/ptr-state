@@ -25,12 +25,12 @@ const receiveIndexed = (
 	return dispatch => {
 		if (!_.isEmpty(attributeData)) {
 			dispatch(
-				addDataAndIndex(filter, order, attributeData, spatialData, changedOn)
+				addDataAndIndexBasedOnSpatialData(filter, order, attributeData, spatialData, changedOn)
 			);
 		} else {
 			// add to index
 			dispatch(
-				createAndAddIndex(filter, order, attributeData, spatialData, changedOn)
+				createAndAddIndexBasedOnSpatialData(filter, order, attributeData, spatialData, changedOn)
 			);
 		}
 	};
@@ -46,6 +46,16 @@ const receiveIndexed = (
  * @param changedOn {string}
  */
 function addDataAndIndex(
+/**
+ * Add data and index at the same time
+ *
+ * @param spatialFilter {Object}
+ * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
+ * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
+ * @param order {Array}
+ * @param changedOn {string}
+ */
+function addDataAndIndexBasedOnSpatialData(
 	spatialFilter,
 	order,
 	attributeData,
@@ -53,11 +63,11 @@ function addDataAndIndex(
 	changedOn
 ) {
 	return dispatch => {
-		const indexData = getIndexData(spatialData, attributeData);
+		const indexData = getIndexDataBySpatialData(spatialData, attributeData);
 
 		for (const attributeDataSourceKey of Object.keys(attributeData)) {
 			dispatch(
-				addDataAndIndexAction(
+				addIndexActionWithSpatialIndex(
 					attributeDataSourceKey,
 					attributeData[attributeDataSourceKey],
 					spatialFilter,
@@ -95,18 +105,18 @@ function addOrUpdateData(attributeData) {
  * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
  * @param {*} changedOn
  */
-function createAndAddIndex(
+function createAndAddIndexBasedOnSpatialData(
 	filter,
 	order,
 	attributeData,
 	spatialData,
 	changedOn
 ) {
-	const indexByLevelByTileByDataSourceKey = getIndexData(
+	const indexByLevelByTileByDataSourceKey = getIndexDataBySpatialData(
 		spatialData,
 		attributeData
 	);
-	return addIndexAction(
+	return addIndexActionWithSpatialIndex(
 		filter,
 		order,
 		[indexByLevelByTileByDataSourceKey],
@@ -138,7 +148,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 		[level]: loadingTiles,
 	};
 
-	return addIndexAction(filter, order, [index], changedOn);
+	return addIndexActionWithSpatialIndex(filter, order, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -149,7 +159,7 @@ function addLoadingIndex(filter, order, level, tiles) {
  * @param {Object} attributeData
  * @return {Object}
  */
-function getIndexData(spatialData, attributeData) {
+function getIndexDataBySpatialData(spatialData, attributeData) {
 	const indexByLevelByTileByDataSourceKey = {};
 
 	//Attribute data indexes are stored in related spatial index
@@ -253,15 +263,19 @@ function addDataAndIndexAction(
 		attributeDataSourceKey,
 		data,
 		spatialFilter,
+function addIndexActionWithSpatialIndex(filter, order, index, changedOn) {
+	return {
+		type: actionTypes.INDEX.ADD_WITH_SPATIAL,
+		spatialFilter: filter,
 		order,
-		indexData,
+		indexData: index,
 		changedOn,
 	};
 }
 
-function addIndexAction(filter, order, index, changedOn) {
+function addIndexActionWithSpatialIndex(filter, order, index, changedOn) {
 	return {
-		type: actionTypes.INDEX.ADD,
+		type: actionTypes.INDEX.ADD_WITH_SPATIAL,
 		spatialFilter: filter,
 		order,
 		indexData: index,
