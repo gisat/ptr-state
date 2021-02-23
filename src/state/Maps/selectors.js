@@ -484,7 +484,7 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
  */
 const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
 	layerState => {
-		const commonFilter = common.getCommmonDataRelationsFilterFromComponentState(
+		const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
 			layerState
 		);
 		if (commonFilter) {

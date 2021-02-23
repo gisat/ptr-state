@@ -26,7 +26,7 @@ const getData = createRecomputeSelector(componentKey => {
 
 	if (!_.isEmpty(data) && attributeKeys?.length) {
 		// Get common relations filter
-		let commonRelationsFilter = common.getCommmonDataRelationsFilterFromComponentState(
+		let commonRelationsFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
 			componentState
 		);
 
