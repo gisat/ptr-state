@@ -768,9 +768,9 @@ const getCommmonDataRelationsFilterFromComponentState = createRecomputeSelector(
 		);
 
 		// add layerTemplate od areaTreeLevelKey
-		if (componentState.layerTemplateKey) {
+		if (relationsFilter && componentState.layerTemplateKey) {
 			relationsFilter.layerTemplateKey = componentState.layerTemplateKey;
-		} else if (componentState.areaTreeLevelKey) {
+		} else if (relationsFilter && componentState.areaTreeLevelKey) {
 			relationsFilter.areaTreeLevelKey = componentState.areaTreeLevelKey;
 		}
 		return relationsFilter;

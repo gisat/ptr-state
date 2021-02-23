@@ -76,7 +76,41 @@ const addWithSpatialIndex = (state, action) => {
 	return {...state, byDataSourceKey, spatialIndexes: updatedIndexes};
 };
 
-const addIndex = (state, action) => {
+/**
+ * Add data and index in one step
+ * @param state {Object}
+ * @param action {Object}
+ * @param action.index {Array} ordered index
+ * @param action.data {Object} Object with data
+ * @param action.filter {Array} 
+ * @param action.order {Array}
+ * @param action.start {Array}
+ * @param action.total {Array}
+ * @param action.changedOn {string}
+ * @return {Object}
+ */
+const addWithIndex = (state, action) => {
+	const byDataSourceKey = commonHelpers.getUpdatedByDataSourceKey(state.byDataSourceKey, action.data);
+
+	//Fake new data object for common action
+	const data = _.reduce(action.index, (acc, val) => {
+		return [...acc, {key: val}]
+	}, []);
+
+	const addIndexAction = {
+		filter: action.filter,
+		order: action.order,
+		data: data,
+		start: action.start,
+		count: action.total,
+		changedOn: action.changedOn,
+	}
+	const stateWithUpdatedIndexes = common.addIndex(state, addIndexAction)
+
+	return {...state, byDataSourceKey, indexes: stateWithUpdatedIndexes.indexes};
+};
+
+const addIndexWithSpatial = (state, action) => {
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
 		action.spatialFilter,

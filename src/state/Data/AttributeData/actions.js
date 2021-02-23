@@ -37,15 +37,36 @@ const receiveIndexed = (
 };
 
 /**
- * Add data and index at the same time
- *
- * @param spatialFilter {Object}
- * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
- * @param order {Array}
- * @param changedOn {string}
+ * Ensure adding index and adding or updating received data from BE.
+ * @param {Object} attributeData
+ * @param {Array} attributeData.index 
+ * @param {Object} attributeData.attributeData 
+ * @param {Object} filter Filler object contains modifiers.
+ * @param {Array?} order
+ * @param {Array?} start
+ * @param {Array?} total
+ * @param {string?} changedOn
  */
-function addDataAndIndex(
+const receiveIndexedAttributeEndPoint = (
+	attributeData,
+	filter,
+	order,
+	start,
+	total,
+	changedOn
+) => {
+	return addDataAndIndexAction(
+		filter,
+		order,
+		total,
+		start,
+		attributeData.index,
+		attributeData.attributeData,
+		changedOn,
+	)
+};
+
+
 /**
  * Add data and index at the same time
  *
@@ -250,26 +271,33 @@ function updateDataAction(key, data) {
 	};
 }
 
+/**
+ * @param {Object} filter Filler object contains modifiers.
+ * @param {Array?} order
+ * @param {Number} total
+ * @param {Number} start
+ * @param {Array} index 
+ * @param {Object} data 
+ * @param {string?} changedOn
+ */
 function addDataAndIndexAction(
-	attributeDataSourceKey,
-	data,
-	spatialFilter,
+	filter,
 	order,
-	indexData,
-	changedOn
+	total,
+	start,
+	index,
+	data,
+	changedOn,
 ) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
-		attributeDataSourceKey,
-		data,
-		spatialFilter,
-function addIndexActionWithSpatialIndex(filter, order, index, changedOn) {
-	return {
-		type: actionTypes.INDEX.ADD_WITH_SPATIAL,
-		spatialFilter: filter,
+		filter,
 		order,
-		indexData: index,
-		changedOn,
+		total,
+		start,
+		index,
+		data,
+		changedOn
 	};
 }
 
@@ -297,4 +325,6 @@ export default {
 	removeIndex: removeIndexAction,
 	receiveIndexed,
 	updateStore: actionUpdateStore,
+	receiveIndexedAttributeEndPoint,
+
 };

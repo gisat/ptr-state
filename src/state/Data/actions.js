@@ -131,7 +131,7 @@ function loadMissingRelationsAndData(
 		const remainingTilesPageCount = spatialFilter.tiles.length;
 
 		//first tile was loaded before loadMissingRelationsAndData first request
-		for (let i = tilesPagination + 1; i < remainingTilesPageCount; i++) {
+		for (let i = tilesPagination + 1; i <= remainingTilesPageCount; i++) {
 			const spatialIndex = {
 				tiles: [spatialFilter.tiles[i]],
 			};

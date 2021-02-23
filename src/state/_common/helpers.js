@@ -145,6 +145,35 @@ function getUpdatedIndexes(
 	return indexes;
 }
 
+/**
+ * Extend object "currentByDataSourceKey" by "update". Return new instance.
+ * @param {Object} currentByDataSourceKey 
+ * @param {Object} update 
+ * @return {Object}
+ */
+function getUpdatedByDataSourceKey(currentByDataSourceKey, update = {}) {
+	let updated = {...currentByDataSourceKey};
+	for(const [key, values] of Object.entries(update)) {
+		if(updated.hasOwnProperty(key)) {
+			updated = {
+				...updated,
+				[key]: {
+					...updated[key],
+					...values,
+				}
+			}
+		} else {
+			updated = {
+				...updated,
+				[key]: {
+					...values,
+				}
+			}
+		}
+	}
+	return updated;
+}
+
 function isCorrespondingIndex(index, filter, order) {
 	return (
 		_.isEqual(index.filter || null, filter || null) &&
@@ -318,6 +347,7 @@ export default {
 	getIndex,
 	getUniqueIndexes,
 	getUpdatedIndexes,
+	getUpdatedByDataSourceKey,
 	mergeFilters,
 	mergeMetadataKeys,
 	isCorrespondingIndex,
