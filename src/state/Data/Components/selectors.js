@@ -33,7 +33,7 @@ const getData = createRecomputeSelector(componentKey => {
 		// Create final relations filter
 		const relationsFilter = {
 			...commonRelationsFilter,
-			attributeKey: {in: attributeKeys},
+			attributeKeys,
 		};
 
 		// Get relations
@@ -60,10 +60,10 @@ const getData = createRecomputeSelector(componentKey => {
 			const indexedFeatureKeys = attributeDataIndex?.index;
 
 			if (indexedFeatureKeys) {
-				let finalFeaturesAsObject = {};
+				let finalFeaturesAsObject = [];
 
 				// Loop through indexed features
-				_.forIn(indexedFeatureKeys, featureKey => {
+				_.forIn(indexedFeatureKeys, (featureKey, index) => {
 					// We don't know which feature is in which attribute DS
 					// also there could be more attributes for the feature
 					_.forIn(
@@ -73,14 +73,14 @@ const getData = createRecomputeSelector(componentKey => {
 
 							if (value !== undefined) {
 								// existing feature
-								if (finalFeaturesAsObject[featureKey]) {
-									finalFeaturesAsObject[featureKey].data[attributeKey] = value;
+								if (finalFeaturesAsObject[index]) {
+									finalFeaturesAsObject[index].data[attributeKey] = value;
 								}
 
 								// new feature
 								else {
 									// TODO format?
-									finalFeaturesAsObject[featureKey] = {
+									finalFeaturesAsObject[index] = {
 										key: featureKey,
 										data: {
 											[attributeKey]: value,
@@ -91,7 +91,8 @@ const getData = createRecomputeSelector(componentKey => {
 						}
 					);
 				});
-				return Object.values(finalFeaturesAsObject);
+				//Remove empty items from array
+				return finalFeaturesAsObject.filter(i => i);
 			} else {
 				return null;
 			}
