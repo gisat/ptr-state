@@ -88,7 +88,7 @@ function addDataAndIndexBasedOnSpatialData(
 
 		for (const attributeDataSourceKey of Object.keys(attributeData)) {
 			dispatch(
-				addIndexActionWithSpatialIndex(
+				addDataAndIndexBasedOnSpatialDataAction(
 					attributeDataSourceKey,
 					attributeData[attributeDataSourceKey],
 					spatialFilter,
@@ -268,6 +268,34 @@ function updateDataAction(key, data) {
 		type: actionTypes.UPDATE,
 		key,
 		data,
+	};
+}
+
+/**
+ * @param {Object} filter Filler object contains modifiers.
+ * @param {Array?} order
+ * @param {Number} total
+ * @param {Number} start
+ * @param {Array} index 
+ * @param {Object} data 
+ * @param {string?} changedOn
+ */
+function addDataAndIndexBasedOnSpatialDataAction(
+	attributeDataSourceKey,
+	data,
+	spatialFilter,
+	order,
+	indexData,
+	changedOn
+) {
+	return {
+		type: actionTypes.ADD_WITH_SPATIAL_INDEX,
+		attributeDataSourceKey,
+		data,
+		spatialFilter,
+		order,
+		indexData,
+		changedOn,
 	};
 }
 
