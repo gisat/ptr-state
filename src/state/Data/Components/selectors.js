@@ -130,7 +130,10 @@ const getDataForColumnChart = createRecomputeSelector(props => {
 			...chartSettings,
 		};
 	} else {
-		return chartSettings;
+		return {
+			...chartSettings,
+			data: [],
+		};
 	}
 });
 
