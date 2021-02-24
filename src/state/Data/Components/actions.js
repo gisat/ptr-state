@@ -7,7 +7,7 @@ import commonActions from '../../_common/actions';
 import attributeRelations from '../AttributeRelations/actions';
 import attributeData from '../AttributeData/actions';
 
-const DEFAULT_RELATIONS_PAGE = {
+const DEFAULT_PAGE_PAGINATION = {
 	offset: 0,
 	limit: 100,
 };
@@ -17,27 +17,56 @@ const DEFAULT_RELATIONS_PAGE = {
  * @param {Object} state App state
  * @return {Number}
  */
-const getPageSize = state => {
-	const localConfig = Select.app.getCompleteLocalConfiguration(state);
-	const PAGE_SIZE =
-		localConfig.requestPageSize || configDefaults.requestPageSize;
-	return PAGE_SIZE;
+const getPageSize = (state, optPageSize) => {
+	if(_.isNumber(optPageSize)) {
+		return optPageSize
+	} else {
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const PAGE_SIZE =
+			localConfig.requestPageSize || configDefaults.requestPageSize;
+		return PAGE_SIZE;
+	}
 };
 
-
+// TODO - tests, move to helper
 const getRestPages = (
 	count,
-	PAGE_SIZE
+	loadedPages,
+	PAGE_SIZE,
+	optStart = 0,
+	optLength
 ) => {
-	if (count === 0) {
+	if (count === 0 || optStart > count) {
 		return 0;
 	} else {
+		let wanted = count - optStart;
+
+		// Request specific number of results
+		if(_.isNumber(optLength)) {
+			if((optStart + optLength) > count) {
+				wanted = count - optStart;
+			} else {
+				wanted = optLength;
+			}
+		}
+
 		const remainingPageCount = Math.ceil(
-			(count - PAGE_SIZE) / PAGE_SIZE
+			Math.max(0, (wanted - (PAGE_SIZE * loadedPages))) / PAGE_SIZE
 		);
+
 		return remainingPageCount;
 	}
 };
+
+const getPagination = (pageIndex, start, pageSize) => {
+	start = _.isNumber(start) ? start : 0;
+	return {
+		offset: start + (pageIndex * pageSize),
+		limit: pageSize,	
+	}
+}
+
+const getNullishPagination = () => getPagination(0, 0, 0);
 
 /**
  * Update whole data.components.components object with given components
@@ -67,24 +96,28 @@ const actionUpdateComponents = components => {
  */
 function ensureDataAndRelations(
 	order,
-	mergedAttributeFilter
+	mergedAttributeFilter,
+	start,
+	length,
+	pageSize,
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
-		const PAGE_SIZE = getPageSize(state);
+		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const PAGE_SIZE = getPageSize(state, pageSize);
 
-		const relations = {
-			offset: 0,
-			limit: PAGE_SIZE,
-		};
+		const relationsPagination = getPagination(0, 0, RELATIONS_PAGE_SIZE)
+
+		const attributePagination = getPagination(0, start, PAGE_SIZE)
+
 		const loadRelations = true;
 		return dispatch(
 			loadIndexedPage(
 				order,
 				mergedAttributeFilter,
 				loadRelations,
-				relations,
-				relations,
+				relationsPagination,
+				attributePagination,
 			)).then(response => {
 				if (response instanceof Error) {
 					return;
@@ -93,15 +126,19 @@ function ensureDataAndRelations(
 
 				const attributeRelationsCount = response.attributeRelationsDataSources.total;
 				const attributeCount = response.attributeData.total;
-
+				const loadedPages = 1;
 				const restRelationsPages = getRestPages(
 					attributeRelationsCount,
-					PAGE_SIZE
+					loadedPages,
+					RELATIONS_PAGE_SIZE
 				);
 
 				const restAttributesPages = getRestPages(
 					attributeCount,
-					PAGE_SIZE
+					loadedPages,
+					PAGE_SIZE,
+					start,
+					length
 				);
 
 				if(restRelationsPages === 0 && restAttributesPages === 0) {
@@ -115,6 +152,9 @@ function ensureDataAndRelations(
 							mergedAttributeFilter,
 							restRelationsPages,
 							restAttributesPages,
+							start,
+							length,
+							pageSize,
 						)
 					);
 				}
@@ -137,9 +177,15 @@ function loadMissingRelationsAndData(
 	mergedAttributeFilter,
 	remainingRelationsPageCount,
 	remainingAttributeDataPageCount,
+	start,
+	length,
+	pageSize,
 ) {
 	return (dispatch, getState) => {
-		const PAGE_SIZE = getPageSize(getState());
+		const state = getState();
+		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const PAGE_SIZE = getPageSize(state, pageSize);
+
 
 		const promises = [];
 
@@ -147,12 +193,14 @@ function loadMissingRelationsAndData(
 		let pagination = 0;
 		const loadRelations = true;
 		for (let i = 1; i <= remainingRelationsPageCount; i++) {
-			const relations = {
-				offset: i * PAGE_SIZE,
-				limit: PAGE_SIZE,
-			};
+			const relationsPagination = getPagination(i, 0, RELATIONS_PAGE_SIZE);
 
-			pagination = i;
+			//only if missing attribute data pages missing
+			let attributePagination = getNullishPagination();
+			if(pagination < remainingAttributeDataPageCount) {
+				attributePagination = getPagination(i, start, PAGE_SIZE);
+				pagination = i;
+			} 
 			
 			promises.push(
 				dispatch(
@@ -160,8 +208,8 @@ function loadMissingRelationsAndData(
 						order,
 						mergedAttributeFilter,
 						loadRelations,
-						relations, //paginations for relations
-						relations, //paginations for data is same like for relations here
+						relationsPagination, //pagination for relations
+						attributePagination, //pagination for data is same like for relations here
 					)
 				)
 			);
@@ -169,19 +217,16 @@ function loadMissingRelationsAndData(
 
 		// If its still needed, load remaining data pages
 		for (let i = pagination + 1; i <= remainingAttributeDataPageCount; i++) {
-
-			const attributeDataPagination = {
-				offset: i * PAGE_SIZE,
-				limit: PAGE_SIZE,
-			};
+			const relationsPagination = getNullishPagination();
+			const attributePagination = getPagination(i, start, PAGE_SIZE);
 			promises.push(
 				dispatch(
 					loadIndexedPage(
 						order,
 						mergedAttributeFilter,
 						false,
-						{},
-						attributeDataPagination,
+						relationsPagination,
+						attributePagination,
 					)
 				)
 			);
@@ -201,6 +246,9 @@ const ensure = ({
 	layerTemplateKey,
 	modifiers,
 	spatialFilter,
+	start,
+	length,
+	pageSize,
 }) => {
 	return (dispatch, getState) => {
 		const mergedAttributeFilter = {
@@ -234,7 +282,10 @@ const ensure = ({
 			return dispatch(
 				ensureDataAndRelations(
 					attributeOrder,
-					mergedAttributeFilter
+					mergedAttributeFilter,
+					start,
+					length,
+					pageSize,
 				)
 			);
 		} else {
@@ -262,6 +313,9 @@ const use = componentKey => {
 			layerTemplateKey,
 			metadataModifiers,
 			spatialFilter,
+			start,
+			length,
+			pageSize,
 		} = componentState;
 
 		// modifiers defined by key
@@ -311,6 +365,9 @@ const use = componentKey => {
 				layerTemplateKey: modifiedLayerTemplateKey,
 				modifiers: modifiersForRequest,
 				spatialFilter,
+				start,
+				length,
+				pageSize,
 			})
 		);
 	};
@@ -321,22 +378,22 @@ const use = componentKey => {
  * @param {Array?} order
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {bool} loadRelations Whether response should contain relations
- * @param {Object?} relations Pagination for relations.
+ * @param {Object?} relationsPagination Pagination for relations.
  * @param {Object?} attributeDataPagination Pagination for attributeData.
  */
 function loadIndexedPage(
 	order,
 	filter,
 	loadRelations,
-	relations,
+	relationsPagination,
 	attributeDataPagination,
 ) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
 
-		const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;
-		const usedAttributeDataPagination = attributeDataPagination ? {...attributeDataPagination} : DEFAULT_RELATIONS_PAGE;
+		const usedRelationsPagination = relationsPagination ? {...relationsPagination} : DEFAULT_PAGE_PAGINATION;
+		const usedAttributeDataPagination = attributeDataPagination ? {...attributeDataPagination} : DEFAULT_PAGE_PAGINATION;
 
 		//FIXME add loading support
 
@@ -366,8 +423,8 @@ function loadIndexedPage(
 
 			// pagination for relations (& data sources)
 			// TODO add support for relations:false on BE
-			// ...(loadRelations && {relations: usedRelations}),
-			relations: usedRelations,
+			// ...(loadRelations && {relations: usedRelationsPagination}),
+			relations: usedRelationsPagination,
 
 			data: {
 				...usedAttributeDataPagination,
