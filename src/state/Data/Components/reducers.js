@@ -6,6 +6,27 @@ const INITIAL_STATE = {
 	sets: {},
 };
 
+const setAttributeKeys = (state, componentKey, attributeKeys) => {
+	if (componentKey) {
+		return {
+			...state,
+			components: {
+				...state.components,
+				[componentKey]: state.components[componentKey]
+					? {
+							...state.components[componentKey],
+							attributeKeys,
+					  }
+					: {
+							attributeKeys,
+					  },
+			},
+		};
+	} else {
+		return null;
+	}
+};
+
 /**
  * Update whole data.components.components object with given components
  * @param state {Object}
@@ -28,6 +49,8 @@ const updateComponents = (state, components) => {
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
+		case ActionTypes.DATA.COMPONENTS.SET.ATTRIBUTE_KEYS:
+			return setAttributeKeys(state, action.component, action.attributeKeys);
 		case ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS:
 			return updateComponents(state, action.components);
 		default:

@@ -233,6 +233,9 @@ export default utils.deepKeyMirror({
 			},
 		},
 		COMPONENTS: {
+			SET: {
+				ATTRIBUTE_KEYS: null,
+			},
 			UPDATE_COMPONENTS: null,
 		},
 		SPATIAL_DATA: {

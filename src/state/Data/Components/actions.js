@@ -24,17 +24,11 @@ const getPageSize = state => {
 	return PAGE_SIZE;
 };
 
-
-const getRestPages = (
-	count,
-	PAGE_SIZE
-) => {
+const getRestPages = (count, PAGE_SIZE) => {
 	if (count === 0) {
 		return 0;
 	} else {
-		const remainingPageCount = Math.ceil(
-			(count - PAGE_SIZE) / PAGE_SIZE
-		);
+		const remainingPageCount = Math.ceil((count - PAGE_SIZE) / PAGE_SIZE);
 		return remainingPageCount;
 	}
 };
@@ -51,24 +45,13 @@ function updateComponentsStateFromView(components) {
 	};
 }
 
-// Actions
-const actionUpdateComponents = components => {
-	return {
-		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
-		components,
-	};
-};
-
 /**
  * Ensure load attribute data and relations.
  * @param {Array?} order
  * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {function}
  */
-function ensureDataAndRelations(
-	order,
-	mergedAttributeFilter
-) {
+function ensureDataAndRelations(order, mergedAttributeFilter) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const PAGE_SIZE = getPageSize(state);
@@ -84,44 +67,42 @@ function ensureDataAndRelations(
 				mergedAttributeFilter,
 				loadRelations,
 				relations,
-				relations,
-			)).then(response => {
-				if (response instanceof Error) {
-					return;
-					throw response;
-				}
+				relations
+			)
+		).then(response => {
+			if (response instanceof Error) {
+				return;
+				throw response;
+			}
 
-				const attributeRelationsCount = response.attributeRelationsDataSources.total;
-				const attributeCount = response.attributeData.total;
+			const attributeRelationsCount =
+				response.attributeRelationsDataSources.total;
+			const attributeCount = response.attributeData.total;
 
-				const restRelationsPages = getRestPages(
-					attributeRelationsCount,
-					PAGE_SIZE
+			const restRelationsPages = getRestPages(
+				attributeRelationsCount,
+				PAGE_SIZE
+			);
+
+			const restAttributesPages = getRestPages(attributeCount, PAGE_SIZE);
+
+			if (restRelationsPages === 0 && restAttributesPages === 0) {
+				//nothing to load
+				return;
+			} else {
+				//needs to load more relations or data
+				return dispatch(
+					loadMissingRelationsAndData(
+						order,
+						mergedAttributeFilter,
+						restRelationsPages,
+						restAttributesPages
+					)
 				);
-
-				const restAttributesPages = getRestPages(
-					attributeCount,
-					PAGE_SIZE
-				);
-
-				if(restRelationsPages === 0 && restAttributesPages === 0) {
-					//nothing to load
-					return
-				} else {
-					//needs to load more relations or data
-					return dispatch(
-						loadMissingRelationsAndData(
-							order,
-							mergedAttributeFilter,
-							restRelationsPages,
-							restAttributesPages,
-						)
-					);
-				}
-			})
-	}
+			}
+		});
+	};
 }
-
 
 /**
  * Helper function. Usually second step in requesting data.
@@ -136,7 +117,7 @@ function loadMissingRelationsAndData(
 	order,
 	mergedAttributeFilter,
 	remainingRelationsPageCount,
-	remainingAttributeDataPageCount,
+	remainingAttributeDataPageCount
 ) {
 	return (dispatch, getState) => {
 		const PAGE_SIZE = getPageSize(getState());
@@ -153,7 +134,7 @@ function loadMissingRelationsAndData(
 			};
 
 			pagination = i;
-			
+
 			promises.push(
 				dispatch(
 					loadIndexedPage(
@@ -161,7 +142,7 @@ function loadMissingRelationsAndData(
 						mergedAttributeFilter,
 						loadRelations,
 						relations, //paginations for relations
-						relations, //paginations for data is same like for relations here
+						relations //paginations for data is same like for relations here
 					)
 				)
 			);
@@ -169,7 +150,6 @@ function loadMissingRelationsAndData(
 
 		// If its still needed, load remaining data pages
 		for (let i = pagination + 1; i <= remainingAttributeDataPageCount; i++) {
-
 			const attributeDataPagination = {
 				offset: i * PAGE_SIZE,
 				limit: PAGE_SIZE,
@@ -181,7 +161,7 @@ function loadMissingRelationsAndData(
 						mergedAttributeFilter,
 						false,
 						{},
-						attributeDataPagination,
+						attributeDataPagination
 					)
 				)
 			);
@@ -212,7 +192,7 @@ const ensure = ({
 			...(featureKeys !== undefined && {featureKeys}),
 			...(layerTemplateKey !== undefined && {layerTemplateKey}),
 			...(spatialFilter !== undefined && {spatialFilter}),
-		}
+		};
 
 		const attributeDataIndex =
 			Select.data.attributeData.getIndex(
@@ -229,17 +209,14 @@ const ensure = ({
 		//
 		// No index exists for filter and order
 		// load all
-		//  
-		if(missingAttributesData) {
+		//
+		if (missingAttributesData) {
 			return dispatch(
-				ensureDataAndRelations(
-					attributeOrder,
-					mergedAttributeFilter
-				)
+				ensureDataAndRelations(attributeOrder, mergedAttributeFilter)
 			);
 		} else {
 			//nothing is missing
-			return
+			return;
 		}
 	};
 };
@@ -329,14 +306,16 @@ function loadIndexedPage(
 	filter,
 	loadRelations,
 	relations,
-	attributeDataPagination,
+	attributeDataPagination
 ) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
 
 		const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;
-		const usedAttributeDataPagination = attributeDataPagination ? {...attributeDataPagination} : DEFAULT_RELATIONS_PAGE;
+		const usedAttributeDataPagination = attributeDataPagination
+			? {...attributeDataPagination}
+			: DEFAULT_RELATIONS_PAGE;
 
 		//FIXME add loading support
 
@@ -362,7 +341,6 @@ function loadIndexedPage(
 
 			// which attributes you want
 			...(attributeKeys && {attributeKeys}),
-
 
 			// pagination for relations (& data sources)
 			// TODO add support for relations:false on BE
@@ -396,7 +374,9 @@ function loadIndexedPage(
 						if (
 							!!loadRelations &&
 							result.attributeRelationsDataSources.attributeRelations &&
-							!_.isEmpty(result.attributeRelationsDataSources.attributeRelations)
+							!_.isEmpty(
+								result.attributeRelationsDataSources.attributeRelations
+							)
 						) {
 							const changes = null;
 							dispatch(
@@ -439,7 +419,25 @@ function loadIndexedPage(
 	};
 }
 
+// Actions ------------------------------------------------------------------------------------------------------------
+
+const actionSetAttributeKeys = (component, attributeKeys) => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.SET.ATTRIBUTE_KEYS,
+		component,
+		attributeKeys,
+	};
+};
+
+const actionUpdateComponents = components => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
+		components,
+	};
+};
+
 export default {
+	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,
 };
