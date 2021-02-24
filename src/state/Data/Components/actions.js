@@ -80,14 +80,6 @@ function updateComponentsStateFromView(components) {
 	};
 }
 
-// Actions
-const actionUpdateComponents = components => {
-	return {
-		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
-		components,
-	};
-};
-
 /**
  * Ensure load attribute data and relations.
  * @param {Array?} order
