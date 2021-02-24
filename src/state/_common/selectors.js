@@ -403,10 +403,6 @@ const getIndexes = getSubstate => {
 	return state => getSubstate(state).indexes;
 };
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
-	getIndexes(getSubstate)(state)
-);
-
 /**
  * Get whole index by given filter and order
  * @param getSubstate
@@ -447,17 +443,6 @@ const getIndexByPath = getSubstate => {
 			return commonHelpers.getIndex(indexes, filter, order);
 		}
 	);
-};
-
-const getIndex_recompute = getSubstate => {
-	return createRecomputeSelector((filter, order) => {
-		const indexes = getIndexesObserver(getSubstate);
-		if (indexes) {
-			return commonHelpers.getIndex(indexes, filter, order);
-		} else {
-			return null;
-		}
-	});
 };
 
 const getIndexChangedOn = getSubstate => {
@@ -708,74 +693,6 @@ const getActiveKeysByFilterByActive = createCachedSelector(
 		}
 	}
 )((state, filterByActive) => JSON.stringify(filterByActive));
-
-const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(
-	getActiveKeysByFilterByActive
-);
-
-/**
- * Merge metadata modifiers with filter by active
- * @params metadataModifiers {Object} {placeKey: "uuid", scopeKey: "uuid", ...}
- * @params filterByActive {Object} {place: true, case: true, ...}
- */
-const getMergedModifiers = createRecomputeSelector(
-	(metadataModifiers, filterByActive) => {
-		// TODO at least a part is the same as in Maps/actions/layerUse?
-
-		// modifiers defined by key
-		let metadataDefinedByKey = metadataModifiers ? {...metadataModifiers} : {};
-
-		// Get actual metadata keys defined by filterByActive
-		const activeMetadataKeys = getActiveKeysByFilterByActiveObserver(
-			filterByActive
-		);
-
-		// Merge metadata, metadata defined by key have priority
-		return commonHelpers.mergeMetadataKeys(
-			metadataDefinedByKey,
-			activeMetadataKeys
-		);
-	}
-);
-
-/**
- * Merge metadata modifiers with filter by active and return it in request-like format
- * @params metadataModifiers {Object}
- * @params filterByActive {Object}
- */
-const getMergedModifiersInRequestFormat = createRecomputeSelector(
-	(metadataModifiers, filterByActive) => {
-		const mergedMetadataKeys = getMergedModifiers(
-			metadataModifiers,
-			filterByActive
-		);
-
-		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-		return commonHelpers.convertModifiersToRequestFriendlyFormat(
-			mergedMetadataKeys
-		);
-	}
-);
-
-/**
- * @params componentState {Object}
- */
-const getCommmonDataRelationsFilterFromComponentState = createRecomputeSelector(
-	componentState => {
-		let relationsFilter = getMergedModifiersInRequestFormat(
-			componentState.metadataModifiers,
-			componentState.filterByActive
-		);
-
-		// add layerTemplate od areaTreeLevelKey
-		if (relationsFilter && componentState.layerTemplateKey) {
-			relationsFilter.layerTemplateKey = componentState.layerTemplateKey;
-		} else if (relationsFilter && componentState.areaTreeLevelKey) {
-			relationsFilter.areaTreeLevelKey = componentState.areaTreeLevelKey;
-		}
-		return relationsFilter;
-	}
-);
 
 const getUsedIndexPages = getSubstate => {
 	return createSelector(
@@ -1043,6 +960,96 @@ const _mergeIntervals = intervals => {
 	);
 };
 
+/* 	--- Recompute observers -------------------------------------------------- */
+
+/**
+ * @param filterByActive {Object}
+ */
+const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(
+	getActiveKeysByFilterByActive
+);
+
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
+	getIndexes(getSubstate)(state)
+);
+
+/* --- Recompute selectors -------------------------------------------------- */
+
+const getIndex_recompute = getSubstate => {
+	return createRecomputeSelector((filter, order) => {
+		const indexes = getIndexesObserver(getSubstate);
+		if (indexes) {
+			return commonHelpers.getIndex(indexes, filter, order);
+		} else {
+			return null;
+		}
+	});
+};
+
+/**
+ * Merge metadata modifiers with filter by active
+ * @params metadataModifiers {Object} {placeKey: "uuid", scopeKey: "uuid", ...}
+ * @params filterByActive {Object} {place: true, case: true, ...}
+ */
+const getMergedModifiers_recompute = createRecomputeSelector(
+	(metadataModifiers, filterByActive) => {
+		// TODO at least a part is the same as in Maps/actions/layerUse?
+
+		// modifiers defined by key
+		let metadataDefinedByKey = metadataModifiers ? {...metadataModifiers} : {};
+
+		// Get actual metadata keys defined by filterByActive
+		const activeMetadataKeys = getActiveKeysByFilterByActiveObserver(
+			filterByActive
+		);
+
+		// Merge metadata, metadata defined by key have priority
+		return commonHelpers.mergeMetadataKeys(
+			metadataDefinedByKey,
+			activeMetadataKeys
+		);
+	}
+);
+
+/**
+ * Merge metadata modifiers with filter by active and return it in request-like format
+ * @params metadataModifiers {Object}
+ * @params filterByActive {Object}
+ */
+const getMergedModifiersInRequestFormat_recompute = createRecomputeSelector(
+	(metadataModifiers, filterByActive) => {
+		const mergedMetadataKeys = getMergedModifiers_recompute(
+			metadataModifiers,
+			filterByActive
+		);
+
+		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+		return commonHelpers.convertModifiersToRequestFriendlyFormat(
+			mergedMetadataKeys
+		);
+	}
+);
+
+/**
+ * @params componentState {Object}
+ */
+const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomputeSelector(
+	componentState => {
+		let relationsFilter = getMergedModifiersInRequestFormat_recompute(
+			componentState.metadataModifiers,
+			componentState.filterByActive
+		);
+
+		// add layerTemplate od areaTreeLevelKey
+		if (componentState.layerTemplateKey) {
+			relationsFilter.layerTemplateKey = componentState.layerTemplateKey;
+		} else if (componentState.areaTreeLevelKey) {
+			relationsFilter.areaTreeLevelKey = componentState.areaTreeLevelKey;
+		}
+		return relationsFilter;
+	}
+);
+
 export default {
 	getActive,
 	getActiveModels,
@@ -1060,8 +1067,6 @@ export default {
 	getByKeysAsObject,
 	getByKeys,
 
-	getCommmonDataRelationsFilterFromComponentState,
-
 	getDataByKey,
 	getDeletePermissionByKey,
 
@@ -1074,7 +1079,6 @@ export default {
 
 	getIndex,
 	getIndexByPath,
-	getIndex_recompute,
 	getIndexed,
 	getIndexes,
 	getIndexChangedOn,
@@ -1084,9 +1088,6 @@ export default {
 	getIndexesByFilteredItem,
 
 	getKeysToLoad,
-
-	getMergedModifiers,
-	getMergedModifiersInRequestFormat,
 
 	getStateToSave,
 
@@ -1100,4 +1101,11 @@ export default {
 
 	// recompute observers
 	getActiveKeysByFilterByActiveObserver,
+	getIndexesObserver,
+
+	// recompute selectors
+	getIndex_recompute,
+	getCommmonDataRelationsFilterFromComponentState_recompute,
+	getMergedModifiers_recompute,
+	getMergedModifiersInRequestFormat_recompute,
 };
