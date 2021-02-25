@@ -80,8 +80,11 @@ const getData = createRecomputeSelector(componentKey => {
 								// new feature
 								else {
 									// TODO temporary fix for buggy BE values datatype
-									const valueAsNumber = Number(value);
-									value = _.isNumber(valueAsNumber) ? valueAsNumber : value;
+									value = isNaN(value)
+										? value
+										: _.isNumber(value)
+										? value
+										: Number(value);
 
 									// TODO format?
 									finalFeaturesAsObject[index] = {
