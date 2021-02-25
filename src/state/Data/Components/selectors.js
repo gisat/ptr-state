@@ -59,59 +59,61 @@ const getData = createRecomputeSelector(componentKey => {
 				);
 
 				// Get indexed features
-				const indexedFeatureKeysAsObject = attributeDataIndex?.index;
+				let indexedFeatureKeysAsObject = attributeDataIndex?.index;
 
 				if (indexedFeatureKeysAsObject) {
-					let indexedFeatureKeys = Object.values(indexedFeatureKeysAsObject);
-
-					const {start, length} = componentState;
-					if ((start || start === 0) && length) {
-						indexedFeatureKeys = indexedFeatureKeys.slice(
-							start,
-							start + length
-						);
-					}
+					let {start, length} = componentState;
+					start = start || 0;
+					length = length || attributeDataIndex.count - 1;
+					let end = Math.min(start + length - 1, attributeDataIndex.count - 1);
 
 					let finalFeaturesAsObject = [];
 
 					// Loop through indexed features
-					_.forEach(indexedFeatureKeys, (featureKey, index) => {
-						// We don't know which feature is in which attribute DS
-						// also there could be more attributes for the feature
-						_.forIn(
-							attributeDsKeyAttributeKeyPairs,
-							(attributeKey, attributeDsKey) => {
-								let value = data[attributeDsKey]?.[featureKey];
+					for (let i = start; i <= end; i++) {
+						const featureKey = indexedFeatureKeysAsObject[i];
+						if (featureKey) {
+							// We don't know which feature is in which attribute DS
+							// also there could be more attributes for the feature
+							_.forIn(
+								attributeDsKeyAttributeKeyPairs,
+								(attributeKey, attributeDsKey) => {
+									let value = data[attributeDsKey]?.[featureKey];
 
-								if (value !== undefined) {
-									// existing feature
-									if (finalFeaturesAsObject[index]) {
-										finalFeaturesAsObject[index].data[attributeKey] = value;
-									}
+									if (value !== undefined) {
+										// existing feature
+										if (finalFeaturesAsObject[i - start]) {
+											finalFeaturesAsObject[i - start].data[
+												attributeKey
+											] = value;
+										}
 
-									// new feature
-									else {
-										// TODO temporary fix for buggy BE values datatype
-										value = isNaN(value)
-											? value
-											: _.isNumber(value)
-											? value
-											: Number(value);
+										// new feature
+										else {
+											// TODO temporary fix for buggy BE values datatype
+											value = isNaN(value)
+												? value
+												: _.isNumber(value)
+												? value
+												: Number(value);
 
-										// TODO format?
-										finalFeaturesAsObject[index] = {
-											key: featureKey,
-											data: {
-												[attributeKey]: value,
-											},
-										};
+											// TODO format?
+											finalFeaturesAsObject[i - start] = {
+												key: featureKey,
+												data: {
+													[attributeKey]: value,
+												},
+											};
+										}
 									}
 								}
-							}
-						);
-					});
-					//Remove empty items from array
-					return finalFeaturesAsObject.filter(i => i);
+							);
+						} else {
+							// no feature key at index
+							finalFeaturesAsObject.push(null);
+						}
+					}
+					return finalFeaturesAsObject;
 				} else {
 					return null;
 				}
