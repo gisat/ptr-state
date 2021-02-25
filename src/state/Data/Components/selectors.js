@@ -139,6 +139,33 @@ const getDataForBigNumber = createRecomputeSelector(props => {
 	};
 });
 
+const getDataForTable = createRecomputeSelector(props => {
+	const componentSettings = componentsSelectors.getByComponentKey_recompute(
+		props.stateComponentKey
+	);
+	const data = getData(props.stateComponentKey);
+
+	const dataDefinition =
+		data?.map(item => {
+			const itemData = {};
+			componentSettings.columns?.forEach(column => {
+				itemData[column.columnKey] = _.get(item, column.dataPath);
+			});
+			return itemData;
+		}) || [];
+
+	const columnsDefinition =
+		componentSettings.columns?.map(column => ({
+			Header: column.header,
+			accessor: column.columnKey,
+		})) || [];
+
+	return {
+		data: dataDefinition,
+		columns: columnsDefinition,
+	};
+});
+
 const getDataForColumnChart = createRecomputeSelector(props => {
 	const componentSettings = componentsSelectors.getByComponentKey_recompute(
 		props.stateComponentKey
@@ -183,4 +210,5 @@ export default {
 	getDataForBigNumber,
 	getDataForColumnChart,
 	getDataForScatterChart,
+	getDataForTable,
 };
