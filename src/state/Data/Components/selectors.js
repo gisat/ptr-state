@@ -69,7 +69,7 @@ const getData = createRecomputeSelector(componentKey => {
 					_.forIn(
 						attributeDsKeyAttributeKeyPairs,
 						(attributeKey, attributeDsKey) => {
-							const value = data[attributeDsKey]?.[featureKey];
+							let value = data[attributeDsKey]?.[featureKey];
 
 							if (value !== undefined) {
 								// existing feature
@@ -79,6 +79,10 @@ const getData = createRecomputeSelector(componentKey => {
 
 								// new feature
 								else {
+									// TODO temporary fix for buggy BE values datatype
+									const valueAsNumber = Number(value);
+									value = valueAsNumber !== NaN ? valueAsNumber : value;
+
 									// TODO format?
 									finalFeaturesAsObject[index] = {
 										key: featureKey,
