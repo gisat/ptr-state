@@ -52,12 +52,6 @@ const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
 	ActionTypes.SCOPES
 );
 
-function setActiveKey(key) {
-	return (dispatch, getState) => {
-		dispatch(setActiveKeyAndEnsureDependencies(key));
-	};
-}
-
 function updateStateFromView(data) {
 	return dispatch => {
 		if (data) {
@@ -66,7 +60,7 @@ function updateStateFromView(data) {
 			}
 
 			if (data && data.activeKey) {
-				dispatch(setActiveKey(data.activeKey));
+				dispatch(setActiveKeyAndEnsureDependencies(data.activeKey));
 			}
 		}
 	};
@@ -85,7 +79,7 @@ export default {
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,
