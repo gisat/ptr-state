@@ -44,7 +44,7 @@ const refreshUses = common.refreshUses(
 );
 const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
 	ActionTypes.SCOPES,
-	'scope'
+	'scopes'
 );
 const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
 	Select.scopes.getSubstate,
