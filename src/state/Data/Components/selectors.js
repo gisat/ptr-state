@@ -5,6 +5,8 @@ import {
 } from '@jvitela/recompute';
 import _ from 'lodash';
 
+import commonHelpers from '../../_common/helpers';
+import commonSelectors from '../../_common/selectors';
 import attributeDataSelectors from '../AttributeData/selectors';
 import attributeRelationsSelectors from '../AttributeRelations/selectors';
 import componentsSelectors from '../../Components/selectors';
@@ -206,6 +208,97 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 	}
 });
 
+const getAttributeFilterByComponentKey = (state, componentKey) => {
+	const componentState = getComponentStateByKey(
+		state,
+		componentKey
+	);
+
+	const {
+		areaTreeLevelKey,
+		attributeKeys,
+		attributeFilter,
+		dataSourceKeys,
+		featureKeys,
+		filterByActive,
+		layerTemplateKey,
+		metadataModifiers,
+		spatialFilter,
+	} = componentState;
+
+	// modifiers defined by key
+	const metadataDefinedByKey = metadataModifiers
+		? {...metadataModifiers}
+		: {};
+
+	if (layerTemplateKey) {
+		metadataDefinedByKey[layerTemplateKey] = layerTemplateKey;
+	} else if (areaTreeLevelKey) {
+		metadataDefinedByKey[areaTreeLevelKey] = areaTreeLevelKey;
+	}
+
+	// Get actual metadata keys defined by filterByActive
+	const activeMetadataKeys = filterByActive
+		? commonSelectors.getActiveKeysByFilterByActive(state, filterByActive)
+		: null;
+
+	// Merge metadata, metadata defined by key have priority
+	const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(
+		metadataDefinedByKey,
+		activeMetadataKeys
+	);
+
+	// Decouple modifiers from templates
+	const {
+		areaTreeLevelKey: modifiedAreaTreeLevelKey,
+		layerTemplateKey: modifiedLayerTemplateKey,
+		applicationKey,
+		...modifiers
+	} = mergedMetadataKeys;
+
+	// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+	const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(
+		modifiers
+	);
+
+	const mergedAttributeFilter = {
+		...modifiersForRequest,
+		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
+		...(attributeKeys !== undefined && {attributeKeys}),
+		...(attributeFilter !== undefined && {attributeFilter}),
+		...(dataSourceKeys !== undefined && {dataSourceKeys}),
+		...(featureKeys !== undefined && {featureKeys}),
+		...(layerTemplateKey !== undefined && {layerTemplateKey}),
+		...(spatialFilter !== undefined && {spatialFilter}),
+	};
+
+	return mergedAttributeFilter;
+}
+
+const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
+	const componentState = getComponentStateByKey(
+		state,
+		componentKey
+	);
+
+	const {
+		attributeOrder,
+	} = componentState;
+	
+	const mergedAttributeFilter = getAttributeFilterByComponentKey(state, componentKey)
+
+	const attributeDataIndex =
+		attributeDataSelectors.getIndex(
+			state,
+			'indexes',
+			mergedAttributeFilter,
+			attributeOrder
+		) || [];
+
+	const missingAttributesData = _.isEmpty(attributeDataIndex);
+	return missingAttributesData ? null : attributeDataIndex;
+}
+
 export default {
 	getComponentStateByKey,
 	getData,
@@ -213,4 +306,6 @@ export default {
 	getDataForColumnChart,
 	getDataForScatterChart,
 	getDataForTable,
+	getIndexForAttributeDataByComponentKey,
+	getAttributeFilterByComponentKey,
 };

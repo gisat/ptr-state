@@ -236,48 +236,24 @@ function loadMissingRelationsAndData(
 }
 
 const ensure = ({
-	areaTreeLevelKey,
-	attributeKeys,
-	attributeFilter,
 	attributeOrder,
-	dataSourceKeys,
-	featureKeys,
-	layerTemplateKey,
-	modifiers,
-	spatialFilter,
 	start,
 	length,
 	pageSize,
+	componentKey,
 }) => {
 	return (dispatch, getState) => {
-		const mergedAttributeFilter = {
-			...modifiers,
-			...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
-			...(attributeKeys !== undefined && {attributeKeys}),
-			...(attributeFilter !== undefined && {attributeFilter}),
-			...(dataSourceKeys !== undefined && {dataSourceKeys}),
-			...(featureKeys !== undefined && {featureKeys}),
-			...(layerTemplateKey !== undefined && {layerTemplateKey}),
-			...(spatialFilter !== undefined && {spatialFilter}),
-		};
+		const state = getState();
+		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(state, componentKey);
+		const attributeDataIndex = Select.data.components.getIndexForAttributeDataByComponentKey(state, componentKey) || [];
 
-		const attributeDataIndex =
-			Select.data.attributeData.getIndex(
-				getState(),
-				'indexes',
-				mergedAttributeFilter,
-				attributeOrder
-			) || [];
-
-		const missingAttributesData = _.isEmpty(attributeDataIndex);
-
-		//FIXME - add determination for missing some pages
+		const missingAllAttributesData = _.isEmpty(attributeDataIndex);
 
 		//
 		// No index exists for filter and order
 		// load all
 		//
-		if (missingAttributesData) {
+		if (missingAllAttributesData) {
 			return dispatch(
 				ensureDataAndRelations(
 					attributeOrder,
@@ -288,8 +264,22 @@ const ensure = ({
 				)
 			);
 		} else {
-			//nothing is missing
-			return;
+			const missingPages = true;
+			if(missingPages) {
+				//FIXME - load just mussing pages
+				return dispatch(
+					ensureDataAndRelations(
+						attributeOrder,
+						mergedAttributeFilter,
+						start,
+						length,
+						pageSize
+					)
+				);
+			} else {
+				//nothing is missing
+				return;
+			}
 		}
 	};
 };
@@ -302,71 +292,21 @@ const use = componentKey => {
 			componentKey
 		);
 		const {
-			areaTreeLevelKey,
-			attributeKeys,
-			attributeFilter,
 			attributeOrder,
-			dataSourceKeys,
-			featureKeys,
-			filterByActive,
-			layerTemplateKey,
-			metadataModifiers,
-			spatialFilter,
 			start,
 			length,
 			pageSize,
 		} = componentState;
 
-		// modifiers defined by key
-		const metadataDefinedByKey = metadataModifiers
-			? {...metadataModifiers}
-			: {};
-
-		if (layerTemplateKey) {
-			metadataDefinedByKey[layerTemplateKey] = layerTemplateKey;
-		} else if (areaTreeLevelKey) {
-			metadataDefinedByKey[areaTreeLevelKey] = areaTreeLevelKey;
-		}
-
-		// Get actual metadata keys defined by filterByActive
-		const activeMetadataKeys = filterByActive
-			? commonSelectors.getActiveKeysByFilterByActive(state, filterByActive)
-			: null;
-
-		// Merge metadata, metadata defined by key have priority
-		const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(
-			metadataDefinedByKey,
-			activeMetadataKeys
-		);
-
-		// Decouple modifiers from templates
-		const {
-			areaTreeLevelKey: modifiedAreaTreeLevelKey,
-			layerTemplateKey: modifiedLayerTemplateKey,
-			applicationKey,
-			...modifiers
-		} = mergedMetadataKeys;
-
-		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-		const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(
-			modifiers
-		);
 
 		// TODO register use?
 		dispatch(
 			ensure({
-				areaTreeLevelKey: modifiedAreaTreeLevelKey,
-				attributeKeys,
-				attributeFilter,
 				attributeOrder,
-				dataSourceKeys,
-				featureKeys,
-				layerTemplateKey: modifiedLayerTemplateKey,
-				modifiers: modifiersForRequest,
-				spatialFilter,
 				start,
 				length,
 				pageSize,
+				componentKey,
 			})
 		);
 	};
@@ -537,4 +477,5 @@ export default {
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,
+	updateComponent
 };
