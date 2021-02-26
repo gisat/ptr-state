@@ -105,7 +105,8 @@ function ensureDataAndRelations(
 	mergedAttributeFilter,
 	start,
 	length,
-	pageSize
+	pageSize,
+	loadRelations
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -116,13 +117,12 @@ function ensureDataAndRelations(
 
 		const attributePagination = getPagination(0, start, PAGE_SIZE);
 
-		const loadRelations = true;
 		const loadData = true;
 		return dispatch(
 			loadIndexedPage(
 				order,
 				mergedAttributeFilter,
-				loadRelations,
+				!!loadRelations,
 				loadData,
 				relationsPagination,
 				attributePagination
@@ -137,11 +137,13 @@ function ensureDataAndRelations(
 				response.attributeRelationsDataSources.total;
 			const attributeCount = response.attributeData.total;
 			const loadedPages = 1;
-			const restRelationsPages = getRestPages(
-				attributeRelationsCount,
-				loadedPages,
-				RELATIONS_PAGE_SIZE
-			);
+			const restRelationsPages = !!loadRelations
+				? getRestPages(
+						attributeRelationsCount,
+						loadedPages,
+						RELATIONS_PAGE_SIZE
+				  )
+				: 0;
 
 			const restAttributesPages = getRestPages(
 				attributeCount,
@@ -262,8 +264,14 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 				componentKey
 			) || [];
 
-		const missingAllAttributesData = _.isEmpty(attributeDataIndex);
+		const attributeRelationsIndex =
+			// Select.data.components.getIndexForAttributeDataByComponentKey(
+			Select.data.attributeRelations.getIndex(state, mergedAttributeFilter) ||
+			[];
 
+		const missingAllAttributesData = _.isEmpty(attributeDataIndex);
+		const missingAllRelations = _.isEmpty(attributeRelationsIndex);
+		const loadRelations = missingAllRelations;
 		//
 		// No index exists for filter and order
 		// load all
@@ -275,7 +283,8 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 					mergedAttributeFilter,
 					start,
 					length,
-					pageSize
+					pageSize,
+					loadRelations
 				)
 			);
 		} else {
@@ -288,7 +297,8 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 						mergedAttributeFilter,
 						start,
 						length,
-						pageSize
+						pageSize,
+						loadRelations
 					)
 				);
 			} else {
