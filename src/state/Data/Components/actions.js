@@ -80,6 +80,18 @@ function updateComponentsStateFromView(components) {
 	};
 }
 
+function updateComponent(componentKey, update) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const componentState = Select.data.components.getComponentStateByKey(
+			state,
+			componentKey
+		);
+
+		dispatch(actionUpdateComponents({[componentKey]: {...componentState, ...update}}));
+	}
+}
+
 /**
  * Ensure load attribute data and relations.
  * @param {Array?} order
