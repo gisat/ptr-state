@@ -52,12 +52,6 @@ const refreshUses = common.refreshUses(
 	ActionTypes.VIEWS,
 	'views'
 );
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.views.getSubstate,
-	'views',
-	ActionTypes.VIEWS,
-	'views'
-);
 
 // ============ actions ===========
 const apply = (key, actions) => {
@@ -123,7 +117,6 @@ export default {
 	setActiveKeys,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 	saveEdited,
 	updateEdited,
 	useKeys,

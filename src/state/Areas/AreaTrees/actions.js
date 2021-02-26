@@ -21,11 +21,6 @@ const refreshUses = common.refreshUses(
 	`areaTrees`,
 	ActionTypes.AREAS.AREA_TREES
 );
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.areas.areaTrees.getSubstate,
-	'areaTrees',
-	ActionTypes.AREAS.AREA_TREES
-);
 
 // ============ actions ===========
 
@@ -39,7 +34,6 @@ function actionClearUseIndexed(componentId) {
 // ============ export ===========
 
 export default {
-	ensureIndexesWithFilterByActive,
 	refreshUses,
 	setActiveKey,
 	useIndexed,

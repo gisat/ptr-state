@@ -1,10 +1,15 @@
 import {assert} from 'chai';
 import slash from 'slash';
+import {ensureDependenciesOfActiveMetadataType} from '../../../src/state/_actionHelpers';
 import actions from '../../../src/state/Cases/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
 
 describe('state/Cases/actions', function () {
 	let dispatchedActions = [];
+	const options = {
+		ensureDependenciesOfActiveMetadataType,
+	};
+
 	const dispatch = function (action) {
 		dispatchedActions.push(action);
 	};
@@ -13,14 +18,14 @@ describe('state/Cases/actions', function () {
 		dispatchedActions = [];
 	};
 
-	const runFunctionActions = function ({dispatch, getState}) {
+	const runFunctionActions = function ({dispatch, getState, options}) {
 		return new Promise((resolve, reject) => {
 			const promises = [];
 			for (let i = 0; i < dispatchedActions.length; i++) {
 				const action = dispatchedActions[i];
 
 				if (typeof action === 'function') {
-					promises.push(action(dispatch, getState));
+					promises.push(action(dispatch, getState, options));
 					dispatchedActions[i] = null;
 				} else if (action instanceof Promise) {
 					promises.push(action);
@@ -32,7 +37,7 @@ describe('state/Cases/actions', function () {
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
-					.then(() => runFunctionActions({dispatch, getState}))
+					.then(() => runFunctionActions({dispatch, getState, options}))
 					.then(() => resolve());
 			}
 
@@ -190,111 +195,6 @@ describe('state/Cases/actions', function () {
 						type: 'COMMON.EDITED.REMOVE_PROPERTY_VALUES',
 						dataType: 'cases',
 						keys: ['k1'],
-					},
-				]);
-			});
-	});
-
-	it('ensureIndexesWithFilterByActive', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			cases: {
-				inUse: {
-					indexes: [
-						[
-							{
-								filterByActive: {name: 'fil'},
-								filter: {
-									name: 'fil',
-								},
-								order: 'asc',
-								start: 1,
-								length: 5,
-							},
-						],
-					],
-				},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata/filtered/cases',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {
-						name: 'fil',
-					},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
-
-			const body = {
-				data: {cases: {k1: {}, k2: {}, k3: {}, k4: {}}},
-				total: 5,
-				changes: {
-					cases: '2020-01-01',
-				},
-			};
-
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
-
-		return actions
-			.ensureIndexesWithFilterByActive({name: 'fil'})(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'CASES.INDEX.ADD',
-						filter: {
-							name: 'fil',
-						},
-						order: 'asc',
-						start: 1,
-						data: {k1: {}, k2: {}, k3: {}, k4: {}},
-						changedOn: '2020-01-01',
-						count: 5,
 					},
 				]);
 			});
@@ -660,39 +560,5 @@ describe('state/Cases/actions', function () {
 		assert.deepStrictEqual(dispatchedActions, [
 			{componentId: 'cid', type: 'CASES.USE.KEYS.CLEAR'},
 		]);
-	});
-
-	it('setActiveKey', function () {
-		const getState = () => ({
-			cases: {},
-		});
-
-		actions.setActiveKey('k1', {name: 'fil'})(dispatch, getState);
-
-		return runFunctionActions({dispatch, getState}).then(function () {
-			assert.deepStrictEqual(dispatchedActions, [
-				{
-					key: 'k1',
-					type: 'CASES.SET_ACTIVE_KEY',
-				},
-			]);
-		});
-	});
-
-	it('setActiveKeys', function () {
-		const getState = () => ({
-			cases: {},
-		});
-
-		actions.setActiveKeys(['k1', 'k2'], {name: 'fil'})(dispatch, getState);
-
-		return runFunctionActions({dispatch, getState}).then(function () {
-			assert.deepStrictEqual(dispatchedActions, [
-				{
-					keys: ['k1', 'k2'],
-					type: 'CASES.SET_ACTIVE_KEYS',
-				},
-			]);
-		});
 	});
 });

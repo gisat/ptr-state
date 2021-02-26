@@ -21,6 +21,8 @@ const saveEdited = common.saveEdited(
 	'scopes',
 	ActionTypes.SCOPES
 );
+const setActiveKey = common.setActiveKey(ActionTypes.SCOPES);
+
 const updateEdited = common.updateEdited(
 	Select.scopes.getSubstate,
 	ActionTypes.SCOPES
@@ -42,15 +44,13 @@ const refreshUses = common.refreshUses(
 	`scopes`,
 	ActionTypes.SCOPES
 );
-const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
-	ActionTypes.SCOPES,
-	'scope'
-);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.scopes.getSubstate,
-	'scopes',
-	ActionTypes.SCOPES
-);
+
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('scope'));
+	};
+};
 
 function updateStateFromView(data) {
 	return dispatch => {
@@ -74,7 +74,6 @@ export default {
 	add,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 
 	refreshUses,
 

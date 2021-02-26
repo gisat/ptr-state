@@ -8,7 +8,6 @@ import commonSelectors from './selectors';
 import Select from '../Select';
 import ActionTypes from '../../constants/ActionTypes';
 
-import Action from '../Action';
 import {utils} from '@gisatcz/ptr-utils';
 import {configDefaults} from '@gisatcz/ptr-core';
 
@@ -441,24 +440,6 @@ const useIndexedBatch = (
 					additionalParams
 				)
 			);
-		};
-	};
-};
-
-const setActiveKeyAndEnsureDependencies = (actionTypes, filterKey) => {
-	return key => {
-		return dispatch => {
-			dispatch(actionSetActiveKey(actionTypes, key));
-			dispatch(ensureIndexesWithActiveKey(filterKey));
-		};
-	};
-};
-
-const setActiveKeysAndEnsureDependencies = (actionTypes, filterKey) => {
-	return keys => {
-		return dispatch => {
-			dispatch(actionSetActiveKeys(actionTypes, keys));
-			dispatch(ensureIndexesWithActiveKey(filterKey));
 		};
 	};
 };
@@ -1251,6 +1232,9 @@ function ensureIndexesWithFilterByActive(
 				getSubstate
 			)(state, filterByActive);
 
+			// TODO temporary console for testing
+			// console.log('###', actionTypes, usedIndexes);
+
 			const promises = _.flatMap(usedIndexes, usedIndex => {
 				_.map(usedIndex.uses, use => {
 					return dispatch(
@@ -1270,26 +1254,6 @@ function ensureIndexesWithFilterByActive(
 
 			return Promise.all(promises);
 		};
-	};
-}
-
-function ensureIndexesWithActiveKey(
-	filterKey,
-	categoryPath = DEFAULT_CATEGORY_PATH
-) {
-	return dispatch => {
-		let filterByActive = {
-			[filterKey]: true,
-		};
-
-		// dispatch ensureIndexesWithFilterByActive on all stores implementing it
-		_.map(Action, actions => {
-			if (actions.hasOwnProperty('ensureIndexesWithFilterByActive')) {
-				dispatch(
-					actions.ensureIndexesWithFilterByActive(filterByActive, categoryPath)
-				);
-			}
-		});
 	};
 }
 
@@ -1534,8 +1498,6 @@ export default {
 	loadIndexedPage,
 	loadKeysPage,
 	setActiveKey: creator(actionSetActiveKey),
-	setActiveKeyAndEnsureDependencies,
-	setActiveKeysAndEnsureDependencies,
 	setActiveKeys: creator(actionSetActiveKeys),
 	receiveUpdated,
 	receiveIndexed,

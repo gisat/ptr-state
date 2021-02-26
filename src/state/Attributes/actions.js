@@ -23,6 +23,7 @@ const saveEdited = common.saveEdited(
 	'attributes',
 	ActionTypes.ATTRIBUTES
 );
+const setActiveKey = common.setActiveKey(ActionTypes.ATTRIBUTES);
 const updateEdited = common.updateEdited(
 	Select.attributes.getSubstate,
 	ActionTypes.ATTRIBUTES
@@ -39,11 +40,6 @@ const useKeys = common.useKeys(
 	ActionTypes.ATTRIBUTES
 );
 const useKeysClear = common.useKeysClear(ActionTypes.ATTRIBUTES);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.attributes.getSubstate,
-	'attributes',
-	ActionTypes.ATTRIBUTES
-);
 const updateStateFromView = common.updateSubstateFromView(
 	ActionTypes.ATTRIBUTES
 );
@@ -52,18 +48,6 @@ const useIndexedBatch = common.useIndexedBatch(
 	ActionTypes.ATTRIBUTES,
 	'data'
 );
-
-const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
-	ActionTypes.ATTRIBUTES,
-	'attribute'
-);
-
-function setActiveKey(key) {
-	return dispatch => {
-		dispatch(setActiveKeyAndEnsureDependencies(key));
-	};
-}
-
 function loadAttributeData(filter, componentId) {
 	return (dispatch, getState) => {
 		return dispatch(
@@ -77,7 +61,6 @@ function loadAttributeData(filter, componentId) {
 export default {
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 	updateStateFromView,
 
 	refreshUses,

@@ -45,11 +45,19 @@ const refreshUses = common.refreshUses(
 	`places`,
 	ActionTypes.PLACES
 );
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.places.getSubstate,
-	'places',
-	ActionTypes.PLACES
-);
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+	};
+};
+
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+	};
+};
 
 // ============ export ===========
 
@@ -57,12 +65,11 @@ export default {
 	add,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
-	setActiveKeys,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,
