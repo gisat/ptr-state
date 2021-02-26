@@ -103,11 +103,13 @@ function ensureDataAndRelations(
 		const attributePagination = getPagination(0, start, PAGE_SIZE);
 
 		const loadRelations = true;
+		const loadData = true;
 		return dispatch(
 			loadIndexedPage(
 				order,
 				mergedAttributeFilter,
 				loadRelations,
+				loadData,
 				relationsPagination,
 				attributePagination
 			)
@@ -189,6 +191,7 @@ function loadMissingRelationsAndData(
 
 			//only if missing attribute data pages missing
 			let attributePagination = getNullishPagination();
+			let loadData = false;
 			if (pagination < remainingAttributeDataPageCount) {
 				attributePagination = getPagination(i, start, PAGE_SIZE);
 				pagination = i;
@@ -200,6 +203,7 @@ function loadMissingRelationsAndData(
 						order,
 						mergedAttributeFilter,
 						loadRelations,
+						loadData,
 						relationsPagination, //pagination for relations
 						attributePagination //pagination for data is same like for relations here
 					)
@@ -211,12 +215,15 @@ function loadMissingRelationsAndData(
 		for (let i = pagination + 1; i <= remainingAttributeDataPageCount; i++) {
 			const relationsPagination = getNullishPagination();
 			const attributePagination = getPagination(i, start, PAGE_SIZE);
+			const loadRelations = false;
+			const loadData = true;
 			promises.push(
 				dispatch(
 					loadIndexedPage(
 						order,
 						mergedAttributeFilter,
-						false,
+						loadRelations,
+						loadData,
 						relationsPagination,
 						attributePagination
 					)
@@ -370,6 +377,7 @@ const use = componentKey => {
  * @param {Array?} order
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {bool} loadRelations Whether response should contain relations
+ * @param {bool} loadData Whether response should contain data
  * @param {Object?} relationsPagination Pagination for relations.
  * @param {Object?} attributeDataPagination Pagination for attributeData.
  */
@@ -377,6 +385,7 @@ function loadIndexedPage(
 	order,
 	filter,
 	loadRelations,
+	loadData,
 	relationsPagination,
 	attributeDataPagination
 ) {
@@ -387,9 +396,23 @@ function loadIndexedPage(
 		const usedRelationsPagination = relationsPagination
 			? {...relationsPagination}
 			: DEFAULT_PAGE_PAGINATION;
+
+		if(loadRelations) {
+			usedRelationsPagination.relations = true;
+		} else {
+			usedRelationsPagination.relations = false;
+		}
+		
 		const usedAttributeDataPagination = attributeDataPagination
 			? {...attributeDataPagination}
 			: DEFAULT_PAGE_PAGINATION;
+
+		
+		if(loadData) {
+			usedAttributeDataPagination.data = true;
+		} else {
+			usedAttributeDataPagination.data = false;
+		}
 
 		//FIXME add loading support
 
