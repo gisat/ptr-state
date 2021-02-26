@@ -88,8 +88,10 @@ function updateComponent(componentKey, update) {
 			componentKey
 		);
 
-		dispatch(actionUpdateComponents({[componentKey]: {...componentState, ...update}}));
-	}
+		dispatch(
+			actionUpdateComponents({[componentKey]: {...componentState, ...update}})
+		);
+	};
 }
 
 /**
@@ -247,17 +249,18 @@ function loadMissingRelationsAndData(
 	};
 }
 
-const ensure = ({
-	attributeOrder,
-	start,
-	length,
-	pageSize,
-	componentKey,
-}) => {
+const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(state, componentKey);
-		const attributeDataIndex = Select.data.components.getIndexForAttributeDataByComponentKey(state, componentKey) || [];
+		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
+			state,
+			componentKey
+		);
+		const attributeDataIndex =
+			Select.data.components.getIndexForAttributeDataByComponentKey(
+				state,
+				componentKey
+			) || [];
 
 		const missingAllAttributesData = _.isEmpty(attributeDataIndex);
 
@@ -277,7 +280,7 @@ const ensure = ({
 			);
 		} else {
 			const missingPages = true;
-			if(missingPages) {
+			if (missingPages) {
 				//FIXME - load just mussing pages
 				return dispatch(
 					ensureDataAndRelations(
@@ -303,13 +306,7 @@ const use = componentKey => {
 			state,
 			componentKey
 		);
-		const {
-			attributeOrder,
-			start,
-			length,
-			pageSize,
-		} = componentState;
-
+		const {attributeOrder, start, length, pageSize} = componentState;
 
 		// TODO register use?
 		dispatch(
@@ -349,18 +346,17 @@ function loadIndexedPage(
 			? {...relationsPagination}
 			: DEFAULT_PAGE_PAGINATION;
 
-		if(loadRelations) {
+		if (loadRelations) {
 			usedRelationsPagination.relations = true;
 		} else {
 			usedRelationsPagination.relations = false;
 		}
-		
+
 		const usedAttributeDataPagination = attributeDataPagination
 			? {...attributeDataPagination}
 			: DEFAULT_PAGE_PAGINATION;
 
-		
-		if(loadData) {
+		if (loadData) {
 			usedAttributeDataPagination.data = true;
 		} else {
 			usedAttributeDataPagination.data = false;
@@ -489,5 +485,5 @@ export default {
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,
-	updateComponent
+	updateComponent,
 };

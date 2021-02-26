@@ -209,10 +209,7 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 });
 
 const getAttributeFilterByComponentKey = (state, componentKey) => {
-	const componentState = getComponentStateByKey(
-		state,
-		componentKey
-	);
+	const componentState = getComponentStateByKey(state, componentKey);
 
 	const {
 		areaTreeLevelKey,
@@ -227,9 +224,7 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 	} = componentState;
 
 	// modifiers defined by key
-	const metadataDefinedByKey = metadataModifiers
-		? {...metadataModifiers}
-		: {};
+	const metadataDefinedByKey = metadataModifiers ? {...metadataModifiers} : {};
 
 	if (layerTemplateKey) {
 		metadataDefinedByKey[layerTemplateKey] = layerTemplateKey;
@@ -273,19 +268,17 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 	};
 
 	return mergedAttributeFilter;
-}
+};
 
 const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
-	const componentState = getComponentStateByKey(
+	const componentState = getComponentStateByKey(state, componentKey);
+
+	const {attributeOrder} = componentState;
+
+	const mergedAttributeFilter = getAttributeFilterByComponentKey(
 		state,
 		componentKey
 	);
-
-	const {
-		attributeOrder,
-	} = componentState;
-	
-	const mergedAttributeFilter = getAttributeFilterByComponentKey(state, componentKey)
 
 	const attributeDataIndex =
 		attributeDataSelectors.getIndex(
@@ -297,7 +290,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 
 	const missingAttributesData = _.isEmpty(attributeDataIndex);
 	return missingAttributesData ? null : attributeDataIndex;
-}
+};
 
 export default {
 	getComponentStateByKey,

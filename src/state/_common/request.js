@@ -45,7 +45,7 @@ export default function request(
 	query,
 	payload,
 	ttl,
-	dataPath,
+	dataPath
 ) {
 	if (_.isUndefined(ttl)) ttl = TTL;
 	if (_.isUndefined(dataPath)) dataPath = DATAPATH;

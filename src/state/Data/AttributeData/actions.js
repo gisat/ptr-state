@@ -25,12 +25,24 @@ const receiveIndexed = (
 	return dispatch => {
 		if (!_.isEmpty(attributeData)) {
 			dispatch(
-				addDataAndIndexBasedOnSpatialData(filter, order, attributeData, spatialData, changedOn)
+				addDataAndIndexBasedOnSpatialData(
+					filter,
+					order,
+					attributeData,
+					spatialData,
+					changedOn
+				)
 			);
 		} else {
 			// add to index
 			dispatch(
-				createAndAddIndexBasedOnSpatialData(filter, order, attributeData, spatialData, changedOn)
+				createAndAddIndexBasedOnSpatialData(
+					filter,
+					order,
+					attributeData,
+					spatialData,
+					changedOn
+				)
 			);
 		}
 	};
@@ -39,8 +51,8 @@ const receiveIndexed = (
 /**
  * Ensure adding index and adding or updating received data from BE.
  * @param {Object} attributeData
- * @param {Array} attributeData.index 
- * @param {Object} attributeData.attributeData 
+ * @param {Array} attributeData.index
+ * @param {Object} attributeData.attributeData
  * @param {Object} filter Filler object contains modifiers.
  * @param {Array?} order
  * @param {Array?} start
@@ -62,10 +74,9 @@ const receiveIndexedAttributeEndPoint = (
 		start,
 		attributeData.index,
 		attributeData.attributeData,
-		changedOn,
-	)
+		changedOn
+	);
 };
-
 
 /**
  * Add data and index at the same time
@@ -276,8 +287,8 @@ function updateDataAction(key, data) {
  * @param {Array?} order
  * @param {Number} total
  * @param {Number} start
- * @param {Array} index 
- * @param {Object} data 
+ * @param {Array} index
+ * @param {Object} data
  * @param {string?} changedOn
  */
 function addDataAndIndexBasedOnSpatialDataAction(
@@ -304,8 +315,8 @@ function addDataAndIndexBasedOnSpatialDataAction(
  * @param {Array?} order
  * @param {Number} total
  * @param {Number} start
- * @param {Array} index 
- * @param {Object} data 
+ * @param {Array} index
+ * @param {Object} data
  * @param {string?} changedOn
  */
 function addDataAndIndexAction(
@@ -315,7 +326,7 @@ function addDataAndIndexAction(
 	start,
 	index,
 	data,
-	changedOn,
+	changedOn
 ) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
@@ -325,7 +336,7 @@ function addDataAndIndexAction(
 		start,
 		index,
 		data,
-		changedOn
+		changedOn,
 	};
 }
 
@@ -354,5 +365,4 @@ export default {
 	receiveIndexed,
 	updateStore: actionUpdateStore,
 	receiveIndexedAttributeEndPoint,
-
 };
