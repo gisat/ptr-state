@@ -1,14 +1,10 @@
 import {assert} from 'chai';
 import slash from 'slash';
-import {ensureDependenciesOfActiveMetadataType} from '../../../src/state/_actionHelpers';
 import actions from '../../../src/state/Cases/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
 
 describe('state/Cases/actions', function () {
 	let dispatchedActions = [];
-	const options = {
-		ensureDependenciesOfActiveMetadataType,
-	};
 
 	const dispatch = function (action) {
 		dispatchedActions.push(action);

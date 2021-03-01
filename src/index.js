@@ -15,10 +15,8 @@ import commonHelpers from './state/_common/helpers';
 import commonReducers, {DEFAULT_INITIAL_STATE} from './state/_common/reducers';
 import commonSelectors from './state/_common/selectors';
 
-import {
-	ensureDependenciesOfActiveMetadataType,
-	STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE,
-} from './state/_actionHelpers';
+import activeMetadataActions from './state/_activeMetadata/actions';
+import {STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE} from './state/_activeMetadata/constants';
 
 import appReducers from './state/App/reducers';
 import areasReducers from './state/Areas/reducers';
@@ -110,7 +108,7 @@ export {
 	commonReducers,
 	commonSelectors,
 	DEFAULT_INITIAL_STATE,
-	ensureDependenciesOfActiveMetadataType,
+	activeMetadataActions,
 	STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE,
 	thunk,
 	logger,
