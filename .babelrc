@@ -11,5 +11,10 @@
         "loose": true
       }
     ]
-  ]
+  ],
+  "env": {
+		"test": {
+			"plugins": ["istanbul"]
+		}
+	}
 }
