@@ -156,9 +156,11 @@ function apiLogoutUser(ttl) {
 	return (dispatch, getState) => {
 		const apiBackendProtocol = Select.app.getLocalConfiguration(getState(), 'apiBackendProtocol');
 		const apiBackendHost = Select.app.getLocalConfiguration(getState(), 'apiBackendHost');
+		const apiBackendPath = Select.app.getLocalConfiguration(getState(), 'apiBackendPath');
+		
 		dispatch(actionApiLogoutRequest());
 
-		let url = apiBackendProtocol + '://' + path.join(apiBackendHost, 'api/login/logout');
+		let url = apiBackendProtocol + '://' + path.join(apiBackendHost, apiBackendPath, 'api/login/logout');
 
 		return fetch(url, {
 			method: 'POST',
