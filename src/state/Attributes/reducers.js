@@ -47,6 +47,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.markDeleted(state, action);
 		case ActionTypes.ATTRIBUTES.SET_ACTIVE_KEY:
 			return common.setActive(state, action);
+		case ActionTypes.ATTRIBUTES.SET_ACTIVE_KEYS:
+			return common.setActiveMultiple(state, action);
 		case ActionTypes.ATTRIBUTES.USE.INDEXED.CLEAR:
 			return common.useIndexedClear(state, action);
 		case ActionTypes.ATTRIBUTES.USE.INDEXED.REGISTER:
