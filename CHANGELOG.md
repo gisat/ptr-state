@@ -1,3 +1,15 @@
+# v1.5.15 (Mon Mar 01 2021)
+
+#### 🐾 Patch
+
+- Fix logout path [#69](https://github.com/gisat-panther/ptr-state/pull/69) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v1.5.14 (Fri Feb 19 2021)
 
 #### 🐾 Patch
