@@ -26,7 +26,7 @@ describe('state/Components/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)

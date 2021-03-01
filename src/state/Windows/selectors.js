@@ -5,34 +5,25 @@ const getAllSetsAsObject = state => state.windows.sets;
 const getAllWindowsAsObject = state => state.windows.windows;
 
 const getSetByKey = createSelector(
-	[
-		getAllSetsAsObject,
-		(state, key) => key
-	],
+	[getAllSetsAsObject, (state, key) => key],
 	(sets, key) => {
 		return sets && sets[key];
 	}
 );
 
 const getWindow = createSelector(
-	[
-		getAllWindowsAsObject,
-		(state, key) => key
-	],
+	[getAllWindowsAsObject, (state, key) => key],
 	(windows, key) => {
 		return windows && windows[key];
 	}
 );
 
 const getWindowsBySetKeyAsObject = createSelector(
-	[
-		getSetByKey,
-		getAllWindowsAsObject
-	],
+	[getSetByKey, getAllWindowsAsObject],
 	(set, windows) => {
 		if (set && set.orderByHistory && set.orderByHistory.length) {
 			let setWindows = {};
-			_.each(set.orderByHistory, (key) => {
+			_.each(set.orderByHistory, key => {
 				setWindows[key] = windows[key];
 			});
 			return setWindows;
@@ -42,16 +33,13 @@ const getWindowsBySetKeyAsObject = createSelector(
 	}
 );
 
-const isOpen = createSelector(
-	[getWindow],
-	(window) => {
-		return window && window.data && window.data.state === 'open';
-	}
-);
+const isOpen = createSelector([getWindow], window => {
+	return window && window.data && window.data.state === 'open';
+});
 
 export default {
 	getSetByKey,
 	getWindow,
 	getWindowsBySetKeyAsObject,
-	isOpen
-}
+	isOpen,
+};

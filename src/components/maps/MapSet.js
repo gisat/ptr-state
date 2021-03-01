@@ -1,24 +1,33 @@
 import {connect} from 'react-redux';
 import Action from '../../state/Action';
 import Select from '../../state/Select';
-import {utils} from '@gisatcz/ptr-utils'
+import {utils} from '@gisatcz/ptr-utils';
 
 const mapStateToProps = (state, ownProps) => {
 	if (ownProps.stateMapSetKey) {
-		const activeMapKey = Select.maps.getMapSetActiveMapKey(state, ownProps.stateMapSetKey);
+		const activeMapKey = Select.maps.getMapSetActiveMapKey(
+			state,
+			ownProps.stateMapSetKey
+		);
 		return {
 			activeMapKey,
-			activeMapView: Select.maps.getMapSetActiveMapView(state, ownProps.stateMapSetKey),
+			activeMapView: Select.maps.getMapSetActiveMapView(
+				state,
+				ownProps.stateMapSetKey
+			),
 			maps: Select.maps.getMapSetMapKeys(state, ownProps.stateMapSetKey),
 			view: Select.maps.getMapSetView(state, ownProps.stateMapSetKey),
 			activeMapViewport: Select.maps.getViewportByMapKey(state, activeMapKey),
-			viewLimits: Select.maps.getMapSetViewLimits(state, ownProps.stateMapSetKey)
-		}
+			viewLimits: Select.maps.getMapSetViewLimits(
+				state,
+				ownProps.stateMapSetKey
+			),
+		};
 	} else {
 		return {
 			backgroundLayer: null,
-			layers: null
-		}
+			layers: null,
+		};
 	}
 };
 
@@ -31,30 +40,20 @@ const mapDispatchToPropsFactory = () => {
 				updateView: (update, mapKey) => {
 					dispatch(Action.maps.updateMapAndSetView(mapKey, update));
 				},
-				resetHeading: (mapKey) => {
-
-				},
-				onMapRemove: (mapKey) => {
-
-				}
-			}
+				resetHeading: mapKey => {},
+				onMapRemove: mapKey => {},
+			};
 		} else {
 			let setKey = ownProps.setKey || componentId;
 			return {
-				onMount: () => {
+				onMount: () => {},
 
-				},
+				onUnmount: () => {},
 
-				onUnmount: () => {
-
-				},
-
-				refreshUse: () => {
-
-				},
-			}
+				refreshUse: () => {},
+			};
 		}
-	}
+	};
 };
 
 export default connect(mapStateToProps, mapDispatchToPropsFactory);

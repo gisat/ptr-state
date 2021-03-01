@@ -28,7 +28,7 @@ describe('state/Cases/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -53,7 +53,7 @@ describe('state/Cases/actions', function () {
 	});
 
 	it('create', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -67,10 +67,7 @@ describe('state/Cases/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {cases: [{key: 'k1', data: {applicationKey: 'ak'}}]},
@@ -128,7 +125,7 @@ describe('state/Cases/actions', function () {
 	});
 
 	it('delete', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -139,7 +136,7 @@ describe('state/Cases/actions', function () {
 			},
 			cases: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				dispatchedActions.push(res);
@@ -150,10 +147,7 @@ describe('state/Cases/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {cases: [{key: 'k1'}]},
@@ -228,7 +222,7 @@ describe('state/Cases/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -335,7 +329,7 @@ describe('state/Cases/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -424,7 +418,7 @@ describe('state/Cases/actions', function () {
 				editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -437,10 +431,7 @@ describe('state/Cases/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {cases: [{key: 'k1', data: {prop: 'val'}}]},
@@ -565,7 +556,7 @@ describe('state/Cases/actions', function () {
 			places: {activeKey: 'k1'},
 			cases: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {

@@ -30,7 +30,7 @@ describe('state/Attributes/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -56,10 +56,7 @@ describe('state/Attributes/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {
@@ -129,7 +126,7 @@ describe('state/Attributes/actions', function () {
 			},
 			attributes: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				dispatchedActions.push(res);
@@ -140,10 +137,7 @@ describe('state/Attributes/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {attributes: [{key: 'k1'}]},
@@ -192,7 +186,7 @@ describe('state/Attributes/actions', function () {
 	});
 
 	it('ensureIndexesWithFilterByActive', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -219,7 +213,7 @@ describe('state/Attributes/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -348,7 +342,7 @@ describe('state/Attributes/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -437,7 +431,7 @@ describe('state/Attributes/actions', function () {
 				editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -450,10 +444,7 @@ describe('state/Attributes/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata',
-				slash(url)
-			);
+			assert.strictEqual('http://localhost/rest/metadata', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {attributes: [{key: 'k1', data: {prop: 'val'}}]},
@@ -520,7 +511,7 @@ describe('state/Attributes/actions', function () {
 			},
 			attributes: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -543,7 +534,7 @@ describe('state/Attributes/actions', function () {
 	});
 
 	it('updateEdited', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -589,7 +580,7 @@ describe('state/Attributes/actions', function () {
 			periods: {activeKey: 'k1'},
 			places: {activeKey: 'k1'},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -688,7 +679,7 @@ describe('state/Attributes/actions', function () {
 	});
 
 	it('useKeys', function () {
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -753,7 +744,7 @@ describe('state/Attributes/actions', function () {
 			periods: {activeKey: 'pe1'},
 			places: {activeKey: 'pl1'},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -850,7 +841,7 @@ describe('state/Attributes/actions', function () {
 			periods: {activeKey: 'pe1'},
 			places: {activeKey: 'pl1'},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {

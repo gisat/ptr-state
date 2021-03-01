@@ -1,8 +1,8 @@
 import createCachedSelector from 're-reselect';
 import _ from 'lodash';
-import moment from "moment";
+import moment from 'moment';
 
-import common from "../_common/selectors";
+import common from '../_common/selectors';
 
 const getSubstate = state => state.periods;
 
@@ -28,20 +28,18 @@ const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
  * Both start and end time must be defined, otherwise all available periods are returned.
  */
 const getByFullPeriodAsObject = createCachedSelector(
-	[
-		getAllAsObject,
-		(state, start) => start,
-		(state, start, end) => end
-	],
+	[getAllAsObject, (state, start) => start, (state, start, end) => end],
 	(periods, start, end) => {
 		if (periods && start && end) {
-			return _.pickBy(periods, (period) => {
+			return _.pickBy(periods, period => {
 				const periodStart = period.data && period.data.start;
 				const periodEnd = period.data && period.data.end;
 
 				if (periodStart && periodEnd) {
-					return moment(periodStart).isBetween(start, end, null, '[]')
-						&& moment(periodEnd).isBetween(start, end, null, '[]');
+					return (
+						moment(periodStart).isBetween(start, end, null, '[]') &&
+						moment(periodEnd).isBetween(start, end, null, '[]')
+					);
 				} else if (periodStart) {
 					return moment(periodStart).isBetween(start, end, null, '[]');
 				} else if (periodEnd) {
@@ -49,7 +47,7 @@ const getByFullPeriodAsObject = createCachedSelector(
 				} else {
 					return true;
 				}
-			})
+			});
 		} else {
 			return periods;
 		}

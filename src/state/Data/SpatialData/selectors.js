@@ -1,13 +1,18 @@
 import common from '../../_common/selectors';
-import {createSelector as createRecomputeSelector, createObserver as createRecomputeObserver} from '@jvitela/recompute';
+import {
+	createSelector as createRecomputeSelector,
+	createObserver as createRecomputeObserver,
+} from '@jvitela/recompute';
 import commonHelpers from '../../_common/helpers';
 import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
-const getSubstate = (state) => state.data.spatialData;
+const getSubstate = state => state.data.spatialData;
 
 const getIndex = common.getIndex(getSubstate);
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) => common.getIndexes(getSubstate)(state));
+const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
+	common.getIndexes(getSubstate)(state)
+);
 
 /**
  * It returns all data for given datasource key
@@ -40,18 +45,21 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
  * @param {string} dataSourceKey
  * @return {Array} indexed feature keys
  */
-const getIndexedFeatureKeys = createRecomputeSelector((filter, level, tile, dataSourceKey) => {
-	const index = getIndex_recompute(filter, null);
-	if (index?.index) {
-		const featureKeys = index.index[level]?.[tile]?.[dataSourceKey];
-		return featureKeys?.length ? featureKeys : null;
-	} else {
-		return null;
-	}
-}, recomputeSelectorOptions);
+const getIndexedFeatureKeys = createRecomputeSelector(
+	(filter, level, tile, dataSourceKey) => {
+		const index = getIndex_recompute(filter, null);
+		if (index?.index) {
+			const featureKeys = index.index[level]?.[tile]?.[dataSourceKey];
+			return featureKeys?.length ? featureKeys : null;
+		} else {
+			return null;
+		}
+	},
+	recomputeSelectorOptions
+);
 
 export default {
 	getByDataSourceKeyObserver,
 	getIndex,
-	getIndexedFeatureKeys
+	getIndexedFeatureKeys,
 };

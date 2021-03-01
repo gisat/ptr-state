@@ -3,7 +3,7 @@ import selectors from '../../../src/state/Cases/selectors';
 
 describe('state/Cases/selectors', function () {
 	describe('getActive', function () {
-		const createState = (activeKey) => ({
+		const createState = activeKey => ({
 			cases: {
 				byKey: {
 					k1: {n: 1},
@@ -121,7 +121,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getActiveModels(test.state),
@@ -166,7 +166,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAll(test.state),
@@ -214,7 +214,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllAsObject(test.state),
@@ -292,7 +292,7 @@ describe('state/Cases/selectors', function () {
 		];
 		const order = 'asc';
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllForActiveScope(test.state, order),
@@ -354,7 +354,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKeys(test.state, test.keys),
@@ -388,7 +388,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getDataByKey(test.state, test.key),
@@ -443,7 +443,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getDeletePermissionByKey(test.state, 'k1'),
@@ -487,7 +487,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getEditedDataByKey(test.state, test.key),
@@ -530,14 +530,7 @@ describe('state/Cases/selectors', function () {
 		const expectedResult = [{key: 'fourth'}, {key: 'fifth'}];
 
 		assert.deepStrictEqual(
-			selectors.getIndexed(
-				state,
-				filterByActive,
-				filter,
-				order,
-				start,
-				length
-			),
+			selectors.getIndexed(state, filterByActive, filter, order, start, length),
 			expectedResult
 		);
 	});
@@ -587,7 +580,7 @@ describe('state/Cases/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getUpdatePermissionByKey(test.state, 'k1'),

@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import slash from 'slash'
+import slash from 'slash';
 import '../../../src/state/Action';
 import actions from '../../../src/state/_common/actions';
 import {resetFetch, setFetch} from '../../../src/state/_common/request';
@@ -33,7 +33,7 @@ describe('state/_common/actions', function () {
 				}
 			}
 
-			dispatchedActions = dispatchedActions.filter((a) => a !== null);
+			dispatchedActions = dispatchedActions.filter(a => a !== null);
 
 			if (promises.length > 0) {
 				return Promise.all(promises)
@@ -99,7 +99,7 @@ describe('state/_common/actions', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					actions.action(test.actionTypes, test.type, test.payload),
@@ -128,7 +128,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('apiUpdate', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -144,7 +144,7 @@ describe('state/_common/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-      assert.strictEqual('http://localhost/rest/user', slash(url));
+			assert.strictEqual('http://localhost/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {name: 'new'}}]},
@@ -226,7 +226,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('create', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -240,7 +240,7 @@ describe('state/_common/actions', function () {
 			},
 		});
 		setFetch(function (url, options) {
-      assert.strictEqual('http://localhost/rest/user', slash(url));
+			assert.strictEqual('http://localhost/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {applicationKey: 'ak'}}]},
@@ -303,7 +303,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('deleteItem', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -314,7 +314,7 @@ describe('state/_common/actions', function () {
 			},
 			sub: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				dispatchedActions.push(res);
@@ -325,7 +325,7 @@ describe('state/_common/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-      assert.strictEqual('http://localhost/rest/user', slash(url));
+			assert.strictEqual('http://localhost/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1'}]},
@@ -379,7 +379,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('ensureKeys', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -397,7 +397,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -453,7 +453,7 @@ describe('state/_common/actions', function () {
 
 	describe('ensureIndexed', function () {
 		it('already loaded', function () {
-			const getSubState = (state) => state.sub;
+			const getSubState = state => state.sub;
 			const getState = () => ({
 				app: {
 					localConfiguration: {
@@ -495,7 +495,7 @@ describe('state/_common/actions', function () {
 		});
 
 		it('missing keys', function () {
-			const getSubState = (state) => state.sub;
+			const getSubState = state => state.sub;
 			const getState = () => ({
 				app: {
 					localConfiguration: {
@@ -516,7 +516,7 @@ describe('state/_common/actions', function () {
 					],
 				},
 			});
-			const dispatch = (action) => {
+			const dispatch = action => {
 				if (typeof action === 'function') {
 					const res = action(dispatch, getState);
 					if (res != null) {
@@ -531,7 +531,7 @@ describe('state/_common/actions', function () {
 			setFetch(function (url, options) {
 				assert.strictEqual(
 					'http://localhost/rest/user/filtered/users',
-          slash(url)
+					slash(url)
 				);
 				assert.deepStrictEqual(options, {
 					body: JSON.stringify({
@@ -608,7 +608,7 @@ describe('state/_common/actions', function () {
 		});
 
 		it('nothing loaded', function () {
-			const getSubState = (state) => state.sub;
+			const getSubState = state => state.sub;
 			const getState = () => ({
 				app: {
 					localConfiguration: {
@@ -621,7 +621,7 @@ describe('state/_common/actions', function () {
 					indexes: [],
 				},
 			});
-			const dispatch = (action) => {
+			const dispatch = action => {
 				if (typeof action === 'function') {
 					const res = action(dispatch, getState);
 					if (res != null) {
@@ -636,7 +636,7 @@ describe('state/_common/actions', function () {
 			setFetch(function (url, options) {
 				assert.strictEqual(
 					'http://localhost/rest/user/filtered/users',
-          slash(url)
+					slash(url)
 				);
 				assert.deepStrictEqual(options, {
 					body: JSON.stringify({
@@ -710,7 +710,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('ensureIndexesWithFilterByActive', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -737,7 +737,7 @@ describe('state/_common/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -752,7 +752,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -821,7 +821,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('ensureKeys', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -839,7 +839,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -916,7 +916,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -990,7 +990,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1066,7 +1066,7 @@ describe('state/_common/actions', function () {
 			periods: {activeKey: 'pe1'},
 			places: {activeKey: 'pl1'},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1081,7 +1081,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1167,7 +1167,7 @@ describe('state/_common/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1182,7 +1182,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1259,7 +1259,7 @@ describe('state/_common/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1274,7 +1274,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1325,9 +1325,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('setActiveKey', function () {
-		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(
-			dispatch
-		);
+		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
 
 		assert.deepStrictEqual(dispatchedActions, [
 			{type: 'SET_ACTIVE_KEY', key: 'k1'},
@@ -1335,10 +1333,9 @@ describe('state/_common/actions', function () {
 	});
 
 	it('setActiveKeys', function () {
-		actions.setActiveKeys({SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS'})([
-			'k1',
-			'k2',
-		])(dispatch);
+		actions.setActiveKeys({SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS'})(['k1', 'k2'])(
+			dispatch
+		);
 
 		assert.deepStrictEqual(dispatchedActions, [
 			{type: 'SET_ACTIVE_KEYS', keys: ['k1', 'k2']},
@@ -1347,7 +1344,7 @@ describe('state/_common/actions', function () {
 
 	describe('receiveUpdated', function () {
 		it('no updates', function () {
-			const getSubState = (state) => state.sub;
+			const getSubState = state => state.sub;
 			const getState = () => ({
 				sub: {},
 			});
@@ -1365,7 +1362,7 @@ describe('state/_common/actions', function () {
 		});
 
 		it('some updates', function () {
-			const getSubState = (state) => state.sub;
+			const getSubState = state => state.sub;
 			const getState = () => ({
 				sub: {
 					editedByKey: {
@@ -1487,7 +1484,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('refreshUses', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1516,7 +1513,7 @@ describe('state/_common/actions', function () {
 				},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1531,7 +1528,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1597,7 +1594,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('saveEdited', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1611,7 +1608,7 @@ describe('state/_common/actions', function () {
 				editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
 			},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1624,7 +1621,7 @@ describe('state/_common/actions', function () {
 			dispatchedActions.push(action);
 		};
 		setFetch(function (url, options) {
-      assert.strictEqual('http://localhost/rest/user', slash(url));
+			assert.strictEqual('http://localhost/rest/user', slash(url));
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					data: {users: [{key: 'k1', data: {prop: 'val'}}]},
@@ -1706,7 +1703,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('updateEdited', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1741,8 +1738,8 @@ describe('state/_common/actions', function () {
 	});
 
 	it('useKeys', function () {
-		const getSubState = (state) => state.sub;
-		const dispatch = (action) => {
+		const getSubState = state => state.sub;
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1798,7 +1795,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('useIndexed', function () {
-		const getSubState = (state) => state.sub;
+		const getSubState = state => state.sub;
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1813,7 +1810,7 @@ describe('state/_common/actions', function () {
 			places: {activeKey: 'k1'},
 			sub: {},
 		});
-		const dispatch = (action) => {
+		const dispatch = action => {
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
@@ -1828,7 +1825,7 @@ describe('state/_common/actions', function () {
 		setFetch(function (url, options) {
 			assert.strictEqual(
 				'http://localhost/rest/user/filtered/users',
-        slash(url)
+				slash(url)
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
@@ -1972,9 +1969,7 @@ describe('state/_common/actions', function () {
 	});
 
 	it('actionSetActiveKey', function () {
-		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(
-			dispatch
-		);
+		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
 
 		assert.deepStrictEqual(dispatchedActions, [
 			{key: 'k1', type: 'SET_ACTIVE_KEY'},

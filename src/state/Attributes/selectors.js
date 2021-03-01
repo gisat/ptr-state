@@ -1,9 +1,8 @@
 import common from '../_common/selectors';
 
-
 const getSubstate = state => state.attributes;
 
-const getAttributes =  common.getAll(getSubstate);
+const getAttributes = common.getAll(getSubstate);
 const getActive = common.getActive(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
@@ -37,5 +36,5 @@ export default {
 	getUpdatePermissionByKey,
 
 	getStateToSave,
-	getSubstate
+	getSubstate,
 };

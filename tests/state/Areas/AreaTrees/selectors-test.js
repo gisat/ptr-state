@@ -43,7 +43,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAll(test.state),
@@ -97,7 +97,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllAsObject(test.state),
@@ -183,7 +183,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 		];
 		const order = 'asc';
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllForActiveScope(test.state, order),
@@ -204,7 +204,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 	});
 
 	describe('getActive', function () {
-		const createState = (activeKey) => ({
+		const createState = activeKey => ({
 			areas: {
 				areaTrees: {
 					byKey: {
@@ -301,7 +301,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKeys(test.state, test.keys),
@@ -354,7 +354,7 @@ describe('state/Areas/AreaTrees/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKeysAsObject(test.state, test.keys),

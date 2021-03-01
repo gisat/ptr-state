@@ -32,7 +32,7 @@ export default {
 	data: Data,
 	layerTemplates: LayerTemplates,
 	layerTrees: LayerTrees,
-    maps: Maps,
+	maps: Maps,
 	periods: Periods,
 	places: Places,
 	scenarios: Scenarios,
@@ -43,5 +43,5 @@ export default {
 	tags: Tags,
 	users: Users,
 	views: Views,
-	windows: Windows
+	windows: Windows,
 };

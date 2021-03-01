@@ -44,7 +44,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.add(test.state, test.action),
@@ -97,7 +97,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.addBatch(test.state, test.action),
@@ -134,7 +134,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.addUnreceivedKeys(test.state, test.action),
@@ -201,7 +201,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.addIndex(test.state, test.action),
@@ -239,11 +239,7 @@ describe('state/_common/reducers', function () {
 						{
 							filter: 'fil',
 							order: 'asc',
-							index: [
-								{someKey: 'k'},
-								{someKey: 'k.1'},
-								{someKey: 'k.2'},
-							],
+							index: [{someKey: 'k'}, {someKey: 'k.1'}, {someKey: 'k.2'}],
 						},
 					],
 				},
@@ -265,7 +261,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.addBatchIndex(test.state, test.action),
@@ -368,7 +364,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.registerUseIndexed(test.state, test.action),
@@ -457,7 +453,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.registerBatchUseIndexed(test.state, test.action),
@@ -495,7 +491,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.useIndexedClear(test.state, test.action),
@@ -518,7 +514,7 @@ describe('state/_common/reducers', function () {
 				},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				reducers.useIndexedClearAll(test.state, test.action),
 				test.expectedResult
@@ -558,7 +554,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.useKeysRegister(test.state, test.action),
@@ -607,7 +603,7 @@ describe('state/_common/reducers', function () {
 				},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.useKeysClear(test.state, test.action),
@@ -645,7 +641,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.markDeleted(test.state, test.action),
@@ -679,7 +675,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				reducers.remove(test.state, test.action),
 				test.expectedResult
@@ -711,7 +707,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.removeEdited(test.state, test.action),
@@ -749,7 +745,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.removeEditedActive(test.state, test.action),
@@ -838,7 +834,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.removeEditedProperty(test.state, test.action),
@@ -915,13 +911,10 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					reducers.removeEditedPropertyValues(
-						test.state,
-						test.action
-					),
+					reducers.removeEditedPropertyValues(test.state, test.action),
 					test.expectedResult
 				);
 			});
@@ -945,7 +938,7 @@ describe('state/_common/reducers', function () {
 				},
 			},
 		];
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.setActive(test.state, test.action),
@@ -973,7 +966,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			assert.deepStrictEqual(
 				reducers.setActiveMultiple(test.state, test.action),
 				test.expectedResult
@@ -1025,7 +1018,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.updateEdited(test.state, test.action),
@@ -1077,7 +1070,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.clearIndexes(test.state, test.action),
@@ -1179,7 +1172,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.clearIndex(test.state, test.action),
@@ -1215,7 +1208,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.dataSetOutdated(test.state, test.action),
@@ -1246,7 +1239,7 @@ describe('state/_common/reducers', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					reducers.cleanupOnLogout(test.state, test.action),

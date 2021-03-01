@@ -37,7 +37,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAttributes(test.state),
@@ -48,7 +48,7 @@ describe('state/Attributes/selectors', function () {
 	});
 
 	describe('getActive', function () {
-		const createState = (activeKey) => ({
+		const createState = activeKey => ({
 			attributes: {
 				byKey: {
 					k1: {n: 1},
@@ -114,7 +114,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getAllAsObject(test.state),
@@ -160,7 +160,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKey(test.state, test.key),
@@ -222,7 +222,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getByKeys(test.state, test.keys),
@@ -256,7 +256,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getDataByKey(test.state, test.key),
@@ -311,7 +311,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getDeletePermissionByKey(test.state, 'k1'),
@@ -355,7 +355,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getEditedDataByKey(test.state, test.key),
@@ -410,7 +410,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.strictEqual(
 					selectors.getUpdatePermissionByKey(test.state, 'k1'),
@@ -439,7 +439,7 @@ describe('state/Attributes/selectors', function () {
 			},
 		];
 
-		tests.forEach((test) => {
+		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getStateToSave(test.state),

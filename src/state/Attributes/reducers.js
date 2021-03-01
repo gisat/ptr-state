@@ -1,10 +1,10 @@
 import ActionTypes from '../../constants/ActionTypes';
 import common from '../_common/reducers';
 
-import {DEFAULT_INITIAL_STATE} from "../_common/reducers";
+import {DEFAULT_INITIAL_STATE} from '../_common/reducers';
 
 const INITIAL_STATE = {
-	...DEFAULT_INITIAL_STATE
+	...DEFAULT_INITIAL_STATE,
 };
 
 const DEFAULT_ATTRIBUTE_COLLOR = '#008000';
@@ -14,14 +14,14 @@ const addAttribute = (state, action) => {
 		action.data.forEach(model => {
 			//check attribute color
 			//if no color, then use default
-			if(!model.data.color) {
+			if (!model.data.color) {
 				model.data.color = DEFAULT_ATTRIBUTE_COLLOR;
 			}
 		});
 	}
 
 	return common.add(state, action);
-}
+};
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
@@ -65,4 +65,4 @@ export default (state = INITIAL_STATE, action) => {
 		default:
 			return state;
 	}
-}
+};
