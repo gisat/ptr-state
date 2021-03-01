@@ -394,39 +394,6 @@ describe('state/Attributes/actions', function () {
 			});
 	});
 
-	it('setActiveKey', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			attributes: {},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-
-		actions.setActiveKey('k1')(dispatch);
-
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
-				{type: 'ATTRIBUTES.SET_ACTIVE_KEY', key: 'k1'},
-			]);
-		});
-	});
-
 	it('updateEdited', function () {
 		const getSubState = state => state.sub;
 		const getState = () => ({

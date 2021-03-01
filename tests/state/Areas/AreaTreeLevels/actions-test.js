@@ -149,14 +149,6 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 			});
 	});
 
-	it('setActiveKey', function () {
-		actions.setActiveKey('k1')(dispatch);
-
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'AREAS.AREA_TREE_LEVELS.SET_ACTIVE_KEY', key: 'k1'},
-		]);
-	});
-
 	it('useIndexed', function () {
 		const getState = () => ({
 			app: {
