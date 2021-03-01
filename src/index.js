@@ -67,9 +67,7 @@ const baseStores = {
 };
 
 const createBaseStore = (specificStores, rootStores, middleware) => {
-	const enhancedThunk = thunk.withExtraArgument({
-		ensureDependenciesOfActiveMetadataType,
-	});
+	const enhancedThunk = thunk.withExtraArgument(activeMetadataActions);
 
 	let appliedMiddleware = applyMiddleware(enhancedThunk, ...middleware);
 	if (process.env.NODE_ENV === 'development') {
