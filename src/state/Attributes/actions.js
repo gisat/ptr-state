@@ -24,6 +24,7 @@ const saveEdited = common.saveEdited(
 	ActionTypes.ATTRIBUTES
 );
 const setActiveKey = common.setActiveKey(ActionTypes.ATTRIBUTES);
+const setActiveKeys = common.setActiveKeys(ActionTypes.ATTRIBUTES);
 const updateEdited = common.updateEdited(
 	Select.attributes.getSubstate,
 	ActionTypes.ATTRIBUTES
@@ -48,6 +49,21 @@ const useIndexedBatch = common.useIndexedBatch(
 	ActionTypes.ATTRIBUTES,
 	'data'
 );
+
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+	};
+};
+
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+	};
+};
+
 function loadAttributeData(filter, componentId) {
 	return (dispatch, getState) => {
 		return dispatch(
@@ -66,7 +82,8 @@ export default {
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
 	useIndexed,

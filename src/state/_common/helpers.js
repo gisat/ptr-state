@@ -215,6 +215,8 @@ function mergeFilters(activeKeys, filterByActive, filter) {
 		if (filterByActive.case) {
 			if (activeKeys.activeCaseKey) {
 				fullFilter.caseKey = activeKeys.activeCaseKey;
+			} else if (activeKeys.activeCaseKeys) {
+				fullFilter.caseKey = {in: activeKeys.activeCaseKeys};
 			}
 		}
 		if (filterByActive.scope) {
@@ -240,11 +242,18 @@ function mergeFilters(activeKeys, filterByActive, filter) {
 		if (filterByActive.attribute) {
 			if (activeKeys.activeAttributeKey) {
 				fullFilter.attributeKey = activeKeys.activeAttributeKey;
+			} else if (activeKeys.activeAttributeKeys) {
+				fullFilter.attributeKey = {in: activeKeys.activeAttributeKeys};
 			}
 		}
 		if (filterByActive.layerTemplate) {
 			if (activeKeys.activeLayerTemplateKey) {
 				fullFilter.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+			}
+		}
+		if (filterByActive.areaTreeLevelKey) {
+			if (activeKeys.activeAreaTreeLevelKey) {
+				fullFilter.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
 			}
 		}
 		return _.isEmpty(fullFilter) ? null : fullFilter;

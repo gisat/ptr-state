@@ -39,6 +39,13 @@ const useIndexed = common.useIndexed(
 const useIndexedClear = common.useIndexedClear(ActionTypes.LAYER_TEMPLATES);
 const clearIndex = common.clearIndex(ActionTypes.LAYER_TEMPLATES);
 
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('layerTemplate'));
+	};
+};
+
 // ============ export ===========
 
 export default {
@@ -48,7 +55,7 @@ export default {
 	delete: deleteItem,
 	saveEdited,
 
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 
 	updateEdited,
 	useIndexed,

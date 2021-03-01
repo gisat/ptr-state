@@ -22,6 +22,13 @@ const refreshUses = common.refreshUses(
 	ActionTypes.AREAS.AREA_TREE_LEVELS
 );
 
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('areaTreeLevel'));
+	};
+};
+
 // ============ actions ===========
 
 function actionClearUseIndexed(componentId) {
@@ -35,7 +42,7 @@ function actionClearUseIndexed(componentId) {
 
 export default {
 	refreshUses,
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 	useIndexed,
 	useIndexedClear: actionClearUseIndexed,
 	useKeys,

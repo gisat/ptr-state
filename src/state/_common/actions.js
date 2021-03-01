@@ -1232,9 +1232,6 @@ function ensureIndexesWithFilterByActive(
 				getSubstate
 			)(state, filterByActive);
 
-			// TODO temporary console for testing
-			console.log('###', actionTypes, usedIndexes);
-
 			const promises = _.flatMap(usedIndexes, usedIndex => {
 				_.map(usedIndex.uses, use => {
 					return dispatch(
