@@ -1233,7 +1233,7 @@ function ensureIndexesWithFilterByActive(
 			)(state, filterByActive);
 
 			// TODO temporary console for testing
-			// console.log('###', actionTypes, usedIndexes);
+			console.log('###', actionTypes, usedIndexes);
 
 			const promises = _.flatMap(usedIndexes, usedIndex => {
 				_.map(usedIndex.uses, use => {

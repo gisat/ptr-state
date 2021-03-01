@@ -47,5 +47,6 @@ export default {
 
 	getByTopics,
 	getStateToSave,
+	getSubstate,
 	getUniqueAttributeKeysForTopics,
 };

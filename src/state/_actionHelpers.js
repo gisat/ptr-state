@@ -26,7 +26,11 @@ export const STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE = {
 		'attributes',
 		ActionTypes.ATTRIBUTES,
 	],
-	// TODO attribute sets
+	attributeSets: [
+		Select.attributeSets.getSubstate,
+		'attributes',
+		ActionTypes.ATTRIBUTE_SETS,
+	],
 	cases: [Select.cases.getSubstate, 'cases', ActionTypes.CASES],
 	layerTemplates: [
 		Select.layerTemplates.getSubstate,
@@ -35,7 +39,7 @@ export const STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE = {
 	],
 	periods: [Select.periods.getSubstate, 'periods', ActionTypes.PERIODS],
 	places: [Select.places.getSubstate, 'places', ActionTypes.PLACES],
-	// TODO scenarios
+	scenarios: [Select.scenarios.getSubstate, 'scenarios', ActionTypes.SCENARIOS],
 	scopes: [Select.scopes.getSubstate, 'scopes', ActionTypes.SCOPES],
 	tags: [Select.tags.getSubstate, 'tags', ActionTypes.TAGS],
 	views: [Select.views.getSubstate, 'views', ActionTypes.VIEWS, 'views'],
