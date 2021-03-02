@@ -677,6 +677,13 @@ const getActiveKeysByFilterByActive = createCachedSelector(
 					keys.periodKeys = activeKeys.activePeriodKeys;
 				}
 			}
+			if (filterByActive.attribute) {
+				if (activeKeys.activeAttributeKey) {
+					keys.attributeKey = activeKeys.activeAttributeKey;
+				} else if (activeKeys.activeAttributeKeys) {
+					keys.attributeKeys = activeKeys.activeAttributeKeys;
+				}
+			}
 			if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
 				keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
 			}

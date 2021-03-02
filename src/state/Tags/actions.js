@@ -37,11 +37,6 @@ const refreshUses = common.refreshUses(
 	`tags`,
 	ActionTypes.TAGS
 );
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.tags.getSubstate,
-	'tags',
-	ActionTypes.TAGS
-);
 
 // ============ actions ===========
 
@@ -50,7 +45,6 @@ const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
 export default {
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 	saveEdited,
 	updateEdited,
 	useKeys,
