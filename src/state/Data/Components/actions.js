@@ -17,15 +17,11 @@ const DEFAULT_PAGE_PAGINATION = {
  * @param {Object} state App state
  * @return {Number}
  */
-const getPageSize = (state, optPageSize) => {
-	if (_.isNumber(optPageSize)) {
-		return optPageSize;
-	} else {
-		const localConfig = Select.app.getCompleteLocalConfiguration(state);
-		const PAGE_SIZE =
-			localConfig.requestPageSize || configDefaults.requestPageSize;
-		return PAGE_SIZE;
-	}
+const getPageSize = state => {
+	const localConfig = Select.app.getCompleteLocalConfiguration(state);
+	const PAGE_SIZE =
+		localConfig.requestPageSize || configDefaults.requestPageSize;
+	return PAGE_SIZE;
 };
 
 // TODO - tests, move to helper
@@ -56,22 +52,33 @@ const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
 	}
 };
 
-const getPagination = (pageIndex, start, pageSize) => {
+const getPagination = (pageIndex, start, pageSize, length, count) => {
 	start = _.isNumber(start) ? start : 0;
+	let limit = pageSize;
+
+	if (_.isNumber(length) && pageIndex * pageSize + pageSize > length) {
+		limit = length - pageIndex * pageSize;
+	}
+
+	if (_.isNumber(count) && start + pageIndex * pageSize + limit > count) {
+		limit = count - (start + pageIndex * pageSize);
+	}
+
 	return {
 		offset: start + pageIndex * pageSize,
-		limit: pageSize,
+		limit,
 	};
 };
 
-const getNullishPagination = () => getPagination(0, 0, 0);
+const getNullishPagination = () => getPagination(0, 0, 0, 0);
 
 const getLoadedPages = (
 	dataIndex = {},
 	start = 0,
 	pageSize,
 	pages = [],
-	count
+	count,
+	lenght
 ) => {
 	const loadedPages = [];
 	pages.forEach(pageIndex => {
@@ -79,6 +86,8 @@ const getLoadedPages = (
 
 		if (start + pageSize * (pageIndex + 1) > count) {
 			itemsOnPage = count - (start + pageSize * (pageIndex + 1) - pageSize);
+		} else if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
+			itemsOnPage = lenght - pageSize * pageIndex;
 		} else {
 			itemsOnPage = pageSize;
 		}
@@ -105,7 +114,8 @@ const getMissingPages = (dataIndex, pageSize, start, length) => {
 		start,
 		pageSize,
 		restPages,
-		count
+		count,
+		length
 	);
 	const missingPages = _.difference(restPages, loadedPages);
 
@@ -217,11 +227,13 @@ function ensureDataAndRelations(
 				//needs to load more relations or data
 				return dispatch(
 					loadMissingRelationsAndData(
+						componentKey,
 						order,
 						mergedAttributeFilter,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
+						length,
 						PAGE_SIZE
 					)
 				);
@@ -242,11 +254,13 @@ function ensureDataAndRelations(
  * @return {function} Return promise.
  */
 function loadMissingRelationsAndData(
+	componentKey,
 	order,
 	mergedAttributeFilter,
 	remainingRelationsPages,
 	remainingAttributeDataPages, // [0,1,2,3] || [2,5]
 	start,
+	length,
 	PAGE_SIZE
 ) {
 	return (dispatch, getState) => {
@@ -254,6 +268,13 @@ function loadMissingRelationsAndData(
 		const RELATIONS_PAGE_SIZE = getPageSize(state);
 
 		const promises = [];
+
+		const attributeDataIndex =
+			Select.data.components.getIndexForAttributeDataByComponentKey(
+				state,
+				componentKey
+			) || {};
+		const attributeCount = attributeDataIndex.count;
 
 		// load remaining relations pages
 		let pagination = 0;
@@ -273,7 +294,9 @@ function loadMissingRelationsAndData(
 				attributePagination = getPagination(
 					remainingAttributeDataPages[i - 1],
 					start,
-					PAGE_SIZE
+					PAGE_SIZE,
+					length,
+					attributeCount
 				);
 				loadData = true;
 				pagination = i;
@@ -299,7 +322,9 @@ function loadMissingRelationsAndData(
 			const attributePagination = getPagination(
 				remainingAttributeDataPages[i - 1],
 				start,
-				PAGE_SIZE
+				PAGE_SIZE,
+				length,
+				attributeCount
 			);
 			const loadRelations = false;
 			const loadData = true;
@@ -332,7 +357,7 @@ const ensure = componentKey => {
 			state,
 			componentKey
 		);
-		const {attributeOrder, start, length, pageSize} = componentState;
+		const {attributeOrder, start = 0, length} = componentState;
 
 		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
 			state,
@@ -352,9 +377,13 @@ const ensure = componentKey => {
 		let loadData = true;
 
 		const RELATIONS_PAGE_SIZE = getPageSize(state);
-		const PAGE_SIZE = getPageSize(state, pageSize);
+
+		// Attribute data page size is same like app page size
+		// In case of need PAGE_SIZE could be modified here
+		const PAGE_SIZE = RELATIONS_PAGE_SIZE;
+
 		let relationsPagination = getPagination(0, 0, RELATIONS_PAGE_SIZE);
-		let attributePagination = getPagination(0, start, PAGE_SIZE);
+		let attributePagination = getPagination(0, start, PAGE_SIZE, length);
 
 		let missingRelationsPages, missingAttributesPages;
 
@@ -391,7 +420,9 @@ const ensure = componentKey => {
 			attributePagination = getPagination(
 				missingAttributesPages[0] || 0,
 				start,
-				PAGE_SIZE
+				PAGE_SIZE,
+				length,
+				attributeDataIndex.count
 			);
 			if (missingAttributesPages.length > 0) {
 				loadData = true;
@@ -407,11 +438,13 @@ const ensure = componentKey => {
 				// Load just missing data and relations defined by missingPages
 				return dispatch(
 					loadMissingRelationsAndData(
+						componentKey,
 						attributeOrder,
 						mergedAttributeFilter,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
+						length,
 						PAGE_SIZE
 					)
 				);
