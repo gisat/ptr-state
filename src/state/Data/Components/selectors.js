@@ -288,6 +288,7 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 		...modifiersForRequest,
 		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
 		...(attributeKeys !== undefined && {attributeKeys}),
+		//FIXME - remove attributeFilter
 		...(attributeFilter !== undefined && {attributeFilter}),
 		...(dataSourceKeys !== undefined && {dataSourceKeys}),
 		...(featureKeys !== undefined && {featureKeys}),
