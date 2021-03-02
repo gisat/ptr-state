@@ -4,7 +4,7 @@ import {
 	createSelector as createRecomputeSelector,
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
-import _ from 'lodash';
+import _, {flatten as _flatten} from 'lodash';
 
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 import {mapConstants} from '@gisatcz/ptr-core';
@@ -17,7 +17,6 @@ import selectorHelpers from './selectorHelpers';
 import DataSelectors from '../Data/selectors';
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
-import Select from '../Select';
 import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
@@ -45,6 +44,17 @@ const getMapByKey = createSelector(
 const getMapSets = createSelector([getMapSetsAsObject], sets => {
 	if (sets && !_.isEmpty(sets)) {
 		return Object.values(sets);
+	} else {
+		return null;
+	}
+});
+
+/**
+ * @param state {Object}
+ */
+const getAllMapSetsMaps = createSelector([getMapSets], mapSets => {
+	if (mapSets) {
+		return _flatten(mapSets.map(mapSet => mapSet.maps));
 	} else {
 		return null;
 	}
@@ -780,6 +790,7 @@ const getSpatialFilterByMapKey = createCachedSelector(
 
 export default {
 	getAllLayersStateByMapKey,
+	getAllMapSetsMaps,
 	getBackgroundLayerStateByMapKey,
 	getFilterByActiveByMapKey,
 	getLayerStateByLayerKeyAndMapKey,

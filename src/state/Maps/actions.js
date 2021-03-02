@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, {isMatch as _isMatch} from 'lodash';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 
 import ActionTypes from '../../constants/ActionTypes';
@@ -151,6 +151,51 @@ function layerUse(layerState, spatialFilter, activeKeys) {
 			dispatch(
 				DataActions.ensure(styleKey, commonRelationsFilter, spatialFilter)
 			);
+		}
+	};
+}
+
+/**
+ * Ensure indexes with filter by active for each active map
+ * @param filterByActive {Object}
+ */
+function ensureWithFilterByActive(filterByActive) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const activeKeys = commonSelectors.getAllActiveKeys(state);
+		const mapKeys = Select.maps.getAllMapSetsMaps(state);
+
+		if (mapKeys && activeKeys) {
+			mapKeys.forEach(mapKey => {
+				const mapViewport = Select.maps.getViewportByMapKey(state, mapKey);
+				if (mapViewport) {
+					const {width, height} = mapViewport;
+					const spatialFilter = Select.maps.getSpatialFilterByMapKey(
+						state,
+						mapKey,
+						width,
+						height
+					);
+
+					if (spatialFilter) {
+						const layers = Select.maps.getAllLayersStateByMapKey(state, mapKey);
+						if (layers) {
+							layers.forEach(layer => {
+								if (
+									layer.filterByActive &&
+									_isMatch(layer.filterByActive, filterByActive)
+								) {
+									// apply layerUse asynchronous on each leyer
+									// it cause better FPS and prevent long synchronous tasks
+									setTimeout(() => {
+										dispatch(layerUse(layer, spatialFilter, activeKeys));
+									}, 0);
+								}
+							});
+						}
+					}
+				}
+			});
 		}
 	};
 }
@@ -380,6 +425,7 @@ const actionUpdateSetView = (setKey, update) => {
 
 // ============ export ===========
 export default {
+	ensureWithFilterByActive,
 	refreshMapSetUse,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
