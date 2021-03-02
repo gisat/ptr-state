@@ -310,16 +310,18 @@ function loadMissingRelationsAndData(
 }
 
 /**
- *
+ * Check if for given componentKey missing data and load missing
  * @param {String} componentKey
- * @param {Array} [attributeOrder] Optional
- * @param {Number} [start] Optional
- * @param {Number} [length] Optional
- * @param {Number} [pageSize] Optional
  */
-const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
+const ensure = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
+		const componentState = Select.data.components.getComponentStateByKey(
+			state,
+			componentKey
+		);
+		const {attributeOrder, start, length, pageSize} = componentState;
+
 		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
 			state,
 			componentKey
@@ -343,6 +345,9 @@ const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
 		let attributePagination = getPagination(0, start, PAGE_SIZE);
 
 		let missingRelationsPages, missingAttributesPages;
+
+		// Relations index exist
+		// find if all required relations are loaded
 		if (!_.isEmpty(attributeRelationsIndex)) {
 			missingRelationsPages = getMissingPages(
 				attributeRelationsIndex,
@@ -362,6 +367,8 @@ const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
 			}
 		}
 
+		// Attribute data index exist
+		// find if all required data are loaded
 		if (!_.isEmpty(attributeDataIndex)) {
 			missingAttributesPages = getMissingPages(
 				attributeDataIndex,
@@ -383,6 +390,7 @@ const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
 
 		// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
 		if (!_.isEmpty(attributeDataIndex) && !_.isEmpty(attributeRelationsIndex)) {
+			// Some of data or relations are needed
 			if (loadData || loadRelations) {
 				return dispatch(
 					loadMissingRelationsAndData(
@@ -423,16 +431,9 @@ const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
  * @param {string} componentKey
  */
 const use = componentKey => {
-	return (dispatch, getState) => {
-		const state = getState();
-		const componentState = Select.data.components.getComponentStateByKey(
-			state,
-			componentKey
-		);
-		const {attributeOrder, start, length, pageSize} = componentState;
-
+	return dispatch => {
 		// TODO register use?
-		dispatch(ensure(componentKey, attributeOrder, start, length, pageSize));
+		dispatch(ensure(componentKey));
 	};
 };
 
