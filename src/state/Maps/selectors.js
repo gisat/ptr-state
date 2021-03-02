@@ -17,6 +17,8 @@ import selectorHelpers from './selectorHelpers';
 import DataSelectors from '../Data/selectors';
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
+import Select from '../Select';
+import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
 
@@ -746,6 +748,36 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	}
 }, recomputeSelectorOptions);
 
+const getSpatialFilterByMapKey = createCachedSelector(
+	[
+		getViewByMapKey,
+		(state, mapKey, mapWidth) => mapWidth,
+		(state, mapKey, mapWidth, mapHeight) => mapHeight,
+	],
+	(view, mapWidth, mapHeight) => {
+		if (mapWidth && mapHeight) {
+			const tiles = helpers.getTiles(
+				mapWidth,
+				mapHeight,
+				view.center,
+				view.boxRange
+			);
+			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
+
+			if (tiles && level) {
+				return {
+					tiles,
+					level,
+				};
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+)((state, mapKey, mapWidth, mapHeight) => `${mapKey}_${mapWidth}_${mapHeight}`);
+
 export default {
 	getAllLayersStateByMapKey,
 	getBackgroundLayerStateByMapKey,
@@ -777,6 +809,8 @@ export default {
 	getMapSets,
 	getMapSetView,
 	getMapSetViewLimits,
+
+	getSpatialFilterByMapKey,
 
 	getViewByMapKey,
 	getViewportByMapKey,

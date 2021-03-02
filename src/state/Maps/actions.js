@@ -26,26 +26,18 @@ import SelectionsAction from '../Selections/actions';
  */
 function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 	return (dispatch, getState) => {
-		// TODO clear use for given mapKey, if exists
 		const state = getState();
-		const componentId = `map_${mapKey}`;
-		const spatialFilter = {};
-		if (mapWidth && mapHeight) {
-			const view = Select.maps.getViewByMapKey(state, mapKey);
-			const tiles = helpers.getTiles(
-				mapWidth,
-				mapHeight,
-				view.center,
-				view.boxRange
-			);
-			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
-			spatialFilter.tiles = tiles;
-			spatialFilter.level = level;
-		} else {
-			//spatial filter is required
+
+		const spatialFilter = Select.maps.getSpatialFilterByMapKey(
+			state,
+			mapKey,
+			mapWidth,
+			mapHeight
+		);
+		//spatial filter is required for now
+		if (!spatialFilter) {
 			return;
 		}
-
 		const activeKeys = commonSelectors.getAllActiveKeys(state);
 
 		// uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
@@ -62,7 +54,7 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 				// apply layerUse asynchronous on each leyer
 				// it cause better FPS and prevent long synchronous tasks
 				setTimeout(() => {
-					dispatch(layerUse(componentId, activeKeys, layer, spatialFilter));
+					dispatch(layerUse(layer, spatialFilter, activeKeys));
 				}, 0)
 			);
 		}
@@ -70,12 +62,11 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 }
 
 /**
- * @param componentId {string}
  * @param activeKeys {Object} active metadata keys (such as activeApplicationKey, activeScopeKey etc.)
  * @param layerState {Object} layer definition
  * @param spatialFilter {{level: number}, {tiles: Array}}
  */
-function layerUse(componentId, activeKeys, layerState, spatialFilter) {
+function layerUse(layerState, spatialFilter, activeKeys) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const styleKey = layerState.styleKey || null;
@@ -156,7 +147,7 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 					return;
 				}
 			}
-			// TODO register use?
+
 			dispatch(
 				DataActions.ensure(styleKey, commonRelationsFilter, spatialFilter)
 			);
