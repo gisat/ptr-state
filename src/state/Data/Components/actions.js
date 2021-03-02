@@ -29,15 +29,9 @@ const getPageSize = (state, optPageSize) => {
 };
 
 // TODO - tests, move to helper
-const getRestPages = (
-	count,
-	loadedPages,
-	PAGE_SIZE,
-	optStart = 0,
-	optLength
-) => {
+const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
 	if (count === 0 || optStart > count) {
-		return 0;
+		return [];
 	} else {
 		let wanted = count - optStart;
 
@@ -50,11 +44,15 @@ const getRestPages = (
 			}
 		}
 
-		const remainingPageCount = Math.ceil(
-			Math.max(0, wanted - PAGE_SIZE * loadedPages) / PAGE_SIZE
-		);
+		const startIndex = optStart;
+		const endIndex = optStart + wanted;
 
-		return remainingPageCount;
+		const lastPageIndex = Math.ceil((endIndex - startIndex) / PAGE_SIZE);
+		const pages = [...Array(lastPageIndex)].map((_, i) => {
+			return i;
+		});
+
+		return pages;
 	}
 };
 
@@ -67,6 +65,52 @@ const getPagination = (pageIndex, start, pageSize) => {
 };
 
 const getNullishPagination = () => getPagination(0, 0, 0);
+
+const getLoadedPages = (
+	dataIndex = {},
+	start = 0,
+	pageSize,
+	pages = [],
+	count
+) => {
+	const loadedPages = [];
+	pages.forEach(pageIndex => {
+		let itemsOnPage = 0;
+
+		if (start + pageSize * (pageIndex + 1) > count) {
+			itemsOnPage = count - (start + pageSize * (pageIndex + 1) - pageSize);
+		} else {
+			itemsOnPage = pageSize;
+		}
+
+		const requestedDataIndexes = [...Array(itemsOnPage)].map((_, i) => {
+			return start + pageSize * pageIndex + i;
+		});
+		const hasPage = requestedDataIndexes.every(index =>
+			dataIndex.hasOwnProperty(index)
+		);
+		if (hasPage) {
+			loadedPages.push(pageIndex);
+		}
+	});
+	return loadedPages;
+};
+
+const getMissingPages = (dataIndex, pageSize, start, length) => {
+	const count = dataIndex.count;
+	const restPages = getRestPages(count, pageSize, start, length);
+
+	const loadedAttributePages = getLoadedPages(
+		dataIndex?.index,
+		start,
+		pageSize,
+		restPages,
+		count
+	);
+	const missingAttributesPages = _.difference(restPages, loadedAttributePages);
+
+	return missingAttributesPages;
+};
 
 /**
  * Update whole data.components.components object with given components
@@ -105,24 +149,22 @@ function ensureDataAndRelations(
 	mergedAttributeFilter,
 	start,
 	length,
-	pageSize
+	PAGE_SIZE,
+	loadRelations,
+	loadData,
+	componentKey,
+	attributePagination,
+	relationsPagination
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const RELATIONS_PAGE_SIZE = getPageSize(state);
-		const PAGE_SIZE = getPageSize(state, pageSize);
 
-		const relationsPagination = getPagination(0, 0, RELATIONS_PAGE_SIZE);
-
-		const attributePagination = getPagination(0, start, PAGE_SIZE);
-
-		const loadRelations = true;
-		const loadData = true;
 		return dispatch(
 			loadIndexedPage(
 				order,
 				mergedAttributeFilter,
-				loadRelations,
+				!!loadRelations,
 				loadData,
 				relationsPagination,
 				attributePagination
@@ -133,25 +175,32 @@ function ensureDataAndRelations(
 				throw response;
 			}
 
-			const attributeRelationsCount =
-				response.attributeRelationsDataSources.total;
-			const attributeCount = response.attributeData.total;
-			const loadedPages = 1;
-			const restRelationsPages = getRestPages(
-				attributeRelationsCount,
-				loadedPages,
-				RELATIONS_PAGE_SIZE
-			);
+			const attributeDataIndex =
+				Select.data.components.getIndexForAttributeDataByComponentKey(
+					getState(),
+					componentKey
+				) || [];
 
-			const restAttributesPages = getRestPages(
-				attributeCount,
-				loadedPages,
+			const attributeRelationsIndex =
+				Select.data.attributeRelations.getIndex(
+					getState(),
+					mergedAttributeFilter
+				) || [];
+
+			const missingAttributesPages = getMissingPages(
+				attributeDataIndex,
 				PAGE_SIZE,
 				start,
 				length
 			);
+			const missingRelationsPages = getMissingPages(
+				attributeRelationsIndex,
+				RELATIONS_PAGE_SIZE,
+				0,
+				null
+			);
 
-			if (restRelationsPages === 0 && restAttributesPages === 0) {
+			if (missingRelationsPages === 0 && missingAttributesPages.length === 0) {
 				//nothing to load
 				return;
 			} else {
@@ -160,11 +209,10 @@ function ensureDataAndRelations(
 					loadMissingRelationsAndData(
 						order,
 						mergedAttributeFilter,
-						restRelationsPages,
-						restAttributesPages,
+						missingRelationsPages,
+						missingAttributesPages,
 						start,
-						length,
-						pageSize
+						PAGE_SIZE
 					)
 				);
 			}
@@ -184,30 +232,38 @@ function ensureDataAndRelations(
 function loadMissingRelationsAndData(
 	order,
 	mergedAttributeFilter,
-	remainingRelationsPageCount,
-	remainingAttributeDataPageCount,
+	remainingRelationsPages,
+	remainingAttributeDataPages, // [0,1,2,3] || [2,5]
 	start,
-	length,
-	pageSize
+	PAGE_SIZE
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const RELATIONS_PAGE_SIZE = getPageSize(state);
-		const PAGE_SIZE = getPageSize(state, pageSize);
 
 		const promises = [];
 
 		// load remaining relations pages
 		let pagination = 0;
 		const loadRelations = true;
-		for (let i = 1; i <= remainingRelationsPageCount; i++) {
-			const relationsPagination = getPagination(i, 0, RELATIONS_PAGE_SIZE);
+
+		for (let i = 1; i <= remainingRelationsPages.length; i++) {
+			const relationsPagination = getPagination(
+				remainingRelationsPages[i - 1],
+				0,
+				RELATIONS_PAGE_SIZE
+			);
 
 			//only if missing attribute data pages missing
 			let attributePagination = getNullishPagination();
 			let loadData = false;
-			if (pagination < remainingAttributeDataPageCount) {
-				attributePagination = getPagination(i, start, PAGE_SIZE);
+			if (pagination < remainingAttributeDataPages.length) {
+				attributePagination = getPagination(
+					remainingAttributeDataPages[i - 1],
+					start,
+					PAGE_SIZE
+				);
+				loadData = true;
 				pagination = i;
 			}
 
@@ -226,9 +282,13 @@ function loadMissingRelationsAndData(
 		}
 
 		// If its still needed, load remaining data pages
-		for (let i = pagination + 1; i <= remainingAttributeDataPageCount; i++) {
+		for (let i = pagination + 1; i <= remainingAttributeDataPages.length; i++) {
 			const relationsPagination = getNullishPagination();
-			const attributePagination = getPagination(i, start, PAGE_SIZE);
+			const attributePagination = getPagination(
+				remainingAttributeDataPages[i - 1],
+				start,
+				PAGE_SIZE
+			);
 			const loadRelations = false;
 			const loadData = true;
 			promises.push(
@@ -249,7 +309,15 @@ function loadMissingRelationsAndData(
 	};
 }
 
-const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
+/**
+ *
+ * @param {String} componentKey
+ * @param {Array} [attributeOrder] Optional
+ * @param {Number} [start] Optional
+ * @param {Number} [length] Optional
+ * @param {Number} [pageSize] Optional
+ */
+const ensure = (componentKey, attributeOrder, start, length, pageSize) => {
 	return (dispatch, getState) => {
 		const state = getState();
 		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
@@ -262,59 +330,98 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 				componentKey
 			) || [];
 
-		const missingAllAttributesData = _.isEmpty(attributeDataIndex);
+		const attributeRelationsIndex =
+			Select.data.attributeRelations.getIndex(state, mergedAttributeFilter) ||
+			[];
 
-		//
-		// No index exists for filter and order
-		// load all
-		//
-		if (missingAllAttributesData) {
+		let loadRelations = true;
+		let loadData = true;
+
+		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const PAGE_SIZE = getPageSize(state, pageSize);
+		let relationsPagination = getPagination(0, 0, RELATIONS_PAGE_SIZE);
+		let attributePagination = getPagination(0, start, PAGE_SIZE);
+
+		let missingRelationsPages, missingAttributesPages;
+		if (!_.isEmpty(attributeRelationsIndex)) {
+			missingRelationsPages = getMissingPages(
+				attributeRelationsIndex,
+				RELATIONS_PAGE_SIZE,
+				0,
+				null
+			);
+			relationsPagination = getPagination(
+				missingRelationsPages[0] || 0,
+				0,
+				RELATIONS_PAGE_SIZE
+			);
+			if (missingRelationsPages.length > 0) {
+				loadRelations = true;
+			} else {
+				loadRelations = false;
+			}
+		}
+
+		if (!_.isEmpty(attributeDataIndex)) {
+			missingAttributesPages = getMissingPages(
+				attributeDataIndex,
+				PAGE_SIZE,
+				start,
+				length
+			);
+			attributePagination = getPagination(
+				missingAttributesPages[0] || 0,
+				start,
+				PAGE_SIZE
+			);
+			if (missingAttributesPages.length > 0) {
+				loadData = true;
+			} else {
+				loadData = false;
+			}
+		}
+
+		// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
+		if (!_.isEmpty(attributeDataIndex) && !_.isEmpty(attributeRelationsIndex)) {
+			if (loadData || loadRelations) {
+				return dispatch(
+					loadMissingRelationsAndData(
+						attributeOrder,
+						mergedAttributeFilter,
+						missingRelationsPages,
+						missingAttributesPages,
+						start,
+						PAGE_SIZE
+					)
+				);
+			} else {
+				// All data are loaded
+				return;
+			}
+			// Attribute or relations or both index is not loaded.
+		} else {
 			return dispatch(
 				ensureDataAndRelations(
 					attributeOrder,
 					mergedAttributeFilter,
 					start,
 					length,
-					pageSize
+					PAGE_SIZE,
+					loadRelations,
+					loadData,
+					componentKey,
+					attributePagination,
+					relationsPagination
 				)
 			);
-		} else {
-			const missingPages = true;
-			if (missingPages) {
-				//FIXME - load just mussing pages
-				return dispatch(
-					ensureDataAndRelations(
-						attributeOrder,
-						mergedAttributeFilter,
-						start,
-						length,
-						pageSize
-					)
-				);
-			} else {
-				//nothing is missing
-				return;
-			}
 		}
 	};
 };
 
-const ensureWithFilterByActive = filterByActive => {
-	return (dispatch, getState) => {
-		const state = getState();
-		const componentStates = Select.data.components.getComponentStatesByFilterByActive(
-			state,
-			filterByActive
-		);
-		if (componentStates) {
-			componentStates.forEach(state => {
-				debugger;
-				// dispatch(ensure());
-			});
-		}
-	};
-};
-
+/**
+ * Entry point for ensuring data for component
+ * @param {string} componentKey
+ */
 const use = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -324,15 +431,8 @@ const use = componentKey => {
 		);
 		const {attributeOrder, start, length, pageSize} = componentState;
 
-		dispatch(
-			ensure({
-				attributeOrder,
-				start,
-				length,
-				pageSize,
-				componentKey,
-			})
-		);
+		// TODO register use?
+		dispatch(ensure(componentKey, attributeOrder, start, length, pageSize));
 	};
 };
 
@@ -497,7 +597,6 @@ const actionUpdateComponents = components => {
 };
 
 export default {
-	ensureWithFilterByActive,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,
