@@ -3,7 +3,15 @@ import {
 	createObserver as createRecomputeObserver,
 	createSelector as createRecomputeSelector,
 } from '@jvitela/recompute';
-import _ from 'lodash';
+import createCachedSelector from 're-reselect';
+import {
+	isEmpty as _isEmpty,
+	filter as _filter,
+	forIn as _forIn,
+	get as _get,
+	isMatch as _isMatch,
+	isNumber as _isNumber,
+} from 'lodash';
 
 import commonHelpers from '../../_common/helpers';
 import commonSelectors from '../../_common/selectors';
@@ -12,12 +20,29 @@ import attributeRelationsSelectors from '../AttributeRelations/selectors';
 import componentsSelectors from '../../Components/selectors';
 
 const getSubstate = state => state.data.components;
+
+const getAllComponentsAsObject = state => state.data.components.components;
 const getComponentStateByKey = (state, key) =>
 	state.data.components.components[key];
 
 const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
+
+const getComponentStatesWithKeyByFilterByActive = createCachedSelector(
+	[getAllComponentsAsObject, (state, filterByActive) => filterByActive],
+	(components, filterByActive) => {
+		if (!_isEmpty(components) && !_isEmpty(filterByActive)) {
+			let filteredComponent;
+
+			return _filter(components, component =>
+				_isMatch(component.filterByActive, filterByActive)
+			);
+		} else {
+			return null;
+		}
+	}
+)((state, filterByActive) => JSON.stringify(filterByActive));
 
 const getData = createRecomputeSelector(componentKey => {
 	const componentState = getComponentStateByKeyObserver(componentKey);
@@ -27,7 +52,7 @@ const getData = createRecomputeSelector(componentKey => {
 		const data = attributeDataSelectors.getAllAsObject_recompute();
 		const attributeKeys = componentState?.attributeKeys;
 
-		if (!_.isEmpty(data) && attributeKeys?.length) {
+		if (!_isEmpty(data) && attributeKeys?.length) {
 			// Get common relations filter
 			let commonRelationsFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
 				componentState
@@ -77,7 +102,7 @@ const getData = createRecomputeSelector(componentKey => {
 						if (featureKey) {
 							// We don't know which feature is in which attribute DS
 							// also there could be more attributes for the feature
-							_.forIn(
+							_forIn(
 								attributeDsKeyAttributeKeyPairs,
 								(attributeKey, attributeDsKey) => {
 									let value = data[attributeDsKey]?.[featureKey];
@@ -95,7 +120,7 @@ const getData = createRecomputeSelector(componentKey => {
 											// TODO temporary fix for buggy BE values datatype
 											value = isNaN(value)
 												? value
-												: _.isNumber(value)
+												: _isNumber(value)
 												? value
 												: Number(value);
 
@@ -138,8 +163,8 @@ const getDataForBigNumber = createRecomputeSelector(props => {
 	const firstFeature = data?.[0];
 
 	return {
-		title: _.get(firstFeature, componentSettings?.titleSourcePath),
-		value: _.get(firstFeature, componentSettings?.valueSourcePath),
+		title: _get(firstFeature, componentSettings?.titleSourcePath),
+		value: _get(firstFeature, componentSettings?.valueSourcePath),
 	};
 });
 
@@ -153,7 +178,7 @@ const getDataForTable = createRecomputeSelector(props => {
 		data?.map(item => {
 			const itemData = {};
 			componentSettings.columns?.forEach(column => {
-				itemData[column.columnKey] = _.get(item, column.dataPath);
+				itemData[column.columnKey] = _get(item, column.dataPath);
 			});
 			return itemData;
 		}) || [];
@@ -288,12 +313,13 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 			attributeOrder
 		) || [];
 
-	const missingAttributesData = _.isEmpty(attributeDataIndex);
+	const missingAttributesData = _isEmpty(attributeDataIndex);
 	return missingAttributesData ? null : attributeDataIndex;
 };
 
 export default {
 	getComponentStateByKey,
+	getComponentStatesWithKeyByFilterByActive,
 	getData,
 	getDataForBigNumber,
 	getDataForColumnChart,

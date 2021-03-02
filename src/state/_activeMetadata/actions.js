@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import common from '../_common/actions';
+import DataComponentsActions from '../Data/Components/actions';
 import {STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE} from './constants';
 
 /**
@@ -19,6 +20,7 @@ function ensureDependenciesOfActiveMetadataType(filterKey) {
 			);
 		});
 
+		dispatch(DataComponentsActions.ensureWithFilterByActive(filterByActive));
 		// TODO data-based stores
 	};
 }

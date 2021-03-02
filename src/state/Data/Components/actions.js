@@ -299,6 +299,22 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 	};
 };
 
+const ensureWithFilterByActive = filterByActive => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const componentStates = Select.data.components.getComponentStatesByFilterByActive(
+			state,
+			filterByActive
+		);
+		if (componentStates) {
+			componentStates.forEach(state => {
+				debugger;
+				// dispatch(ensure());
+			});
+		}
+	};
+};
+
 const use = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -308,7 +324,6 @@ const use = componentKey => {
 		);
 		const {attributeOrder, start, length, pageSize} = componentState;
 
-		// TODO register use?
 		dispatch(
 			ensure({
 				attributeOrder,
@@ -482,6 +497,7 @@ const actionUpdateComponents = components => {
 };
 
 export default {
+	ensureWithFilterByActive,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,
