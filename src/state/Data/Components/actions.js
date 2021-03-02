@@ -426,6 +426,21 @@ const ensure = componentKey => {
 	};
 };
 
+const ensureWithFilterByActive = filterByActive => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const componentKeys = Select.data.components.getComponentKeysByFilterByActive(
+			state,
+			filterByActive
+		);
+		if (componentKeys) {
+			componentKeys.forEach(componentKey => {
+				dispatch(ensure(componentKey));
+			});
+		}
+	};
+};
+
 /**
  * Entry point for ensuring data for component
  * @param {string} componentKey
@@ -598,6 +613,7 @@ const actionUpdateComponents = components => {
 };
 
 export default {
+	ensureWithFilterByActive,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	use,

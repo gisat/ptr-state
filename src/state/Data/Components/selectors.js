@@ -29,15 +29,18 @@ const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
 
-const getComponentStatesWithKeyByFilterByActive = createCachedSelector(
+const getComponentKeysByFilterByActive = createCachedSelector(
 	[getAllComponentsAsObject, (state, filterByActive) => filterByActive],
 	(components, filterByActive) => {
 		if (!_isEmpty(components) && !_isEmpty(filterByActive)) {
-			let filteredComponent;
+			let filteredKeys = [];
+			_forIn(components, (componentState, key) => {
+				if (_isMatch(componentState.filterByActive, filterByActive)) {
+					filteredKeys.push(key);
+				}
+			});
 
-			return _filter(components, component =>
-				_isMatch(component.filterByActive, filterByActive)
-			);
+			return filteredKeys.length ? filteredKeys : null;
 		} else {
 			return null;
 		}
@@ -319,7 +322,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 
 export default {
 	getComponentStateByKey,
-	getComponentStatesWithKeyByFilterByActive,
+	getComponentKeysByFilterByActive,
 	getData,
 	getDataForBigNumber,
 	getDataForColumnChart,
