@@ -100,16 +100,16 @@ const getMissingPages = (dataIndex, pageSize, start, length) => {
 	const count = dataIndex.count;
 	const restPages = getRestPages(count, pageSize, start, length);
 
-	const loadedAttributePages = getLoadedPages(
+	const loadedPages = getLoadedPages(
 		dataIndex?.index,
 		start,
 		pageSize,
 		restPages,
 		count
 	);
-	const missingAttributesPages = _.difference(restPages, loadedAttributePages);
+	const missingPages = _.difference(restPages, loadedPages);
 
-	return missingAttributesPages;
+	return missingPages;
 };
 
 /**
@@ -140,11 +140,22 @@ function updateComponent(componentKey, update) {
 
 /**
  * Ensure load attribute data and relations.
+ * Useful if no indexes are registered for relations and attribute data.
+ * Function has two phases, it loads data and relations in first and determinate and loads what is missing in second phase.
+ * @param {String} componentKey Related component
  * @param {Array?} order
- * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey.
+ * @param {Number} start Position of first asked item after ordered.
+ * @param {Number} length How many attribute data asking for.
+ * @param {Number} PAGE_SIZE How many attribute data items will be in one request.
+ * @param {Boolean} loadRelations Whether to load relations.
+ * @param {Boolean} loadData Whether to load attribute data.
+ * @param {Object} attributePagination Paginations for attributes {offset: Number, limit: Number}
+ * @param {Object} relationsPagination Paginations for relations {offset: Number, limit: Number}
  * @return {function}
  */
 function ensureDataAndRelations(
+	componentKey,
 	order,
 	mergedAttributeFilter,
 	start,
@@ -152,7 +163,6 @@ function ensureDataAndRelations(
 	PAGE_SIZE,
 	loadRelations,
 	loadData,
-	componentKey,
 	attributePagination,
 	relationsPagination
 ) {
@@ -225,8 +235,10 @@ function ensureDataAndRelations(
  * Load all relations and attributeData based on its remaining page counts.
  * @param {Array?} order
  * @param {Object} mergedAttributeFilter Filler object contains modifiers.
- * @param {Number} remainingRelationsPageCount
- * @param {Number} remainingAttributeDataPageCount
+ * @param {Array} remainingRelationsPages
+ * @param {Array} remainingAttributeDataPages
+ * @param {Array} start
+ * @param {Array} PAGE_SIZE
  * @return {function} Return promise.
  */
 function loadMissingRelationsAndData(
@@ -310,7 +322,7 @@ function loadMissingRelationsAndData(
 }
 
 /**
- * Check if for given componentKey missing data and load missing
+ * Check if for given componentKey missing data or relations and load them.
  * @param {String} componentKey
  */
 const ensure = componentKey => {
@@ -392,6 +404,7 @@ const ensure = componentKey => {
 		if (!_.isEmpty(attributeDataIndex) && !_.isEmpty(attributeRelationsIndex)) {
 			// Some of data or relations are needed
 			if (loadData || loadRelations) {
+				// Load just missing data and relations defined by missingPages
 				return dispatch(
 					loadMissingRelationsAndData(
 						attributeOrder,
@@ -408,8 +421,10 @@ const ensure = componentKey => {
 			}
 			// Attribute or relations or both index is not loaded.
 		} else {
+			// Load relations and data
 			return dispatch(
 				ensureDataAndRelations(
+					componentKey,
 					attributeOrder,
 					mergedAttributeFilter,
 					start,
@@ -417,7 +432,6 @@ const ensure = componentKey => {
 					PAGE_SIZE,
 					loadRelations,
 					loadData,
-					componentKey,
 					attributePagination,
 					relationsPagination
 				)
