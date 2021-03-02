@@ -154,7 +154,7 @@ function updateComponent(componentKey, update) {
  * Function has two phases, it loads data and relations in first and determinate and loads what is missing in second phase.
  * @param {String} componentKey Related component
  * @param {Array?} order
- * @param {Object} mergedAttributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey.
+ * @param {Object} attributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey.
  * @param {Number} start Position of first asked item after ordered.
  * @param {Number} length How many attribute data asking for.
  * @param {Number} PAGE_SIZE How many attribute data items will be in one request.
@@ -167,7 +167,7 @@ function updateComponent(componentKey, update) {
 function ensureDataAndRelations(
 	componentKey,
 	order,
-	mergedAttributeFilter,
+	attributeFilter,
 	start,
 	length,
 	PAGE_SIZE,
@@ -183,7 +183,7 @@ function ensureDataAndRelations(
 		return dispatch(
 			loadIndexedPage(
 				order,
-				mergedAttributeFilter,
+				attributeFilter,
 				!!loadRelations,
 				loadData,
 				relationsPagination,
@@ -204,7 +204,7 @@ function ensureDataAndRelations(
 			const attributeRelationsIndex =
 				Select.data.attributeRelations.getIndex(
 					getState(),
-					mergedAttributeFilter
+					attributeFilter
 				) || [];
 
 			const missingAttributesPages = getMissingPages(
@@ -229,7 +229,7 @@ function ensureDataAndRelations(
 					loadMissingRelationsAndData(
 						componentKey,
 						order,
-						mergedAttributeFilter,
+						attributeFilter,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
@@ -246,7 +246,7 @@ function ensureDataAndRelations(
  * Helper function. Usually second step in requesting data.
  * Load all relations and attributeData based on its remaining page counts.
  * @param {Array?} order
- * @param {Object} mergedAttributeFilter Filler object contains modifiers.
+ * @param {Object} attributeFilter Filler object contains modifiers.
  * @param {Array} remainingRelationsPages
  * @param {Array} remainingAttributeDataPages
  * @param {Array} start
@@ -256,7 +256,7 @@ function ensureDataAndRelations(
 function loadMissingRelationsAndData(
 	componentKey,
 	order,
-	mergedAttributeFilter,
+	attributeFilter,
 	remainingRelationsPages,
 	remainingAttributeDataPages, // [0,1,2,3] || [2,5]
 	start,
@@ -306,7 +306,7 @@ function loadMissingRelationsAndData(
 				dispatch(
 					loadIndexedPage(
 						order,
-						mergedAttributeFilter,
+						attributeFilter,
 						loadRelations,
 						loadData,
 						relationsPagination, //pagination for relations
@@ -332,7 +332,7 @@ function loadMissingRelationsAndData(
 				dispatch(
 					loadIndexedPage(
 						order,
-						mergedAttributeFilter,
+						attributeFilter,
 						loadRelations,
 						loadData,
 						relationsPagination,
@@ -359,7 +359,7 @@ const ensure = componentKey => {
 		);
 		const {attributeOrder, start = 0, length} = componentState;
 
-		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
+		const attributeFilter = Select.data.components.getAttributeFilterByComponentKey(
 			state,
 			componentKey
 		);
@@ -370,7 +370,7 @@ const ensure = componentKey => {
 			) || [];
 
 		const attributeRelationsIndex =
-			Select.data.attributeRelations.getIndex(state, mergedAttributeFilter) ||
+			Select.data.attributeRelations.getIndex(state, attributeFilter) ||
 			[];
 
 		let loadRelations = true;
@@ -440,7 +440,7 @@ const ensure = componentKey => {
 					loadMissingRelationsAndData(
 						componentKey,
 						attributeOrder,
-						mergedAttributeFilter,
+						attributeFilter,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
@@ -459,7 +459,7 @@ const ensure = componentKey => {
 				ensureDataAndRelations(
 					componentKey,
 					attributeOrder,
-					mergedAttributeFilter,
+					attributeFilter,
 					start,
 					length,
 					PAGE_SIZE,
