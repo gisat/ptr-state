@@ -78,9 +78,10 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 	return (dispatch, getState) => {
 		const state = getState();
+		const styleKey = layerState.styleKey || null;
 
 		// TODO ensure style here for now
-		if (layerState.styleKey) {
+		if (styleKey) {
 			dispatch(
 				StylesActions.useKeys(
 					[layerState.styleKey],
@@ -130,20 +131,20 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 			modifiers
 		);
 		if (layerTemplateKey || areaTreeLevelKey) {
-			let mergedFilter = {};
+			let commonRelationsFilter = {};
 			if (areaTreeLevelKey) {
-				mergedFilter = {...modifiersForRequest, areaTreeLevelKey};
+				commonRelationsFilter = {...modifiersForRequest, areaTreeLevelKey};
 			}
 
 			if (layerTemplateKey) {
-				mergedFilter = {...modifiersForRequest, layerTemplateKey};
+				commonRelationsFilter = {...modifiersForRequest, layerTemplateKey};
 			}
 
 			if (layerTemplateKey) {
 				const order = null;
 				const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(
 					state,
-					mergedFilter,
+					commonRelationsFilter,
 					order
 				);
 				const sdsContainsVector =
@@ -157,13 +158,7 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 			}
 			// TODO register use?
 			dispatch(
-				DataActions.ensure({
-					styleKey: layerState.styleKey || null,
-					data: {
-						spatialFilter,
-					},
-					mergedFilter,
-				})
+				DataActions.ensure(styleKey, commonRelationsFilter, spatialFilter)
 			);
 		}
 	};
