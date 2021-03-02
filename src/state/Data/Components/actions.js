@@ -309,7 +309,15 @@ function loadMissingRelationsAndData(
 	};
 }
 
-const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
+/**
+ * 
+ * @param {String} componentKey 
+ * @param {Array} [attributeOrder] Optional 
+ * @param {Number} [start] Optional
+ * @param {Number} [length] Optional
+ * @param {Number} [pageSize] Optional
+ */
+const ensure = (componentKey, attributeOrder, start, length, pageSize, ) => {
 	return (dispatch, getState) => {
 		const state = getState();
 		const mergedAttributeFilter = Select.data.components.getAttributeFilterByComponentKey(
@@ -410,6 +418,10 @@ const ensure = ({attributeOrder, start, length, pageSize, componentKey}) => {
 	};
 };
 
+/**
+ * Entry point for ensuring data for component
+ * @param {string} componentKey 
+ */
 const use = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -421,13 +433,13 @@ const use = componentKey => {
 
 		// TODO register use?
 		dispatch(
-			ensure({
+			ensure(
+				componentKey,
 				attributeOrder,
 				start,
 				length,
 				pageSize,
-				componentKey,
-			})
+				)
 		);
 	};
 };
