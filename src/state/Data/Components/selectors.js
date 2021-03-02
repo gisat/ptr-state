@@ -284,7 +284,7 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 		modifiers
 	);
 
-	const mergedAttributeFilter = {
+	const attributeRelationsFilter = {
 		...modifiersForRequest,
 		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
 		...(attributeKeys !== undefined && {attributeKeys}),
@@ -295,7 +295,7 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 		...(spatialFilter !== undefined && {spatialFilter}),
 	};
 
-	return mergedAttributeFilter;
+	return attributeRelationsFilter;
 };
 
 const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
@@ -303,7 +303,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 
 	const {attributeOrder} = componentState;
 
-	const mergedAttributeFilter = getAttributeFilterByComponentKey(
+	const attributeRelationsFilter = getAttributeFilterByComponentKey(
 		state,
 		componentKey
 	);
@@ -312,7 +312,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 		attributeDataSelectors.getIndex(
 			state,
 			'indexes',
-			mergedAttributeFilter,
+			attributeRelationsFilter,
 			attributeOrder
 		) || [];
 
