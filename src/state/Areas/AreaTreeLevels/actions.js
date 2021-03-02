@@ -21,11 +21,13 @@ const refreshUses = common.refreshUses(
 	`areaTreeLevels`,
 	ActionTypes.AREAS.AREA_TREE_LEVELS
 );
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.areas.areaTrees.getSubstate,
-	'areaTreeLevels',
-	ActionTypes.AREAS.AREA_TREE_LEVELS
-);
+
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('areaTreeLevel'));
+	};
+};
 
 // ============ actions ===========
 
@@ -39,9 +41,8 @@ function actionClearUseIndexed(componentId) {
 // ============ export ===========
 
 export default {
-	ensureIndexesWithFilterByActive,
 	refreshUses,
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 	useIndexed,
 	useIndexedClear: actionClearUseIndexed,
 	useKeys,
