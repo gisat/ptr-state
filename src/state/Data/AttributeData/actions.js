@@ -163,7 +163,7 @@ function createAndAddIndexBasedOnSpatialData(
  * @param {Number} level
  * @param {Array.[Array]} tiles
  */
-function addLoadingIndex(filter, order, level, tiles) {
+function addLoadingSpatialIndex(filter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
@@ -181,6 +181,37 @@ function addLoadingIndex(filter, order, level, tiles) {
 	};
 
 	return addIndexActionWithSpatialIndex(filter, order, [index], changedOn);
+}
+
+/**
+ * Create new index based on given level and tiles with loading indicator.
+ * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Array?} order
+ * @param {Number} level
+ * @param {Array.[Array]} tiles
+ */
+function addLoadingIndex(pagination, filter, order) {
+	const changedOn = null;
+
+	//Fake new data object for common action
+	const data = _.reduce(
+		[...Array(pagination.limit)],
+		(acc, val) => {
+			//Use key = true as a loading identificator
+			return [...acc, {key: true}];
+		},
+		[]
+	);
+
+	// filter, order, data, start, count, changedOn
+	return addIndexAction(
+		filter,
+		order,
+		data,
+		pagination.offset,
+		pagination.limit,
+		changedOn
+	);
 }
 
 // ============ helpers ============
@@ -350,6 +381,18 @@ function addIndexActionWithSpatialIndex(filter, order, index, changedOn) {
 	};
 }
 
+function addIndexAction(filter, order, data, start, count, changedOn) {
+	return {
+		type: actionTypes.INDEX.ADD,
+		filter,
+		order,
+		data: data,
+		start,
+		count,
+		changedOn,
+	};
+}
+
 function actionUpdateStore(data) {
 	return {
 		type: actionTypes.UPDATE_STORE,
@@ -361,6 +404,7 @@ function actionUpdateStore(data) {
 
 export default {
 	addLoadingIndex,
+	addLoadingSpatialIndex,
 	removeIndex: removeIndexAction,
 	receiveIndexed,
 	updateStore: actionUpdateStore,

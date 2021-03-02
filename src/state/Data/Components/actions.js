@@ -202,10 +202,8 @@ function ensureDataAndRelations(
 				) || [];
 
 			const attributeRelationsIndex =
-				Select.data.attributeRelations.getIndex(
-					getState(),
-					attributeFilter
-				) || [];
+				Select.data.attributeRelations.getIndex(getState(), attributeFilter) ||
+				[];
 
 			const missingAttributesPages = getMissingPages(
 				attributeDataIndex,
@@ -371,8 +369,7 @@ const ensure = componentKey => {
 			) || [];
 
 		const attributeRelationsIndex =
-			Select.data.attributeRelations.getIndex(state, attributeFilter) ||
-			[];
+			Select.data.attributeRelations.getIndex(state, attributeFilter) || [];
 
 		let loadRelations = true;
 		let loadData = true;
@@ -521,28 +518,6 @@ function loadIndexedPage(
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
 
-		const usedRelationsPagination = relationsPagination
-			? {...relationsPagination}
-			: DEFAULT_PAGE_PAGINATION;
-
-		if (loadRelations) {
-			usedRelationsPagination.relations = true;
-		} else {
-			usedRelationsPagination.relations = false;
-		}
-
-		const usedAttributeDataPagination = attributeDataPagination
-			? {...attributeDataPagination}
-			: DEFAULT_PAGE_PAGINATION;
-
-		if (loadData) {
-			usedAttributeDataPagination.data = true;
-		} else {
-			usedAttributeDataPagination.data = false;
-		}
-
-		//FIXME add loading support
-
 		const {
 			componentKey,
 			layerTemplateKey,
@@ -554,6 +529,42 @@ function loadIndexedPage(
 			spatialFilter,
 			...modifiers
 		} = filter;
+
+		const usedRelationsPagination = relationsPagination
+			? {...relationsPagination}
+			: DEFAULT_PAGE_PAGINATION;
+
+		if (loadRelations) {
+			usedRelationsPagination.relations = true;
+			//set relations loading
+			dispatch(
+				attributeRelations.addLoadingIndex(
+					usedRelationsPagination,
+					filter,
+					order
+				)
+			);
+		} else {
+			usedRelationsPagination.relations = false;
+		}
+
+		const usedAttributeDataPagination = attributeDataPagination
+			? {...attributeDataPagination}
+			: DEFAULT_PAGE_PAGINATION;
+
+		if (loadData) {
+			usedAttributeDataPagination.data = true;
+			//set attributeData loading
+			dispatch(
+				attributeData.addLoadingIndex(
+					usedAttributeDataPagination,
+					filter,
+					order
+				)
+			);
+		} else {
+			usedAttributeDataPagination.data = false;
+		}
 
 		// Create payload
 		const payload = {

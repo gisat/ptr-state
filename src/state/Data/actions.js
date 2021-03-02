@@ -753,7 +753,7 @@ function loadIndexedPage(
 		////
 		const loadingTilesAttributes = spatialIndex?.tiles || spatialFilter.tiles;
 		dispatch(
-			attributeData.addLoadingIndex(
+			attributeData.addLoadingSpatialIndex(
 				mergedAttributeFilter,
 				order,
 				spatialFilter.level,

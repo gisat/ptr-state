@@ -163,7 +163,7 @@ export default (state = INITIAL_STATE, action) => {
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
 			return update(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
-			return common.add(state, action);
+			return common.addIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL:
 			return addIndexWithSpatial(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
