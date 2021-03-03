@@ -333,7 +333,7 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
@@ -352,7 +352,7 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
@@ -360,7 +360,7 @@ describe('state/_common/selectors', function () {
 						activeKey: 'scopeK',
 					},
 				},
-				expectedResult: [{n: 1}, {n: 2}, {key: 'k3'}, null],
+				expectedResult: [null, {n: 1}, {n: 2}, {key: 'k3'}],
 			},
 		];
 		const order = 'asc';
@@ -388,12 +388,12 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
 				},
-				expectedResult: [{key: 'k1'}, {key: 'k2'}, {key: 'k3'}, null],
+				expectedResult: [null, {key: 'k1'}, {key: 'k2'}, {key: 'k3'}],
 			},
 			{
 				name: 'empty indexes',
@@ -416,12 +416,12 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
 				},
-				expectedResult: [{n: 1}, {n: 2}, {key: 'k3'}, null],
+				expectedResult: [null, {n: 1}, {n: 2}, {key: 'k3'}],
 			},
 		];
 		const filter = {scopeKey: 'scopeK'};
@@ -450,7 +450,7 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
@@ -478,7 +478,7 @@ describe('state/_common/selectors', function () {
 								filter: {scopeKey: 'scopeK'},
 								order: 'asc',
 								count: 4,
-								index: [null, 'k1', 'k2', 'k3'],
+								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 							},
 						],
 					},
@@ -1091,15 +1091,15 @@ describe('state/_common/selectors', function () {
 						filter: {scopeKey: 'scopesKey'},
 						order: 'asc',
 						count: 7,
-						index: [
-							'first',
-							'second',
-							'third',
-							'fourth',
-							'fifth',
-							'sixth',
-							'seventh',
-						],
+						index: {
+							1: 'first',
+							2: 'second',
+							3: 'third',
+							4: 'fourth',
+							5: 'fifth',
+							6: 'sixth',
+							7: 'seventh',
+						},
 					},
 				],
 			},
@@ -1110,7 +1110,7 @@ describe('state/_common/selectors', function () {
 		const start = 3;
 		const length = 2;
 
-		const expectedResult = [{key: 'fourth'}, {key: 'fifth'}];
+		const expectedResult = [{key: 'third'}, {key: 'fourth'}];
 
 		assert.deepStrictEqual(
 			selectors.getIndexed(getSubState)(
@@ -1167,15 +1167,15 @@ describe('state/_common/selectors', function () {
 						filter: 'fil',
 						order: 'asc',
 						count: 7,
-						index: [
-							'first',
-							'second',
-							'third',
-							'fourth',
-							'fifth',
-							'sixth',
-							'seventh',
-						],
+						index: {
+							1: 'first',
+							2: 'second',
+							3: 'third',
+							4: 'fourth',
+							5: 'fifth',
+							6: 'sixth',
+							7: 'seventh',
+						},
 					},
 				],
 			},
@@ -1185,7 +1185,7 @@ describe('state/_common/selectors', function () {
 		const start = 3;
 		const length = 2;
 
-		const expectedResult = {3: 'fourth', 4: 'fifth'};
+		const expectedResult = {3: 'third', 4: 'fourth'};
 
 		assert.deepStrictEqual(
 			selectors.getIndexPage(getSubState)(state, filter, order, start, length),

@@ -30,7 +30,7 @@ describe('state/Data/AttributeRelations/selectors/getFilteredAttributeDataSource
 							scopeKey: 'europe',
 						},
 						count: 2,
-						index: {0: 'relation1', 1: 'relation2'},
+						index: {1: 'relation1', 2: 'relation2'},
 					},
 				],
 			},

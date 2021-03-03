@@ -606,13 +606,7 @@ function loadIndexedPage(
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
 					if (result.attributeData || result.attributeRelationsDataSources) {
-						if (
-							!!loadRelations &&
-							result.attributeRelationsDataSources.attributeRelations &&
-							!_.isEmpty(
-								result.attributeRelationsDataSources.attributeRelations
-							)
-						) {
+						if (loadRelations) {
 							const changes = null;
 							dispatch(
 								attributeRelations.receiveIndexed(
@@ -621,7 +615,8 @@ function loadIndexedPage(
 									order,
 									result.attributeRelationsDataSources.offset,
 									result.attributeRelationsDataSources.total,
-									changes
+									changes,
+									usedRelationsPagination.limit
 								)
 							);
 						}

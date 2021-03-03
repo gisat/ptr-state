@@ -148,7 +148,7 @@ describe('state/Areas/AreaTreeLevels/selectors', function () {
 									filter: {scopeKey: 'scopeK'},
 									order: 'asc',
 									count: 4,
-									index: [null, 'k1', 'k2', 'k3'],
+									index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 								},
 							],
 						},
@@ -169,7 +169,7 @@ describe('state/Areas/AreaTreeLevels/selectors', function () {
 									filter: {scopeKey: 'scopeK'},
 									order: 'asc',
 									count: 4,
-									index: [null, 'k1', 'k2', 'k3'],
+									index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 								},
 							],
 						},
@@ -178,7 +178,7 @@ describe('state/Areas/AreaTreeLevels/selectors', function () {
 						activeKey: 'scopeK',
 					},
 				},
-				expectedResult: [{n: 1}, {n: 2}, {key: 'k3'}, null],
+				expectedResult: [null, {n: 1}, {n: 2}, {key: 'k3'}],
 			},
 		];
 		const order = 'asc';

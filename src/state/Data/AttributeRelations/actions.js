@@ -22,7 +22,8 @@ function receiveIndexed(
 	order,
 	start,
 	total,
-	changedOn
+	changedOn,
+	limit
 ) {
 	return dispatch => {
 		// add attributeRelations to store
@@ -32,7 +33,15 @@ function receiveIndexed(
 
 		// add to index
 		dispatch(
-			addIndex(filter, order, total, start, attributeRelations, changedOn)
+			addIndex(
+				filter,
+				order,
+				total,
+				start,
+				attributeRelations,
+				changedOn,
+				limit
+			)
 		);
 	};
 }
