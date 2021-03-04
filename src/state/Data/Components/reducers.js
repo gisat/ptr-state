@@ -2,7 +2,10 @@ import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/reducers';
 
 const INITIAL_STATE = {
-	components: {},
+	components: {
+		byKey: {},
+		inUse: [],
+	},
 	sets: {},
 };
 
@@ -12,14 +15,17 @@ const setAttributeKeys = (state, componentKey, attributeKeys) => {
 			...state,
 			components: {
 				...state.components,
-				[componentKey]: state.components[componentKey]
-					? {
-							...state.components[componentKey],
-							attributeKeys,
-					  }
-					: {
-							attributeKeys,
-					  },
+				byKey: {
+					...state.components.byKey,
+					[componentKey]: state.components.byKey[componentKey]
+						? {
+								...state.components.byKey[componentKey],
+								attributeKeys,
+						  }
+						: {
+								attributeKeys,
+						  },
+				},
 			},
 		};
 	} else {
@@ -30,16 +36,19 @@ const setAttributeKeys = (state, componentKey, attributeKeys) => {
 /**
  * Update whole data.components.components object with given components
  * @param state {Object}
- * @param components {Object}
+ * @param componentsByKey {Object}
  * @return {Object}
  */
-const updateComponents = (state, components) => {
-	if (components) {
+const updateComponents = (state, componentsByKey) => {
+	if (componentsByKey) {
 		return {
 			...state,
 			components: {
 				...state.components,
-				...components,
+				byKey: {
+					...state.components.byKey,
+					...componentsByKey,
+				},
 			},
 		};
 	} else {

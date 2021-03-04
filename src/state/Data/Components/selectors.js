@@ -21,9 +21,10 @@ import componentsSelectors from '../../Components/selectors';
 
 const getSubstate = state => state.data.components;
 
-const getAllComponentsAsObject = state => state.data.components.components;
+const getAllComponentsAsObject = state =>
+	state.data.components.components.byKey;
 const getComponentStateByKey = (state, key) =>
-	state.data.components.components[key];
+	state.data.components.components.byKey[key];
 
 const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
