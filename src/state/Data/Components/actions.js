@@ -26,19 +26,30 @@ const getPageSize = state => {
 
 // TODO - tests, move to helper
 const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
-	if (count === 0 || optStart > count) {
+	if (_.isNumber(count) && (count === 0 || optStart > count)) {
 		return [];
 	} else {
-		let wanted = count - optStart;
 
-		// Request specific number of results
-		if (_.isNumber(optLength)) {
-			if (optStart + optLength > count) {
-				wanted = count - optStart;
-			} else {
+		let wanted;
+		if(_.isNumber(count)) {
+			wanted = count - optStart;
+			// Request specific number of results
+			if (_.isNumber(optLength)) {
+				if (optStart + optLength > count) {
+					wanted = count - optStart;
+				} else {
+					wanted = optLength;
+				}
+			}
+		} else {
+			// Request specific number of results
+			if (_.isNumber(optLength)) {
 				wanted = optLength;
+			} else {
+				wanted = PAGE_SIZE;
 			}
 		}
+
 
 		const startIndex = optStart;
 		const endIndex = optStart + wanted;
@@ -72,6 +83,15 @@ const getPagination = (pageIndex, start, pageSize, length, count) => {
 
 const getNullishPagination = () => getPagination(0, 0, 0, 0);
 
+/**
+ * Find loaded or loading pages
+ * @param {*} dataIndex 
+ * @param {*} start 
+ * @param {*} pageSize 
+ * @param {*} pages 
+ * @param {*} count 
+ * @param {*} lenght 
+ */
 const getLoadedPages = (
 	dataIndex = {},
 	start = 0,
@@ -84,13 +104,22 @@ const getLoadedPages = (
 	pages.forEach(pageIndex => {
 		let itemsOnPage = 0;
 
-		if (start + pageSize * (pageIndex + 1) > count) {
-			itemsOnPage = count - (start + pageSize * (pageIndex + 1) - pageSize);
-		} else if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
-			itemsOnPage = lenght - pageSize * pageIndex;
+		if(_.isNumber(count)) {
+			if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
+				itemsOnPage = lenght - pageSize * pageIndex;
+			} else if (start + pageSize * (pageIndex + 1) > count) {
+				itemsOnPage = count - (start + pageSize * (pageIndex + 1) - pageSize);
+			}
 		} else {
-			itemsOnPage = pageSize;
+			if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
+				itemsOnPage = lenght - pageSize * pageIndex;
+			} else {
+				itemsOnPage = pageSize;
+			}
 		}
+
+
+
 
 		const requestedDataIndexes = [...Array(itemsOnPage)].map((_, i) => {
 			return start + pageSize * pageIndex + i;
@@ -106,7 +135,7 @@ const getLoadedPages = (
 };
 
 const getMissingPages = (dataIndex, pageSize, start, length) => {
-	const count = dataIndex.count;
+	const count = dataIndex?.count || null;
 	const restPages = getRestPages(count, pageSize, start, length);
 
 	const loadedPages = getLoadedPages(
@@ -218,7 +247,7 @@ function ensureDataAndRelations(
 				null
 			);
 
-			if (missingRelationsPages === 0 && missingAttributesPages.length === 0) {
+			if (missingRelationsPages.length === 0 && missingAttributesPages.length === 0) {
 				//nothing to load
 				return;
 			} else {
@@ -385,9 +414,12 @@ const ensure = componentKey => {
 
 		let missingRelationsPages, missingAttributesPages;
 
+		const attributeDataIndexLoaded = !_.isEmpty(attributeDataIndex) && _.isNumber(attributeDataIndex.count);
+		const attributeRelationsIndexLoaded = !_.isEmpty(attributeRelationsIndex) && _.isNumber(attributeRelationsIndex.count);
+
 		// Relations index exist
 		// find if all required relations are loaded
-		if (!_.isEmpty(attributeRelationsIndex)) {
+		if (!_.isEmpty(attributeDataIndex)) {
 			missingRelationsPages = getMissingPages(
 				attributeRelationsIndex,
 				RELATIONS_PAGE_SIZE,
