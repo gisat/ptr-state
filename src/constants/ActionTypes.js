@@ -242,8 +242,10 @@ export default utils.deepKeyMirror({
 			},
 		},
 		COMPONENTS: {
-			SET: {
-				ATTRIBUTE_KEYS: null,
+			COMPONENT: {
+				SET: {
+					ATTRIBUTE_KEYS: null,
+				},
 			},
 			UPDATE_COMPONENTS: null,
 		},

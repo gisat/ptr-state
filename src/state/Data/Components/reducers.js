@@ -49,8 +49,8 @@ const updateComponents = (state, components) => {
 
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-		case ActionTypes.DATA.COMPONENTS.SET.ATTRIBUTE_KEYS:
-			return setAttributeKeys(state, action.component, action.attributeKeys);
+		case ActionTypes.DATA.COMPONENTS.COMPONENT.SET.ATTRIBUTE_KEYS:
+			return setAttributeKeys(state, action.componentKey, action.attributeKeys);
 		case ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS:
 			return updateComponents(state, action.components);
 		default:

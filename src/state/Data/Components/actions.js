@@ -492,7 +492,6 @@ const ensureWithFilterByActive = filterByActive => {
  */
 const use = componentKey => {
 	return dispatch => {
-		// TODO register use?
 		dispatch(ensure(componentKey));
 	};
 };
@@ -656,10 +655,10 @@ function loadIndexedPage(
 
 // Actions ------------------------------------------------------------------------------------------------------------
 
-const actionSetAttributeKeys = (component, attributeKeys) => {
+const actionSetAttributeKeys = (componentKey, attributeKeys) => {
 	return {
-		type: ActionTypes.DATA.COMPONENTS.SET.ATTRIBUTE_KEYS,
-		component,
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.SET.ATTRIBUTE_KEYS,
+		componentKey,
 		attributeKeys,
 	};
 };
