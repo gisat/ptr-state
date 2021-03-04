@@ -1,5 +1,4 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import common from '../../_common/actions';
 import {tileAsString} from '../helpers';
 import _ from 'lodash';
 
@@ -208,8 +207,8 @@ function addLoadingIndex(pagination, filter, order) {
 		filter,
 		order,
 		data,
-		pagination.offset,
-		pagination.limit,
+		pagination.offset + 1,
+		null,
 		changedOn
 	);
 }

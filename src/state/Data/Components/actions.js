@@ -1,125 +1,20 @@
+import _ from 'lodash';
 import ActionTypes from '../../../constants/ActionTypes';
-import Select from '../../Select';
-import commonHelpers from '../../_common/helpers';
-import commonSelectors from '../../_common/selectors';
 import request from '../../_common/request';
 import commonActions from '../../_common/actions';
 import attributeRelations from '../AttributeRelations/actions';
 import attributeData from '../AttributeData/actions';
+import Select from '../../Select';
+import {
+	getPageSize,
+	getPagination,
+	getNullishPagination,
+	getMissingPages,
+} from './helpers';
 
 const DEFAULT_PAGE_PAGINATION = {
 	offset: 0,
 	limit: 100,
-};
-
-/**
- * Central method for getting PAGE_SIZE from state or configDefaults.
- * @param {Object} state App state
- * @return {Number}
- */
-const getPageSize = state => {
-	const localConfig = Select.app.getCompleteLocalConfiguration(state);
-	const PAGE_SIZE =
-		localConfig.requestPageSize || configDefaults.requestPageSize;
-	return PAGE_SIZE;
-};
-
-// TODO - tests, move to helper
-const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
-	if (count === 0 || optStart > count) {
-		return [];
-	} else {
-		let wanted = count - optStart;
-
-		// Request specific number of results
-		if (_.isNumber(optLength)) {
-			if (optStart + optLength > count) {
-				wanted = count - optStart;
-			} else {
-				wanted = optLength;
-			}
-		}
-
-		const startIndex = optStart;
-		const endIndex = optStart + wanted;
-
-		const lastPageIndex = Math.ceil((endIndex - startIndex) / PAGE_SIZE);
-		const pages = [...Array(lastPageIndex)].map((_, i) => {
-			return i;
-		});
-
-		return pages;
-	}
-};
-
-const getPagination = (pageIndex, start, pageSize, length, count) => {
-	start = _.isNumber(start) ? start : 0;
-	let limit = pageSize;
-
-	if (_.isNumber(length) && pageIndex * pageSize + pageSize > length) {
-		limit = length - pageIndex * pageSize;
-	}
-
-	if (_.isNumber(count) && start + pageIndex * pageSize + limit > count) {
-		limit = count - (start + pageIndex * pageSize);
-	}
-
-	return {
-		offset: start + pageIndex * pageSize,
-		limit,
-	};
-};
-
-const getNullishPagination = () => getPagination(0, 0, 0, 0);
-
-const getLoadedPages = (
-	dataIndex = {},
-	start = 0,
-	pageSize,
-	pages = [],
-	count,
-	lenght
-) => {
-	const loadedPages = [];
-	pages.forEach(pageIndex => {
-		let itemsOnPage = 0;
-
-		if (start + pageSize * (pageIndex + 1) > count) {
-			itemsOnPage = count - (start + pageSize * (pageIndex + 1) - pageSize);
-		} else if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
-			itemsOnPage = lenght - pageSize * pageIndex;
-		} else {
-			itemsOnPage = pageSize;
-		}
-
-		const requestedDataIndexes = [...Array(itemsOnPage)].map((_, i) => {
-			return start + pageSize * pageIndex + i;
-		});
-		const hasPage = requestedDataIndexes.every(index =>
-			dataIndex.hasOwnProperty(index)
-		);
-		if (hasPage) {
-			loadedPages.push(pageIndex);
-		}
-	});
-	return loadedPages;
-};
-
-const getMissingPages = (dataIndex, pageSize, start, length) => {
-	const count = dataIndex.count;
-	const restPages = getRestPages(count, pageSize, start, length);
-
-	const loadedPages = getLoadedPages(
-		dataIndex?.index,
-		start,
-		pageSize,
-		restPages,
-		count,
-		length
-	);
-	const missingPages = _.difference(restPages, loadedPages);
-
-	return missingPages;
 };
 
 /**
@@ -214,11 +109,14 @@ function ensureDataAndRelations(
 			const missingRelationsPages = getMissingPages(
 				attributeRelationsIndex,
 				RELATIONS_PAGE_SIZE,
-				0,
+				1,
 				null
 			);
 
-			if (missingRelationsPages === 0 && missingAttributesPages.length === 0) {
+			if (
+				missingRelationsPages.length === 0 &&
+				missingAttributesPages.length === 0
+			) {
 				//nothing to load
 				return;
 			} else {
@@ -282,7 +180,7 @@ function loadMissingRelationsAndData(
 		for (let i = 1; i <= remainingRelationsPages.length; i++) {
 			const relationsPagination = getPagination(
 				remainingRelationsPages[i - 1],
-				0,
+				1,
 				RELATIONS_PAGE_SIZE
 			);
 
@@ -356,8 +254,7 @@ const ensure = componentKey => {
 			state,
 			componentKey
 		);
-		const {attributeOrder, start = 0, length} = componentState;
-
+		const {attributeOrder, start = 1, length} = componentState;
 		const attributeFilter = Select.data.components.getAttributeFilterByComponentKey(
 			state,
 			componentKey
@@ -380,18 +277,17 @@ const ensure = componentKey => {
 		// In case of need PAGE_SIZE could be modified here
 		const PAGE_SIZE = RELATIONS_PAGE_SIZE;
 
-		let relationsPagination = getPagination(0, 0, RELATIONS_PAGE_SIZE);
+		let relationsPagination = getPagination(0, 1, RELATIONS_PAGE_SIZE);
 		let attributePagination = getPagination(0, start, PAGE_SIZE, length);
 
 		let missingRelationsPages, missingAttributesPages;
-
 		// Relations index exist
 		// find if all required relations are loaded
 		if (!_.isEmpty(attributeRelationsIndex)) {
 			missingRelationsPages = getMissingPages(
 				attributeRelationsIndex,
 				RELATIONS_PAGE_SIZE,
-				0,
+				1,
 				null
 			);
 			relationsPagination = getPagination(
@@ -613,7 +509,7 @@ function loadIndexedPage(
 									result.attributeRelationsDataSources.attributeRelations,
 									filter,
 									order,
-									result.attributeRelationsDataSources.offset,
+									result.attributeRelationsDataSources.offset + 1,
 									result.attributeRelationsDataSources.total,
 									changes,
 									usedRelationsPagination.limit
@@ -628,7 +524,7 @@ function loadIndexedPage(
 									result.attributeData,
 									filter,
 									order,
-									result.attributeData.offset,
+									result.attributeData.offset + 1,
 									result.attributeData.total,
 									changes
 								)

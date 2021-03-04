@@ -93,9 +93,9 @@ const getData = createRecomputeSelector(componentKey => {
 
 				if (indexedFeatureKeysAsObject) {
 					let {start, length} = componentState;
-					start = start || 0;
-					length = length || attributeDataIndex.count - 1;
-					let end = Math.min(start + length - 1, attributeDataIndex.count - 1);
+					start = start || 1;
+					length = length || attributeDataIndex.count;
+					let end = Math.min(start + length - 1, attributeDataIndex.count);
 
 					let finalFeaturesAsObject = [];
 

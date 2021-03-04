@@ -1361,7 +1361,7 @@ function actionAddIndex(
 		start,
 		data,
 		changedOn,
-		...(limit && {...limit}),
+		...(limit && {limit: limit}),
 	});
 }
 

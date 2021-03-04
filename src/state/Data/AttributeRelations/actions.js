@@ -71,8 +71,8 @@ function addLoadingIndex(pagination, filter, order) {
 		filter,
 		order,
 		data,
-		pagination.offset,
-		pagination.limit,
+		pagination.offset + 1,
+		null,
 		changedOn
 	);
 }

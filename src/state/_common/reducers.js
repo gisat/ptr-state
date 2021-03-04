@@ -98,7 +98,7 @@ export default {
 		selectedIndex = {
 			filter: selectedIndex.filter || action.filter,
 			order: selectedIndex.order || action.order,
-			count: action.count,
+			count: selectedIndex.count || action.count,
 			changedOn: action.changedOn,
 			index,
 		};
