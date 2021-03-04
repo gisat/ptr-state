@@ -37,11 +37,19 @@ const mapDispatchToPropsFactory = () => {
 	return (dispatch, ownProps) => {
 		if (ownProps.stateMapSetKey) {
 			return {
+				onMount: () => {
+					dispatch(Action.maps.mapSetUseRegister(ownProps.stateMapSetKey));
+				},
+				onUnmount: () => {},
 				updateView: (update, mapKey) => {
 					dispatch(Action.maps.updateMapAndSetView(mapKey, update));
 				},
 				resetHeading: mapKey => {},
-				onMapRemove: mapKey => {},
+				onMapRemove: mapKey => {
+					dispatch(
+						Action.maps.removeMapFromSet(ownProps.stateMapSetKey, mapKey)
+					);
+				},
 			};
 		} else {
 			let setKey = ownProps.setKey || componentId;
