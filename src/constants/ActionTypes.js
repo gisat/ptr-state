@@ -242,8 +242,14 @@ export default utils.deepKeyMirror({
 			},
 		},
 		COMPONENTS: {
-			SET: {
-				ATTRIBUTE_KEYS: null,
+			COMPONENT: {
+				SET: {
+					ATTRIBUTE_KEYS: null,
+				},
+				USE: {
+					CLEAR: null,
+					REGISTER: null,
+				},
 			},
 			UPDATE_COMPONENTS: null,
 		},
@@ -308,8 +314,13 @@ export default utils.deepKeyMirror({
 
 	MAPS: {
 		SET: {
+			REMOVE_MAP: null,
 			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,
+			USE: {
+				CLEAR: null,
+				REGISTER: null,
+			},
 			VIEW: {
 				SET: null,
 				UPDATE: null,
@@ -318,6 +329,10 @@ export default utils.deepKeyMirror({
 		MAP: {
 			LAYERS: {
 				SET_STYLE_KEY: null,
+			},
+			USE: {
+				CLEAR: null,
+				REGISTER: null,
 			},
 			VIEWPORT: {
 				SET: null,

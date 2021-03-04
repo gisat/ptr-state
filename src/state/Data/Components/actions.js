@@ -283,7 +283,7 @@ const ensure = componentKey => {
 		let missingRelationsPages, missingAttributesPages;
 		// Relations index exist
 		// find if all required relations are loaded
-		if (!_.isEmpty(attributeRelationsIndex)) {
+		if (!_.isEmpty(attributeDataIndex)) {
 			missingRelationsPages = getMissingPages(
 				attributeRelationsIndex,
 				RELATIONS_PAGE_SIZE,
@@ -376,7 +376,13 @@ const ensureWithFilterByActive = filterByActive => {
 		);
 		if (componentKeys) {
 			componentKeys.forEach(componentKey => {
-				dispatch(ensure(componentKey));
+				const isInUse = Select.data.components.isComponentInUse(
+					state,
+					componentKey
+				);
+				if (isInUse) {
+					dispatch(ensure(componentKey));
+				}
 			});
 		}
 	};
@@ -388,8 +394,40 @@ const ensureWithFilterByActive = filterByActive => {
  */
 const use = componentKey => {
 	return dispatch => {
-		// TODO register use?
+		dispatch(componentUseRegister(componentKey));
 		dispatch(ensure(componentKey));
+	};
+};
+
+/**
+ * Clear use of the component
+ * @param componentKey {string}
+ */
+const componentUseClear = componentKey => {
+	return (dispatch, getState) => {
+		const registered = Select.data.components.isComponentInUse(
+			getState(),
+			componentKey
+		);
+		if (registered) {
+			dispatch(actionComponentUseClear(componentKey));
+		}
+	};
+};
+
+/**
+ * Register use of the component
+ * @param componentKey {string}
+ */
+const componentUseRegister = componentKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.data.components.isComponentInUse(
+			getState(),
+			componentKey
+		);
+		if (!alreadyRegistered) {
+			dispatch(actionComponentUseRegister(componentKey));
+		}
 	};
 };
 
@@ -547,10 +585,10 @@ function loadIndexedPage(
 
 // Actions ------------------------------------------------------------------------------------------------------------
 
-const actionSetAttributeKeys = (component, attributeKeys) => {
+const actionSetAttributeKeys = (componentKey, attributeKeys) => {
 	return {
-		type: ActionTypes.DATA.COMPONENTS.SET.ATTRIBUTE_KEYS,
-		component,
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.SET.ATTRIBUTE_KEYS,
+		componentKey,
 		attributeKeys,
 	};
 };
@@ -562,7 +600,22 @@ const actionUpdateComponents = components => {
 	};
 };
 
+const actionComponentUseClear = componentKey => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.USE.CLEAR,
+		componentKey,
+	};
+};
+
+const actionComponentUseRegister = componentKey => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.USE.REGISTER,
+		componentKey,
+	};
+};
+
 export default {
+	componentUseClear,
 	ensureWithFilterByActive,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,

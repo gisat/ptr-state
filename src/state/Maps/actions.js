@@ -18,6 +18,45 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
+ * Register use of the map set
+ * @param mapSetKey {string}
+ */
+const mapSetUseRegister = mapSetKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.maps.isMapSetInUse(getState(), mapSetKey);
+		if (!alreadyRegistered) {
+			dispatch(actionMapSetUseRegister(mapSetKey));
+		}
+	};
+};
+
+/**
+ * Clear use of the map
+ * @param mapKey {string}
+ */
+const mapUseClear = mapKey => {
+	return (dispatch, getState) => {
+		const registered = Select.maps.isMapInUse(getState(), mapKey);
+		if (registered) {
+			dispatch(actionMapUseClear(mapKey));
+		}
+	};
+};
+
+/**
+ * Register use of the map
+ * @param mapKey {string}
+ */
+const mapUseRegister = mapKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.maps.isMapInUse(getState(), mapKey);
+		if (!alreadyRegistered) {
+			dispatch(actionMapUseRegister(mapKey));
+		}
+	};
+};
+
+/**
  * @param mapKey {string}
  * @param backgroundLayer {Object} background layer definition
  * @param layers {Object} layers definition
@@ -26,6 +65,7 @@ import SelectionsAction from '../Selections/actions';
  */
 function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 	return (dispatch, getState) => {
+		dispatch(mapUseRegister(mapKey));
 		const state = getState();
 
 		const spatialFilter = Select.maps.getSpatialFilterByMapKey(
@@ -304,6 +344,30 @@ function refreshMapSetUse(setKey) {
 }
 
 /**
+ * @param setKey {string}
+ * @param mapKey {string}
+ */
+function removeMapFromSet(setKey, mapKey) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const mapSetMapKeys = Select.maps.getMapSetMapKeys(state, setKey);
+		if (mapSetMapKeys && mapSetMapKeys.includes(mapKey)) {
+			const activeMapKey = Select.maps.getMapSetActiveMapKey(state, setKey);
+			dispatch(actionRemoveMapFromSet(setKey, mapKey));
+
+			// if map to remove is active at the same time
+			if (activeMapKey === mapKey) {
+				// check map set map keys again & set first map as active
+				const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
+				if (mapSetMapKeys) {
+					dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
+				}
+			}
+		}
+	};
+}
+
+/**
  * @param mapKey {string}
  * @param update {Object} map view fragment
  */
@@ -366,6 +430,14 @@ function updateStateFromView(data) {
  * ACTIONS
  * ================================================== */
 
+const actionRemoveMapFromSet = (setKey, mapKey) => {
+	return {
+		type: ActionTypes.MAPS.SET.REMOVE_MAP,
+		setKey,
+		mapKey,
+	};
+};
+
 const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY,
@@ -423,10 +495,42 @@ const actionUpdateSetView = (setKey, update) => {
 	};
 };
 
+const actionMapSetUseClear = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.USE.CLEAR,
+		mapSetKey,
+	};
+};
+
+const actionMapSetUseRegister = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.USE.REGISTER,
+		mapSetKey,
+	};
+};
+
+const actionMapUseClear = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.USE.CLEAR,
+		mapKey,
+	};
+};
+
+const actionMapUseRegister = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.USE.REGISTER,
+		mapKey,
+	};
+};
+
 // ============ export ===========
 export default {
 	ensureWithFilterByActive,
+	mapSetUseRegister,
+	mapUseClear,
+	mapUseRegister,
 	refreshMapSetUse,
+	removeMapFromSet,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,

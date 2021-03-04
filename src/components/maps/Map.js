@@ -74,7 +74,9 @@ const mapDispatchToPropsFactory = () => {
 					);
 				},
 
-				onUnmount: () => {},
+				onUnmount: () => {
+					dispatch(Action.maps.mapUseClear(ownProps.stateMapKey));
+				},
 
 				refreshUse: () => {},
 

@@ -23,9 +23,33 @@ import helpers from './selectorHelpers';
 
 const getSubstate = state => state.maps;
 
+const getAllMapSetsInUse = state => state.maps.inUse.sets;
+const getAllMapsInUse = state => state.maps.inUse.maps;
 const getActiveMapKey = state => state.maps.activeMapKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
+
+const isMapSetInUse = createCachedSelector(
+	[getAllMapSetsInUse, (state, mapSetKey) => mapSetKey],
+	(mapSetsInUse, mapSetKey) => {
+		if (mapSetsInUse.length && mapSetKey) {
+			return !!_.includes(mapSetsInUse, mapSetKey);
+		} else {
+			return false;
+		}
+	}
+)((state, mapSetKey) => mapSetKey);
+
+const isMapInUse = createCachedSelector(
+	[getAllMapsInUse, (state, mapKey) => mapKey],
+	(mapsInUse, mapKey) => {
+		if (mapsInUse.length && mapKey) {
+			return !!_.includes(mapsInUse, mapKey);
+		} else {
+			return false;
+		}
+	}
+)((state, mapKey) => mapKey);
 
 /**
  * @param state {Object}
@@ -789,6 +813,9 @@ const getSpatialFilterByMapKey = createCachedSelector(
 )((state, mapKey, mapWidth, mapHeight) => `${mapKey}_${mapWidth}_${mapHeight}`);
 
 export default {
+	isMapInUse,
+	isMapSetInUse,
+
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,
 	getBackgroundLayerStateByMapKey,
