@@ -23,12 +23,24 @@ const getSubstate = state => state.data.components;
 
 const getAllComponentsAsObject = state =>
 	state.data.components.components.byKey;
+const getAllComponentsInUse = state => state.data.components.components.inUse;
 const getComponentStateByKey = (state, key) =>
 	state.data.components.components.byKey[key];
 
 const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
+
+const isComponentInUse = createCachedSelector(
+	[getAllComponentsInUse, (state, componentKey) => componentKey],
+	(componentsInUse, componentKey) => {
+		if (componentsInUse.length && componentKey) {
+			return !!_.includes(componentsInUse, componentKey);
+		} else {
+			return false;
+		}
+	}
+)((state, componentKey) => componentKey);
 
 const getComponentKeysByFilterByActive = createCachedSelector(
 	[getAllComponentsAsObject, (state, filterByActive) => filterByActive],
@@ -332,4 +344,6 @@ export default {
 	getDataForTable,
 	getIndexForAttributeDataByComponentKey,
 	getAttributeFilterByComponentKey,
+
+	isComponentInUse,
 };

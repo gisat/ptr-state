@@ -29,9 +29,8 @@ const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
 	if (_.isNumber(count) && (count === 0 || optStart > count)) {
 		return [];
 	} else {
-
 		let wanted;
-		if(_.isNumber(count)) {
+		if (_.isNumber(count)) {
 			wanted = count - optStart;
 			// Request specific number of results
 			if (_.isNumber(optLength)) {
@@ -49,7 +48,6 @@ const getRestPages = (count, PAGE_SIZE, optStart = 0, optLength) => {
 				wanted = PAGE_SIZE;
 			}
 		}
-
 
 		const startIndex = optStart;
 		const endIndex = optStart + wanted;
@@ -85,12 +83,12 @@ const getNullishPagination = () => getPagination(0, 0, 0, 0);
 
 /**
  * Find loaded or loading pages
- * @param {*} dataIndex 
- * @param {*} start 
- * @param {*} pageSize 
- * @param {*} pages 
- * @param {*} count 
- * @param {*} lenght 
+ * @param {*} dataIndex
+ * @param {*} start
+ * @param {*} pageSize
+ * @param {*} pages
+ * @param {*} count
+ * @param {*} lenght
  */
 const getLoadedPages = (
 	dataIndex = {},
@@ -104,7 +102,7 @@ const getLoadedPages = (
 	pages.forEach(pageIndex => {
 		let itemsOnPage = 0;
 
-		if(_.isNumber(count)) {
+		if (_.isNumber(count)) {
 			if (_.isNumber(lenght) && pageSize * (pageIndex + 1) > lenght) {
 				itemsOnPage = lenght - pageSize * pageIndex;
 			} else if (start + pageSize * (pageIndex + 1) > count) {
@@ -117,9 +115,6 @@ const getLoadedPages = (
 				itemsOnPage = pageSize;
 			}
 		}
-
-
-
 
 		const requestedDataIndexes = [...Array(itemsOnPage)].map((_, i) => {
 			return start + pageSize * pageIndex + i;
@@ -247,7 +242,10 @@ function ensureDataAndRelations(
 				null
 			);
 
-			if (missingRelationsPages.length === 0 && missingAttributesPages.length === 0) {
+			if (
+				missingRelationsPages.length === 0 &&
+				missingAttributesPages.length === 0
+			) {
 				//nothing to load
 				return;
 			} else {
@@ -414,8 +412,11 @@ const ensure = componentKey => {
 
 		let missingRelationsPages, missingAttributesPages;
 
-		const attributeDataIndexLoaded = !_.isEmpty(attributeDataIndex) && _.isNumber(attributeDataIndex.count);
-		const attributeRelationsIndexLoaded = !_.isEmpty(attributeRelationsIndex) && _.isNumber(attributeRelationsIndex.count);
+		const attributeDataIndexLoaded =
+			!_.isEmpty(attributeDataIndex) && _.isNumber(attributeDataIndex.count);
+		const attributeRelationsIndexLoaded =
+			!_.isEmpty(attributeRelationsIndex) &&
+			_.isNumber(attributeRelationsIndex.count);
 
 		// Relations index exist
 		// find if all required relations are loaded
@@ -512,7 +513,13 @@ const ensureWithFilterByActive = filterByActive => {
 		);
 		if (componentKeys) {
 			componentKeys.forEach(componentKey => {
-				dispatch(ensure(componentKey));
+				const isInUse = Select.data.components.isComponentInUse(
+					state,
+					componentKey
+				);
+				if (isInUse) {
+					dispatch(ensure(componentKey));
+				}
 			});
 		}
 	};
@@ -524,7 +531,40 @@ const ensureWithFilterByActive = filterByActive => {
  */
 const use = componentKey => {
 	return dispatch => {
+		dispatch(componentUseRegister(componentKey));
 		dispatch(ensure(componentKey));
+	};
+};
+
+/**
+ * Clear use of the component
+ * @param componentKey {string}
+ */
+const componentUseClear = componentKey => {
+	return (dispatch, getState) => {
+		const registered = Select.data.components.isComponentInUse(
+			getState(),
+			componentKey
+		);
+		if (registered) {
+			dispatch(actionComponentUseClear(componentKey));
+		}
+	};
+};
+
+/**
+ * Register use of the component
+ * @param componentKey {string}
+ */
+const componentUseRegister = componentKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.data.components.isComponentInUse(
+			getState(),
+			componentKey
+		);
+		if (!alreadyRegistered) {
+			dispatch(actionComponentUseRegister(componentKey));
+		}
 	};
 };
 
@@ -697,7 +737,22 @@ const actionUpdateComponents = components => {
 	};
 };
 
+const actionComponentUseClear = componentKey => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.USE.CLEAR,
+		componentKey,
+	};
+};
+
+const actionComponentUseRegister = componentKey => {
+	return {
+		type: ActionTypes.DATA.COMPONENTS.COMPONENT.USE.REGISTER,
+		componentKey,
+	};
+};
+
 export default {
+	componentUseClear,
 	ensureWithFilterByActive,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
