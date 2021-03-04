@@ -148,12 +148,13 @@ describe('state/_common/reducers', function () {
 		const tests = [
 			{
 				name: 'empty data',
-				state: {indexes: [{filter: 'fil', order: 'asc', index: 'idx'}]},
+				state: {indexes: [{filter: 'fil', order: 'asc', index: {1: 'idx'}}]},
 				action: {
 					filter: 'fil',
 					order: 'asc',
 					changedOn: 'some time',
 					count: 2,
+					start: 1,
 					data: [],
 				},
 				expectedResult: {
@@ -162,7 +163,7 @@ describe('state/_common/reducers', function () {
 							changedOn: 'some time',
 							count: 2,
 							filter: 'fil',
-							index: 'idx',
+							index: {1: 'idx'},
 							order: 'asc',
 						},
 					],
@@ -175,7 +176,7 @@ describe('state/_common/reducers', function () {
 						{
 							filter: 'fil',
 							order: 'asc',
-							index: [{key: 'k'}, {key: 'k.1'}, {key: 'k.2'}],
+							index: {1: 'k', 2: 'k.1', 3: 'k.2'},
 						},
 					],
 				},
@@ -193,7 +194,134 @@ describe('state/_common/reducers', function () {
 							changedOn: 'some time',
 							count: 2,
 							filter: 'fil',
-							index: {0: {key: 'k'}, 1: 'k2', 2: 'k3'},
+							index: {1: 'k2', 2: 'k3', 3: 'k.2'},
+							order: 'asc',
+						},
+					],
+				},
+			},
+			{
+				name: 'add empty data',
+				state: {
+					indexes: [
+						{
+							filter: 'fil',
+							order: 'asc',
+							index: {1: 'k2', 2: 'k3'},
+						},
+					],
+				},
+				action: {
+					filter: 'fil',
+					order: 'asc',
+					changedOn: 'some time',
+					count: 2,
+					start: 2,
+					data: [],
+				},
+				expectedResult: {
+					indexes: [
+						{
+							changedOn: 'some time',
+							count: 2,
+							filter: 'fil',
+							index: {1: 'k2', 2: 'k3'},
+							order: 'asc',
+						},
+					],
+				},
+			},
+			{
+				name: 'remove loading indicator in partialy filled index',
+				state: {
+					indexes: [
+						{
+							filter: 'fil',
+							order: 'asc',
+							index: {1: 'k', 2: true, 3: true},
+						},
+					],
+				},
+				action: {
+					filter: 'fil',
+					order: 'asc',
+					changedOn: 'some time',
+					count: 2,
+					start: 2,
+					data: [{key: 'k2'}],
+					limit: 2,
+				},
+				expectedResult: {
+					indexes: [
+						{
+							changedOn: 'some time',
+							count: 2,
+							filter: 'fil',
+							index: {1: 'k', 2: 'k2'},
+							order: 'asc',
+						},
+					],
+				},
+			},
+			{
+				name: 'remove loading indicator if data are empty',
+				state: {
+					indexes: [
+						{
+							filter: 'fil',
+							order: 'asc',
+							index: {1: true, 2: true, 3: true, 4: true},
+						},
+					],
+				},
+				action: {
+					filter: 'fil',
+					order: 'asc',
+					changedOn: 'some time',
+					count: 0,
+					start: 1,
+					data: [],
+					limit: 4,
+				},
+				expectedResult: {
+					indexes: [
+						{
+							changedOn: 'some time',
+							count: 0,
+							filter: 'fil',
+							index: {},
+							order: 'asc',
+						},
+					],
+				},
+			},
+			{
+				name: 'remove loading indicator frome part of index',
+				state: {
+					indexes: [
+						{
+							filter: 'fil',
+							order: 'asc',
+							index: {1: true, 2: true, 3: true, 4: 'key1', 5: true},
+						},
+					],
+				},
+				action: {
+					filter: 'fil',
+					order: 'asc',
+					changedOn: 'some time',
+					count: 1,
+					start: 2,
+					data: [],
+					limit: 2,
+				},
+				expectedResult: {
+					indexes: [
+						{
+							changedOn: 'some time',
+							count: 1,
+							filter: 'fil',
+							index: {1: true, 4: 'key1', 5: true},
 							order: 'asc',
 						},
 					],
@@ -215,7 +343,7 @@ describe('state/_common/reducers', function () {
 		const tests = [
 			{
 				name: 'empty data',
-				state: {indexes: [{filter: 'fil', order: 'asc', index: 'idx'}]},
+				state: {indexes: [{filter: 'fil', order: 'asc', index: {1: 'idx'}}]},
 				action: {
 					filter: 'fil',
 					order: 'asc',
@@ -226,7 +354,7 @@ describe('state/_common/reducers', function () {
 					indexes: [
 						{
 							filter: 'fil',
-							index: 'idx',
+							index: {1: 'idx'},
 							order: 'asc',
 						},
 					],
@@ -239,7 +367,7 @@ describe('state/_common/reducers', function () {
 						{
 							filter: 'fil',
 							order: 'asc',
-							index: [{someKey: 'k'}, {someKey: 'k.1'}, {someKey: 'k.2'}],
+							index: {1: 'k', 2: 'k.1', 3: 'k.2'},
 						},
 					],
 				},
@@ -253,7 +381,8 @@ describe('state/_common/reducers', function () {
 					indexes: [
 						{
 							filter: 'fil',
-							index: {0: 'k2', 1: 'k3', 2: {someKey: 'k.2'}},
+							//FIXME - index from 0
+							index: {0: 'k2', 1: 'k3', 2: 'k.1', 3: 'k.2'},
 							order: 'asc',
 						},
 					],
@@ -1048,7 +1177,7 @@ describe('state/_common/reducers', function () {
 							filter: 'fil',
 							order: 'asc',
 							count: 5,
-							index: ['v1', 'v2'],
+							index: {1: 'v1', 2: 'v2'},
 							changedOn: 'changed on',
 						},
 					],
@@ -1062,7 +1191,7 @@ describe('state/_common/reducers', function () {
 							count: null,
 							index: null,
 							changedOn: null,
-							outdated: ['v1', 'v2'],
+							outdated: {1: 'v1', 2: 'v2'},
 							outdatedCount: 5,
 						},
 					],
@@ -1090,14 +1219,14 @@ describe('state/_common/reducers', function () {
 							filter: 'fil',
 							order: 'asc',
 							count: 5,
-							index: ['v1', 'v2'],
+							index: {1: 'v1', 2: 'v2'},
 							changedOn: 'changed on',
 						},
 						{
 							filter: 'fil',
 							order: 'desc',
 							count: 7,
-							index: ['v2.1', 'v2.2'],
+							index: {1: 'v2.1', 2: 'v2.2'},
 							changedOn: 'changed on2',
 						},
 					],
@@ -1112,14 +1241,14 @@ describe('state/_common/reducers', function () {
 							filter: 'fil',
 							order: 'asc',
 							count: 5,
-							index: ['v1', 'v2'],
+							index: {1: 'v1', 2: 'v2'},
 							changedOn: 'changed on',
 						},
 						{
 							filter: 'fil',
 							order: 'desc',
 							count: 7,
-							index: ['v2.1', 'v2.2'],
+							index: {1: 'v2.1', 2: 'v2.2'},
 							changedOn: 'changed on2',
 						},
 					],
@@ -1133,14 +1262,14 @@ describe('state/_common/reducers', function () {
 							filter: 'fil',
 							order: 'asc',
 							count: 5,
-							index: ['v1', 'v2'],
+							index: {1: 'v1', 2: 'v2'},
 							changedOn: 'changed on',
 						},
 						{
 							filter: 'fil',
 							order: 'desc',
 							count: 7,
-							index: ['v2.1', 'v2.2'],
+							index: {1: 'v2.1', 2: 'v2.2'},
 							changedOn: 'changed on2',
 						},
 					],
@@ -1157,14 +1286,14 @@ describe('state/_common/reducers', function () {
 							count: null,
 							index: null,
 							changedOn: null,
-							outdated: ['v1', 'v2'],
+							outdated: {1: 'v1', 2: 'v2'},
 							outdatedCount: 5,
 						},
 						{
 							filter: 'fil',
 							order: 'desc',
 							count: 7,
-							index: ['v2.1', 'v2.2'],
+							index: {1: 'v2.1', 2: 'v2.2'},
 							changedOn: 'changed on2',
 						},
 					],

@@ -51,6 +51,9 @@ export default {
 		return {...state, byKey: newData};
 	},
 
+	//
+	// Add or update existing index
+	// FIXME - separate add and update functionality
 	addIndex: (state, action) => {
 		let indexes = [];
 		let selectedIndex = {};
@@ -68,12 +71,28 @@ export default {
 			});
 		}
 
-		let index;
+		let index = {
+			...(selectedIndex?.index && {...selectedIndex.index}),
+		};
 		if (action.data.length) {
-			index = {...selectedIndex.index};
 			action.data.forEach((model, i) => {
 				index[action.start + i] = model.key;
 			});
+		}
+
+		//
+		// Remove loading indicator if data does not come
+		//
+		if (_.isNumber(action.limit)) {
+			if (!index) {
+				index = {};
+			} else {
+				for (let i = action.start; i < action.start + action.limit; i++) {
+					if (index[i] === true) {
+						delete index[i];
+					}
+				}
+			}
 		}
 
 		selectedIndex = {
@@ -81,13 +100,14 @@ export default {
 			order: selectedIndex.order || action.order,
 			count: action.count,
 			changedOn: action.changedOn,
-			index: index || selectedIndex.index,
+			index,
 		};
 		indexes.push(selectedIndex);
 
 		return {...state, indexes: indexes};
 	},
-
+	// FIXME - do we use it?
+	// fix adding from 1
 	addBatchIndex: (state, action) => {
 		let indexes = [];
 		let selectedIndex = {};

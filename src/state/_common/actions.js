@@ -1351,7 +1351,8 @@ function actionAddIndex(
 	count,
 	start,
 	data,
-	changedOn
+	changedOn,
+	limit //optional
 ) {
 	return action(actionTypes, 'INDEX.ADD', {
 		filter,
@@ -1360,6 +1361,7 @@ function actionAddIndex(
 		start,
 		data,
 		changedOn,
+		...(limit && {...limit}),
 	});
 }
 

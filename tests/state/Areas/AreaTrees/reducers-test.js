@@ -102,7 +102,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 		const tests = [
 			{
 				name: 'empty data',
-				state: {indexes: [{filter: 'fil', order: 'asc', index: 'idx'}]},
+				state: {indexes: [{filter: 'fil', order: 'asc', index: {1: 'idx'}}]},
 				action: {
 					type: 'AREAS.AREA_TREES.INDEX.ADD',
 					filter: 'fil',
@@ -117,7 +117,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 							changedOn: 'some time',
 							count: 2,
 							filter: 'fil',
-							index: 'idx',
+							index: {1: 'idx'},
 							order: 'asc',
 						},
 					],
@@ -130,7 +130,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 						{
 							filter: 'fil',
 							order: 'asc',
-							index: [{key: 'k'}, {key: 'k.1'}, {key: 'k.2'}],
+							index: {1: 'k', 2: 'k.1', 3: 'k.2'},
 						},
 					],
 				},
@@ -139,17 +139,17 @@ describe('state/Areas/AreaTrees/reducers', function () {
 					filter: 'fil',
 					order: 'asc',
 					changedOn: 'some time',
-					count: 2,
-					start: 1,
+					count: 3,
+					start: 2,
 					data: [{key: 'k2'}, {key: 'k3'}],
 				},
 				expectedResult: {
 					indexes: [
 						{
 							changedOn: 'some time',
-							count: 2,
+							count: 3,
 							filter: 'fil',
-							index: {0: {key: 'k'}, 1: 'k2', 2: 'k3'},
+							index: {1: 'k', 2: 'k2', 3: 'k3'},
 							order: 'asc',
 						},
 					],
@@ -448,7 +448,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 							filter: 'fil',
 							order: 'asc',
 							count: 5,
-							index: ['v1', 'v2'],
+							index: {1: 'v1', 2: 'v2'},
 							changedOn: 'changed on',
 						},
 					],
@@ -462,7 +462,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 							count: null,
 							index: null,
 							changedOn: null,
-							outdated: ['v1', 'v2'],
+							outdated: {1: 'v1', 2: 'v2'},
 							outdatedCount: 5,
 						},
 					],

@@ -469,27 +469,41 @@ describe('state/_common/actions', function () {
 							order: 'asc',
 							count: 5,
 							changedOn: '2020-01-01',
-							index: ['k1', 'k2', 'k3', 'k4', 'k5'],
+							index: {1: 'k1', 2: 'k2', 3: 'k3', 4: 'k4', 5: 'k5'},
 						},
 					],
 				},
 			});
 
-			actions
+			const dispatch = action => {
+				if (typeof action === 'function') {
+					const res = action(dispatch, getState);
+					if (res != null) {
+						dispatchedActions.push(res);
+					}
+
+					return res;
+				}
+
+				dispatchedActions.push(action);
+			};
+
+			return actions
 				.ensureIndexed(
 					getSubState,
 					'users',
 					{name: 'fil'},
 					'asc',
-					0,
+					1,
 					5,
-					{},
+					{INDEX: {ADD: 'ADD_INDEX'}},
 					'user'
 				)(dispatch, getState)
 				.then(function () {
 					return runFunctionActions({dispatch, getState});
 				})
 				.then(function () {
+					//do not call any request, everything is loaded
 					assert.deepStrictEqual(dispatchedActions, []);
 				});
 		});
@@ -511,7 +525,7 @@ describe('state/_common/actions', function () {
 							order: 'asc',
 							count: 5,
 							changedOn: '2020-01-01',
-							index: [null, 'k1', 'k2', 'k3'],
+							index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 						},
 					],
 				},

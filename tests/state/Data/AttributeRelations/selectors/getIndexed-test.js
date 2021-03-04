@@ -28,7 +28,7 @@ describe('state/Data/AttributeRelations/selectors/getIndexed', function () {
 							scopeKey: 'europe',
 						},
 						count: 3,
-						index: {0: true, 1: 'relation1', 2: false},
+						index: {1: true, 2: 'relation1', 3: false},
 					},
 				],
 			},

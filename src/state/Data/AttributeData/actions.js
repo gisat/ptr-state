@@ -209,7 +209,7 @@ function addLoadingIndex(pagination, filter, order) {
 		order,
 		data,
 		pagination.offset,
-		pagination.limit,
+		null,
 		changedOn
 	);
 }
