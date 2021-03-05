@@ -818,6 +818,7 @@ export default {
 
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,
+	getAllMapsInUse,
 	getBackgroundLayerStateByMapKey,
 	getFilterByActiveByMapKey,
 	getLayerStateByLayerKeyAndMapKey,

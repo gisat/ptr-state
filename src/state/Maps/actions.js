@@ -203,7 +203,7 @@ function ensureWithFilterByActive(filterByActive) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const activeKeys = commonSelectors.getAllActiveKeys(state);
-		const mapKeys = Select.maps.getAllMapSetsMaps(state);
+		const mapKeys = Select.maps.getAllMapsInUse(state);
 
 		if (mapKeys && activeKeys) {
 			mapKeys.forEach(mapKey => {
