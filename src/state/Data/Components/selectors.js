@@ -87,6 +87,8 @@ const getData = createRecomputeSelector(componentKey => {
 				...attributeDataFilterExtension,
 			};
 
+			const attributeOrder = componentState.attributeOrder || null;
+
 			const relationsFilter = {
 				...commonFilter,
 			};
@@ -109,7 +111,7 @@ const getData = createRecomputeSelector(componentKey => {
 				// TODO more sophisticated index with attributeFilter & attributeOrder
 				const attributeDataIndex = attributeDataSelectors.getIndex_recompute(
 					attributeFilter,
-					null
+					attributeOrder
 				);
 
 				// Get indexed features
