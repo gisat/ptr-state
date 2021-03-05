@@ -436,14 +436,12 @@ describe('state/Data/Components/helpers', function () {
 	});
 
 	describe('getNullishPagination', function () {
-		// count, PAGE_SIZE, optStart = 0, optLength
 		it('getNullishPagination', function () {
 			assert.deepStrictEqual(getNullishPagination(), {offset: 0, limit: 0});
 		});
 	});
 
 	describe('getLoadedPages', function () {
-		// count, PAGE_SIZE, optStart = 0, optLength
 		it('Get loadedPages with dataIndex, start 1, pageSize 5, pages [0,1], count 20, lenght 10', function () {
 			const moctDataIndex = {
 				1: 1,
@@ -571,6 +569,76 @@ describe('state/Data/Components/helpers', function () {
 				[0]
 			);
 		});
-		// dataIndex, start, pageSize, pages, count, lenght
+
+		describe('getMissingPages', function () {
+			it('Get getMissingPages with mockData, start 1, pageSize 5, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 1, 10), [0, 1]);
+			});
+
+			it('Get getMissingPages with mockData and partialy loaded index, start 1, pageSize 5, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+					index: {1: null, 2: null, 3: null, 4: null, 5: null},
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 1, 10), [1]);
+			});
+
+			it('Get getMissingPages with mockData and partialy loaded index _1, start 1, pageSize 5, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+					index: {1: null, 2: null, 3: null, 4: null},
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 1, 10), [0, 1]);
+			});
+
+			it('Get getMissingPages with mockData and partialy loaded index _2, start 1, pageSize 5, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+					index: {1: null, 2: null, 3: null, 4: null, 5: null, 6: null},
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 1, 10), [1]);
+			});
+
+			it('Get getMissingPages with mockData and partialy loaded index _3, start 2, pageSize 5, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+					index: {2: null, 3: null, 4: null, 5: null, 6: null},
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 2, 10), [1]);
+			});
+
+			it('Get getMissingPages with mockData and partialy loaded index _4, start 1, pageSize 1, count 10, lenght 10', function () {
+				const mockData = {
+					const: 10,
+					index: {2: null, 5: null, 6: null},
+				};
+				assert.deepStrictEqual(getMissingPages(mockData, 1, 1, 10), [
+					0,
+					2,
+					3,
+					6,
+					7,
+					8,
+					9,
+				]);
+			});
+			it('Get getMissingPages with null mockData , start 1, pageSize 5, lenght 10', function () {
+				const mockData = null;
+				assert.deepStrictEqual(getMissingPages(mockData, 5, 1, 10), [0, 1]);
+			});
+
+			it('Get getMissingPages with null mockData , start null, pageSize 5, lenght 10', function () {
+				const mockData = null;
+				assert.deepStrictEqual(getMissingPages(mockData, 5, null, 10), [0, 1]);
+			});
+
+			it('Get getMissingPages with null mockData , start null, pageSize 5, lenght null. Only one page if length undefined', function () {
+				const mockData = null;
+				assert.deepStrictEqual(getMissingPages(mockData, 5), [0]);
+			});
+		});
 	});
 });
