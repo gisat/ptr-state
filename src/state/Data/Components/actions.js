@@ -392,17 +392,15 @@ const ensure = componentKey => {
 const ensureWithFilterByActive = filterByActive => {
 	return (dispatch, getState) => {
 		const state = getState();
-		const componentKeys = Select.data.components.getComponentKeysByFilterByActive(
-			state,
-			filterByActive
-		);
-		if (componentKeys) {
-			componentKeys.forEach(componentKey => {
-				const isInUse = Select.data.components.isComponentInUse(
+		const componentsInUse = Select.data.components.getAllComponentsInUse(state);
+		if (componentsInUse.length) {
+			componentsInUse.forEach(componentKey => {
+				const fitsFilterByActive = Select.data.components.componentMatchesFilterByActive(
 					state,
-					componentKey
+					componentKey,
+					filterByActive
 				);
-				if (isInUse) {
+				if (fitsFilterByActive) {
 					dispatch(ensure(componentKey));
 				}
 			});

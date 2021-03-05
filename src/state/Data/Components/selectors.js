@@ -50,23 +50,22 @@ const isComponentInUse = createCachedSelector(
 	}
 )((state, componentKey) => componentKey);
 
-const getComponentKeysByFilterByActive = createCachedSelector(
-	[getAllComponentsAsObject, (state, filterByActive) => filterByActive],
-	(components, filterByActive) => {
-		if (!_isEmpty(components) && !_isEmpty(filterByActive)) {
-			let filteredKeys = [];
-			_forIn(components, (componentState, key) => {
-				if (_isMatch(componentState.filterByActive, filterByActive)) {
-					filteredKeys.push(key);
-				}
-			});
-
-			return filteredKeys.length ? filteredKeys : null;
+const componentMatchesFilterByActive = createCachedSelector(
+	[
+		getComponentStateByKey,
+		(state, component, filterByActive) => filterByActive,
+	],
+	(componentState, filterByActive) => {
+		if (componentState?.filterByActive && filterByActive) {
+			return _isMatch(componentState.filterByActive, filterByActive);
 		} else {
-			return null;
+			return false;
 		}
 	}
-)((state, filterByActive) => JSON.stringify(filterByActive));
+)(
+	(state, componentKey, filterByActive) =>
+		`${componentKey}_${JSON.stringify(filterByActive)}`
+);
 
 const getData = createRecomputeSelector(componentKey => {
 	const componentState = getComponentStateByKeyObserver(componentKey);
@@ -365,8 +364,10 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 };
 
 export default {
+	componentMatchesFilterByActive,
+
+	getAllComponentsInUse,
 	getComponentStateByKey,
-	getComponentKeysByFilterByActive,
 	getData,
 	getDataForBigNumber,
 	getDataForColumnChart,

@@ -18,6 +18,19 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
+ * Clear use of the map set
+ * @param mapSetKey {string}
+ */
+const mapSetUseClear = mapSetKey => {
+	return (dispatch, getState) => {
+		const registered = Select.maps.isMapSetInUse(getState(), mapSetKey);
+		if (registered) {
+			dispatch(actionMapSetUseClear(mapSetKey));
+		}
+	};
+};
+
+/**
  * Register use of the map set
  * @param mapSetKey {string}
  */
@@ -526,6 +539,7 @@ const actionMapUseRegister = mapKey => {
 // ============ export ===========
 export default {
 	ensureWithFilterByActive,
+	mapSetUseClear,
 	mapSetUseRegister,
 	mapUseClear,
 	mapUseRegister,

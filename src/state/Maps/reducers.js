@@ -230,6 +230,26 @@ const mapUseClear = (state, mapKey) => {
 	}
 };
 
+const mapSetUseClear = (state, mapSetKey) => {
+	if (mapSetKey) {
+		const index = _indexOf(state.inUse.sets, mapSetKey);
+		let updatedInUse = [
+			...state.inUse.sets.slice(0, index),
+			...state.inUse.sets.slice(index + 1),
+		];
+
+		return {
+			...state,
+			inUse: {
+				...state.inUse,
+				sets: updatedInUse,
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
 const mapUseRegister = (state, mapKey) => {
 	if (mapKey) {
 		return {
@@ -285,6 +305,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.USE.CLEAR:
+			return mapSetUseClear(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.USE.REGISTER:
 			return mapSetUseRegister(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.VIEW.UPDATE:

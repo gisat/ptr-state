@@ -40,7 +40,9 @@ const mapDispatchToPropsFactory = () => {
 				onMount: () => {
 					dispatch(Action.maps.mapSetUseRegister(ownProps.stateMapSetKey));
 				},
-				onUnmount: () => {},
+				onUnmount: () => {
+					dispatch(Action.maps.mapSetUseClear(ownProps.stateMapSetKey));
+				},
 				updateView: (update, mapKey) => {
 					dispatch(Action.maps.updateMapAndSetView(mapKey, update));
 				},
