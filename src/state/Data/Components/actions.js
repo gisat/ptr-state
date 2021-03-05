@@ -49,7 +49,8 @@ function updateComponent(componentKey, update) {
  * Function has two phases, it loads data and relations in first and determinate and loads what is missing in second phase.
  * @param {String} componentKey Related component
  * @param {Array?} order
- * @param {Object} attributeFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey.
+ * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
+ * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {Number} start Position of first asked item after ordered.
  * @param {Number} length How many attribute data asking for.
  * @param {Number} PAGE_SIZE How many attribute data items will be in one request.
@@ -62,7 +63,8 @@ function updateComponent(componentKey, update) {
 function ensureDataAndRelations(
 	componentKey,
 	order,
-	attributeFilter,
+	commonFilter,
+	attributeDataFilterExtension,
 	start,
 	length,
 	PAGE_SIZE,
@@ -78,7 +80,8 @@ function ensureDataAndRelations(
 		return dispatch(
 			loadIndexedPage(
 				order,
-				attributeFilter,
+				commonFilter,
+				attributeDataFilterExtension,
 				!!loadRelations,
 				loadData,
 				relationsPagination,
@@ -96,8 +99,9 @@ function ensureDataAndRelations(
 					componentKey
 				) || [];
 
+			const relationsFilter = {...commonFilter};
 			const attributeRelationsIndex =
-				Select.data.attributeRelations.getIndex(getState(), attributeFilter) ||
+				Select.data.attributeRelations.getIndex(getState(), relationsFilter) ||
 				[];
 
 			const missingAttributesPages = getMissingPages(
@@ -125,7 +129,8 @@ function ensureDataAndRelations(
 					loadMissingRelationsAndData(
 						componentKey,
 						order,
-						attributeFilter,
+						commonFilter,
+						attributeDataFilterExtension,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
@@ -143,9 +148,10 @@ function ensureDataAndRelations(
  * Load all relations and attributeData based on its remaining page counts.
  * @param {String} componentKey
  * @param {Array?} order
- * @param {Object} attributeFilter Filler object contains modifiers.
+ * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
+ * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {Array} remainingRelationsPages
- * @param {Array} remainingAttributeDataPages
+ * @param {Array} remainingAttributeDataPages [0,1,2,3] || [2,5]
  * @param {Array} start
  * @param {Array} PAGE_SIZE
  * @return {function} Return promise.
@@ -153,9 +159,10 @@ function ensureDataAndRelations(
 function loadMissingRelationsAndData(
 	componentKey,
 	order,
-	attributeFilter,
+	commonFilter,
+	attributeDataFilterExtension,
 	remainingRelationsPages,
-	remainingAttributeDataPages, // [0,1,2,3] || [2,5]
+	remainingAttributeDataPages,
 	start,
 	length,
 	PAGE_SIZE
@@ -203,7 +210,8 @@ function loadMissingRelationsAndData(
 				dispatch(
 					loadIndexedPage(
 						order,
-						attributeFilter,
+						commonFilter,
+						attributeDataFilterExtension,
 						loadRelations,
 						loadData,
 						relationsPagination, //pagination for relations
@@ -229,7 +237,8 @@ function loadMissingRelationsAndData(
 				dispatch(
 					loadIndexedPage(
 						order,
-						attributeFilter,
+						commonFilter,
+						attributeDataFilterExtension,
 						loadRelations,
 						loadData,
 						relationsPagination,
@@ -254,11 +263,22 @@ const ensure = componentKey => {
 			state,
 			componentKey
 		);
-		const {attributeOrder, start = 1, length} = componentState;
-		const attributeFilter = Select.data.components.getAttributeFilterByComponentKey(
+		const {attributeOrder: order, start = 1, length} = componentState;
+
+		const attributeDataFilterExtension = Select.data.components.getAttributeFilterExtensionByComponentKey(
 			state,
 			componentKey
 		);
+
+		const commonFilter = Select.data.components.getCommonFilterByComponentKey(
+			state,
+			componentKey
+		);
+
+		const relationsFilter = {
+			...commonFilter,
+		};
+
 		const attributeDataIndex =
 			Select.data.components.getIndexForAttributeDataByComponentKey(
 				state,
@@ -266,7 +286,7 @@ const ensure = componentKey => {
 			) || [];
 
 		const attributeRelationsIndex =
-			Select.data.attributeRelations.getIndex(state, attributeFilter) || [];
+			Select.data.attributeRelations.getIndex(state, relationsFilter) || [];
 
 		let loadRelations = true;
 		let loadData = true;
@@ -333,8 +353,9 @@ const ensure = componentKey => {
 				return dispatch(
 					loadMissingRelationsAndData(
 						componentKey,
-						attributeOrder,
-						attributeFilter,
+						order,
+						commonFilter,
+						attributeDataFilterExtension,
 						missingRelationsPages,
 						missingAttributesPages,
 						start,
@@ -352,8 +373,9 @@ const ensure = componentKey => {
 			return dispatch(
 				ensureDataAndRelations(
 					componentKey,
-					attributeOrder,
-					attributeFilter,
+					order,
+					commonFilter,
+					attributeDataFilterExtension,
 					start,
 					length,
 					PAGE_SIZE,
@@ -434,7 +456,8 @@ const componentUseRegister = componentKey => {
 /**
  *
  * @param {Array?} order
- * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
+ * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {bool} loadRelations Whether response should contain relations
  * @param {bool} loadData Whether response should contain data
  * @param {Object?} relationsPagination Pagination for relations.
@@ -442,7 +465,8 @@ const componentUseRegister = componentKey => {
  */
 function loadIndexedPage(
 	order,
-	filter,
+	commonFilter,
+	attributeDataFilterExtension,
 	loadRelations,
 	loadData,
 	relationsPagination,
@@ -456,12 +480,21 @@ function loadIndexedPage(
 			layerTemplateKey,
 			areaTreeLevelKey,
 			attributeKeys,
+			modifiers,
+		} = commonFilter;
+
+		const {
 			attributeFilter,
 			dataSourceKeys,
 			featureKeys,
 			spatialFilter,
-			...modifiers
-		} = filter;
+		} = attributeDataFilterExtension;
+
+		const relationsFilter = {...commonFilter};
+		const attributeDataFilter = {
+			...commonFilter,
+			...attributeDataFilterExtension,
+		};
 
 		const usedRelationsPagination = relationsPagination
 			? {...relationsPagination}
@@ -473,7 +506,7 @@ function loadIndexedPage(
 			dispatch(
 				attributeRelations.addLoadingIndex(
 					usedRelationsPagination,
-					filter,
+					relationsFilter,
 					order
 				)
 			);
@@ -491,7 +524,7 @@ function loadIndexedPage(
 			dispatch(
 				attributeData.addLoadingIndex(
 					usedAttributeDataPagination,
-					filter,
+					attributeDataFilter,
 					order
 				)
 			);
@@ -544,7 +577,7 @@ function loadIndexedPage(
 							dispatch(
 								attributeRelations.receiveIndexed(
 									result.attributeRelationsDataSources.attributeRelations,
-									filter,
+									relationsFilter,
 									order,
 									result.attributeRelationsDataSources.offset + 1,
 									result.attributeRelationsDataSources.total,
@@ -559,7 +592,7 @@ function loadIndexedPage(
 							dispatch(
 								attributeData.receiveIndexedAttributeEndPoint(
 									result.attributeData,
-									filter,
+									attributeDataFilter,
 									order,
 									result.attributeData.offset + 1,
 									result.attributeData.total,

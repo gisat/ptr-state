@@ -31,6 +31,14 @@ const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
 
+const getAttributeFilterExtensionByComponentKeyObserver = createRecomputeObserver(
+	getAttributeFilterExtensionByComponentKey
+);
+
+const getCommonFilterByComponentKeyObserver = createRecomputeObserver(
+	getCommonFilterByComponentKey
+);
+
 const isComponentInUse = createCachedSelector(
 	[getAllComponentsInUse, (state, componentKey) => componentKey],
 	(componentsInUse, componentKey) => {
@@ -69,15 +77,19 @@ const getData = createRecomputeSelector(componentKey => {
 		const attributeKeys = componentState?.attributeKeys;
 
 		if (!_isEmpty(data) && attributeKeys?.length) {
-			// Get common relations filter
-			let commonRelationsFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
-				componentState
+			const attributeFilterExtension = getAttributeFilterExtensionByComponentKeyObserver(
+				componentKey
 			);
 
-			// Create final relations filter
+			const commonFilter = getCommonFilterByComponentKeyObserver(componentKey);
+
+			const attributeFilter = {
+				...commonFilter,
+				...attributeFilterExtension,
+			};
+
 			const relationsFilter = {
-				...commonRelationsFilter,
-				attributeKeys,
+				...commonFilter,
 			};
 
 			// Get relations
@@ -97,7 +109,7 @@ const getData = createRecomputeSelector(componentKey => {
 				// Find data index
 				// TODO more sophisticated index with attributeFilter & attributeOrder
 				const attributeDataIndex = attributeDataSelectors.getIndex_recompute(
-					relationsFilter,
+					attributeFilter,
 					null
 				);
 
@@ -249,19 +261,35 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 	}
 });
 
-const getAttributeFilterByComponentKey = (state, componentKey) => {
+function getAttributeFilterExtensionByComponentKey(state, componentKey) {
+	const componentState = getComponentStateByKey(state, componentKey);
+
+	const {
+		attributeFilter,
+		dataSourceKeys,
+		featureKeys,
+		spatialFilter,
+	} = componentState;
+
+	const attributeRelationsFilter = {
+		...(attributeFilter !== undefined && {attributeFilter}),
+		...(dataSourceKeys !== undefined && {dataSourceKeys}),
+		...(featureKeys !== undefined && {featureKeys}),
+		...(spatialFilter !== undefined && {spatialFilter}),
+	};
+
+	return attributeRelationsFilter;
+}
+
+function getCommonFilterByComponentKey(state, componentKey) {
 	const componentState = getComponentStateByKey(state, componentKey);
 
 	const {
 		areaTreeLevelKey,
 		attributeKeys,
-		attributeFilter,
-		dataSourceKeys,
-		featureKeys,
 		filterByActive,
 		layerTemplateKey,
 		metadataModifiers,
-		spatialFilter,
 	} = componentState;
 
 	// modifiers defined by key
@@ -297,36 +325,38 @@ const getAttributeFilterByComponentKey = (state, componentKey) => {
 		modifiers
 	);
 
-	const attributeRelationsFilter = {
-		...modifiersForRequest,
+	const commonFilter = {
+		modifiers: modifiersForRequest,
 		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
-		...(attributeKeys !== undefined && {attributeKeys}),
-		//FIXME - remove attributeFilter
-		...(attributeFilter !== undefined && {attributeFilter}),
-		...(dataSourceKeys !== undefined && {dataSourceKeys}),
-		...(featureKeys !== undefined && {featureKeys}),
 		...(layerTemplateKey !== undefined && {layerTemplateKey}),
-		...(spatialFilter !== undefined && {spatialFilter}),
+		...(attributeKeys !== undefined && {attributeKeys}),
 	};
 
-	return attributeRelationsFilter;
-};
+	return commonFilter;
+}
 
 const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 	const componentState = getComponentStateByKey(state, componentKey);
 
 	const {attributeOrder} = componentState;
 
-	const attributeRelationsFilter = getAttributeFilterByComponentKey(
+	const attributeFilterExtension = getAttributeFilterExtensionByComponentKey(
 		state,
 		componentKey
 	);
+
+	const commonFilter = getCommonFilterByComponentKey(state, componentKey);
+
+	const attributeFilter = {
+		...commonFilter,
+		...attributeFilterExtension,
+	};
 
 	const attributeDataIndex =
 		attributeDataSelectors.getIndex(
 			state,
 			'indexes',
-			attributeRelationsFilter,
+			attributeFilter,
 			attributeOrder
 		) || [];
 
@@ -343,7 +373,7 @@ export default {
 	getDataForScatterChart,
 	getDataForTable,
 	getIndexForAttributeDataByComponentKey,
-	getAttributeFilterByComponentKey,
-
+	getCommonFilterByComponentKey,
+	getAttributeFilterExtensionByComponentKey,
 	isComponentInUse,
 };
