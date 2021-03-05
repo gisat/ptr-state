@@ -18,6 +18,7 @@ Object.assign(Paths, {
 
 const lodashExternal = [
 	'lodash/isObject',
+	'lodash/indexOf',
 	'lodash/isEqual',
 	'lodash/find',
 	'lodash/map',
