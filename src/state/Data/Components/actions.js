@@ -473,6 +473,7 @@ function loadIndexedPage(
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
+		const relationsOrder = null;
 
 		const {
 			layerTemplateKey,
@@ -505,7 +506,7 @@ function loadIndexedPage(
 				attributeRelations.addLoadingIndex(
 					usedRelationsPagination,
 					relationsFilter,
-					order
+					relationsOrder
 				)
 			);
 		} else {
@@ -572,7 +573,6 @@ function loadIndexedPage(
 					if (result.attributeData || result.attributeRelationsDataSources) {
 						if (loadRelations) {
 							const changes = null;
-							const relationsOrder = null;
 							dispatch(
 								attributeRelations.receiveIndexed(
 									result.attributeRelationsDataSources.attributeRelations,
