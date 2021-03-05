@@ -31,8 +31,8 @@ const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
 
-const getAttributeFilterExtensionByComponentKeyObserver = createRecomputeObserver(
-	getAttributeFilterExtensionByComponentKey
+const getAttributeDataFilterExtensionByComponentKeyObserver = createRecomputeObserver(
+	getAttributeDataFilterExtensionByComponentKey
 );
 
 const getCommonFilterByComponentKeyObserver = createRecomputeObserver(
@@ -76,7 +76,7 @@ const getData = createRecomputeSelector(componentKey => {
 		const attributeKeys = componentState?.attributeKeys;
 
 		if (!_isEmpty(data) && attributeKeys?.length) {
-			const attributeFilterExtension = getAttributeFilterExtensionByComponentKeyObserver(
+			const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKeyObserver(
 				componentKey
 			);
 
@@ -84,7 +84,7 @@ const getData = createRecomputeSelector(componentKey => {
 
 			const attributeFilter = {
 				...commonFilter,
-				...attributeFilterExtension,
+				...attributeDataFilterExtension,
 			};
 
 			const relationsFilter = {
@@ -260,7 +260,7 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 	}
 });
 
-function getAttributeFilterExtensionByComponentKey(state, componentKey) {
+function getAttributeDataFilterExtensionByComponentKey(state, componentKey) {
 	const componentState = getComponentStateByKey(state, componentKey);
 
 	const {
@@ -339,7 +339,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 
 	const {attributeOrder} = componentState;
 
-	const attributeFilterExtension = getAttributeFilterExtensionByComponentKey(
+	const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
 		state,
 		componentKey
 	);
@@ -348,7 +348,7 @@ const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
 
 	const attributeFilter = {
 		...commonFilter,
-		...attributeFilterExtension,
+		...attributeDataFilterExtension,
 	};
 
 	const attributeDataIndex =
@@ -375,6 +375,6 @@ export default {
 	getDataForTable,
 	getIndexForAttributeDataByComponentKey,
 	getCommonFilterByComponentKey,
-	getAttributeFilterExtensionByComponentKey,
+	getAttributeDataFilterExtensionByComponentKey,
 	isComponentInUse,
 };

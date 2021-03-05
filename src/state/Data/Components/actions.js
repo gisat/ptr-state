@@ -265,7 +265,7 @@ const ensure = componentKey => {
 		);
 		const {attributeOrder: order, start = 1, length} = componentState;
 
-		const attributeDataFilterExtension = Select.data.components.getAttributeFilterExtensionByComponentKey(
+		const attributeDataFilterExtension = Select.data.components.getAttributeDataFilterExtensionByComponentKey(
 			state,
 			componentKey
 		);
