@@ -572,11 +572,12 @@ function loadIndexedPage(
 					if (result.attributeData || result.attributeRelationsDataSources) {
 						if (loadRelations) {
 							const changes = null;
+							const relationsOrder = null;
 							dispatch(
 								attributeRelations.receiveIndexed(
 									result.attributeRelationsDataSources.attributeRelations,
 									relationsFilter,
-									order,
+									relationsOrder,
 									result.attributeRelationsDataSources.offset + 1,
 									result.attributeRelationsDataSources.total,
 									changes,
