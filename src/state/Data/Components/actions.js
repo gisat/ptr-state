@@ -453,7 +453,6 @@ function loadIndexedPage(
 		const apiPath = 'rest/attributeData/filtered';
 
 		const {
-			componentKey,
 			layerTemplateKey,
 			areaTreeLevelKey,
 			attributeKeys,
