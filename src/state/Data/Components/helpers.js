@@ -160,17 +160,24 @@ export function getLoadedPages(
 	return loadedPages;
 }
 
-export function getMissingPages(dataIndex, pageSize, start, length) {
-	const count = dataIndex?.count || null;
-	const restPages = getRestPages(count, pageSize, start, length);
+/**
+ * Determinate requested pages and which pages are alredy loaded or loading. Return difference between requested an loaded pages.
+ * @param {Object} [optDataIndex]
+ * @param {Number} pageSize Size of pagesize
+ * @param {Number} [optStart] Optional start.
+ * @param {Number} [optLength] Optional length of requested data.
+ */
+export function getMissingPages(optDataIndex, pageSize, optStart, optLength) {
+	const count = optDataIndex?.count || null;
+	const restPages = getRestPages(count, pageSize, optStart, optLength);
 
 	const loadedPages = getLoadedPages(
-		dataIndex?.index,
-		start,
+		optDataIndex?.index,
+		optStart,
 		pageSize,
 		restPages,
 		count,
-		length
+		optLength
 	);
 	const missingPages = _.difference(restPages, loadedPages);
 
