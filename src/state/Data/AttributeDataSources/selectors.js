@@ -13,7 +13,7 @@ const getIndex_recompute = common.getIndex_recompute(getSubstate);
 /**
  * It returns data source model for given key, if exists
  * @param key {string} data source key
- * @return {Object} attribute data source
+ * @return {Object} attribute data source model
  */
 const getByKeyObserver = createRecomputeObserver((state, key) => {
 	return getSubstate(state)?.byKey?.[key] || null;
@@ -22,10 +22,21 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
 /**
  * It returns data source models for given keys
  * @param keys {Array} data source keys
- * @return {Array} A collection of data sources
+ * @return {Array} A collection of data source models
  */
 const getByKeys = createRecomputeSelector(keys => {
-	return keys.map(key => getByKeyObserver(key));
+	if (keys?.length) {
+		let dataSources = [];
+		keys.forEach(key => {
+			const dataSource = getByKeyObserver(key);
+			if (dataSource) {
+				dataSources.push(dataSource);
+			}
+		});
+		return dataSources.length ? dataSources : null;
+	} else {
+		return null;
+	}
 }, recomputeSelectorOptions);
 
 /**
@@ -37,7 +48,7 @@ const getIndexed = createRecomputeSelector(filter => {
 	const index = getIndex_recompute(filter, null);
 	if (index?.index) {
 		let keys = Object.values(index.index);
-		if (keys) {
+		if (keys?.length) {
 			return getByKeys(keys);
 		} else {
 			return null;
@@ -48,6 +59,8 @@ const getIndexed = createRecomputeSelector(filter => {
 }, recomputeSelectorOptions);
 
 export default {
+	getByKeyObserver,
+	getByKeys,
 	getIndexed,
 	getIndex,
 	getIndex_recompute,
