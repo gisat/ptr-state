@@ -126,6 +126,8 @@ export function getLoadedPages(
 			} else if (optStart + pageSize * (pageIndex + 1) > optCount) {
 				itemsOnPage =
 					optCount - (optStart + pageSize * (pageIndex + 1) - pageSize) + 1;
+			} else {
+				itemsOnPage = pageSize;
 			}
 		} else {
 			if (_.isNumber(optLength) && pageSize * (pageIndex + 1) > optLength) {
