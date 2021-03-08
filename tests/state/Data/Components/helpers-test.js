@@ -1,6 +1,5 @@
 import {assert} from 'chai';
 import {
-	getPageSize,
 	getRestPages,
 	getPagination,
 	getNullishPagination,
@@ -9,26 +8,6 @@ import {
 } from '../../../../src/state/Data/Components/helpers';
 
 describe('state/Data/Components/helpers', function () {
-	describe('getPageSize', function () {
-		it('It return pageSize from state', function () {
-			const mockState = {
-				app: {
-					localConfiguration: {
-						requestPageSize: 99,
-					},
-				},
-			};
-			assert.deepStrictEqual(getPageSize(mockState), 99);
-		});
-		it('It return pageSize from ptr-core', function () {
-			const mockState = {
-				app: {
-					localConfiguration: {},
-				},
-			};
-			assert.deepStrictEqual(getPageSize(mockState), 100);
-		});
-	});
 	describe('getRestPages', function () {
 		// count, PAGE_SIZE, optStart = 0, optLength
 		it('Request by pageSize 100', function () {
