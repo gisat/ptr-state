@@ -5,12 +5,9 @@ import commonActions from '../../_common/actions';
 import attributeRelations from '../AttributeRelations/actions';
 import attributeData from '../AttributeData/actions';
 import Select from '../../Select';
-import {
-	getPageSize,
-	getPagination,
-	getNullishPagination,
-	getMissingPages,
-} from './helpers';
+import {getPagination, getNullishPagination, getMissingPages} from './helpers';
+
+import {getPageSize} from '../helpers';
 
 const DEFAULT_PAGE_PAGINATION = {
 	offset: 0,

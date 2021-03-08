@@ -3,18 +3,6 @@ import {configDefaults} from '@gisatcz/ptr-core';
 import Select from '../../Select';
 
 /**
- * Central method for getting PAGE_SIZE from state or configDefaults.
- * @param {Object} state App state
- * @return {Number}
- */
-export function getPageSize(state) {
-	const localConfig = Select.app.getCompleteLocalConfiguration(state);
-	const PAGE_SIZE =
-		localConfig.requestPageSize || configDefaults.requestPageSize;
-	return PAGE_SIZE;
-}
-
-/**
  *
  * @param {Number} [count] Optional size of data on BE. Usually known after request on BE.
  * @param {Number} PAGE_SIZE Size of pagesize
