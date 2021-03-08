@@ -1,4 +1,3 @@
-import common from '../../_common/selectors';
 import {
 	createObserver as createRecomputeObserver,
 	createSelector as createRecomputeSelector,
@@ -72,7 +71,7 @@ const getData = createRecomputeSelector(componentKey => {
 
 	if (componentState) {
 		// TODO cached selector for data of only relevant data sources needed!!!
-		const data = attributeDataSelectors.getAllAsObject_recompute();
+		const data = attributeDataSelectors.getAllAsObjectObserver();
 		const attributeKeys = componentState?.attributeKeys;
 
 		if (!_isEmpty(data) && attributeKeys?.length) {
