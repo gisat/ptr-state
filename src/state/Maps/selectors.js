@@ -564,21 +564,9 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 			geometryColumnName,
 			...dataSourceOptions
 		} = spatialDataSource?.data;
-		let {
-			key,
-			name,
-			opacity,
-			styleKey,
-			renderAsType,
-			options: layerStateOptions,
-		} = layerState;
+		let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
 
 		layerKey = layerKey || key;
-
-		// TODO temporary for development. Next, could be data source type rewritten in layer state (e.g. vector -> tiled-vector?)
-		if (renderAsType) {
-			type = renderAsType;
-		}
 
 		let options = {...dataSourceOptions, ...layerStateOptions};
 
@@ -600,7 +588,11 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 				singleTile,
 				url,
 			};
-		} else if (type === 'vector' || type === 'tiled-vector') {
+		} else if (
+			type === 'vector' ||
+			type === 'tiledVector' ||
+			type === 'tiled-vector'
+		) {
 			let features,
 				tiles = null;
 
@@ -610,7 +602,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					fidColumnName,
 					attributeDataSourceKeyAttributeKeyPairs
 				);
-			} else if (type === 'tiled-vector') {
+			} else if (type === 'tiledVector' || type === 'tiled-vector') {
 				const view = getViewByMapKeyObserver(mapKey);
 				const viewport = getViewportByMapKeyObserver(mapKey);
 				const tileList = selectorHelpers.getTiles(
