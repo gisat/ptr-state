@@ -1,6 +1,10 @@
 import Select from '../Select';
 import ActionTypes from '../../constants/ActionTypes';
 
+/**
+ * A list of stores where indexes should be checked, if they depend on given filter by active.
+ * The collection item has following structure: {storeKey: [getSubstate, data type, action types, category path ('metadata' by default)]}
+ */
 export const STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE = {
 	areaRelations: [
 		Select.areaRelations.getSubstate,
