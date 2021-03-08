@@ -15,6 +15,9 @@ import commonHelpers from './state/_common/helpers';
 import commonReducers, {DEFAULT_INITIAL_STATE} from './state/_common/reducers';
 import commonSelectors from './state/_common/selectors';
 
+import activeMetadataActions from './state/_activeMetadata/actions';
+import {STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE} from './state/_activeMetadata/constants';
+
 import appReducers from './state/App/reducers';
 import areasReducers from './state/Areas/reducers';
 import areaRelationsReducers from './state/AreaRelations/reducers';
@@ -64,9 +67,11 @@ const baseStores = {
 };
 
 const createBaseStore = (specificStores, rootStores, middleware) => {
-	let appliedMiddleware = applyMiddleware(thunk, ...middleware);
+	const enhancedThunk = thunk.withExtraArgument(activeMetadataActions);
+
+	let appliedMiddleware = applyMiddleware(enhancedThunk, ...middleware);
 	if (process.env.NODE_ENV === 'development') {
-		appliedMiddleware = applyMiddleware(thunk, logger, ...middleware);
+		appliedMiddleware = applyMiddleware(enhancedThunk, logger, ...middleware);
 	}
 	let stores = specificStores
 		? {...baseStores, ...rootStores, specific: combineReducers(specificStores)}
@@ -77,7 +82,7 @@ const createBaseStore = (specificStores, rootStores, middleware) => {
 			reduxBatch,
 			appliedMiddleware,
 			reduxBatch,
-			applyMiddleware(thunk),
+			applyMiddleware(enhancedThunk),
 			reduxBatch
 		)
 	);
@@ -101,6 +106,8 @@ export {
 	commonReducers,
 	commonSelectors,
 	DEFAULT_INITIAL_STATE,
+	activeMetadataActions,
+	STORES_TO_ENSURE_WITH_FILTER_BY_ACTIVE,
 	thunk,
 	logger,
 	reduxBatch,

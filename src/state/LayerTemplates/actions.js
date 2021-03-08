@@ -20,6 +20,7 @@ const saveEdited = common.saveEdited(
 	'layerTemplates',
 	ActionTypes.LAYER_TEMPLATES
 );
+const setActiveKey = common.setActiveKey(ActionTypes.LAYER_TEMPLATES);
 const updateEdited = common.updateEdited(
 	Select.layerTemplates.getSubstate,
 	ActionTypes.LAYER_TEMPLATES
@@ -37,11 +38,13 @@ const useIndexed = common.useIndexed(
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.LAYER_TEMPLATES);
 const clearIndex = common.clearIndex(ActionTypes.LAYER_TEMPLATES);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.layerTemplates.getSubstate,
-	'layerTemplates',
-	ActionTypes.LAYER_TEMPLATES
-);
+
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('layerTemplate'));
+	};
+};
 
 // ============ export ===========
 
@@ -50,14 +53,9 @@ export default {
 	clearIndex,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
-
 	saveEdited,
 
-	setActiveKey: common.setActiveKeyAndEnsureDependencies(
-		ActionTypes.LAYER_TEMPLATES,
-		'layerTemplate'
-	),
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 
 	updateEdited,
 	useIndexed,

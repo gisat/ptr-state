@@ -20,6 +20,8 @@ const saveEdited = common.saveEdited(
 	'periods',
 	ActionTypes.PERIODS
 );
+const setActiveKey = common.setActiveKey(ActionTypes.PERIODS);
+const setActiveKeys = common.setActiveKeys(ActionTypes.PERIODS);
 const updateEdited = common.updateEdited(
 	Select.periods.getSubstate,
 	ActionTypes.PERIODS
@@ -42,31 +44,19 @@ const refreshUses = common.refreshUses(
 	`periods`,
 	ActionTypes.PERIODS
 );
-const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
-	ActionTypes.PERIODS,
-	'period'
-);
-const setActiveKeysAndEnsureDependencies = common.setActiveKeysAndEnsureDependencies(
-	ActionTypes.PERIODS,
-	'period'
-);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.periods.getSubstate,
-	'periods',
-	ActionTypes.PERIODS
-);
-
-function setActiveKey(key) {
-	return dispatch => {
-		dispatch(setActiveKeyAndEnsureDependencies(key));
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
 	};
-}
+};
 
-function setActiveKeys(keys) {
-	return dispatch => {
-		dispatch(setActiveKeysAndEnsureDependencies(keys));
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
 	};
-}
+};
 
 // ============ actions ===========
 
@@ -76,13 +66,12 @@ export default {
 	add,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
-	setActiveKeys,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,

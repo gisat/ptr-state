@@ -20,6 +20,8 @@ const saveEdited = common.saveEdited(
 	'cases',
 	ActionTypes.CASES
 );
+const setActiveKey = common.setActiveKey(ActionTypes.CASES);
+const setActiveKeys = common.setActiveKeys(ActionTypes.CASES);
 const updateEdited = common.updateEdited(
 	Select.cases.getSubstate,
 	ActionTypes.CASES
@@ -42,31 +44,20 @@ const refreshUses = common.refreshUses(
 	`cases`,
 	ActionTypes.CASES
 );
-const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
-	ActionTypes.CASES,
-	'case'
-);
-const setActiveKeysAndEnsureDependencies = common.setActiveKeysAndEnsureDependencies(
-	ActionTypes.CASES,
-	'case'
-);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.cases.getSubstate,
-	'cases',
-	ActionTypes.CASES
-);
 
-function setActiveKey(key) {
-	return dispatch => {
-		dispatch(setActiveKeyAndEnsureDependencies(key));
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
 	};
-}
+};
 
-function setActiveKeys(keys) {
-	return dispatch => {
-		dispatch(setActiveKeysAndEnsureDependencies(keys));
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
 	};
-}
+};
 
 // ============ actions ===========
 
@@ -76,13 +67,12 @@ export default {
 	add,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
-	setActiveKeys,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,

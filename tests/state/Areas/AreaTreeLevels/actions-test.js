@@ -42,113 +42,6 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 		});
 	};
 
-	it('ensureIndexesWithFilterByActive', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			areas: {
-				areaTrees: {
-					inUse: {
-						indexes: [
-							[
-								{
-									filterByActive: {name: 'fil'},
-									filter: {
-										name: 'fil',
-									},
-									order: 'asc',
-									start: 1,
-									length: 5,
-								},
-							],
-						],
-					},
-				},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/metadata/filtered/areaTreeLevels',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {
-						name: 'fil',
-					},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
-
-			const body = {
-				data: {areaTreeLevels: {k1: {}, k2: {}, k3: {}, k4: {}}},
-				total: 5,
-				changes: {
-					areaTreeLevels: '2020-01-01',
-				},
-			};
-
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
-
-		return actions
-			.ensureIndexesWithFilterByActive({name: 'fil'})(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'AREAS.AREA_TREE_LEVELS.INDEX.ADD',
-						filter: {
-							name: 'fil',
-						},
-						order: 'asc',
-						start: 1,
-						data: {k1: {}, k2: {}, k3: {}, k4: {}},
-						changedOn: '2020-01-01',
-						count: 5,
-					},
-				]);
-			});
-	});
-
 	it('refreshUses', function () {
 		const getSubState = state => state.sub;
 		const getState = () => ({
@@ -254,14 +147,6 @@ describe('state/Areas/AreaTreeLevels/actions', function () {
 					},
 				]);
 			});
-	});
-
-	it('setActiveKey', function () {
-		actions.setActiveKey('k1')(dispatch);
-
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'AREAS.AREA_TREE_LEVELS.SET_ACTIVE_KEY', key: 'k1'},
-		]);
 	});
 
 	it('useIndexed', function () {

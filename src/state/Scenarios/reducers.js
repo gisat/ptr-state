@@ -11,6 +11,26 @@ export default (state = INITIAL_STATE, action) => {
 			return common.add(state, action);
 		case ActionTypes.SCENARIOS.ADD_UNRECEIVED:
 			return common.addUnreceivedKeys(state, action);
+		case ActionTypes.SCENARIOS.INDEX.ADD:
+			return common.addIndex(state, action);
+		case ActionTypes.SCENARIOS.INDEX.CLEAR_ALL:
+			return common.clearIndexes(state, action);
+		case ActionTypes.SCENARIOS.INDEX.CLEAR_INDEX:
+			return common.clearIndex(state, action);
+		case ActionTypes.SCENARIOS.MARK_DELETED:
+			return common.markDeleted(state, action);
+		case ActionTypes.SCENARIOS.SET_ACTIVE_KEY:
+			return common.setActive(state, action);
+		case ActionTypes.SCENARIOS.SET_ACTIVE_KEYS:
+			return common.setActiveMultiple(state, action);
+		case ActionTypes.SCENARIOS.USE.INDEXED.CLEAR:
+			return common.useIndexedClear(state, action);
+		case ActionTypes.SCENARIOS.USE.INDEXED.REGISTER:
+			return common.registerUseIndexed(state, action);
+		case ActionTypes.SCENARIOS.USE.KEYS.REGISTER:
+			return common.useKeysRegister(state, action);
+		case ActionTypes.SCENARIOS.USE.KEYS.CLEAR:
+			return common.useKeysClear(state, action);
 		default:
 			return state;
 	}

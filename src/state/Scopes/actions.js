@@ -21,6 +21,8 @@ const saveEdited = common.saveEdited(
 	'scopes',
 	ActionTypes.SCOPES
 );
+const setActiveKey = common.setActiveKey(ActionTypes.SCOPES);
+
 const updateEdited = common.updateEdited(
 	Select.scopes.getSubstate,
 	ActionTypes.SCOPES
@@ -42,21 +44,13 @@ const refreshUses = common.refreshUses(
 	`scopes`,
 	ActionTypes.SCOPES
 );
-const setActiveKeyAndEnsureDependencies = common.setActiveKeyAndEnsureDependencies(
-	ActionTypes.SCOPES,
-	'scope'
-);
-const ensureIndexesWithFilterByActive = common.ensureIndexesWithFilterByActive(
-	Select.scopes.getSubstate,
-	'scopes',
-	ActionTypes.SCOPES
-);
 
-function setActiveKey(key) {
-	return (dispatch, getState) => {
-		dispatch(setActiveKeyAndEnsureDependencies(key));
+const setActiveKeyAndEnsureDependencies = key => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKey(key));
+		dispatch(options.ensureDependenciesOfActiveMetadataType('scope'));
 	};
-}
+};
 
 function updateStateFromView(data) {
 	return dispatch => {
@@ -66,7 +60,7 @@ function updateStateFromView(data) {
 			}
 
 			if (data && data.activeKey) {
-				dispatch(setActiveKey(data.activeKey));
+				dispatch(setActiveKeyAndEnsureDependencies(data.activeKey));
 			}
 		}
 	};
@@ -80,12 +74,11 @@ export default {
 	add,
 	create,
 	delete: deleteItem,
-	ensureIndexesWithFilterByActive,
 
 	refreshUses,
 
 	saveEdited,
-	setActiveKey,
+	setActiveKey: setActiveKeyAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,

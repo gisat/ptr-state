@@ -8,7 +8,6 @@ import commonSelectors from './selectors';
 import Select from '../Select';
 import ActionTypes from '../../constants/ActionTypes';
 
-import Action from '../Action';
 import {utils} from '@gisatcz/ptr-utils';
 import {configDefaults} from '@gisatcz/ptr-core';
 
@@ -441,24 +440,6 @@ const useIndexedBatch = (
 					additionalParams
 				)
 			);
-		};
-	};
-};
-
-const setActiveKeyAndEnsureDependencies = (actionTypes, filterKey) => {
-	return key => {
-		return dispatch => {
-			dispatch(actionSetActiveKey(actionTypes, key));
-			dispatch(ensureIndexesWithActiveKey(filterKey));
-		};
-	};
-};
-
-const setActiveKeysAndEnsureDependencies = (actionTypes, filterKey) => {
-	return keys => {
-		return dispatch => {
-			dispatch(actionSetActiveKeys(actionTypes, keys));
-			dispatch(ensureIndexesWithActiveKey(filterKey));
 		};
 	};
 };
@@ -1273,26 +1254,6 @@ function ensureIndexesWithFilterByActive(
 	};
 }
 
-function ensureIndexesWithActiveKey(
-	filterKey,
-	categoryPath = DEFAULT_CATEGORY_PATH
-) {
-	return dispatch => {
-		let filterByActive = {
-			[filterKey]: true,
-		};
-
-		// dispatch ensureIndexesWithFilterByActive on all stores implementing it
-		_.map(Action, actions => {
-			if (actions.hasOwnProperty('ensureIndexesWithFilterByActive')) {
-				dispatch(
-					actions.ensureIndexesWithFilterByActive(filterByActive, categoryPath)
-				);
-			}
-		});
-	};
-}
-
 function updateSubstateFromView(actionTypes) {
 	return data => {
 		return dispatch => {
@@ -1534,8 +1495,6 @@ export default {
 	loadIndexedPage,
 	loadKeysPage,
 	setActiveKey: creator(actionSetActiveKey),
-	setActiveKeyAndEnsureDependencies,
-	setActiveKeysAndEnsureDependencies,
 	setActiveKeys: creator(actionSetActiveKeys),
 	receiveUpdated,
 	receiveIndexed,
