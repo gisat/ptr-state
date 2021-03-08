@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import {configDefaults} from '@gisatcz/ptr-core';
+import Select from '../Select';
 
 /**
  * Returns string representing given tile
@@ -70,3 +72,15 @@ export const getMissingTiles = (index, filter) => {
 		}
 	}
 };
+
+/**
+ * Central method for getting PAGE_SIZE from state or configDefaults.
+ * @param {Object} state App state
+ * @return {Number}
+ */
+export function getPageSize(state) {
+	const localConfig = Select.app.getCompleteLocalConfiguration(state);
+	const PAGE_SIZE =
+		localConfig.requestPageSize || configDefaults.requestPageSize;
+	return PAGE_SIZE;
+}

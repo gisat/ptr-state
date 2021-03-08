@@ -1,4 +1,3 @@
-import {configDefaults} from '@gisatcz/ptr-core';
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';
 import attributeData from './AttributeData/actions';
@@ -10,7 +9,7 @@ import request from '../_common/request';
 import commonActions from '../_common/actions';
 
 import Select from '../Select';
-import {getMissingTiles, tileAsArray} from './helpers';
+import {getMissingTiles, tileAsArray, getPageSize} from './helpers';
 import {TILED_VECTOR_LAYER_TYPES} from './constants';
 
 const DEFAULT_RELATIONS_PAGE = {
@@ -19,17 +18,12 @@ const DEFAULT_RELATIONS_PAGE = {
 };
 
 /**
- * Central method for getting PAGE_SIZE from state or configDefaults.
- * @param {Object} state App state
- * @return {Number}
+ * Calculates how many page of relations is missing.
+ * @param {Number} attributeRelationsCount Wanted attributeRelations items
+ * @param {Number} spatialRelationsCount Wanted spatialRelations items
+ * @param {Number} PAGE_SIZE How many items fit to one page
+ * @returns Number How many pages remaining
  */
-const getPageSize = state => {
-	const localConfig = Select.app.getCompleteLocalConfiguration(state);
-	const PAGE_SIZE =
-		localConfig.requestPageSize || configDefaults.requestPageSize;
-	return PAGE_SIZE;
-};
-
 const getRestRelationsPages = (
 	attributeRelationsCount,
 	spatialRelationsCount,
