@@ -30,6 +30,21 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
 });
 
 /**
+ * It returns whole index for given filter & order
+ * @param {Object} filter
+ * @param {Array} order
+ * @return {Object} index
+ */
+const getIndex_recompute = createRecomputeSelector((filter, order) => {
+	const indexes = getIndexesObserver();
+	if (indexes) {
+		return commonHelpers.getIndex(indexes, filter, order);
+	} else {
+		return null;
+	}
+});
+
+/**
  * It returns whole spatial index for given filter & order
  * @param {Object} filter
  * @param {Array} order
@@ -121,6 +136,7 @@ const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
 export default {
 	getAllAsObjectObserver,
 	getIndex,
+	getIndex_recompute,
 	getIndexesObserver,
 	getSpatialIndex_recompute,
 	getDataByDataSourceKeys,
