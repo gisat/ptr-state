@@ -802,6 +802,7 @@ function loadIndexedPage(
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
 					if (result.data) {
+						const start = relations.offset + 1;
 						////
 						// Attributes
 						////
@@ -816,7 +817,7 @@ function loadIndexedPage(
 									result.data.attributeRelations,
 									attributeRelationsFilter,
 									order,
-									relations.offset,
+									start,
 									result.total.attributeRelations,
 									changes
 								)
@@ -834,7 +835,7 @@ function loadIndexedPage(
 									result.data.attributeDataSources,
 									attributeRelationsFilter,
 									order,
-									relations.offset,
+									start,
 									result.total.attributeRelations,
 									changes
 								)
@@ -868,7 +869,7 @@ function loadIndexedPage(
 									result.data.spatialRelations,
 									spatialRelationsFilter,
 									order,
-									relations.offset,
+									start,
 									result.total.spatialRelations,
 									changes
 								)
@@ -886,7 +887,7 @@ function loadIndexedPage(
 									result.data.spatialDataSources,
 									spatialRelationsFilter,
 									order,
-									relations.offset,
+									start,
 									result.total.spatialRelations,
 									changes
 								)
