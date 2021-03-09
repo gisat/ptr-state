@@ -10,14 +10,14 @@ const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
  * Add data to state only when attributeData received, in case of empty attributeData it adds only index.
  * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
  * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.
- * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {string?} changedOn
  */
 const receiveIndexed = (
 	attributeData,
 	spatialData,
-	filter,
+	attributeDataFilter,
 	order,
 	changedOn
 ) => {
@@ -25,7 +25,7 @@ const receiveIndexed = (
 		if (!_.isEmpty(attributeData)) {
 			dispatch(
 				addDataAndIndexBasedOnSpatialData(
-					filter,
+					attributeDataFilter,
 					order,
 					attributeData,
 					spatialData,
@@ -36,7 +36,7 @@ const receiveIndexed = (
 			// add to index
 			dispatch(
 				createAndAddIndexBasedOnSpatialData(
-					filter,
+					attributeDataFilter,
 					order,
 					attributeData,
 					spatialData,
@@ -52,7 +52,7 @@ const receiveIndexed = (
  * @param {Object} attributeData
  * @param {Array} attributeData.index
  * @param {Object} attributeData.attributeData
- * @param {Object} filter Filler object contains modifiers.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Array?} start
  * @param {Array?} total
@@ -60,14 +60,14 @@ const receiveIndexed = (
  */
 const receiveIndexedAttributeEndPoint = (
 	attributeData,
-	filter,
+	attributeDataFilter,
 	order,
 	start,
 	total,
 	changedOn
 ) => {
 	return addDataAndIndexAction(
-		filter,
+		attributeDataFilter,
 		order,
 		total,
 		start,
@@ -80,14 +80,14 @@ const receiveIndexedAttributeEndPoint = (
 /**
  * Add data and index at the same time
  *
- * @param spatialFilter {Object}
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
  * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
  * @param order {Array}
  * @param changedOn {string}
  */
 function addDataAndIndexBasedOnSpatialData(
-	spatialFilter,
+	attributeDataFilter,
 	order,
 	attributeData,
 	spatialData,
@@ -101,7 +101,7 @@ function addDataAndIndexBasedOnSpatialData(
 				addDataAndIndexBasedOnSpatialDataAction(
 					attributeDataSourceKey,
 					attributeData[attributeDataSourceKey],
-					spatialFilter,
+					attributeDataFilter,
 					order,
 					[indexData],
 					changedOn
@@ -130,14 +130,14 @@ function addOrUpdateData(attributeData) {
 
 /**
  * Create and add index for given attribute data based on related spatial data index.
- * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
  * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
  * @param {*} changedOn
  */
 function createAndAddIndexBasedOnSpatialData(
-	filter,
+	attributeDataFilter,
 	order,
 	attributeData,
 	spatialData,
@@ -148,7 +148,7 @@ function createAndAddIndexBasedOnSpatialData(
 		attributeData
 	);
 	return addIndexActionWithSpatialIndex(
-		filter,
+		attributeDataFilter,
 		order,
 		[indexByLevelByTileByDataSourceKey],
 		changedOn
@@ -157,12 +157,12 @@ function createAndAddIndexBasedOnSpatialData(
 
 /**
  * Create new index based on given level and tiles with loading indicator.
- * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Number} level
  * @param {Array.[Array]} tiles
  */
-function addLoadingSpatialIndex(filter, order, level, tiles) {
+function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
@@ -179,17 +179,22 @@ function addLoadingSpatialIndex(filter, order, level, tiles) {
 		[level]: loadingTiles,
 	};
 
-	return addIndexActionWithSpatialIndex(filter, order, [index], changedOn);
+	return addIndexActionWithSpatialIndex(
+		attributeDataFilter,
+		order,
+		[index],
+		changedOn
+	);
 }
 
 /**
  * Create new index based on given level and tiles with loading indicator.
- * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Number} level
  * @param {Array.[Array]} tiles
  */
-function addLoadingIndex(pagination, filter, order) {
+function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const changedOn = null;
 
 	//Fake new data object for common action
@@ -204,7 +209,7 @@ function addLoadingIndex(pagination, filter, order) {
 
 	// filter, order, data, start, count, changedOn
 	return addIndexAction(
-		filter,
+		attributeDataFilter,
 		order,
 		data,
 		pagination.offset + 1,
@@ -313,7 +318,7 @@ function updateDataAction(key, data) {
 }
 
 /**
- * @param {Object} filter Filler object contains modifiers.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Number} total
  * @param {Number} start
@@ -324,7 +329,7 @@ function updateDataAction(key, data) {
 function addDataAndIndexBasedOnSpatialDataAction(
 	attributeDataSourceKey,
 	data,
-	spatialFilter,
+	attributeDataFilter,
 	order,
 	indexData,
 	changedOn
@@ -333,7 +338,7 @@ function addDataAndIndexBasedOnSpatialDataAction(
 		type: actionTypes.ADD_WITH_SPATIAL_INDEX,
 		attributeDataSourceKey,
 		data,
-		spatialFilter,
+		filter: attributeDataFilter,
 		order,
 		indexData,
 		changedOn,
@@ -341,7 +346,7 @@ function addDataAndIndexBasedOnSpatialDataAction(
 }
 
 /**
- * @param {Object} filter Filler object contains modifiers.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {Number} total
  * @param {Number} start
@@ -350,7 +355,7 @@ function addDataAndIndexBasedOnSpatialDataAction(
  * @param {string?} changedOn
  */
 function addDataAndIndexAction(
-	filter,
+	attributeDataFilter,
 	order,
 	total,
 	start,
@@ -360,7 +365,7 @@ function addDataAndIndexAction(
 ) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
-		filter,
+		filter: attributeDataFilter,
 		order,
 		total,
 		start,
@@ -370,20 +375,42 @@ function addDataAndIndexAction(
 	};
 }
 
-function addIndexActionWithSpatialIndex(filter, order, index, changedOn) {
+function addIndexActionWithSpatialIndex(
+	attributeDataFilter,
+	order,
+	index,
+	changedOn
+) {
 	return {
 		type: actionTypes.INDEX.ADD_WITH_SPATIAL,
-		spatialFilter: filter,
+		filter: attributeDataFilter,
 		order,
 		indexData: index,
 		changedOn,
 	};
 }
 
-function addIndexAction(filter, order, data, start, count, changedOn) {
+/**
+ *
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param {*} order
+ * @param {*} data
+ * @param {*} start
+ * @param {*} count
+ * @param {*} changedOn
+ * @returns
+ */
+function addIndexAction(
+	attributeDataFilter,
+	order,
+	data,
+	start,
+	count,
+	changedOn
+) {
 	return {
 		type: actionTypes.INDEX.ADD,
-		filter,
+		filter: attributeDataFilter,
 		order,
 		data: data,
 		start,

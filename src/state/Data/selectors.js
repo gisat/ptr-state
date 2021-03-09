@@ -77,7 +77,7 @@ const getFeatures = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
- * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Object} populated tile (with feature's geometries and attributes)
  */
 const getTile = createRecomputeSelector(
@@ -194,7 +194,7 @@ const getTile = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
- * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Array} a collection of populated tiles (with feature's geometries and attributes)
  */
 const getTiles = createRecomputeSelector(

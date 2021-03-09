@@ -578,7 +578,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
  * @param mapKey {string} map unique identifier
  * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
- * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  */
 const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 	(
