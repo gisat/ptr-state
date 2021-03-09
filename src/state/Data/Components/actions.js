@@ -72,7 +72,9 @@ function ensureDataAndRelations(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
-		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const PAGE_SIZE = getPageSize(localConfig);
+		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
 
 		return dispatch(
 			loadIndexedPage(
@@ -166,7 +168,8 @@ function loadMissingRelationsAndData(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
-		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
 
 		const promises = [];
 

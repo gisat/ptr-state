@@ -74,7 +74,8 @@ function loadMissingRelationsAndData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		const PAGE_SIZE = getPageSize(getState());
+		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+		const PAGE_SIZE = getPageSize(localConfig);
 
 		const promises = [];
 
@@ -197,7 +198,9 @@ function loadMissingAttributeData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		const PAGE_SIZE = getPageSize(getState());
+		const state = getState();
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const PAGE_SIZE = getPageSize(localConfig);
 
 		const relations = {
 			// start: 0,
@@ -213,7 +216,7 @@ function loadMissingAttributeData(
 		//get attribute data index with loaded and loading data
 		const attributeDataIndex =
 			Select.data.attributeData.getIndex(
-				getState(),
+				state,
 				'spatialIndexes',
 				attributeDataFilter,
 				order
@@ -228,12 +231,12 @@ function loadMissingAttributeData(
 
 		// Load relations and data sources in first request if they are not already loaded.
 		const attributeRelations = Select.data.attributeRelations.getIndex(
-			getState(),
+			state,
 			attributeRelationsFilter,
 			order
 		);
 		const attributeDataSources = Select.data.attributeDataSources.getIndex(
-			getState(),
+			state,
 			attributeRelationsFilter,
 			order
 		);
@@ -408,7 +411,8 @@ function ensureDataAndRelations(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		const PAGE_SIZE = getPageSize(getState());
+		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+		const PAGE_SIZE = getPageSize(localConfig);
 
 		const relations = {
 			// start: 0,
