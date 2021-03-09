@@ -77,6 +77,7 @@ const getFeatures = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {Object} populated tile (with feature's geometries and attributes)
  */
 const getTile = createRecomputeSelector(
@@ -88,7 +89,8 @@ const getTile = createRecomputeSelector(
 		spatialRelationsFilter,
 		attributeRelationsFilter,
 		attributeDataSourceKeyAttributeKeyPairs,
-		styleKey
+		styleKey,
+		attributeDataFilter
 	) => {
 		// Get all data for given key. It caused performance issues when the data was passed as a parameter
 		const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(
@@ -99,6 +101,7 @@ const getTile = createRecomputeSelector(
 			const tileString = tileAsString(tile);
 			const cacheParams = {
 				attributeRelationsFilter,
+				attributeDataFilter,
 				spatialRelationsFilter,
 				level,
 				tileAsString: tileString,
@@ -112,7 +115,7 @@ const getTile = createRecomputeSelector(
 				spatialDataSourceKey
 			);
 			const indexedFeatureKeysByAttributeDataSourceKeys = attributeData.getSpatiallyIndexedFeatureKeysByDataSourceKeys(
-				attributeRelationsFilter,
+				attributeDataFilter,
 				level,
 				tileString
 			);
@@ -191,6 +194,7 @@ const getTile = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {Array} a collection of populated tiles (with feature's geometries and attributes)
  */
 const getTiles = createRecomputeSelector(
@@ -202,7 +206,8 @@ const getTiles = createRecomputeSelector(
 		spatialRelationsFilter,
 		attributeRelationsFilter,
 		attributeDataSourceKeyAttributeKeyPairs,
-		styleKey
+		styleKey,
+		attributeDataFilter
 	) => {
 		if (tiles?.length) {
 			let populatedTiles = [];
@@ -215,13 +220,13 @@ const getTiles = createRecomputeSelector(
 					spatialRelationsFilter,
 					attributeRelationsFilter,
 					attributeDataSourceKeyAttributeKeyPairs,
-					styleKey
+					styleKey,
+					attributeDataFilter
 				);
 				if (populatedTile) {
 					populatedTiles.push(populatedTile);
 				}
 			});
-
 			return populatedTiles.length ? populatedTiles : null;
 		} else {
 			return null;

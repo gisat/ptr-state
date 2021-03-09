@@ -58,6 +58,7 @@ const getRestRelationsPages = (
  * @param {Number} attributeRelationsCount Count of known attribute relations. Used for determinate further requests.
  * @param {Number} spatialRelationsCount Count of known spatial relations. Used for determinate further requests.
  * @param {Array} preloadedSpatialDataSources SpatialDataSources loaded by previous request.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {function} Return promise.
  */
 function loadMissingRelationsAndData(
@@ -69,16 +70,12 @@ function loadMissingRelationsAndData(
 	attributeRelationsFilter,
 	attributeRelationsCount,
 	spatialRelationsCount,
-	preloadedSpatialDataSources = []
+	preloadedSpatialDataSources = [],
+	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		const PAGE_SIZE = getPageSize(getState());
 
-		// FIXME - add attributeFilter support
-		// attributeFilter is null at the moment
-		const attributeFilter = null;
-		const dataSourceKeys = null;
-		const featureKeys = null;
 		const promises = [];
 
 		// load remaining relations pages
@@ -104,16 +101,14 @@ function loadMissingRelationsAndData(
 					loadIndexedPage(
 						styleKey,
 						relations,
-						featureKeys,
 						spatialIndex,
 						spatialFilter,
-						attributeFilter,
 						loadGeometry,
 						loadRelations,
-						dataSourceKeys,
 						order,
 						spatialRelationsFilter,
-						attributeRelationsFilter
+						attributeRelationsFilter,
+						attributeDataFilter
 					)
 				)
 			);
@@ -137,16 +132,14 @@ function loadMissingRelationsAndData(
 					loadIndexedPage(
 						styleKey,
 						relations,
-						featureKeys,
 						spatialIndex,
 						spatialFilter,
-						attributeFilter,
 						loadGeometry,
 						loadRestTilesRelations,
-						dataSourceKeys,
 						order,
 						spatialRelationsFilter,
-						attributeRelationsFilter
+						attributeRelationsFilter,
+						attributeDataFilter
 					)
 				)
 			);
@@ -178,7 +171,7 @@ function loadMissingRelationsAndData(
 			if (allSourcesAreUnsupported) {
 				// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
 				dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
-				dispatch(attributeData.removeIndex(attributeRelationsFilter, order));
+				dispatch(attributeData.removeIndex(attributeDataFilter, order));
 			}
 		});
 	};
@@ -192,6 +185,7 @@ function loadMissingRelationsAndData(
  * @param {Array?} order
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Object} attributeRelationsFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {function}
  */
 function loadMissingAttributeData(
@@ -199,7 +193,8 @@ function loadMissingAttributeData(
 	styleKey,
 	order,
 	spatialRelationsFilter,
-	attributeRelationsFilter
+	attributeRelationsFilter,
+	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		const PAGE_SIZE = getPageSize(getState());
@@ -220,7 +215,7 @@ function loadMissingAttributeData(
 			Select.data.attributeData.getIndex(
 				getState(),
 				'spatialIndexes',
-				attributeRelationsFilter,
+				attributeDataFilter,
 				order
 			) || [];
 
@@ -249,12 +244,6 @@ function loadMissingAttributeData(
 		//load only attribute data
 		const loadGeometry = false;
 
-		//FIXME - add support for attributeFilter
-		const attributeFilter = null;
-
-		const dataSourceKeys = null;
-		const featureKeys = null;
-
 		// Modified spatial filter with only missing attribute data tiles
 		const spatialFilterWithMissingTiles = {
 			...spatialFilter,
@@ -269,16 +258,14 @@ function loadMissingAttributeData(
 				loadIndexedPage(
 					styleKey,
 					relations,
-					featureKeys,
 					spatialIndex,
 					spatialFilterWithMissingTiles,
-					attributeFilter,
 					loadGeometry,
 					loadRelations,
-					dataSourceKeys,
 					order,
 					spatialRelationsFilter,
-					attributeRelationsFilter
+					attributeRelationsFilter,
+					attributeDataFilter
 				)
 			).then(response => {
 				if (response instanceof Error) {
@@ -304,7 +291,8 @@ function loadMissingAttributeData(
 						attributeRelationsFilter,
 						attributeRelationsCount,
 						spatialRelationsCount,
-						preloadSpatialDataSources
+						preloadSpatialDataSources,
+						attributeDataFilter
 					)
 				);
 			});
@@ -321,13 +309,10 @@ function loadMissingAttributeData(
 						loadIndexedPage(
 							styleKey,
 							relations,
-							featureKeys,
 							spatialIndex,
 							spatialFilter,
-							attributeFilter,
 							loadGeometry,
 							loadRelations,
-							dataSourceKeys,
 							order,
 							spatialRelationsFilter,
 							attributeRelationsFilter
@@ -347,6 +332,7 @@ function loadMissingAttributeData(
  * @param {Array?} order
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Object} attributeRelationsFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {function}
  */
 function loadMissingSpatialData(
@@ -354,7 +340,8 @@ function loadMissingSpatialData(
 	styleKey,
 	order,
 	spatialRelationsFilter,
-	attributeRelationsFilter
+	attributeRelationsFilter,
+	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		//
@@ -379,26 +366,21 @@ function loadMissingSpatialData(
 			};
 
 			const relations = {};
-			const attributeFilter = null;
 			const loadGeometry = true;
 			const loadRelations = false;
-			const dataSourceKeys = null;
-			const featureKeys = null;
 			promises.push(
 				dispatch(
 					loadIndexedPage(
 						styleKey,
 						relations,
-						featureKeys,
 						spatialIndex,
 						spatialFilter,
-						attributeFilter,
 						loadGeometry,
 						loadRelations,
-						dataSourceKeys,
 						order,
 						spatialRelationsFilter,
-						attributeRelationsFilter
+						attributeRelationsFilter,
+						attributeDataFilter
 					)
 				)
 			);
@@ -414,6 +396,7 @@ function loadMissingSpatialData(
  * @param {Array?} order
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Object} attributeRelationsFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @return {function}
  */
 function ensureDataAndRelations(
@@ -421,7 +404,8 @@ function ensureDataAndRelations(
 	styleKey,
 	order,
 	spatialRelationsFilter,
-	attributeRelationsFilter
+	attributeRelationsFilter,
+	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		const PAGE_SIZE = getPageSize(getState());
@@ -433,29 +417,22 @@ function ensureDataAndRelations(
 			limit: PAGE_SIZE,
 		};
 
-		// FIXME - add attributeFilter support
-		// attributeFilter is null at the moment
-		const attributeFilter = null;
 		const loadGeometry = true;
 		const loadRelations = true;
-		const dataSourceKeys = null;
-		const featureKeys = null;
 		const spatialIndex = null;
 		if (spatialFilter && !_.isEmpty(spatialFilter)) {
 			return dispatch(
 				loadIndexedPage(
 					styleKey,
 					relations,
-					featureKeys,
 					spatialIndex,
 					spatialFilter,
-					attributeFilter,
 					loadGeometry,
 					loadRelations,
-					dataSourceKeys,
 					order,
 					spatialRelationsFilter,
-					attributeRelationsFilter
+					attributeRelationsFilter,
+					attributeDataFilter
 				)
 			)
 				.then(response => {
@@ -488,9 +465,7 @@ function ensureDataAndRelations(
 					if (restRelationsPages === 0 && allSourcesAreUnsupported) {
 						// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
 						dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
-						dispatch(
-							attributeData.removeIndex(attributeRelationsFilter, order)
-						);
+						dispatch(attributeData.removeIndex(attributeDataFilter, order));
 						return;
 					} else {
 						return dispatch(
@@ -503,7 +478,8 @@ function ensureDataAndRelations(
 								attributeRelationsFilter,
 								attributeRelationsCount,
 								spatialRelationsCount,
-								preloadSpatialDataSources
+								preloadSpatialDataSources,
+								attributeDataFilter
 							)
 						);
 					}
@@ -603,18 +579,28 @@ const hasSpatialOrAreaRelations = (
  * Entry function for requesting of loading new data. In first step are identified loaded indexes based on filters.
  * Next phase is request only data that are missing.
  * @param styleKey {string}
- * @param commonRelationsFilter {Object}
- * @param spatialFilter {Object}
+ * @param commonRelationsFilter {Object} Filter object with modifiers, layerTemplateKey or areaTreeLevelKey. It defines spatialRealations and after add styleKey is used as a attributeRelations filter.
+ * @param {Object} spatialFilter Spatial defined filter of level and its tiles
+ * @param attributeDataFilterExtension {Object} Filter object with optional values for attributeFilter, dataSourceKeys and featureKeys. After merge with attributeRelationsFilter it defines filter for attributeData
  * @return {function}
  */
-function ensure(styleKey, commonRelationsFilter, spatialFilter) {
+function ensure(
+	styleKey,
+	commonRelationsFilter,
+	spatialFilter,
+	attributeDataFilterExtension
+) {
 	return (dispatch, getState) => {
 		// Filter params - see Panther docs: Code/API/Data endpoint
 		const {areaTreeLevelKey, layerTemplateKey} = commonRelationsFilter;
 		const spatialRelationsFilter = commonRelationsFilter;
 		const attributeRelationsFilter = {...commonRelationsFilter, styleKey};
+		const attributeDataFilter = {
+			...attributeRelationsFilter,
+			...attributeDataFilterExtension,
+		};
 
-		// select indexes
+		// Order for spatialData if null at the moment
 		const order = null;
 
 		const spatialDataIndex =
@@ -627,7 +613,7 @@ function ensure(styleKey, commonRelationsFilter, spatialFilter) {
 			Select.data.attributeData.getIndex(
 				getState(),
 				'spatialIndexes',
-				attributeRelationsFilter,
+				attributeDataFilter,
 				order
 			) || [];
 		const missingAttributesData = hasMissingAttributesData(
@@ -656,7 +642,8 @@ function ensure(styleKey, commonRelationsFilter, spatialFilter) {
 					styleKey,
 					order,
 					spatialRelationsFilter,
-					attributeRelationsFilter
+					attributeRelationsFilter,
+					attributeDataFilter
 				)
 			);
 		}
@@ -668,7 +655,8 @@ function ensure(styleKey, commonRelationsFilter, spatialFilter) {
 					styleKey,
 					order,
 					spatialRelationsFilter,
-					attributeRelationsFilter
+					attributeRelationsFilter,
+					attributeDataFilter
 				)
 			);
 		}
@@ -680,7 +668,8 @@ function ensure(styleKey, commonRelationsFilter, spatialFilter) {
 					styleKey,
 					order,
 					spatialRelationsFilter,
-					attributeRelationsFilter
+					attributeRelationsFilter,
+					attributeDataFilter
 				)
 			);
 		}
@@ -691,39 +680,34 @@ function ensure(styleKey, commonRelationsFilter, spatialFilter) {
  *
  * @param {string?} styleKey
  * @param {Object?} relations Pagination for relations.
- * @param {Array?} featureKeys Array of feature keys that should be loaded.
  * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
- * @param {Object?} attributeFilter Filter for requested attribute data.
  * @param {bool} loadGeometry Whether response should contain geometry
  * @param {bool} loadRelations Whether response should contain relations
- * @param {Array?} dataSourceKeys Another optional filter parameter. Possible to use insted of layerTemplateKey or areaTreeKey
  * @param {Array?} order
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Object} attributeRelationsFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  */
 function loadIndexedPage(
 	styleKey,
 	relations,
-	featureKeys,
 	spatialIndex,
 	spatialFilter,
-	attributeFilter,
 	loadGeometry,
 	loadRelations,
-	dataSourceKeys,
 	order,
 	spatialRelationsFilter,
-	attributeRelationsFilter
+	attributeRelationsFilter,
+	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/data/filtered';
-
 		const {
 			areaTreeLevelKey,
 			layerTemplateKey,
-			...modifiers
+			modifiers,
 		} = spatialRelationsFilter;
 		const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;
 
@@ -750,7 +734,7 @@ function loadIndexedPage(
 		const loadingTilesAttributes = spatialIndex?.tiles || spatialFilter.tiles;
 		dispatch(
 			attributeData.addLoadingSpatialIndex(
-				attributeRelationsFilter,
+				attributeDataFilter,
 				order,
 				spatialFilter.level,
 				loadingTilesAttributes
@@ -760,7 +744,7 @@ function loadIndexedPage(
 		// Create payload
 
 		const payload = {
-			modifiers,
+			...(modifiers && {modifiers}),
 
 			// which layer you want
 			...(layerTemplateKey && {layerTemplateKey}),
@@ -774,7 +758,9 @@ function loadIndexedPage(
 
 			data: {
 				// list of features you want
-				...(featureKeys && {featureKeys}),
+				...(attributeDataFilter?.featureKeys && {
+					featureKeys: attributeDataFilter.featureKeys,
+				}),
 
 				// which tiles you want (pseudo-pagination)
 				// spatialIndex: {
@@ -793,7 +779,9 @@ function loadIndexedPage(
 				//     },
 				//     ...
 				// },
-				...(attributeFilter && {attributeFilter}),
+				...(attributeDataFilter?.attributeFilter && {
+					attributeFilter: attributeDataFilter.attributeFilter,
+				}),
 
 				//request for geometry
 				geometry: !!loadGeometry,
@@ -802,7 +790,9 @@ function loadIndexedPage(
 				relations: !!loadRelations,
 
 				// use data source keys as filter or add them to filter
-				...(dataSourceKeys && {dataSourceKeys}),
+				...(attributeDataFilter?.dataSourceKeys && {
+					dataSourceKeys: attributeDataFilter.dataSourceKeys,
+				}),
 			},
 		};
 
@@ -857,7 +847,7 @@ function loadIndexedPage(
 								attributeData.receiveIndexed(
 									result.data.attributeData,
 									result.data.spatialData,
-									attributeRelationsFilter,
+									attributeDataFilter,
 									order,
 									changes
 								)

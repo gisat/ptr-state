@@ -496,10 +496,12 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 				activeMetadataKeys
 			);
 
+			const relationsFilter = {};
 			// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-			let relationsFilter = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			const modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
 				mergedMetadataKeys
 			);
+			relationsFilter.modifiers = modifiers;
 
 			// add layerTemplate od areaTreeLevelKey
 			if (layer.layerTemplateKey) {
@@ -508,6 +510,37 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 				relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
 			}
 			return relationsFilter;
+		} else {
+			return null;
+		}
+	},
+	recomputeSelectorOptions
+);
+
+/**
+ * @param layerState {Object}
+ */
+const getAttributeDataFilterFromLayerState = createRecomputeSelector(
+	layerState => {
+		const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
+			layerState
+		);
+		if (commonFilter) {
+			let attributeFilter = {...commonFilter};
+			const attributeDataFilterExtension = {
+				...(layerState?.options?.attributeFilter && {
+					attributeFilter: layerState.options.attributeFilter,
+				}),
+				...(layerState?.options?.dataSourceKeys && {
+					dataSourceKeys: layerState.options.dataSourceKeys,
+				}),
+				...(layerState?.options?.featureKeys && {
+					featureKeys: layerState.options.featureKeys,
+				}),
+				...(layerState?.styleKey && {styleKey: layerState.styleKey}),
+			};
+
+			return {...attributeFilter, ...attributeDataFilterExtension};
 		} else {
 			return null;
 		}
@@ -545,6 +578,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
  * @param mapKey {string} map unique identifier
  * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  */
 const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 	(
@@ -554,7 +588,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		attributeDataSourceKeyAttributeKeyPairs,
 		mapKey,
 		spatialRelationsFilter,
-		attributeRelationsFilter
+		attributeRelationsFilter,
+		attributeDataFilter
 	) => {
 		let {
 			attribution,
@@ -624,7 +659,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					spatialRelationsFilter,
 					attributeRelationsFilter,
 					attributeDataSourceKeyAttributeKeyPairs,
-					styleKey
+					styleKey,
+					attributeDataFilter
 				);
 			}
 
@@ -744,6 +780,9 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(
 					layerState
 				);
+				const attributeDataFilter = getAttributeDataFilterFromLayerState(
+					layerState
+				);
 				const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(
 					spatialRelationsFilter
 				);
@@ -760,7 +799,8 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 								attributeDataSourceKeyAttributeKeyPairs,
 								mapKey,
 								spatialRelationsFilter,
-								attributeRelationsFilter
+								attributeRelationsFilter,
+								attributeDataFilter
 							)
 						);
 					});

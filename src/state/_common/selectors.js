@@ -1042,10 +1042,12 @@ const getMergedModifiersInRequestFormat_recompute = createRecomputeSelector(
  */
 const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomputeSelector(
 	componentState => {
-		let relationsFilter = getMergedModifiersInRequestFormat_recompute(
+		const relationsFilter = {};
+		const modifiers = getMergedModifiersInRequestFormat_recompute(
 			componentState.metadataModifiers,
 			componentState.filterByActive
 		);
+		relationsFilter.modifiers = modifiers;
 
 		// add layerTemplate od areaTreeLevelKey
 		if (componentState.layerTemplateKey) {

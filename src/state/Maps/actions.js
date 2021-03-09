@@ -115,11 +115,10 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 }
 
 /**
- * @param activeKeys {Object} active metadata keys (such as activeApplicationKey, activeScopeKey etc.)
  * @param layerState {Object} layer definition
  * @param spatialFilter {{level: number}, {tiles: Array}}
  */
-function layerUse(layerState, spatialFilter, activeKeys) {
+function layerUse(layerState, spatialFilter) {
 	return (dispatch, getState) => {
 		const state = getState();
 		const styleKey = layerState.styleKey || null;
@@ -177,11 +176,17 @@ function layerUse(layerState, spatialFilter, activeKeys) {
 		if (layerTemplateKey || areaTreeLevelKey) {
 			let commonRelationsFilter = {};
 			if (areaTreeLevelKey) {
-				commonRelationsFilter = {...modifiersForRequest, areaTreeLevelKey};
+				commonRelationsFilter = {
+					...(modifiersForRequest && {modifiers: modifiersForRequest}),
+					areaTreeLevelKey,
+				};
 			}
 
 			if (layerTemplateKey) {
-				commonRelationsFilter = {...modifiersForRequest, layerTemplateKey};
+				commonRelationsFilter = {
+					...(modifiersForRequest && {modifiers: modifiersForRequest}),
+					layerTemplateKey,
+				};
 			}
 
 			if (layerTemplateKey) {
@@ -201,8 +206,25 @@ function layerUse(layerState, spatialFilter, activeKeys) {
 				}
 			}
 
+			const attributeDataFilterExtension = {
+				...(layerState?.options?.attributeFilter && {
+					attributeFilter: layerState.options.attributeFilter,
+				}),
+				...(layerState?.options?.dataSourceKeys && {
+					dataSourceKeys: layerState.options.dataSourceKeys,
+				}),
+				...(layerState?.options?.featureKeys && {
+					featureKeys: layerState.options.featureKeys,
+				}),
+			};
+
 			dispatch(
-				DataActions.ensure(styleKey, commonRelationsFilter, spatialFilter)
+				DataActions.ensure(
+					styleKey,
+					commonRelationsFilter,
+					spatialFilter,
+					attributeDataFilterExtension
+				)
 			);
 		}
 	};
