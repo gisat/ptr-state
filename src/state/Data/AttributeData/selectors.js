@@ -10,6 +10,8 @@ const getSubstate = state => state.data.attributeData;
 
 const getIndex = common.getIndexByPath(getSubstate);
 
+// Recompute observers ---------------------------------------------------------
+
 const getAllAsObjectObserver = createRecomputeObserver(
 	state => getSubstate(state).byDataSourceKey
 );
@@ -135,6 +137,7 @@ const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
 
 export default {
 	getAllAsObjectObserver,
+	getByDataSourceKeyObserver,
 	getIndex,
 	getIndex_recompute,
 	getIndexesObserver,
