@@ -1373,12 +1373,12 @@ describe('state/_common/selectors', function () {
 				},
 			},
 		};
-		const filter = {scopeKey: 'scopesKey'};
+		const filter = {scopeKey: 'filter'};
 		const order = 'asc';
 
 		const expectedResult = {
 			filter: {
-				scopeKey: 'scopesKey',
+				scopeKey: 'filter',
 			},
 			order: 'asc',
 			uses: [{start: 5, length: 3}],
@@ -1413,7 +1413,7 @@ describe('state/_common/selectors', function () {
 		const expectedResult = [
 			{
 				filter: {
-					scopeKey: 'scopesKey',
+					scopeKey: 'filter',
 				},
 				order: 'asc',
 				uses: [{start: 5, length: 3}],

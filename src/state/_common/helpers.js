@@ -2,11 +2,10 @@ import createCachedSelector from 're-reselect';
 import _ from 'lodash';
 
 /**
- * TODO tests
- * Returns all indexes that fits filter and order
- * @param {*} indexes
- * @param {*} filter
- * @param {*} order
+ * Return index for given filter and order
+ * @param indexes {Array} list of indexes
+ * @param filter {Object}
+ * @param order {Array}
  */
 const getIndex = createCachedSelector(
 	[
@@ -28,7 +27,7 @@ const getIndex = createCachedSelector(
 	return `${JSON.stringify(filter)}${JSON.stringify(order)}`;
 });
 
-// TODO Test
+// TODO check the usage if it makes sense
 function getUniqueIndexes(indexes) {
 	if (!_.isEmpty(indexes)) {
 		return indexes.reduce((uniqueIndexes, index) => {
@@ -174,6 +173,15 @@ function getUpdatedByDataSourceKey(currentByDataSourceKey, update = {}) {
 	return updated;
 }
 
+/**
+ * True, if index.filter object and index.order array are deeply equal to given filter and order
+ * @param index {Object} existing index
+ * @param index.filter {Object}
+ * @param index.order {Array}
+ * @param filter {Object}
+ * @param order {Array}
+ * @return {boolean}
+ */
 function isCorrespondingIndex(index, filter, order) {
 	return (
 		_.isEqual(index.filter || null, filter || null) &&
@@ -236,59 +244,74 @@ function itemFitFilter(filter, item) {
 	});
 }
 
+/**
+ * Merge stores active keys with filter by active and filter
+ * @param activeKeys {Object} {activeScopeKey: 'bbb', activePlaceKeys: ['ddd', 'eee'], ...}
+ * @param filterByActive {Object} {scope: true, place: true, ...}
+ * @param filter {Object} {scopeKey: 'aaa', placeKey: {in: ['fff']}, ...}
+ * @return {Object} merged object which looks like this {scopeKey: 'aaa', placeKey: {in: ['bbb', 'ccc']}, ...}
+ */
 function mergeFilters(activeKeys, filterByActive, filter) {
 	if (activeKeys && filterByActive) {
-		let fullFilter = {...filter};
+		let activeKeysFilter = {};
 		if (filterByActive.application) {
 			if (activeKeys.activeApplicationKey) {
-				fullFilter.applicationKey = activeKeys.activeApplicationKey;
+				activeKeysFilter.applicationKey = activeKeys.activeApplicationKey;
 			}
 		}
 		if (filterByActive.case) {
 			if (activeKeys.activeCaseKey) {
-				fullFilter.caseKey = activeKeys.activeCaseKey;
+				activeKeysFilter.caseKey = activeKeys.activeCaseKey;
 			} else if (activeKeys.activeCaseKeys) {
-				fullFilter.caseKey = {in: activeKeys.activeCaseKeys};
+				activeKeysFilter.caseKey = {in: activeKeys.activeCaseKeys};
 			}
 		}
 		if (filterByActive.scope) {
 			if (activeKeys.activeScopeKey) {
-				fullFilter.scopeKey = activeKeys.activeScopeKey;
+				activeKeysFilter.scopeKey = activeKeys.activeScopeKey;
 			}
 		}
-		// TODO add scenario, ...
+		if (filterByActive.scenario) {
+			if (activeKeys.activeScenarioKey) {
+				activeKeysFilter.scenarioKey = activeKeys.activeScenarioKey;
+			} else if (activeKeys.activeScenarioKeys) {
+				activeKeysFilter.scenarioKey = {in: activeKeys.activeScenarioKeys};
+			}
+		}
 		if (filterByActive.place) {
 			if (activeKeys.activePlaceKey) {
-				fullFilter.placeKey = activeKeys.activePlaceKey;
+				activeKeysFilter.placeKey = activeKeys.activePlaceKey;
 			} else if (activeKeys.activePlaceKeys) {
-				fullFilter.placeKey = {in: activeKeys.activePlaceKeys};
+				activeKeysFilter.placeKey = {in: activeKeys.activePlaceKeys};
 			}
 		}
 		if (filterByActive.period) {
 			if (activeKeys.activePeriodKey) {
-				fullFilter.periodKey = activeKeys.activePeriodKey;
+				activeKeysFilter.periodKey = activeKeys.activePeriodKey;
 			} else if (activeKeys.activePeriodKeys) {
-				fullFilter.periodKey = {in: activeKeys.activePeriodKeys};
+				activeKeysFilter.periodKey = {in: activeKeys.activePeriodKeys};
 			}
 		}
 		if (filterByActive.attribute) {
 			if (activeKeys.activeAttributeKey) {
-				fullFilter.attributeKey = activeKeys.activeAttributeKey;
+				activeKeysFilter.attributeKey = activeKeys.activeAttributeKey;
 			} else if (activeKeys.activeAttributeKeys) {
-				fullFilter.attributeKey = {in: activeKeys.activeAttributeKeys};
+				activeKeysFilter.attributeKey = {in: activeKeys.activeAttributeKeys};
 			}
 		}
 		if (filterByActive.layerTemplate) {
 			if (activeKeys.activeLayerTemplateKey) {
-				fullFilter.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+				activeKeysFilter.layerTemplateKey = activeKeys.activeLayerTemplateKey;
 			}
 		}
-		if (filterByActive.areaTreeLevelKey) {
+		if (filterByActive.areaTreeLevel) {
 			if (activeKeys.activeAreaTreeLevelKey) {
-				fullFilter.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+				activeKeysFilter.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
 			}
 		}
-		return _.isEmpty(fullFilter) ? null : fullFilter;
+
+		const finalFilter = {...activeKeysFilter, ...filter};
+		return _.isEmpty(finalFilter) ? null : finalFilter;
 	} else {
 		return filter;
 	}

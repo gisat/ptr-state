@@ -350,28 +350,10 @@ const useIndexed = (
 				)
 			);
 			let state = getState();
+			const activeKeys = commonSelectors.getAllActiveKeys(state);
+
 			let fullFilter = commonHelpers.mergeFilters(
-				{
-					activeApplicationKey: state.app.key,
-					activeAttributeKey: commonSelectors.getActiveKey(
-						state => state.attributes
-					)(state),
-					activeScopeKey: commonSelectors.getActiveKey(state => state.scopes)(
-						state
-					),
-					activePeriodKey: commonSelectors.getActiveKey(state => state.periods)(
-						state
-					),
-					activePeriodKeys: commonSelectors.getActiveKeys(
-						state => state.periods
-					)(state),
-					activePlaceKey: commonSelectors.getActiveKey(state => state.places)(
-						state
-					),
-					activePlaceKeys: commonSelectors.getActiveKeys(state => state.places)(
-						state
-					),
-				},
+				activeKeys,
 				filterByActive,
 				filter
 			);
