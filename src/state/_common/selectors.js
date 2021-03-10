@@ -176,25 +176,6 @@ const getByFilterOrder = getSubstate => {
 	);
 };
 
-const getBatchByFilterOrder = getSubstate => {
-	return createSelector(
-		[
-			getAllAsObject(getSubstate),
-			getIndexes(getSubstate),
-			(state, filter) => filter,
-			(state, filter, order) => order,
-		],
-		(models, indexes, filter, order) => {
-			if (models && indexes) {
-				const index = commonHelpers.getIndex(indexes, filter, order);
-				return modelsFromIndex2(models, index);
-			} else {
-				return null;
-			}
-		}
-	);
-};
-
 const getIndexed = getSubstate => {
 	//todo proper memoization && unify with old getIndexedPage etc.
 	return createCachedSelector(
@@ -1071,7 +1052,6 @@ export default {
 	getAllForActiveScope,
 
 	getByFilterOrder,
-	getBatchByFilterOrder,
 	getByKey,
 	getByKeysAsObject,
 	getByKeys,

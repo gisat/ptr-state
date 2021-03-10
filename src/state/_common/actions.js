@@ -373,66 +373,6 @@ const useIndexed = (
 	};
 };
 
-const useIndexedBatch = (
-	dataType,
-	actionTypes,
-	categoryPath = DEFAULT_CATEGORY_PATH
-) => {
-	return (
-		filterByActive,
-		filter,
-		order,
-		componentId,
-		key,
-		additionalParams
-	) => {
-		return (dispatch, getState) => {
-			dispatch(
-				actionUseIndexedBatchRegister(
-					actionTypes,
-					componentId,
-					filterByActive,
-					filter,
-					order
-				)
-			);
-			let state = getState();
-			let fullFilter = commonHelpers.mergeFilters(
-				{
-					activeApplicationKey: state.app.key,
-					activeScopeKey: commonSelectors.getActiveKey(state => state.scopes)(
-						state
-					),
-					activePeriodKey: commonSelectors.getActiveKey(state => state.periods)(
-						state
-					),
-					activePeriodKeys: commonSelectors.getActiveKeys(
-						state => state.periods
-					)(state),
-					activePlaceKey: commonSelectors.getActiveKey(state => state.places)(
-						state
-					),
-					activePlaceKeys: commonSelectors.getActiveKeys(state => state.places)(
-						state
-					),
-				},
-				filterByActive,
-				filter
-			);
-			return dispatch(
-				ensureIndexedBatch(
-					dataType,
-					fullFilter,
-					order,
-					actionTypes,
-					categoryPath,
-					key,
-					additionalParams
-				)
-			);
-		};
-	};
-};
 /**
  * If not refresh data, call clearIndex to invalidate data.
  */
@@ -487,33 +427,6 @@ function receiveIndexed(actionTypes, result, dataType, filter, order, start) {
 				start,
 				result.data[dataType],
 				result.changes && result.changes[dataType]
-			)
-		);
-	};
-}
-
-function receiveIndexedBatch(
-	actionTypes,
-	result,
-	dataType,
-	filter,
-	order,
-	key
-) {
-	return dispatch => {
-		// add data to store
-		if (result.data[dataType].length) {
-			dispatch(actionAddBatch(actionTypes, result.data[dataType], key));
-		}
-
-		// add to index
-		dispatch(
-			actionAddBatchIndex(
-				actionTypes,
-				filter,
-				order,
-				result.data[dataType],
-				key
 			)
 		);
 	};
@@ -617,63 +530,6 @@ function create(
 					dispatch(actionGeneralError(error));
 				});
 		};
-	};
-}
-
-function loadAll(dataType, actionTypes, categoryPath = DEFAULT_CATEGORY_PATH) {
-	return (dispatch, getState) => {
-		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE =
-			localConfig.requestPageSize || configDefaults.requestPageSize;
-		const apiPath = getAPIPath(categoryPath, dataType);
-		let payload = {
-			limit: PAGE_SIZE,
-		};
-		return request(localConfig, apiPath, 'POST', null, payload)
-			.then(result => {
-				if (
-					(result.errors && result.errors[dataType]) ||
-					(result.data && !result.data[dataType])
-				) {
-					dispatch(
-						actionGeneralError(result.errors[dataType] || new Error('no data'))
-					);
-				} else {
-					if (result.total <= PAGE_SIZE) {
-						// everything already loaded
-						dispatch(actionAdd(actionTypes, result.data[dataType]));
-					} else {
-						// load remaining pages
-						let promises = [];
-						let remainingPageCount = Math.ceil(
-							(result.total - PAGE_SIZE) / PAGE_SIZE
-						);
-						for (let i = 0; i < remainingPageCount; i++) {
-							let pagePayload = {
-								offset: (i + 1) * PAGE_SIZE,
-								limit: PAGE_SIZE,
-							};
-							promises.push(
-								request(localConfig, apiPath, 'POST', null, pagePayload)
-							); //todo what if one fails?
-						}
-						Promise.all(promises).then(results => {
-							let remainingData = _.flatten(
-								results.map(res => res.data[dataType])
-							);
-							dispatch(
-								actionAdd(actionTypes, [
-									...result.data[dataType],
-									...remainingData,
-								])
-							);
-						});
-					}
-				}
-			})
-			.catch(error => {
-				dispatch(actionGeneralError(error));
-			});
 	};
 }
 
@@ -839,36 +695,6 @@ function ensureIndexed(
 	};
 }
 
-function ensureIndexedBatch(
-	dataType,
-	filter,
-	order,
-	actionTypes,
-	categoryPath = DEFAULT_CATEGORY_PATH,
-	key,
-	additionalParams
-) {
-	return dispatch => {
-		return dispatch(
-			loadIndexedBatch(
-				dataType,
-				filter,
-				order,
-				actionTypes,
-				categoryPath,
-				key,
-				additionalParams
-			)
-		)
-			.then(response => {
-				//success
-			})
-			.catch(err => {
-				throw new Error(`_common/actions#ensure: ${err}`);
-			});
-	};
-}
-
 function loadKeysPage(
 	dataType,
 	actionTypes,
@@ -947,119 +773,6 @@ function loadIndexedPage(
 			.catch(error => {
 				dispatch(actionGeneralError(error));
 				return error; //todo do we need to return this
-			});
-	};
-}
-
-function loadIndexedBatch(
-	dataType,
-	filter,
-	order,
-	actionTypes,
-	categoryPath = DEFAULT_CATEGORY_PATH,
-	key,
-	additionalParams
-) {
-	return (dispatch, getState) => {
-		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const apiPath = getAPIPath(categoryPath, dataType);
-
-		let payload = {
-			filter: {...filter},
-			order: order,
-		};
-
-		if (additionalParams) {
-			payload = {...payload, ...additionalParams};
-		}
-
-		return request(localConfig, apiPath, 'POST', null, payload)
-			.then(result => {
-				if (
-					(result.errors && result.errors[dataType]) ||
-					(result.data && !result.data[dataType])
-				) {
-					throw new Error(result.errors[dataType] || 'no data');
-				} else {
-					dispatch(
-						receiveIndexedBatch(
-							actionTypes,
-							result,
-							dataType,
-							filter,
-							order,
-							key
-						)
-					);
-				}
-			})
-			.catch(error => {
-				dispatch(actionGeneralError(error));
-				return error;
-			});
-	};
-}
-
-function loadFiltered(
-	dataType,
-	actionTypes,
-	filter,
-	categoryPath = DEFAULT_CATEGORY_PATH
-) {
-	return (dispatch, getState) => {
-		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
-		const PAGE_SIZE =
-			localConfig.requestPageSize || configDefaults.requestPageSize;
-		const apiPath = getAPIPath(categoryPath, dataType);
-		const payload = {
-			filter: filter,
-			limit: PAGE_SIZE,
-		};
-		return request(localConfig, apiPath, 'POST', null, payload)
-			.then(result => {
-				if (
-					(result.errors && result.errors[dataType]) ||
-					(result.data && !result.data[dataType])
-				) {
-					dispatch(
-						actionGeneralError(result.errors[dataType] || new Error('no data'))
-					);
-				} else {
-					if (result.total <= PAGE_SIZE) {
-						// everything already loaded
-						return dispatch(actionAdd(actionTypes, result.data[dataType]));
-					} else {
-						// load remaining pages
-						let promises = [];
-						let remainingPageCount = Math.ceil(
-							(result.total - PAGE_SIZE) / PAGE_SIZE
-						);
-						for (let i = 0; i < remainingPageCount; i++) {
-							let pagePayload = {
-								filter: filter,
-								offset: (i + 1) * PAGE_SIZE,
-								limit: PAGE_SIZE,
-							};
-							promises.push(
-								request(localConfig, apiPath, 'POST', null, pagePayload)
-							); //todo what if one fails?
-						}
-						return Promise.all(promises).then(results => {
-							let remainingData = _.flatten(
-								results.map(res => res.data[dataType])
-							);
-							dispatch(
-								actionAdd(actionTypes, [
-									...result.data[dataType],
-									...remainingData,
-								])
-							);
-						});
-					}
-				}
-			})
-			.catch(error => {
-				dispatch(actionGeneralError(error));
 			});
 	};
 }
@@ -1312,15 +1025,6 @@ function actionAdd(actionTypes, data, filter) {
 	return action(actionTypes, 'ADD', {data, filter});
 }
 
-function actionAddBatch(actionTypes, data, key) {
-	if (!_.isArray(data)) data = [data];
-	const payload = {
-		data,
-		key, //FIXME - key should be union of filter and key?
-	};
-	return action(actionTypes, 'ADD_BATCH', payload);
-}
-
 function actionAddUnreceivedKeys(actionTypes, keys) {
 	if (!_.isArray(keys)) keys = [keys];
 	return action(actionTypes, 'ADD_UNRECEIVED', {keys});
@@ -1346,11 +1050,6 @@ function actionAddIndex(
 		...(limit && {limit: limit}),
 	});
 }
-
-function actionAddBatchIndex(actionTypes, filter, order, data, key) {
-	return action(actionTypes, 'INDEX.ADD_BATCH', {filter, order, data, key});
-}
-
 /**
  * Useful for invalidate data before refresh indexes
  */
@@ -1409,31 +1108,12 @@ function actionUseIndexedRegister(
 	});
 }
 
-function actionUseIndexedBatchRegister(
-	actionTypes,
-	componentId,
-	filterByActive,
-	filter,
-	order
-) {
-	return action(actionTypes, 'USE.INDEXED_BATCH.REGISTER', {
-		componentId,
-		filterByActive,
-		filter,
-		order,
-	});
-}
-
 function actionUseIndexedClear(actionTypes, componentId) {
 	return action(actionTypes, 'USE.INDEXED.CLEAR', {componentId});
 }
 
 function actionUseIndexedClearAll(actionTypes) {
 	return action(actionTypes, 'USE.INDEXED.CLEAR_ALL');
-}
-
-function actionSetInitial(actionTypes) {
-	return action(actionTypes, 'SET_INITIAL');
 }
 
 function actionUpdateStore(actionTypes, data) {
@@ -1472,8 +1152,6 @@ const getCreatePayload = (datatype, key = utils.uuid(), applicationKey) => {
 
 export default {
 	add: creator(actionAdd),
-	addBatch: creator(actionAddBatch),
-	addBatchIndex: creator(actionAddBatchIndex),
 	action,
 	addIndex: creator(actionAddIndex),
 	actionGeneralError,
@@ -1485,9 +1163,6 @@ export default {
 	ensureIndexed,
 	ensureIndexesWithFilterByActive,
 	ensureKeys,
-	loadAll,
-	loadFiltered,
-	useIndexedBatch,
 	loadIndexedPage,
 	loadKeysPage,
 	setActiveKey: creator(actionSetActiveKey),
@@ -1510,19 +1185,6 @@ export default {
 	useIndexedRegister: actionUseIndexedRegister,
 	useIndexedClear: creator(actionUseIndexedClear),
 	useIndexedClearAll: creator(actionUseIndexedClearAll),
-	setInitial: creator(actionSetInitial),
 	actionDataSetOutdated,
 	actionSetActiveKey,
 };
-
-// useIndexedBatch
-// ensureIndexedBatch
-// actionUseIndexedBatchRegister
-// loadIndexedBatch
-// receiveIndexedBatch
-//actionAddBatchIndex
-
-//reducer
-// - USE.INDEXED_BATCH.REGISTER
-// - INDEX.ADD_BATCH
-// - ADD_BATCH
