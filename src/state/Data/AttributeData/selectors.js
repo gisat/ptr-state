@@ -1,4 +1,9 @@
 import {
+	isEmpty as _isEmpty,
+	forEach as _forEach,
+	forIn as _forIn,
+} from 'lodash';
+import {
 	createObserver as createRecomputeObserver,
 	createSelector as createRecomputeSelector,
 } from '@jvitela/recompute';
@@ -39,12 +44,12 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
  */
 const getIndex_recompute = createRecomputeSelector((filter, order) => {
 	const indexes = getIndexesObserver();
-	if (indexes) {
+	if (indexes && !_isEmpty(indexes)) {
 		return commonHelpers.getIndex(indexes, filter, order);
 	} else {
 		return null;
 	}
-});
+}, recomputeSelectorOptions);
 
 /**
  * It returns whole spatial index for given filter & order
@@ -54,7 +59,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
  */
 const getSpatialIndex_recompute = createRecomputeSelector((filter, order) => {
 	const indexes = getSpatialIndexesObserver();
-	if (indexes) {
+	if (indexes && !_isEmpty(indexes)) {
 		return commonHelpers.getIndex(indexes, filter, order);
 	} else {
 		return null;
@@ -69,14 +74,14 @@ const getSpatialIndex_recompute = createRecomputeSelector((filter, order) => {
 const getDataByDataSourceKeys = createRecomputeSelector(dataSourceKeys => {
 	if (dataSourceKeys) {
 		let data = {};
-		_.forEach(dataSourceKeys, key => {
+		_forEach(dataSourceKeys, key => {
 			const attributes = getByDataSourceKeyObserver(key);
-			if (attributes && !_.isEmpty(attributes)) {
+			if (attributes && !_isEmpty(attributes)) {
 				data[key] = attributes;
 			}
 		});
 
-		return !_.isEmpty(data) ? data : null;
+		return !_isEmpty(data) ? data : null;
 	} else {
 		return null;
 	}
@@ -97,14 +102,16 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector(
 			const dataByDataSourceKey = getDataByDataSourceKeys(dataSourceKeys);
 			if (dataByDataSourceKey) {
 				let attributes = {};
-				_.forIn(dataByDataSourceKey, (dataSourceData, dataSourceKey) => {
-					const value = dataSourceData[featureKey];
-					const attributeKey =
-						attributeDataSourceKeyAttributeKeyPairs[dataSourceKey];
-					attributes[attributeKey] = value;
+				_forIn(dataByDataSourceKey, (dataSourceData, dataSourceKey) => {
+					if (dataSourceData.hasOwnProperty(featureKey)) {
+						const value = dataSourceData[featureKey];
+						const attributeKey =
+							attributeDataSourceKeyAttributeKeyPairs[dataSourceKey];
+						attributes[attributeKey] = value;
+					}
 				});
 
-				return !_.isEmpty(attributes) ? attributes : null;
+				return !_isEmpty(attributes) ? attributes : null;
 			} else {
 				return null;
 			}
@@ -125,7 +132,7 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector(
 const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
 	(filter, level, tile) => {
 		const index = getSpatialIndex_recompute(filter, null);
-		if (index?.index) {
+		if (index?.index && !_isEmpty(index)) {
 			const featureKeysByDataSourceKeys = index.index[level]?.[tile];
 			return featureKeysByDataSourceKeys || null;
 		} else {
@@ -142,6 +149,7 @@ export default {
 	getIndex_recompute,
 	getIndexesObserver,
 	getSpatialIndex_recompute,
+	getSpatialIndexesObserver,
 	getDataByDataSourceKeys,
 	getAttributesByDataSourceKeysForFeatureKey,
 	getSpatiallyIndexedFeatureKeysByDataSourceKeys,

@@ -48,11 +48,6 @@ const useKeysClear = common.useKeysClear(ActionTypes.ATTRIBUTES);
 const updateStateFromView = common.updateSubstateFromView(
 	ActionTypes.ATTRIBUTES
 );
-const useIndexedBatch = common.useIndexedBatch(
-	'attributes',
-	ActionTypes.ATTRIBUTES,
-	'data'
-);
 
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
@@ -67,14 +62,6 @@ const setActiveKeysAndEnsureDependencies = keys => {
 		dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
 	};
 };
-
-function loadAttributeData(filter, componentId) {
-	return (dispatch, getState) => {
-		return dispatch(
-			useIndexedBatch(null, filter, null, componentId, 'attributeDataSourceKey')
-		);
-	};
-}
 
 // ============ export ===========
 
@@ -95,7 +82,4 @@ export default {
 	useIndexedClear,
 	useKeys,
 	useKeysClear,
-	useIndexedBatch,
-
-	loadAttributeData,
 };

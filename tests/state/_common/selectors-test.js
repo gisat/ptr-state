@@ -437,72 +437,6 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	describe('getBatchByFilterOrder', function () {
-		const tests = [
-			{
-				name: 'empty models',
-				state: {
-					sub: {
-						byKey: {},
-						indexes: [
-							{filter: 'fil', order: 'desc'},
-							{
-								filter: {scopeKey: 'scopeK'},
-								order: 'asc',
-								count: 4,
-								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
-							},
-						],
-					},
-				},
-				expectedResult: [null, null, null, null],
-			},
-			{
-				name: 'empty indexes',
-				state: {
-					sub: {
-						byKey: {k1: {n: 1}, k2: {n: 2}},
-						indexes: [],
-					},
-				},
-				expectedResult: null,
-			},
-			{
-				name: 'some',
-				state: {
-					sub: {
-						byKey: {k1: {n: 1}, k2: {n: 2}},
-						indexes: [
-							{filter: 'fil', order: 'desc'},
-							{
-								filter: {scopeKey: 'scopeK'},
-								order: 'asc',
-								count: 4,
-								index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
-							},
-						],
-					},
-				},
-				expectedResult: [null, {n: 1}, {n: 2}, null],
-			},
-		];
-		const filter = {scopeKey: 'scopeK'};
-		const order = 'asc';
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getBatchByFilterOrder(getSubState)(
-						test.state,
-						filter,
-						order
-					),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
 	describe('getByKey', function () {
 		const tests = [
 			{
@@ -1373,12 +1307,12 @@ describe('state/_common/selectors', function () {
 				},
 			},
 		};
-		const filter = {scopeKey: 'scopesKey'};
+		const filter = {scopeKey: 'filter'};
 		const order = 'asc';
 
 		const expectedResult = {
 			filter: {
-				scopeKey: 'scopesKey',
+				scopeKey: 'filter',
 			},
 			order: 'asc',
 			uses: [{start: 5, length: 3}],
@@ -1413,7 +1347,7 @@ describe('state/_common/selectors', function () {
 		const expectedResult = [
 			{
 				filter: {
-					scopeKey: 'scopesKey',
+					scopeKey: 'filter',
 				},
 				order: 'asc',
 				uses: [{start: 5, length: 3}],

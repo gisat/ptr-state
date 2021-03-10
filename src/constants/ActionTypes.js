@@ -1,8 +1,6 @@
 import {utils} from '@gisatcz/ptr-utils';
 
 export default utils.deepKeyMirror({
-	INITIALIZE: 'INITIALIZE',
-
 	APP: {
 		SET_KEY: null,
 		SET_BASE_URL: null,
@@ -100,7 +98,6 @@ export default utils.deepKeyMirror({
 		},
 		INDEX: {
 			ADD: null,
-			ADD_BATCH: null,
 			CLEAR_ALL: null,
 			CLEAR_INDEX: null,
 		},
@@ -118,9 +115,6 @@ export default utils.deepKeyMirror({
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null,
-			},
-			INDEXED_BATCH: {
 				REGISTER: null,
 			},
 		},
@@ -312,6 +306,40 @@ export default utils.deepKeyMirror({
 		},
 	},
 
+	LAYER_TREES: {
+		ADD: null,
+		ADD_UNRECEIVED: null,
+		DELETE: null,
+		MARK_DELETED: null,
+		EDITED: {
+			REMOVE: null,
+			REMOVE_PROPERTY: null,
+			UPDATE: null,
+		},
+		ENSURE: {
+			ERROR: null,
+		},
+		INDEX: {
+			ADD: null,
+			CLEAR_INDEX: null,
+			CLEAR_ALL: null,
+		},
+		LOAD: {
+			ERROR: null,
+			REQUEST: null,
+		},
+		USE: {
+			INDEXED: {
+				CLEAR: null,
+				REGISTER: null,
+			},
+			KEYS: {
+				CLEAR: null,
+				REGISTER: null,
+			},
+		},
+	},
+
 	MAPS: {
 		SET: {
 			REMOVE_MAP: null,
@@ -416,8 +444,6 @@ export default utils.deepKeyMirror({
 			},
 		},
 	},
-
-	REDIRECT_TO_VIEW: 'REDIRECT_TO_VIEW',
 
 	SCENARIOS: {
 		ADD: null,
@@ -607,40 +633,6 @@ export default utils.deepKeyMirror({
 		INDEX: {
 			ADD: null,
 			CLEAR_ALL: null,
-		},
-		USE: {
-			INDEXED: {
-				CLEAR: null,
-				REGISTER: null,
-			},
-			KEYS: {
-				CLEAR: null,
-				REGISTER: null,
-			},
-		},
-	},
-
-	LAYER_TREES: {
-		ADD: null,
-		ADD_UNRECEIVED: null,
-		DELETE: null,
-		MARK_DELETED: null,
-		EDITED: {
-			REMOVE: null,
-			REMOVE_PROPERTY: null,
-			UPDATE: null,
-		},
-		ENSURE: {
-			ERROR: null,
-		},
-		INDEX: {
-			ADD: null,
-			CLEAR_INDEX: null,
-			CLEAR_ALL: null,
-		},
-		LOAD: {
-			ERROR: null,
-			REQUEST: null,
 		},
 		USE: {
 			INDEXED: {

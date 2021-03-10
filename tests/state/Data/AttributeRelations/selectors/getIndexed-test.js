@@ -30,6 +30,12 @@ describe('state/Data/AttributeRelations/selectors/getIndexed', function () {
 						count: 3,
 						index: {1: true, 2: 'relation1', 3: false},
 					},
+					{
+						filter: {
+							scopeKey: 'america',
+						},
+						index: {},
+					},
 				],
 			},
 		},
@@ -69,6 +75,13 @@ describe('state/Data/AttributeRelations/selectors/getIndexed', function () {
 
 		const filter = {
 			scopeKey: 'europe',
+		};
+		assert.isNull(selectors.getIndexed(filter));
+	});
+
+	it('Should select null, if no data indexed yet', function () {
+		const filter = {
+			scopeKey: 'america',
 		};
 		assert.isNull(selectors.getIndexed(filter));
 	});
