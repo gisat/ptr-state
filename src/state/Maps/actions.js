@@ -191,7 +191,7 @@ function layerUse(layerState, spatialFilter) {
 
 			if (layerTemplateKey) {
 				const order = null;
-				const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(
+				const spatialDataSources = Select.data.spatialDataSources.getIndexed(
 					state,
 					commonRelationsFilter,
 					order
