@@ -10,7 +10,7 @@ const getSubstate = state => state.data.spatialData;
 
 const getIndex = common.getIndex(getSubstate);
 
-const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
+const getIndexesObserver = createRecomputeObserver(state =>
 	common.getIndexes(getSubstate)(state)
 );
 
@@ -30,7 +30,7 @@ const getByDataSourceKeyObserver = createRecomputeObserver((state, key) => {
  * @return {Object} index
  */
 const getIndex_recompute = createRecomputeSelector((filter, order) => {
-	const indexes = getIndexesObserver(getSubstate);
+	const indexes = getIndexesObserver();
 	if (indexes) {
 		return commonHelpers.getIndex(indexes, filter, order);
 	} else {
@@ -47,10 +47,10 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
  */
 const getIndexedFeatureKeys = createRecomputeSelector(
 	(filter, level, tile, dataSourceKey) => {
-		const index = getIndex_recompute(filter, null);
-		if (index?.index) {
-			const featureKeys = index.index[level]?.[tile]?.[dataSourceKey];
-			return featureKeys?.length ? featureKeys : null;
+		if (level && tile && dataSourceKey) {
+			const index = getIndex_recompute(filter, null);
+			const featureKeys = index?.index[level]?.[tile]?.[dataSourceKey];
+			return featureKeys && featureKeys.length ? featureKeys : null;
 		} else {
 			return null;
 		}
@@ -61,5 +61,7 @@ const getIndexedFeatureKeys = createRecomputeSelector(
 export default {
 	getByDataSourceKeyObserver,
 	getIndex,
+	getIndex_recompute,
+	getIndexesObserver,
 	getIndexedFeatureKeys,
 };
