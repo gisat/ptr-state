@@ -1,3 +1,4 @@
+import {configDefaults} from '@gisatcz/ptr-core';
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';
 import attributeData from './AttributeData/actions';
@@ -14,11 +15,12 @@ import {TILED_VECTOR_LAYER_TYPES} from './constants';
 
 const DEFAULT_RELATIONS_PAGE = {
 	offset: 0,
-	limit: 100,
+	limit: configDefaults.requestPageSize,
 };
 
 /**
  * Calculates how many page of relations is missing.
+ * It assume that one page of size PAGE_SIZE was loaded.
  * @param {Number} attributeRelationsCount Wanted attributeRelations items
  * @param {Number} spatialRelationsCount Wanted spatialRelations items
  * @param {Number} PAGE_SIZE How many items fit to one page
@@ -118,7 +120,7 @@ function loadMissingRelationsAndData(
 		//
 		//load rest of tiles
 		//
-		const remainingTilesPageCount = spatialFilter.tiles.length;
+		const remainingTilesPageCount = spatialFilter?.tiles?.length || 0;
 
 		//first tile was loaded before loadMissingRelationsAndData first request
 		for (let i = tilesPagination + 1; i < remainingTilesPageCount; i++) {
@@ -145,36 +147,39 @@ function loadMissingRelationsAndData(
 				)
 			);
 		}
+		if (promises.length > 0) {
+			return Promise.all(promises).then((response = []) => {
+				// All relations are loaded at this moment.
+				// Check if all spatialDataSources relations from response and preloadedSpatialDataSources are type of "unsupported" like raster/wms/wmts.
+				// If all spatialDataSources are unsupported, then received data are empty and indexes needs to be removed.
+				// If only some of spatialDataSources relations are unsupported, then loading status on index will be replaced by data.
+				const spatialDataSourcesTypes = _.flattenDeep(
+					response.map(r =>
+						r?.data?.spatialDataSources?.map(sds => ({
+							type: sds.data.type,
+							key: sds.key,
+						}))
+					)
+				);
+				const spatialDataSourcesPairs = [
+					...spatialDataSourcesTypes,
+					...preloadedSpatialDataSources,
+				];
+				const allSourcesAreUnsupported = spatialDataSourcesPairs.every(
+					ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.type)
+				);
 
-		return Promise.all(promises).then((response = []) => {
-			// All relations are loaded at this moment.
-			// Check if all spatialDataSources relations from response and preloadedSpatialDataSources are type of "unsupported" like raster/wms/wmts.
-			// If all spatialDataSources are unsupported, then received data are empty and indexes needs to be removed.
-			// If only some of spatialDataSources relations are unsupported, then loading status on index will be replaced by data.
-			const spatialDataSourcesTypes = _.flattenDeep(
-				response.map(r =>
-					r?.data?.spatialDataSources?.map(sds => ({
-						type: sds.data.type,
-						key: sds.key,
-					}))
-				)
-			);
-			const spatialDataSourcesPairs = [
-				...spatialDataSourcesTypes,
-				...preloadedSpatialDataSources,
-			];
-			const allSourcesAreUnsupported = spatialDataSourcesPairs.every(
-				ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.type)
-			);
-
-			// Check if all of returned spatialDataSources are unsupported type.
-			// Indexes for unsupported layers can be cleared.
-			if (allSourcesAreUnsupported) {
-				// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
-				dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
-				dispatch(attributeData.removeIndex(attributeDataFilter, order));
-			}
-		});
+				// Check if all of returned spatialDataSources are unsupported type.
+				// Indexes for unsupported layers can be cleared.
+				if (allSourcesAreUnsupported) {
+					// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
+					dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
+					dispatch(attributeData.removeIndex(attributeDataFilter, order));
+				}
+			});
+		} else {
+			return Promise.resolve();
+		}
 	};
 }
 
@@ -445,6 +450,8 @@ function ensureDataAndRelations(
 						throw response;
 					}
 
+					//FIXME
+
 					const attributeRelationsCount = response.total.attributeRelations;
 					const spatialRelationsCount = response.total.spatialRelations;
 
@@ -455,10 +462,7 @@ function ensureDataAndRelations(
 					);
 
 					const spatialDataSources = response?.data?.spatialDataSources || [];
-					const preloadSpatialDataSources = spatialDataSources.map(sds => ({
-						type: sds.data.type,
-						key: sds.key,
-					}));
+
 					const allSourcesAreUnsupported = spatialDataSources.every(
 						ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.data?.type)
 					);
@@ -472,6 +476,10 @@ function ensureDataAndRelations(
 						dispatch(attributeData.removeIndex(attributeDataFilter, order));
 						return;
 					} else {
+						const preloadSpatialDataSources = spatialDataSources.map(sds => ({
+							type: sds.data.type,
+							key: sds.key,
+						}));
 						return dispatch(
 							loadMissingRelationsAndData(
 								loadGeometry,
@@ -681,7 +689,269 @@ function ensure(
 }
 
 /**
- *
+ * Save result data to related stores.
+ * If data are presented, then save them to attributeRelations, attributeDataSources, attributeData, spatialRelations, spatialDataSources, spatialData.
+ * @param {Object} result result data from backend data endpoind
+ * @param {bool} loadGeometry Whether response should contain geometry
+ * @param {bool} loadRelations Whether response should contain relations
+ * @param {Array?} order
+ * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {Object} attributeRelationsFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param {Object} start
+ */
+function processResult(
+	result,
+	loadGeometry,
+	loadRelations,
+	order,
+	spatialRelationsFilter,
+	attributeRelationsFilter,
+	attributeDataFilter,
+	start
+) {
+	return (dispatch, getState) => {
+		////
+		// Attributes
+		////
+		if (
+			!!loadRelations &&
+			result.data.attributeRelations &&
+			!_.isEmpty(result.data.attributeRelations)
+		) {
+			const changes = null;
+			dispatch(
+				attributeRelations.receiveIndexed(
+					result.data.attributeRelations,
+					attributeRelationsFilter,
+					order,
+					start,
+					result.total.attributeRelations,
+					changes
+				)
+			);
+		}
+
+		if (
+			!!loadRelations &&
+			result.data.attributeDataSources &&
+			!_.isEmpty(result.data.attributeDataSources)
+		) {
+			const changes = null;
+			dispatch(
+				attributeDataSources.receiveIndexed(
+					result.data.attributeDataSources,
+					attributeRelationsFilter,
+					order,
+					start,
+					result.total.attributeRelations,
+					changes
+				)
+			);
+		}
+
+		if (result.data.spatialData && result.data.attributeData) {
+			const changes = null;
+			dispatch(
+				attributeData.receiveIndexed(
+					result.data.attributeData,
+					result.data.spatialData,
+					attributeDataFilter,
+					order,
+					changes
+				)
+			);
+		}
+
+		////
+		// Spatial data
+		////
+		if (
+			!!loadRelations &&
+			result.data.spatialRelations &&
+			!_.isEmpty(result.data.spatialRelations)
+		) {
+			const changes = null;
+			dispatch(
+				spatialRelations.receiveIndexed(
+					result.data.spatialRelations,
+					spatialRelationsFilter,
+					order,
+					start,
+					result.total.spatialRelations,
+					changes
+				)
+			);
+		}
+
+		if (
+			!!loadRelations &&
+			result.data.spatialDataSources &&
+			!_.isEmpty(result.data.spatialDataSources)
+		) {
+			const changes = null;
+			dispatch(
+				spatialDataSources.receiveIndexed(
+					result.data.spatialDataSources,
+					spatialRelationsFilter,
+					order,
+					start,
+					result.total.spatialRelations,
+					changes
+				)
+			);
+		}
+
+		if (!!loadGeometry) {
+			// Add data even if data are empty.
+			// Override loading indicator in state index
+			const changes = null;
+			dispatch(
+				spatialData.receiveIndexed(
+					result.data.spatialData,
+					spatialRelationsFilter,
+					order,
+					changes
+				)
+			);
+		}
+	};
+}
+
+/**
+ * Create request payload for data endpoint
+ * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {string?} styleKey
+ * @param {Object?} relations Pagination for relations.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
+ * @param {bool} loadGeometry Whether response should contain geometry
+ * @param {bool} loadRelations Whether response should contain relations
+ * @param {Object} spatialFilter Spatial defined filter of level and its tiles
+ * @returns
+ */
+function composeDataEndpointPayload(
+	spatialRelationsFilter,
+	styleKey,
+	relations,
+	attributeDataFilter,
+	spatialIndex,
+	loadGeometry,
+	loadRelations,
+	spatialFilter
+) {
+	const {areaTreeLevelKey, layerTemplateKey, modifiers} =
+		spatialRelationsFilter || {};
+
+	// Create payload
+	const payload = {
+		...(modifiers && {modifiers}),
+
+		// which layer you want
+		...(layerTemplateKey && {layerTemplateKey}),
+		...(areaTreeLevelKey && {areaTreeLevelKey}),
+
+		// get attributes from style
+		...(styleKey && {styleKey}),
+
+		// pagination for relations (& data sources)
+		relations,
+
+		data: {
+			// list of features you want
+			...(attributeDataFilter?.featureKeys && {
+				featureKeys: attributeDataFilter.featureKeys,
+			}),
+
+			// which tiles you want (pseudo-pagination)
+			// spatialIndex: {
+			//     tiles: [[lon, lat], ...],
+			// },
+			...(spatialIndex && {spatialIndex}),
+
+			// extent
+			spatialFilter,
+
+			// filter features by attribute value
+			// attributeFilter: {
+			//     'attribute-uuid': "blue",
+			//     'attribute-uuid': {
+			//         in: [12, 13]
+			//     },
+			//     ...
+			// },
+			...(attributeDataFilter?.attributeFilter && {
+				attributeFilter: attributeDataFilter.attributeFilter,
+			}),
+
+			//request for geometry
+			geometry: !!loadGeometry,
+
+			//request for relations
+			relations: !!loadRelations,
+
+			// use data source keys as filter or add them to filter
+			...(attributeDataFilter?.dataSourceKeys && {
+				dataSourceKeys: attributeDataFilter.dataSourceKeys,
+			}),
+		},
+	};
+	return payload;
+}
+
+/**
+ * Set loading status to spatialData and attributeData stores to related indexes, level and tiles.
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
+ * @param {Object} spatialFilter Spatial defined filter of level and its tiles
+ * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
+ * @param {Array?} order
+ * @param {bool} loadGeometry Whether response should contain geometry
+ */
+function setLoading(
+	attributeDataFilter,
+	spatialIndex,
+	spatialFilter,
+	spatialRelationsFilter,
+	order,
+	loadGeometry
+) {
+	return (dispatch, getState) => {
+		const loadingTilesGeometry =
+			spatialIndex?.tiles || spatialFilter?.tiles || [];
+
+		////
+		// Spatial
+		////
+		if (loadGeometry && loadingTilesGeometry.length > 0) {
+			dispatch(
+				spatialData.addLoadingIndex(
+					spatialRelationsFilter,
+					order,
+					spatialFilter.level,
+					loadingTilesGeometry
+				)
+			);
+		}
+
+		////
+		// Attribute
+		////
+		if (loadingTilesGeometry.length > 0) {
+			dispatch(
+				attributeData.addLoadingSpatialIndex(
+					attributeDataFilter,
+					order,
+					spatialFilter.level,
+					loadingTilesGeometry
+				)
+			);
+		}
+	};
+}
+
+/**
+ * Central method for executing requests to data endpoint.
  * @param {string?} styleKey
  * @param {Object?} relations Pagination for relations.
  * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
@@ -701,217 +971,60 @@ function loadIndexedPage(
 	loadGeometry,
 	loadRelations,
 	order,
-	spatialRelationsFilter,
+	spatialRelationsFilter = {},
 	attributeRelationsFilter,
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/data/filtered';
-		const {
-			areaTreeLevelKey,
-			layerTemplateKey,
-			modifiers,
-		} = spatialRelationsFilter;
-		const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;
 
-		//register indexes
-
-		////
-		// Spatial
-		////
-		if (loadGeometry) {
-			const loadingTilesGeometry = spatialIndex?.tiles || spatialFilter.tiles;
-			dispatch(
-				spatialData.addLoadingIndex(
-					spatialRelationsFilter,
-					order,
-					spatialFilter.level,
-					loadingTilesGeometry
-				)
-			);
-		}
-
-		////
-		// Attribute
-		////
-		const loadingTilesAttributes = spatialIndex?.tiles || spatialFilter.tiles;
+		//Register loading to related indexes and tiles
 		dispatch(
-			attributeData.addLoadingSpatialIndex(
+			setLoading(
 				attributeDataFilter,
+				spatialIndex,
+				spatialFilter,
+				spatialRelationsFilter,
 				order,
-				spatialFilter.level,
-				loadingTilesAttributes
+				loadGeometry
 			)
 		);
 
-		// Create payload
+		const usedRelations = relations ? {...relations} : DEFAULT_RELATIONS_PAGE;
 
-		const payload = {
-			...(modifiers && {modifiers}),
+		const payload = composeDataEndpointPayload(
+			spatialRelationsFilter,
+			styleKey,
+			usedRelations,
+			attributeDataFilter,
+			spatialIndex,
+			loadGeometry,
+			loadRelations,
+			spatialFilter
+		);
 
-			// which layer you want
-			...(layerTemplateKey && {layerTemplateKey}),
-			...(areaTreeLevelKey && {areaTreeLevelKey}),
-
-			// get attributes from style
-			...(styleKey && {styleKey}),
-
-			// pagination for relations (& data sources)
-			relations: usedRelations,
-
-			data: {
-				// list of features you want
-				...(attributeDataFilter?.featureKeys && {
-					featureKeys: attributeDataFilter.featureKeys,
-				}),
-
-				// which tiles you want (pseudo-pagination)
-				// spatialIndex: {
-				//     tiles: [[lon, lat], ...],
-				// },
-				...(spatialIndex && {spatialIndex}),
-
-				// extent
-				spatialFilter,
-
-				// filter features by attribute value
-				// attributeFilter: {
-				//     'attribute-uuid': "blue",
-				//     'attribute-uuid': {
-				//         in: [12, 13]
-				//     },
-				//     ...
-				// },
-				...(attributeDataFilter?.attributeFilter && {
-					attributeFilter: attributeDataFilter.attributeFilter,
-				}),
-
-				//request for geometry
-				geometry: !!loadGeometry,
-
-				//request for relations
-				relations: !!loadRelations,
-
-				// use data source keys as filter or add them to filter
-				...(attributeDataFilter?.dataSourceKeys && {
-					dataSourceKeys: attributeDataFilter.dataSourceKeys,
-				}),
-			},
-		};
+		const start = usedRelations.offset + 1;
 
 		return request(localConfig, apiPath, 'POST', null, payload)
 			.then(result => {
 				if (result.errors) {
-					throw new Error(result.errors[dataType] || 'no data');
+					const error = new Error(result.errors[dataType] || 'no data');
+					dispatch(commonActions.actionGeneralError(error));
 				} else {
 					if (result.data) {
-						const start = relations.offset + 1;
-						////
-						// Attributes
-						////
-						if (
-							!!loadRelations &&
-							result.data.attributeRelations &&
-							!_.isEmpty(result.data.attributeRelations)
-						) {
-							const changes = null;
-							dispatch(
-								attributeRelations.receiveIndexed(
-									result.data.attributeRelations,
-									attributeRelationsFilter,
-									order,
-									start,
-									result.total.attributeRelations,
-									changes
-								)
-							);
-						}
-
-						if (
-							!!loadRelations &&
-							result.data.attributeDataSources &&
-							!_.isEmpty(result.data.attributeDataSources)
-						) {
-							const changes = null;
-							dispatch(
-								attributeDataSources.receiveIndexed(
-									result.data.attributeDataSources,
-									attributeRelationsFilter,
-									order,
-									start,
-									result.total.attributeRelations,
-									changes
-								)
-							);
-						}
-
-						if (result.data.spatialData && result.data.attributeData) {
-							const changes = null;
-							dispatch(
-								attributeData.receiveIndexed(
-									result.data.attributeData,
-									result.data.spatialData,
-									attributeDataFilter,
-									order,
-									changes
-								)
-							);
-						}
-
-						////
-						// Spatial data
-						////
-						if (
-							!!loadRelations &&
-							result.data.spatialRelations &&
-							!_.isEmpty(result.data.spatialRelations)
-						) {
-							const changes = null;
-							dispatch(
-								spatialRelations.receiveIndexed(
-									result.data.spatialRelations,
-									spatialRelationsFilter,
-									order,
-									start,
-									result.total.spatialRelations,
-									changes
-								)
-							);
-						}
-
-						if (
-							!!loadRelations &&
-							result.data.spatialDataSources &&
-							!_.isEmpty(result.data.spatialDataSources)
-						) {
-							const changes = null;
-							dispatch(
-								spatialDataSources.receiveIndexed(
-									result.data.spatialDataSources,
-									spatialRelationsFilter,
-									order,
-									start,
-									result.total.spatialRelations,
-									changes
-								)
-							);
-						}
-
-						if (!!loadGeometry) {
-							// Add data even if data are empty.
-							// Override loading indicator in state index
-							const changes = null;
-							dispatch(
-								spatialData.receiveIndexed(
-									result.data.spatialData,
-									spatialRelationsFilter,
-									order,
-									changes
-								)
-							);
-						}
-
+						dispatch(
+							processResult(
+								result,
+								loadGeometry,
+								loadRelations,
+								order,
+								spatialRelationsFilter,
+								attributeRelationsFilter,
+								attributeDataFilter,
+								start
+							)
+						);
 						return result;
 					} else {
 						const error = new Error('no data');
@@ -928,6 +1041,7 @@ function loadIndexedPage(
 }
 
 export default {
+	//export of sub actions
 	attributeData,
 	attributeDataSources,
 	attributeRelations,
@@ -936,7 +1050,18 @@ export default {
 	spatialDataSources,
 	spatialRelations,
 
-	ensure, //todo TESTS
-	loadMissingSpatialData, //todo TESTS
-	ensureDataAndRelations, //todo TESTS
+	//export functions
+	getRestRelationsPages, //ok
+	loadMissingRelationsAndData,
+	loadMissingAttributeData,
+	loadMissingSpatialData,
+	ensureDataAndRelations,
+	hasMissingAttributesData,
+	hasMissingSpatialData,
+	hasSpatialOrAreaRelations,
+	ensure,
+	loadIndexedPage,
+	processResult,
+	composeDataEndpointPayload,
+	setLoading,
 };

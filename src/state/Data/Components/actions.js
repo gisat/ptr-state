@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {configDefaults} from '@gisatcz/ptr-core';
 import ActionTypes from '../../../constants/ActionTypes';
 import request from '../../_common/request';
 import commonActions from '../../_common/actions';
@@ -11,7 +12,7 @@ import {getPageSize} from '../helpers';
 
 const DEFAULT_PAGE_PAGINATION = {
 	offset: 0,
-	limit: 100,
+	limit: configDefaults.requestPageSize,
 };
 
 /**

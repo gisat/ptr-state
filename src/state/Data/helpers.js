@@ -102,6 +102,6 @@ export const getMissingTiles = (index, filter) => {
  */
 export function getPageSize(localConfig) {
 	const PAGE_SIZE =
-		localConfig.requestPageSize || configDefaults.requestPageSize;
+		localConfig?.requestPageSize || configDefaults.requestPageSize;
 	return PAGE_SIZE;
 }
