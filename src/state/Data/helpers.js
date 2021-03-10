@@ -1,4 +1,9 @@
-import _ from 'lodash';
+import {
+	isArray as _isArray,
+	isFinite as _isFinite,
+	reduce as _reduce,
+} from 'lodash';
+
 import {configDefaults} from '@gisatcz/ptr-core';
 
 /**
@@ -9,7 +14,7 @@ import {configDefaults} from '@gisatcz/ptr-core';
 export const tileAsString = tile => {
 	if (typeof tile === 'string') {
 		return tile;
-	} else if (_.isArray(tile)) {
+	} else if (_isArray(tile)) {
 		const arrTile = tileAsArray(tile);
 		if (arrTile) {
 			return arrTile.join(',');
@@ -28,16 +33,16 @@ export const tileAsArray = tile => {
 	if (
 		typeof tile === 'string' &&
 		tile.split(',').length > 1 &&
-		tile.split(',').every(i => _.isFinite(parseFloat(i)))
+		tile.split(',').every(i => _isFinite(parseFloat(i)))
 	) {
 		return tile.split(',').map(parseFloat);
 	} else if (
-		_.isArray(tile) &&
+		_isArray(tile) &&
 		tile.length !== 1 &&
-		tile.every(i => _.isFinite(parseFloat(i)))
+		tile.every(i => _isFinite(parseFloat(i)))
 	) {
 		return tile.map(parseFloat);
-	} else if (_.isArray(tile) && tile.length === 1) {
+	} else if (_isArray(tile) && tile.length === 1) {
 		return tileAsArray(tile[0]);
 	} else {
 		return null;
@@ -53,10 +58,10 @@ export const tileAsArray = tile => {
  * @returns {Array?} Array of missing tiles in string format
  */
 export const getMissingTiles = (index, filter) => {
-	if (index && index.index && filter && _.isArray(filter.tiles)) {
+	if (index && index.index && filter && _isArray(filter.tiles)) {
 		//index contains level
 		if (index.index?.[filter.level]) {
-			const loadedTilesInIndex = _.reduce(
+			const loadedTilesInIndex = _reduce(
 				index.index[filter.level],
 				(acc, tileData, tileKey) => {
 					//tileData === true means it is loading, so we mark them as not missing
@@ -80,7 +85,7 @@ export const getMissingTiles = (index, filter) => {
 			return filter.tiles.map(tile => tileAsString(tile));
 		}
 	} else {
-		if (_.isArray(filter?.tiles)) {
+		if (_isArray(filter?.tiles)) {
 			// all tiles are missing
 			return filter.tiles.map(tile => tileAsString(tile));
 		} else {
