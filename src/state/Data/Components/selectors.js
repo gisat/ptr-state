@@ -5,7 +5,6 @@ import {
 import createCachedSelector from 're-reselect';
 import {
 	isEmpty as _isEmpty,
-	filter as _filter,
 	forIn as _forIn,
 	get as _get,
 	isMatch as _isMatch,
@@ -20,8 +19,6 @@ import componentsSelectors from '../../Components/selectors';
 
 const getSubstate = state => state.data.components;
 
-const getAllComponentsAsObject = state =>
-	state.data.components.components.byKey;
 const getAllComponentsInUse = state => state.data.components.components.inUse;
 const getComponentStateByKey = (state, key) =>
 	state.data.components.components.byKey[key];
@@ -30,14 +27,12 @@ const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
 );
 
-const getAttributeDataFilterExtensionByComponentKeyObserver = createRecomputeObserver(
-	getAttributeDataFilterExtensionByComponentKey
-);
-
-const getCommonFilterByComponentKeyObserver = createRecomputeObserver(
-	getCommonFilterByComponentKey
-);
-
+/**
+ * Check if component is in use
+ * @param state {Object}
+ * @param componentKey {string}
+ * @return {boolean}
+ */
 const isComponentInUse = createCachedSelector(
 	[getAllComponentsInUse, (state, componentKey) => componentKey],
 	(componentsInUse, componentKey) => {
@@ -49,10 +44,17 @@ const isComponentInUse = createCachedSelector(
 	}
 )((state, componentKey) => componentKey);
 
+/**
+ * Check if component's filter by active matches give filterByActive
+ * @param state {Object}
+ * @param componentKey {string}
+ * @param filterByActive {Object} {scope: true, place: true, ...}
+ * @return {boolean}
+ */
 const componentMatchesFilterByActive = createCachedSelector(
 	[
 		getComponentStateByKey,
-		(state, component, filterByActive) => filterByActive,
+		(state, componentKey, filterByActive) => filterByActive,
 	],
 	(componentState, filterByActive) => {
 		if (componentState?.filterByActive && filterByActive) {
@@ -75,11 +77,11 @@ const getData = createRecomputeSelector(componentKey => {
 		const attributeKeys = componentState?.attributeKeys;
 
 		if (!_isEmpty(data) && attributeKeys?.length) {
-			const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKeyObserver(
+			const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
 				componentKey
 			);
 
-			const commonFilter = getCommonFilterByComponentKeyObserver(componentKey);
+			const commonFilter = getCommonFilterByComponentKey(componentKey);
 
 			const attributeFilter = {
 				...commonFilter,
@@ -261,28 +263,38 @@ const getDataForScatterChart = createRecomputeSelector(props => {
 	}
 });
 
-function getAttributeDataFilterExtensionByComponentKey(state, componentKey) {
-	const componentState = getComponentStateByKey(state, componentKey);
+/**
+ * Get filter params which are specific for attribute data
+ * @param componentKey {string}
+ * @return {Object}
+ */
+const getAttributeDataFilterExtensionByComponentKey = createRecomputeSelector(
+	componentKey => {
+		const componentState = getComponentStateByKeyObserver(componentKey);
 
-	const {
-		attributeFilter,
-		dataSourceKeys,
-		featureKeys,
-		spatialFilter,
-	} = componentState;
+		const {
+			attributeFilter,
+			dataSourceKeys,
+			featureKeys,
+			spatialFilter,
+		} = componentState;
 
-	const attributeRelationsFilter = {
-		...(attributeFilter !== undefined && {attributeFilter}),
-		...(dataSourceKeys !== undefined && {dataSourceKeys}),
-		...(featureKeys !== undefined && {featureKeys}),
-		...(spatialFilter !== undefined && {spatialFilter}),
-	};
+		return {
+			...(attributeFilter !== undefined && {attributeFilter}),
+			...(dataSourceKeys !== undefined && {dataSourceKeys}),
+			...(featureKeys !== undefined && {featureKeys}),
+			...(spatialFilter !== undefined && {spatialFilter}),
+		};
+	}
+);
 
-	return attributeRelationsFilter;
-}
-
-function getCommonFilterByComponentKey(state, componentKey) {
-	const componentState = getComponentStateByKey(state, componentKey);
+/**
+ * Get filter params which are common to both attributeRelations and attributeData
+ * @param componentKey {string}
+ * @return {{modifiers: Object, areaTreeLevelKey: string, layerTemplateKey: string, attributeKeys: Array}}
+ */
+const getCommonFilterByComponentKey = createRecomputeSelector(componentKey => {
+	const componentState = getComponentStateByKeyObserver(componentKey);
 
 	const {
 		areaTreeLevelKey,
@@ -303,7 +315,7 @@ function getCommonFilterByComponentKey(state, componentKey) {
 
 	// Get actual metadata keys defined by filterByActive
 	const activeMetadataKeys = filterByActive
-		? commonSelectors.getActiveKeysByFilterByActive(state, filterByActive)
+		? commonSelectors.getActiveKeysByFilterByActiveObserver(filterByActive)
 		: null;
 
 	// Merge metadata, metadata defined by key have priority
@@ -325,44 +337,41 @@ function getCommonFilterByComponentKey(state, componentKey) {
 		modifiers
 	);
 
-	const commonFilter = {
+	return {
 		modifiers: modifiersForRequest,
 		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
 		...(layerTemplateKey !== undefined && {layerTemplateKey}),
 		...(attributeKeys !== undefined && {attributeKeys}),
 	};
+});
 
-	return commonFilter;
-}
+const getIndexForAttributeDataByComponentKey = createRecomputeSelector(
+	componentKey => {
+		const componentState = getComponentStateByKeyObserver(componentKey);
 
-const getIndexForAttributeDataByComponentKey = (state, componentKey) => {
-	const componentState = getComponentStateByKey(state, componentKey);
+		const {attributeOrder} = componentState;
 
-	const {attributeOrder} = componentState;
+		const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
+			componentKey
+		);
 
-	const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
-		state,
-		componentKey
-	);
+		const commonFilter = getCommonFilterByComponentKey(componentKey);
 
-	const commonFilter = getCommonFilterByComponentKey(state, componentKey);
+		const attributeFilter = {
+			...commonFilter,
+			...attributeDataFilterExtension,
+		};
 
-	const attributeFilter = {
-		...commonFilter,
-		...attributeDataFilterExtension,
-	};
+		const attributeDataIndex =
+			attributeDataSelectors.getIndex_recompute(
+				attributeFilter,
+				attributeOrder
+			) || [];
 
-	const attributeDataIndex =
-		attributeDataSelectors.getIndex(
-			state,
-			'indexes',
-			attributeFilter,
-			attributeOrder
-		) || [];
-
-	const missingAttributesData = _isEmpty(attributeDataIndex);
-	return missingAttributesData ? null : attributeDataIndex;
-};
+		const missingAttributesData = _isEmpty(attributeDataIndex);
+		return missingAttributesData ? null : attributeDataIndex;
+	}
+);
 
 export default {
 	componentMatchesFilterByActive,
