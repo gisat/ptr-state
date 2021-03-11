@@ -139,7 +139,7 @@ const getTile = createRecomputeSelector(
 						// TODO what if some geometries is missing
 						const geometry =
 							spatialDataForDataSource[key]?.geometry ||
-							spatialDataForDataSource[key]?.geometries[level];
+							spatialDataForDataSource[key]?.geometries?.[level];
 
 						if (attributeDataSourceKeyAttributeKeyPairs) {
 							const attributes = attributeData.getAttributesByDataSourceKeysForFeatureKey(

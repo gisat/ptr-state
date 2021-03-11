@@ -260,9 +260,14 @@ export const DataSelectorsState = {
 					index: {
 						6: {
 							'0,0': {
-								spatialDataSource1: ['featureKey1', 'featureKey2'],
+								spatialDataSource1: [
+									'featureKey1',
+									'featureKey2',
+									'featureKey5',
+								],
 								spatialDataSource2: ['featureKey11'],
 								spatialDataSource3: ['featureKey21'],
+								spatialDataSource4: [],
 							},
 							'0,1': {
 								spatialDataSource1: ['featureKey3'],
