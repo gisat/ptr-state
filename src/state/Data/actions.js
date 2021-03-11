@@ -552,27 +552,20 @@ const hasMissingSpatialData = (spatialDataIndex, spatialFilter) => {
 };
 
 /**
- * It find out if for given ltKey/atlKey and spatialRelationsFilter exists relations index.
- * The Existence of index means it is loading or loaded.
+ * It find out if for given spatialRelationsFilter exists relations index.
+ * The Existence of index means it is loading or loaded or we can just find out missing data.
  * TODO - add support of areaTrees
+ * TODO - add support of dataSourcesKeys
  * @param {Object} state App state object
- * @param {string?} areaTreeLevelKey Optional area tree key
- * @param {string?} layerTemplateKey Optional layer template key
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array} order
  * @return {bool}
  */
-const hasSpatialOrAreaRelations = (
-	state,
-	areaTreeLevelKey,
-	layerTemplateKey,
-	spatialRelationsFilter,
-	order
-) => {
+const hasSpatialOrAreaRelations = (state, spatialRelationsFilter, order) => {
 	let spatialRelationsIndex = null;
 	let areaRelationsIndex = null;
 
-	if (layerTemplateKey) {
+	if (spatialRelationsFilter.layerTemplateKey) {
 		spatialRelationsIndex = Select.data.spatialRelations.getIndex(
 			state,
 			spatialRelationsFilter,
@@ -581,7 +574,7 @@ const hasSpatialOrAreaRelations = (
 	}
 
 	// FIXME - add support for areaTreeLevels
-	if (areaTreeLevelKey) {
+	if (spatialRelationsFilter.areaTreeLevelKey) {
 		// areaRelationsIndex = Select.data.areaRelations.getIndex(getState(), spatialRelationsFilter, order);
 	}
 
@@ -639,8 +632,8 @@ function ensure(
 		);
 		const filterHasSpatialOrAreaRelations = hasSpatialOrAreaRelations(
 			getState(),
-			areaTreeLevelKey,
-			layerTemplateKey,
+			// areaTreeLevelKey,
+			// layerTemplateKey,
 			spatialRelationsFilter,
 			order
 		);
@@ -1052,17 +1045,17 @@ export default {
 	spatialRelations,
 
 	//export functions
-	getRestRelationsPages, //tested
-	loadMissingRelationsAndData,
-	loadMissingAttributeData,
-	loadMissingSpatialData,
+	composeDataEndpointPayload, //tested
+	ensure,
 	ensureDataAndRelations,
+	getRestRelationsPages, //tested
 	hasMissingAttributesData,
 	hasMissingSpatialData,
 	hasSpatialOrAreaRelations,
-	ensure,
 	loadIndexedPage, //tested
+	loadMissingAttributeData,
+	loadMissingRelationsAndData,
+	loadMissingSpatialData,
 	processResult, //tested
-	composeDataEndpointPayload,
 	setLoading, //tested
 };

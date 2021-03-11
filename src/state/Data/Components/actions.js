@@ -648,9 +648,14 @@ const actionComponentUseRegister = componentKey => {
 
 export default {
 	componentUseClear,
+	componentUseRegister,
+	ensure,
+	ensureDataAndRelations,
 	ensureWithFilterByActive,
+	loadIndexedPage,
+	loadMissingRelationsAndData,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
-	use,
 	updateComponent,
+	use,
 };
