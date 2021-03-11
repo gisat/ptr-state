@@ -825,7 +825,7 @@ function processResult(
  * @param {string?} styleKey
  * @param {Object?} relations Pagination for relations.
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
- * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
+ * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded. Tiles are subset of tiles defined inspatilaFilter.
  * @param {bool} loadGeometry Whether response should contain geometry
  * @param {bool} loadRelations Whether response should contain relations
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
@@ -903,7 +903,7 @@ function composeDataEndpointPayload(
 /**
  * Set loading status to spatialData and attributeData stores to related indexes, level and tiles.
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
- * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
+ * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded. Tiles are subset of tiles defined inspatilaFilter.
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
  * @param {Object} spatialRelationsFilter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
  * @param {Array?} order
@@ -955,7 +955,7 @@ function setLoading(
  * Central method for executing requests to data endpoint.
  * @param {string?} styleKey
  * @param {Object?} relations Pagination for relations.
- * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded.
+ * @param {Object?} spatialIndex Object where under "tiles" key is array of tiles that should be loaded. Tiles are subset of tiles defined inspatilaFilter.
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
  * @param {bool} loadGeometry Whether response should contain geometry
  * @param {bool} loadRelations Whether response should contain relations
@@ -1052,7 +1052,7 @@ export default {
 	spatialRelations,
 
 	//export functions
-	getRestRelationsPages, //ok
+	getRestRelationsPages, //tested
 	loadMissingRelationsAndData,
 	loadMissingAttributeData,
 	loadMissingSpatialData,
@@ -1061,8 +1061,8 @@ export default {
 	hasMissingSpatialData,
 	hasSpatialOrAreaRelations,
 	ensure,
-	loadIndexedPage,
-	processResult,
+	loadIndexedPage, //tested
+	processResult, //tested
 	composeDataEndpointPayload,
-	setLoading,
+	setLoading, //tested
 };

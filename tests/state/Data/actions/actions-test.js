@@ -1,12 +1,5 @@
 import {assert} from 'chai';
-import slash from 'slash';
 import actions from '../../../../src/state/Data/actions';
-import {resetFetch, setFetch} from '../../../../src/state/_common/request';
-
-import {
-	responseWithSpatialAndAttributeData,
-	responseWithRelationsSpatialAndAttributeData,
-} from './mockData';
 
 describe('state/Data/actions', function () {
 	this.timeout(5000);
