@@ -10,6 +10,7 @@ import {
 import {connect, Provider} from 'react-redux';
 
 import connects from './components/connects';
+import MountWrapper from './components/MountWrapper';
 
 import commonActionTypes from './constants/ActionTypes';
 import Action from './state/Action';
@@ -100,6 +101,7 @@ export {
 	compose,
 	connect,
 	Provider,
+	MountWrapper,
 	baseStores,
 	createBaseStore,
 	connects,

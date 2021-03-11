@@ -6,7 +6,6 @@ import createCachedSelector from 're-reselect';
 import {
 	isEmpty as _isEmpty,
 	forIn as _forIn,
-	get as _get,
 	isMatch as _isMatch,
 	isNumber as _isNumber,
 } from 'lodash';
@@ -304,60 +303,7 @@ const getData = createRecomputeSelector(componentKey => {
 	}
 });
 
-const getDataForBigNumber = createRecomputeSelector(props => {
-	const componentSettings = componentsSelectors.getByComponentKey_recompute(
-		props.stateComponentKey
-	);
-	const data = getData(props.stateComponentKey);
-	const firstFeature = data?.[0];
-
-	return {
-		title: _get(firstFeature, componentSettings?.titleSourcePath),
-		value: _get(firstFeature, componentSettings?.valueSourcePath),
-	};
-});
-
-const getDataForTable = createRecomputeSelector(props => {
-	const componentSettings = componentsSelectors.getByComponentKey_recompute(
-		props.stateComponentKey
-	);
-	const data = getData(props.stateComponentKey);
-
-	const dataDefinition =
-		data?.map(item => {
-			const itemData = {};
-			componentSettings.columns?.forEach(column => {
-				itemData[column.columnKey] = _get(item, column.dataPath);
-			});
-			return itemData;
-		}) || [];
-
-	const columnsDefinition =
-		componentSettings.columns?.map(column => ({
-			Header: column.header,
-			accessor: column.columnKey,
-		})) || [];
-
-	return {
-		data: dataDefinition,
-		columns: columnsDefinition,
-	};
-});
-
-const getDataForColumnChart = createRecomputeSelector(props => {
-	const componentSettings = componentsSelectors.getByComponentKey_recompute(
-		props.stateComponentKey
-	);
-	const chartSettings = {...componentSettings, ...props};
-	const data = getData(props.stateComponentKey);
-
-	return {
-		data: data || [],
-		...chartSettings,
-	};
-});
-
-const getDataForScatterChart = createRecomputeSelector(props => {
+const getDataForCartesianChart = createRecomputeSelector(props => {
 	const componentSettings = componentsSelectors.getByComponentKey_recompute(
 		props.stateComponentKey
 	);
@@ -383,8 +329,5 @@ export default {
 
 	// Data selectors
 	getData,
-	getDataForBigNumber,
-	getDataForColumnChart,
-	getDataForScatterChart,
-	getDataForTable,
+	getDataForCartesianChart,
 };
