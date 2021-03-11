@@ -2,6 +2,7 @@ import {assert} from 'chai';
 import actions from '../../../../src/state/Data/actions';
 
 describe('state/Data/actions', function () {
+	this.timeout(5000);
 	let dispatchedActions = [];
 
 	const clearDispatchedActions = function () {
@@ -186,7 +187,7 @@ describe('state/Data/actions', function () {
 			const spatialRelationsFilter = null;
 			const attributeRelationsFilter = null;
 			const attributeDataFilter = null;
-			debugger;
+
 			dispatch(
 				actions.loadIndexedPage(
 					styleKey,
