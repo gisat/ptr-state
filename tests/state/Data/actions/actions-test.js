@@ -1,5 +1,12 @@
 import {assert} from 'chai';
+import slash from 'slash';
 import actions from '../../../../src/state/Data/actions';
+import {resetFetch, setFetch} from '../../../../src/state/_common/request';
+
+import {
+	responseWithSpatialAndAttributeData,
+	responseWithRelationsSpatialAndAttributeData,
+} from './mockData';
 
 describe('state/Data/actions', function () {
 	let dispatchedActions = [];
@@ -146,8 +153,6 @@ describe('state/Data/actions', function () {
 		// 		);
 
 		// 		return runFunctionActions({dispatch, getState}).then(() => {
-		// 			console.log(dispatchedActions);
-		// 			debugger
 		// 			assert.deepStrictEqual(dispatchedActions, [
 		// 				// {
 		// 				// 	type: 'DATA.SPATIAL_RELATIONS.INDEX.ADD',
@@ -161,50 +166,5 @@ describe('state/Data/actions', function () {
 		// 			]);
 		// 		});
 		// 	});
-	});
-
-	describe('loadIndexedPage', function () {
-		it('dispatch nothing', function () {
-			const getState = () => ({
-				app: {
-					localConfiguration: {
-						apiBackendProtocol: 'http',
-						apiBackendHost: 'backend',
-						apiBackendPath: 'rest',
-					},
-				},
-			});
-			const dispatch = getDispatch(getState);
-
-			const styleKey = null;
-			const relations = null;
-			const spatialIndex = null;
-			const spatialFilter = null;
-			const loadGeometry = null;
-			const loadRelations = null;
-			const order = null;
-			const spatialRelationsFilter = null;
-			const attributeRelationsFilter = null;
-			const attributeDataFilter = null;
-			debugger;
-			dispatch(
-				actions.loadIndexedPage(
-					styleKey,
-					relations,
-					spatialIndex,
-					spatialFilter,
-					loadGeometry,
-					loadRelations,
-					order,
-					spatialRelationsFilter,
-					attributeRelationsFilter,
-					attributeDataFilter
-				)
-			);
-
-			return runFunctionActions({dispatch, getState}).then(() => {
-				assert.deepStrictEqual(dispatchedActions, [{type: 'ERROR'}]);
-			});
-		});
 	});
 });

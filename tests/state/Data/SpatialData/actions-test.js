@@ -76,7 +76,7 @@ describe('state/Data/SpatialData/actions', function () {
 				indexData: [{}],
 				level: undefined,
 				order: null,
-				spatialFilter: {},
+				filter: {},
 				type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
 			},
 		];
@@ -152,7 +152,7 @@ describe('state/Data/SpatialData/actions', function () {
 					level: '2',
 					type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
 					order: null,
-					spatialFilter: {},
+					filter: {},
 					changedOn: null,
 					indexData: [
 						{
@@ -241,7 +241,7 @@ describe('state/Data/SpatialData/actions', function () {
 					level: '2',
 					order: null,
 					type: 'DATA.SPATIAL_DATA.ADD_WITH_INDEX',
-					spatialFilter: {},
+					filter: {},
 					indexData: [
 						{
 							2: {

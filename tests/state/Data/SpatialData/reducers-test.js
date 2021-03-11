@@ -88,7 +88,7 @@ describe('state/Data/SpatialData', function () {
 		);
 	});
 
-	it('add new indexes', function () {
+	it('add new indexes 1', function () {
 		const filter = {scope: 'cities'};
 		const order = null;
 		const level = 10;
@@ -101,7 +101,7 @@ describe('state/Data/SpatialData', function () {
 				{},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					spatialFilter: filter,
+					filter,
 					order,
 					indexData: data,
 					changedOn,
@@ -120,7 +120,7 @@ describe('state/Data/SpatialData', function () {
 		);
 	});
 
-	it('add new indexes', function () {
+	it('add new indexes 2', function () {
 		const filter = {scope: 'cities'};
 		const order = null;
 		const level = 10;
@@ -141,7 +141,7 @@ describe('state/Data/SpatialData', function () {
 				{},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					spatialFilter: filter,
+					filter,
 					order,
 					indexData: data,
 					changedOn,
@@ -200,7 +200,7 @@ describe('state/Data/SpatialData', function () {
 				},
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					spatialFilter: filter,
+					filter,
 					order,
 					indexData: updateIndex,
 					changedOn,

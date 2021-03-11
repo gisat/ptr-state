@@ -30,13 +30,13 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
  * Add data and index at the same time
  * Add data, even if data are empty, for replacing loading indicator.
  * @param spatialDataAndIndexByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
- * @param spatialFilter {Object}
+ * @param filter {Object}
  * @param order {Array}
  * @param changedOn {string}
  */
 function addDataAndIndex(
 	spatialDataAndIndexByDataSourceKey,
-	spatialFilter,
+	filter,
 	order,
 	changedOn
 ) {
@@ -60,7 +60,7 @@ function addDataAndIndex(
 			addDataAndIndexAction(
 				spatialDataByDataSourceKey,
 				level,
-				spatialFilter,
+				filter,
 				order,
 				[indexByLevelByTileByDataSourceKey],
 				changedOn
@@ -197,7 +197,7 @@ function addDataAction(key, data, level) {
 function addDataAndIndexAction(
 	dataByDataSourceKey,
 	level,
-	spatialFilter,
+	filter,
 	order,
 	indexData,
 	changedOn
@@ -206,7 +206,7 @@ function addDataAndIndexAction(
 		type: actionTypes.ADD_WITH_INDEX,
 		dataByDataSourceKey,
 		level,
-		spatialFilter,
+		filter,
 		order,
 		indexData,
 		changedOn,
@@ -216,7 +216,7 @@ function addDataAndIndexAction(
 function addIndexAction(filter, order, index, changedOn) {
 	return {
 		type: actionTypes.INDEX.ADD,
-		spatialFilter: filter,
+		filter,
 		order,
 		indexData: index,
 		changedOn,

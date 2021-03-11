@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {configDefaults} from '@gisatcz/ptr-core';
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';

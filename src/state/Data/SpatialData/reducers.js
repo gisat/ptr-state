@@ -50,7 +50,7 @@ const addWithIndex = (state, action) => {
 	);
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
-		action.spatialFilter,
+		action.filter,
 		action.order,
 		action.indexData,
 		action.changedOn
@@ -66,7 +66,7 @@ const addWithIndex = (state, action) => {
 const addIndex = (state, action) => {
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
-		action.spatialFilter,
+		action.filter,
 		action.order,
 		action.indexData,
 		action.changedOn
