@@ -67,28 +67,6 @@ function modelsFromIndex(models, index) {
 	return nonEmptyArray(indexedModels);
 }
 
-function modelsFromIndex2(models, index) {
-	if (!index || !index.index) {
-		return null;
-	}
-
-	const indexedModels = [];
-	for (const [key, value] of Object.entries(index.index)) {
-		if (value) {
-			const indexedModel = models[value];
-			if (indexedModel) {
-				indexedModels.push(indexedModel);
-			} else {
-				indexedModels.push(null);
-			}
-		} else {
-			indexedModels.push(null);
-		}
-	}
-
-	return nonEmptyArray(indexedModels);
-}
-
 const getAllForActiveScope = getSubstate => {
 	return createSelector(
 		[

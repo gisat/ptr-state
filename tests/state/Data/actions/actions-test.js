@@ -9,6 +9,7 @@ import {
 } from './mockData';
 
 describe('state/Data/actions', function () {
+	this.timeout(5000);
 	let dispatchedActions = [];
 
 	const clearDispatchedActions = function () {

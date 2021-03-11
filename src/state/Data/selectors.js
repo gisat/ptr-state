@@ -77,7 +77,7 @@ const getFeatures = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
- * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param attributeDataFilter {Object} Filter object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Object} populated tile (with feature's geometries and attributes)
  */
 const getTile = createRecomputeSelector(
@@ -123,7 +123,7 @@ const getTile = createRecomputeSelector(
 				cacheParams,
 				indexedFeatureKeys,
 				indexedFeatureKeysByAttributeDataSourceKeys,
-			}); // TODO is index enough as cache key?
+			});
 			const cache = tilesCache.findByKey(cacheKey);
 			if (cache) {
 				return cache.data;
@@ -139,7 +139,7 @@ const getTile = createRecomputeSelector(
 						// TODO what if some geometries is missing
 						const geometry =
 							spatialDataForDataSource[key]?.geometry ||
-							spatialDataForDataSource[key]?.geometries[level];
+							spatialDataForDataSource[key]?.geometries?.[level];
 
 						if (attributeDataSourceKeyAttributeKeyPairs) {
 							const attributes = attributeData.getAttributesByDataSourceKeysForFeatureKey(
@@ -194,7 +194,7 @@ const getTile = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
- * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
+ * @param attributeDataFilter {Object} Filter object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Array} a collection of populated tiles (with feature's geometries and attributes)
  */
 const getTiles = createRecomputeSelector(
@@ -237,6 +237,7 @@ const getTiles = createRecomputeSelector(
 
 export default {
 	getFeatures,
+	getTile,
 	getTiles,
 
 	attributeData,
