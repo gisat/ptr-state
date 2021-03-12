@@ -8,6 +8,7 @@ import {
 	forIn as _forIn,
 	isMatch as _isMatch,
 	isNumber as _isNumber,
+	includes as _includes,
 } from 'lodash';
 
 import commonHelpers from '../../_common/helpers';
@@ -16,11 +17,9 @@ import attributeDataSelectors from '../AttributeData/selectors';
 import attributeRelationsSelectors from '../AttributeRelations/selectors';
 import componentsSelectors from '../../Components/selectors';
 
-const getSubstate = state => state.data.components;
-
 const getAllComponentsInUse = state => state.data.components.components.inUse;
 const getComponentStateByKey = (state, key) =>
-	state.data.components.components.byKey[key];
+	state.data.components.components.byKey[key] || null;
 
 const getComponentStateByKeyObserver = createRecomputeObserver(
 	getComponentStateByKey
@@ -36,7 +35,7 @@ const isComponentInUse = createCachedSelector(
 	[getAllComponentsInUse, (state, componentKey) => componentKey],
 	(componentsInUse, componentKey) => {
 		if (componentsInUse?.length && componentKey) {
-			return !!_.includes(componentsInUse, componentKey);
+			return !!_includes(componentsInUse, componentKey);
 		} else {
 			return false;
 		}
@@ -76,19 +75,23 @@ const getAttributeDataFilterExtensionByComponentKey = createRecomputeSelector(
 	componentKey => {
 		const componentState = getComponentStateByKeyObserver(componentKey);
 
-		const {
-			attributeFilter,
-			dataSourceKeys,
-			featureKeys,
-			spatialFilter,
-		} = componentState;
+		if (componentState) {
+			const {
+				attributeFilter,
+				dataSourceKeys,
+				featureKeys,
+				spatialFilter,
+			} = componentState;
 
-		return {
-			...(attributeFilter !== undefined && {attributeFilter}),
-			...(dataSourceKeys !== undefined && {dataSourceKeys}),
-			...(featureKeys !== undefined && {featureKeys}),
-			...(spatialFilter !== undefined && {spatialFilter}),
-		};
+			return {
+				...(attributeFilter !== undefined && {attributeFilter}),
+				...(dataSourceKeys !== undefined && {dataSourceKeys}),
+				...(featureKeys !== undefined && {featureKeys}),
+				...(spatialFilter !== undefined && {spatialFilter}),
+			};
+		} else {
+			return {};
+		}
 	}
 );
 
@@ -100,53 +103,59 @@ const getAttributeDataFilterExtensionByComponentKey = createRecomputeSelector(
 const getCommonFilterByComponentKey = createRecomputeSelector(componentKey => {
 	const componentState = getComponentStateByKeyObserver(componentKey);
 
-	const {
-		areaTreeLevelKey,
-		attributeKeys,
-		filterByActive,
-		layerTemplateKey,
-		metadataModifiers,
-	} = componentState;
+	if (componentState) {
+		const {
+			areaTreeLevelKey,
+			attributeKeys,
+			filterByActive,
+			layerTemplateKey,
+			metadataModifiers,
+		} = componentState;
 
-	// modifiers defined by key
-	const metadataDefinedByKey = metadataModifiers ? {...metadataModifiers} : {};
+		// modifiers defined by key
+		const metadataDefinedByKey = metadataModifiers
+			? {...metadataModifiers}
+			: {};
 
-	if (layerTemplateKey) {
-		metadataDefinedByKey[layerTemplateKey] = layerTemplateKey;
-	} else if (areaTreeLevelKey) {
-		metadataDefinedByKey[areaTreeLevelKey] = areaTreeLevelKey;
+		if (layerTemplateKey) {
+			metadataDefinedByKey[layerTemplateKey] = layerTemplateKey;
+		} else if (areaTreeLevelKey) {
+			metadataDefinedByKey[areaTreeLevelKey] = areaTreeLevelKey;
+		}
+
+		// Get actual metadata keys defined by filterByActive
+		const activeMetadataKeys = filterByActive
+			? commonSelectors.getActiveKeysByFilterByActiveObserver(filterByActive)
+			: null;
+
+		// Merge metadata, metadata defined by key have priority
+		const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(
+			metadataDefinedByKey,
+			activeMetadataKeys
+		);
+
+		// Decouple modifiers from templates
+		const {
+			areaTreeLevelKey: modifiedAreaTreeLevelKey,
+			layerTemplateKey: modifiedLayerTemplateKey,
+			applicationKey,
+			...modifiers
+		} = mergedMetadataKeys;
+
+		// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
+		const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			modifiers
+		);
+
+		return {
+			modifiers: modifiersForRequest,
+			...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
+			...(layerTemplateKey !== undefined && {layerTemplateKey}),
+			...(attributeKeys !== undefined && {attributeKeys}),
+		};
+	} else {
+		return {};
 	}
-
-	// Get actual metadata keys defined by filterByActive
-	const activeMetadataKeys = filterByActive
-		? commonSelectors.getActiveKeysByFilterByActiveObserver(filterByActive)
-		: null;
-
-	// Merge metadata, metadata defined by key have priority
-	const mergedMetadataKeys = commonHelpers.mergeMetadataKeys(
-		metadataDefinedByKey,
-		activeMetadataKeys
-	);
-
-	// Decouple modifiers from templates
-	const {
-		areaTreeLevelKey: modifiedAreaTreeLevelKey,
-		layerTemplateKey: modifiedLayerTemplateKey,
-		applicationKey,
-		...modifiers
-	} = mergedMetadataKeys;
-
-	// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-	const modifiersForRequest = commonHelpers.convertModifiersToRequestFriendlyFormat(
-		modifiers
-	);
-
-	return {
-		modifiers: modifiersForRequest,
-		...(areaTreeLevelKey !== undefined && {areaTreeLevelKey}),
-		...(layerTemplateKey !== undefined && {layerTemplateKey}),
-		...(attributeKeys !== undefined && {attributeKeys}),
-	};
 });
 
 /**
@@ -157,26 +166,30 @@ const getIndexForAttributeDataByComponentKey = createRecomputeSelector(
 	componentKey => {
 		const componentState = getComponentStateByKeyObserver(componentKey);
 
-		const {attributeOrder} = componentState;
+		if (componentState) {
+			const {attributeOrder} = componentState;
 
-		const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
-			componentKey
-		);
+			const attributeDataFilterExtension = getAttributeDataFilterExtensionByComponentKey(
+				componentKey
+			);
 
-		const commonFilter = getCommonFilterByComponentKey(componentKey);
+			const commonFilter = getCommonFilterByComponentKey(componentKey);
 
-		const attributeDataFilter = {
-			...commonFilter,
-			...attributeDataFilterExtension,
-		};
+			const attributeDataFilter = {
+				...commonFilter,
+				...attributeDataFilterExtension,
+			};
 
-		const attributeDataIndex =
-			attributeDataSelectors.getIndex_recompute(
-				attributeDataFilter,
-				attributeOrder
-			) || [];
+			const attributeDataIndex =
+				attributeDataSelectors.getIndex_recompute(
+					attributeDataFilter,
+					attributeOrder
+				) || [];
 
-		return !_isEmpty(attributeDataIndex) ? attributeDataIndex : null;
+			return !_isEmpty(attributeDataIndex) ? attributeDataIndex : null;
+		} else {
+			return null;
+		}
 	}
 );
 
@@ -303,6 +316,12 @@ const getData = createRecomputeSelector(componentKey => {
 	}
 });
 
+/**
+ * Specific selector to assembling the attribute data & settings of the cartesian chart
+ * @param props {Object} component props
+ * @param props.stateComponentKey {string} component key, needed for data assembling
+ * @return {Object} Cartesian chart data & settings
+ */
 const getDataForCartesianChart = createRecomputeSelector(props => {
 	const componentSettings = componentsSelectors.getByComponentKey_recompute(
 		props.stateComponentKey
@@ -323,6 +342,7 @@ export default {
 	getAttributeDataFilterExtensionByComponentKey,
 	getCommonFilterByComponentKey,
 	getComponentStateByKey,
+	getComponentStateByKeyObserver,
 	getIndexForAttributeDataByComponentKey,
 
 	isComponentInUse,
