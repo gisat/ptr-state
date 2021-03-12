@@ -249,7 +249,10 @@ const getData = createRecomputeSelector(componentKey => {
 				// Get indexed features
 				let indexedFeatureKeysAsObject = attributeDataIndex?.index;
 
-				if (indexedFeatureKeysAsObject) {
+				if (
+					indexedFeatureKeysAsObject &&
+					!_isEmpty(indexedFeatureKeysAsObject)
+				) {
 					let {start, length} = componentState;
 					start = start || 1;
 					length = length || attributeDataIndex.count;
