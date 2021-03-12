@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import ActionTypes from '../../../constants/ActionTypes';
 import request from '../../_common/request';
@@ -73,6 +74,7 @@ function ensureDataAndRelations(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const PAGE_SIZE = getPageSize(localConfig);
 		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
@@ -95,7 +97,6 @@ function ensureDataAndRelations(
 
 			const attributeDataIndex =
 				Select.data.components.getIndexForAttributeDataByComponentKey(
-					getState(),
 					componentKey
 				) || [];
 
@@ -169,6 +170,7 @@ function loadMissingRelationsAndData(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
 
@@ -176,7 +178,6 @@ function loadMissingRelationsAndData(
 
 		const attributeDataIndex =
 			Select.data.components.getIndexForAttributeDataByComponentKey(
-				state,
 				componentKey
 			) || {};
 		const attributeCount = attributeDataIndex.count;
@@ -260,6 +261,7 @@ function loadMissingRelationsAndData(
 const ensure = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
+		setState(state);
 		const componentState = Select.data.components.getComponentStateByKey(
 			state,
 			componentKey
@@ -267,12 +269,10 @@ const ensure = componentKey => {
 		const {attributeOrder: order = null, start = 1, length} = componentState;
 
 		const attributeDataFilterExtension = Select.data.components.getAttributeDataFilterExtensionByComponentKey(
-			state,
 			componentKey
 		);
 
 		const commonFilter = Select.data.components.getCommonFilterByComponentKey(
-			state,
 			componentKey
 		);
 
@@ -282,7 +282,6 @@ const ensure = componentKey => {
 
 		const attributeDataIndex =
 			Select.data.components.getIndexForAttributeDataByComponentKey(
-				state,
 				componentKey
 			) || [];
 
