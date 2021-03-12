@@ -83,6 +83,7 @@ function loadMissingRelationsAndData(
 		const promises = [];
 
 		// load remaining relations pages
+		// ignoring first page
 		const remainingRelationsPageCount = getRestRelationsPages(
 			attributeRelationsCount,
 			spatialRelationsCount,
@@ -1049,9 +1050,9 @@ export default {
 	ensure,
 	ensureDataAndRelations,
 	getRestRelationsPages, //tested
-	hasMissingAttributesData,
-	hasMissingSpatialData,
-	hasSpatialOrAreaRelations,
+	hasMissingAttributesData, //tested
+	hasMissingSpatialData, //tested
+	hasSpatialOrAreaRelations, //tested
 	loadIndexedPage, //tested
 	loadMissingAttributeData,
 	loadMissingRelationsAndData,
