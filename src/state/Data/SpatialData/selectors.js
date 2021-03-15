@@ -5,7 +5,7 @@ import {
 } from '@jvitela/recompute';
 import commonHelpers from '../../_common/helpers';
 import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
-
+import {isNumber as _isNumber} from 'lodash';
 const getSubstate = state => state.data.spatialData;
 
 const getIndex = common.getIndex(getSubstate);
@@ -47,7 +47,7 @@ const getIndex_recompute = createRecomputeSelector((filter, order) => {
  */
 const getIndexedFeatureKeys = createRecomputeSelector(
 	(filter, level, tile, dataSourceKey) => {
-		if (level && tile && dataSourceKey) {
+		if (_isNumber(level) && tile && dataSourceKey) {
 			const index = getIndex_recompute(filter, null);
 			const featureKeys = index?.index[level]?.[tile]?.[dataSourceKey];
 			return featureKeys && featureKeys.length ? featureKeys : null;
@@ -57,6 +57,26 @@ const getIndexedFeatureKeys = createRecomputeSelector(
 	},
 	recomputeSelectorOptions
 );
+/**
+ * @param {Object} filter
+ * @param {number} level
+ * @param {string} tile
+ * @param {string} dataSourceKey
+ * @return {Array} indexed feature keys
+ */
+const isTileLoading = createRecomputeSelector((filter, level, tile) => {
+	if (_isNumber(level) && tile) {
+		const index = getIndex_recompute(filter, null);
+		if (index) {
+			const loading = index?.index[level]?.[tile];
+			return loading === true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}, recomputeSelectorOptions);
 
 export default {
 	getByDataSourceKeyObserver,
@@ -64,4 +84,5 @@ export default {
 	getIndex_recompute,
 	getIndexesObserver,
 	getIndexedFeatureKeys,
+	isTileLoading, //FIXME test
 };

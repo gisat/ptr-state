@@ -1,70 +1,10 @@
-export const responseWithSpatialAndAttributeData = {
-	data: {
-		spatialRelations: [],
-		attributeRelations: [],
-		spatialDataSources: [],
-		attributeDataSources: [],
-		spatialData: {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'1.40625,49.21875': [18502],
-					},
-				},
-			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {},
-				spatialIndex: {
-					7: {
-						'1.40625,49.21875': [],
-					},
-				},
-			},
-		},
-		attributeData: {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18502: '27',
-			},
-		},
-	},
-	total: {
-		spatialRelations: 2,
-		attributeRelations: 1,
-	},
-	limit: 100,
-	offset: 0,
-};
-export const responseWithRelationsSpatialAndAttributeData = {
+//
+// pageSize: 1
+// first of two response with relations and geometry
+//
+export const responseWithRelationsSpatialAndAttributeData_1 = {
 	data: {
 		spatialRelations: [
-			{
-				key: '5d35a80c-e4bc-4054-9b04-7ae9829198ee',
-				data: {
-					scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-					periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-					placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-					spatialDataSourceKey: '85e35be5-1706-402a-86ad-851397bae7aa',
-					layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
-					scenarioKey: null,
-					caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-					applicationKey: null,
-				},
-			},
 			{
 				key: '8b0e266c-40d4-4bfe-ad75-964d9af1f57f',
 				data: {
@@ -98,18 +38,6 @@ export const responseWithRelationsSpatialAndAttributeData = {
 			},
 		],
 		spatialDataSources: [
-			{
-				key: '85e35be5-1706-402a-86ad-851397bae7aa',
-				data: {
-					nameInternal: 'gadm36_fra_4',
-					attribution: null,
-					type: 'tiledVector',
-					layerName: null,
-					tableName: 'gadm36_FRA_4',
-					fidColumnName: 'ogc_fid',
-					geometryColumnName: 'geom',
-				},
-			},
 			{
 				key: '848e2559-936d-4262-a808-4c87aa60217d',
 				data: {
@@ -154,7 +82,7 @@ export const responseWithRelationsSpatialAndAttributeData = {
 				},
 				spatialIndex: {
 					7: {
-						'1.40625,49.21875': [18502],
+						'0,1': [18502],
 					},
 				},
 			},
@@ -162,7 +90,7 @@ export const responseWithRelationsSpatialAndAttributeData = {
 				data: {},
 				spatialIndex: {
 					7: {
-						'1.40625,49.21875': [],
+						'0,1': [],
 					},
 				},
 			},
@@ -180,16 +108,21 @@ export const responseWithRelationsSpatialAndAttributeData = {
 	limit: 100,
 	offset: 0,
 };
-export const responseWithSpatialRelationsSpatialAndAttributeData = {
+
+//
+// pageSize: 1
+// second of two response with relations and geometry
+//
+export const responseWithRelationsSpatialAndAttributeData_2 = {
 	data: {
 		spatialRelations: [
 			{
-				key: '8b0e266c-40d4-4bfe-ad75-964d9af1f57f',
+				key: '5d35a80c-e4bc-4054-9b04-7ae9829198ee',
 				data: {
 					scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
 					periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-					placeKey: '9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-					spatialDataSourceKey: '848e2559-936d-4262-a808-4c87aa60217d',
+					placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
+					spatialDataSourceKey: '85e35be5-1706-402a-86ad-851397bae7aa',
 					layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
 					scenarioKey: null,
 					caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
@@ -200,69 +133,18 @@ export const responseWithSpatialRelationsSpatialAndAttributeData = {
 		attributeRelations: [],
 		spatialDataSources: [
 			{
-				key: '848e2559-936d-4262-a808-4c87aa60217d',
+				key: '85e35be5-1706-402a-86ad-851397bae7aa',
 				data: {
-					nameInternal: 'gadm36_deu_4',
+					nameInternal: 'gadm36_fra_4',
 					attribution: null,
 					type: 'tiledVector',
 					layerName: null,
-					tableName: 'gadm36_DEU_4',
+					tableName: 'gadm36_FRA_4',
 					fidColumnName: 'ogc_fid',
 					geometryColumnName: 'geom',
 				},
 			},
 		],
-		attributeDataSources: [],
-		spatialData: {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'1.40625,49.21875': [18502],
-					},
-				},
-			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {},
-				spatialIndex: {
-					7: {
-						'1.40625,49.21875': [],
-					},
-				},
-			},
-		},
-		attributeData: {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18502: '27',
-			},
-		},
-	},
-	total: {
-		spatialRelations: 2,
-		attributeRelations: 2,
-	},
-	limit: 100,
-	offset: 0,
-};
-export const responseWithSpatialAndAttributeData_2 = {
-	data: {
-		spatialRelations: [],
-		attributeRelations: [],
-		spatialDataSources: [],
 		attributeDataSources: [],
 		spatialData: {
 			'85e35be5-1706-402a-86ad-851397bae7aa': {
@@ -304,7 +186,7 @@ export const responseWithSpatialAndAttributeData_2 = {
 	},
 	total: {
 		spatialRelations: 2,
-		attributeRelations: 2,
+		attributeRelations: 1,
 	},
 	limit: 100,
 	offset: 0,

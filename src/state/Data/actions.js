@@ -11,8 +11,14 @@ import request from '../_common/request';
 import commonActions from '../_common/actions';
 
 import Select from '../Select';
-import {getMissingTiles, tileAsArray, getPageSize} from './helpers';
+import {
+	getMissingTiles,
+	tileAsArray,
+	tileAsString,
+	getPageSize,
+} from './helpers';
 import {TILED_VECTOR_LAYER_TYPES} from './constants';
+import helpers from '../_common/helpers';
 
 const DEFAULT_RELATIONS_PAGE = {
 	offset: 0,
@@ -186,7 +192,7 @@ function loadMissingRelationsAndData(
 }
 
 /**
- * Ensure load missing attribute data for tiles defined in spatialFilter that are not loaded or loading in state.
+ * Ensure load missing attribute data and relations for tiles defined in spatialFilter that are not loaded or loading in state.
  *
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
  * @param {string?} styleKey UUID
@@ -369,6 +375,20 @@ function loadMissingSpatialData(
 		//diff spatial data loaded/loading and to load
 		const missingSpatialDataTiles =
 			getMissingTiles(spatialDataIndex, spatialFilter) || [];
+		const loadGeometry = true;
+
+		dispatch(
+			setLoading(
+				attributeDataFilter,
+				{
+					tiles: missingSpatialDataTiles,
+				},
+				spatialFilter,
+				spatialRelationsFilter,
+				order,
+				loadGeometry
+			)
+		);
 		const promises = [];
 		for (const tile of missingSpatialDataTiles) {
 			const spatialIndex = {
@@ -376,7 +396,6 @@ function loadMissingSpatialData(
 			};
 
 			const relations = {};
-			const loadGeometry = true;
 			const loadRelations = false;
 			promises.push(
 				dispatch(
@@ -401,6 +420,7 @@ function loadMissingSpatialData(
 
 /**
  * Ensure load spatial data, attribute data and relations for tiles defined in spatialFilter.
+ * Makes load first page of data, if more date missing, pass filters to loadMissingRelationsAndData.
  * @param {Object} spatialFilter Spatial defined filter of level and its tiles
  * @param {string?} styleKey UUID
  * @param {Array?} order
@@ -451,8 +471,6 @@ function ensureDataAndRelations(
 						return;
 						throw response;
 					}
-
-					//FIXME
 
 					const attributeRelationsCount = response.total.attributeRelations;
 					const spatialRelationsCount = response.total.spatialRelations;
@@ -915,16 +933,52 @@ function setLoading(
 		const loadingTilesGeometry =
 			spatialIndex?.tiles || spatialFilter?.tiles || [];
 
+		//get loading tiles
+		const spatialTilesInNotLoadingState = _.reduce(
+			loadingTilesGeometry,
+			(acc = [], tile) => {
+				const loading = Select.data.spatialData.isTileLoading(
+					getState(),
+					spatialRelationsFilter,
+					spatialFilter.level,
+					tileAsString(tile)
+				);
+				if (!loading) {
+					return [...acc, tile];
+				} else {
+					return acc;
+				}
+			},
+			[]
+		);
+		const attributesTilesInNotLoadingState = _.reduce(
+			loadingTilesGeometry,
+			(acc = [], tile) => {
+				const loading = Select.data.attributeData.isTileLoading(
+					getState(),
+					attributeDataFilter,
+					spatialFilter.level,
+					tileAsString(tile)
+				);
+				if (!loading) {
+					return [...acc, tile];
+				} else {
+					return acc;
+				}
+			},
+			[]
+		);
+
 		////
 		// Spatial
 		////
-		if (loadGeometry && loadingTilesGeometry.length > 0) {
+		if (loadGeometry && spatialTilesInNotLoadingState.length > 0) {
 			dispatch(
 				spatialData.addLoadingIndex(
 					spatialRelationsFilter,
 					order,
 					spatialFilter.level,
-					loadingTilesGeometry
+					spatialTilesInNotLoadingState
 				)
 			);
 		}
@@ -932,13 +986,13 @@ function setLoading(
 		////
 		// Attribute
 		////
-		if (loadingTilesGeometry.length > 0) {
+		if (attributesTilesInNotLoadingState.length > 0) {
 			dispatch(
 				attributeData.addLoadingSpatialIndex(
 					attributeDataFilter,
 					order,
 					spatialFilter.level,
-					loadingTilesGeometry
+					attributesTilesInNotLoadingState
 				)
 			);
 		}
@@ -1055,7 +1109,7 @@ export default {
 	hasSpatialOrAreaRelations, //tested
 	loadIndexedPage, //tested
 	loadMissingAttributeData,
-	loadMissingRelationsAndData,
+	loadMissingRelationsAndData, //tested
 	loadMissingSpatialData,
 	processResult, //tested
 	setLoading, //tested
