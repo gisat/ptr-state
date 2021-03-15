@@ -176,7 +176,7 @@ export default {
 	getDataByDataSourceKeys,
 	getAttributesByDataSourceKeysForFeatureKey,
 	getSpatiallyIndexedFeatureKeysByDataSourceKeys,
-	isTileLoading, //Add tests
+	isTileLoading,
 
 	getSubstate,
 };

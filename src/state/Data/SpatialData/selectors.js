@@ -84,5 +84,5 @@ export default {
 	getIndex_recompute,
 	getIndexesObserver,
 	getIndexedFeatureKeys,
-	isTileLoading, //FIXME test
+	isTileLoading,
 };
