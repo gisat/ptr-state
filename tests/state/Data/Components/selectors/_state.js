@@ -52,7 +52,7 @@ export const ComponentsSelectorsState = {
 					filter: {
 						modifiers: {
 							periodKey: 'activePeriodKey1',
-							scopeKey: 'scope2',
+							scopeKey: 'scope1',
 						},
 						attributeKeys: ['attribute1', 'attribute2'],
 					},
@@ -75,6 +75,7 @@ export const ComponentsSelectorsState = {
 							scopeKey: 'scope2',
 						},
 						attributeKeys: ['attribute1'],
+						areaTreeLevelKey: 'areaTreeLevel1',
 					},
 					index: {1: 'relation3'},
 				},
@@ -124,7 +125,7 @@ export const ComponentsSelectorsState = {
 						},
 						attributeKeys: ['attribute1'],
 					},
-					count: 2,
+					count: 3,
 					index: {1: 'featureKey2', 2: 'featureKey1'},
 				},
 				{
@@ -148,7 +149,7 @@ export const ComponentsSelectorsState = {
 						attributeKeys: ['attribute1', 'attribute2'],
 					},
 					order: [['attribute1', 'ascending']],
-					count: 3,
+					count: 6,
 					index: {
 						1: 'featureKey2',
 						2: 'featureKey4',
@@ -177,7 +178,7 @@ export const ComponentsSelectorsState = {
 						},
 						attributeKeys: ['attribute1'],
 						start: 2,
-						length: 1,
+						length: 2,
 					},
 					componentD: {
 						filterByActive: {

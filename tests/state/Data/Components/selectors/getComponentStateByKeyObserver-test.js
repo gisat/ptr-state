@@ -18,7 +18,7 @@ describe('getComponentStateByKeyObserver-test', function () {
 			},
 			attributeKeys: ['attribute1'],
 			start: 2,
-			length: 1,
+			length: 2,
 		};
 
 		assert.deepStrictEqual(

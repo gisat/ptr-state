@@ -18,7 +18,7 @@ describe('getIndexForAttributeDataByComponentKey-test', function () {
 				},
 				attributeKeys: ['attribute1'],
 			},
-			count: 2,
+			count: 3,
 			index: {1: 'featureKey2', 2: 'featureKey1'},
 		};
 
@@ -39,7 +39,7 @@ describe('getIndexForAttributeDataByComponentKey-test', function () {
 				attributeKeys: ['attribute1', 'attribute2'],
 			},
 			order: [['attribute1', 'ascending']],
-			count: 3,
+			count: 6,
 			index: {
 				1: 'featureKey2',
 				2: 'featureKey4',
@@ -83,7 +83,7 @@ describe('getIndexForAttributeDataByComponentKey-test', function () {
 		);
 	});
 
-	it('Should return null, if there is no state for give component', function () {
+	it('Should return null, if there is no state for given component', function () {
 		assert.isNull(
 			selectors.getIndexForAttributeDataByComponentKey('componentXY')
 		);
