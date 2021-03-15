@@ -72,11 +72,40 @@ describe('state/Data/actions/loadIndexedPage', function () {
 				app: {
 					localConfiguration: {
 						apiBackendProtocol: 'http',
-						apiBackendHost: 'backend',
-						apiBackendPath: 'rest',
+						apiBackendHost: 'localhost',
+						apiBackendPath: 'backend',
+					},
+					data: {
+						spatialData: {
+							indexes: [],
+						},
+						attributeData: {
+							indexes: [],
+						},
 					},
 				},
 			});
+
+			setFetch(function (url, options) {
+				assert.strictEqual(
+					'http://localhost/backend/rest/data/filtered',
+					slash(url)
+				);
+
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve({});
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: options.body,
+				});
+			});
+
 			const dispatch = getDispatch(getState);
 
 			const styleKey = null;

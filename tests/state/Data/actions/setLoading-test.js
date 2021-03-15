@@ -63,7 +63,16 @@ describe('state/Data/actions/setLoading', function () {
 	//
 
 	it('Set loading for spatial and attribute data', function () {
-		const getState = () => ({});
+		const getState = () => ({
+			data: {
+				spatialData: {
+					indexes: [],
+				},
+				attributeData: {
+					indexes: [],
+				},
+			},
+		});
 		const dispatch = getDispatch(getState);
 
 		const modifiers = {

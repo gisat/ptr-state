@@ -2,7 +2,9 @@ import {
 	isEmpty as _isEmpty,
 	forEach as _forEach,
 	forIn as _forIn,
+	isNumber as _isNumber,
 } from 'lodash';
+
 import {
 	createObserver as createRecomputeObserver,
 	createSelector as createRecomputeSelector,
@@ -131,9 +133,9 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector(
  */
 const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
 	(filter, level, tile) => {
-		const index = getSpatialIndex_recompute(filter, null);
-		if (index?.index && !_isEmpty(index)) {
-			const featureKeysByDataSourceKeys = index.index[level]?.[tile];
+		const spatialIndex = getSpatialIndex_recompute(filter, null);
+		if (spatialIndex?.index && !_isEmpty(spatialIndex)) {
+			const featureKeysByDataSourceKeys = spatialIndex.index[level]?.[tile];
 			return featureKeysByDataSourceKeys || null;
 		} else {
 			return null;
@@ -141,6 +143,27 @@ const getSpatiallyIndexedFeatureKeysByDataSourceKeys = createRecomputeSelector(
 	},
 	recomputeSelectorOptions
 );
+
+/**
+ * @param {Object} filter
+ * @param {number} level
+ * @param {string} tile
+ * @param {string} dataSourceKey
+ * @return {Array} indexed feature keys
+ */
+const isTileLoading = createRecomputeSelector((filter, level, tile) => {
+	if (_isNumber(level) && tile) {
+		const index = getSpatialIndex_recompute(filter, null);
+		if (index) {
+			const loading = index?.index[level]?.[tile];
+			return loading === true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}, recomputeSelectorOptions);
 
 export default {
 	getAllAsObjectObserver,
@@ -153,6 +176,7 @@ export default {
 	getDataByDataSourceKeys,
 	getAttributesByDataSourceKeysForFeatureKey,
 	getSpatiallyIndexedFeatureKeysByDataSourceKeys,
+	isTileLoading, //Add tests
 
 	getSubstate,
 };
