@@ -80,6 +80,14 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 					apiBackendPath: 'rest',
 				},
 			},
+			data: {
+				attributeData: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
+				},
+			},
 		});
 		const dispatch = getDispatch(getState);
 
@@ -122,6 +130,14 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 					apiBackendHost: 'localhost',
 					apiBackendPath: 'backend',
 					requestPageSize: 1,
+				},
+			},
+			data: {
+				attributeData: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
 				},
 			},
 		});
@@ -438,6 +454,14 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 					apiBackendHost: 'localhost',
 					apiBackendPath: 'backend',
 					requestPageSize: 1,
+				},
+			},
+			data: {
+				attributeData: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
 				},
 			},
 		});

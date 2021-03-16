@@ -66,6 +66,7 @@ const getIndexedFeatureKeys = createRecomputeSelector(
  */
 const isTileLoading = createRecomputeSelector((filter, level, tile) => {
 	if (_isNumber(level) && tile) {
+		debugger;
 		const index = getIndex_recompute(filter, null);
 		if (index) {
 			const loading = index?.index[level]?.[tile];

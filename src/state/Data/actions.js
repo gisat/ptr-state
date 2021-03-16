@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import attributeRelations from './AttributeRelations/actions';
 import attributeDataSources from './AttributeDataSources/actions';
@@ -930,6 +931,7 @@ function setLoading(
 	loadGeometry
 ) {
 	return (dispatch, getState) => {
+		setState(getState());
 		const loadingTilesGeometry =
 			spatialIndex?.tiles || spatialFilter?.tiles || [];
 

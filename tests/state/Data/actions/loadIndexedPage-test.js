@@ -147,6 +147,14 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						apiBackendPath: 'backend',
 					},
 				},
+				data: {
+					attributeData: {
+						indexes: [],
+					},
+					spatialData: {
+						indexes: [],
+					},
+				},
 			});
 
 			setFetch(function (url, options) {
@@ -323,6 +331,14 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
 						apiBackendPath: 'backend',
+					},
+				},
+				data: {
+					attributeData: {
+						indexes: [],
+					},
+					spatialData: {
+						indexes: [],
 					},
 				},
 			});
@@ -766,6 +782,14 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						apiBackendProtocol: 'http',
 						apiBackendHost: 'localhost',
 						apiBackendPath: 'backend',
+					},
+				},
+				data: {
+					attributeData: {
+						indexes: [],
+					},
+					spatialData: {
+						indexes: [],
 					},
 				},
 			});

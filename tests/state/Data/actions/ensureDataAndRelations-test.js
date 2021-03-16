@@ -101,6 +101,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					apiBackendHost: 'backend',
 					apiBackendPath: 'rest',
 				},
+				data: {
+					attributeData: {
+						indexes: [],
+					},
+					spatialData: {
+						indexes: [],
+					},
+				},
 			},
 		};
 
@@ -281,7 +289,8 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 			}
 		});
 
-		const dispatch = getDispatch(getState, store.dispatch);
+		// const dispatch = getDispatch(getState, store.dispatch);
+		const dispatch = getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',

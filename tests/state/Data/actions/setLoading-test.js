@@ -184,7 +184,17 @@ describe('state/Data/actions/setLoading', function () {
 		});
 	});
 	it('Set loading for attribute data', function () {
-		const getState = () => ({});
+		const getState = () => ({
+			data: {
+				attributeData: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
+				},
+			},
+		});
+
 		const dispatch = getDispatch(getState);
 
 		const modifiers = {
@@ -270,7 +280,16 @@ describe('state/Data/actions/setLoading', function () {
 		});
 	});
 	it('Do not dispatch any action cause tiles are empty', function () {
-		const getState = () => ({});
+		const getState = () => ({
+			data: {
+				attributeData: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
+				},
+			},
+		});
 		const dispatch = getDispatch(getState);
 
 		const modifiers = {
