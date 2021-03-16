@@ -938,7 +938,6 @@ function setLoading(
 			loadingTilesGeometry,
 			(acc = [], tile) => {
 				const loading = Select.data.spatialData.isTileLoading(
-					getState(),
 					spatialRelationsFilter,
 					spatialFilter.level,
 					tileAsString(tile)
@@ -955,7 +954,6 @@ function setLoading(
 			loadingTilesGeometry,
 			(acc = [], tile) => {
 				const loading = Select.data.attributeData.isTileLoading(
-					getState(),
 					attributeDataFilter,
 					spatialFilter.level,
 					tileAsString(tile)

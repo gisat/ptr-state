@@ -1,9 +1,14 @@
+import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
+import thunk from 'redux-thunk';
+// import {reduxBatch} from '@manaflair/redux-batch';
 import {assert} from 'chai';
 import _ from 'lodash';
 import slash from 'slash';
 import actions from '../../../../src/state/Data/actions';
 import {resetFetch, setFetch} from '../../../../src/state/_common/request';
-
+import AttributeDataReducer from '../../../../src/state/Data/AttributeData/reducers';
+import SpatialDataReducer from '../../../../src/state/Data/SpatialData/reducers';
+import AppReducers from '../../../../src/state/App/reducers';
 import {
 	responseWithRelationsSpatialAndAttributeData_1,
 	responseWithRelationsSpatialAndAttributeData_2,
@@ -19,19 +24,26 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 		dispatchedActions = [];
 	};
 
-	const getDispatch = getState => {
+	const getDispatch = (getState, optDispatch) => {
 		return action => {
-			const dispatch = getDispatch(getState);
+			const dispatch = getDispatch(getState, optDispatch);
 			if (typeof action === 'function') {
 				const res = action(dispatch, getState);
 				if (res != null) {
 					//apply reducer
+					if (optDispatch) {
+						debugger;
+						optDispatch(res);
+					}
 					dispatchedActions.push(res);
 				}
 
 				return res;
 			}
 
+			if (optDispatch) {
+				optDispatch(action);
+			}
 			dispatchedActions.push(action);
 		};
 	};
@@ -75,7 +87,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 	//
 
 	it('dispatch error befause of missing spatialFilter', function () {
-		const getState = () => ({
+		const reducers = combineReducers({
+			data: combineReducers({
+				attributeData: AttributeDataReducer,
+				spatialData: SpatialDataReducer,
+			}),
+		});
+
+		const defaultState = {
 			app: {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
@@ -83,8 +102,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					apiBackendPath: 'rest',
 				},
 			},
-		});
-		const dispatch = getDispatch(getState);
+		};
+
+		const store = createStore(reducers, defaultState);
+
+		const getState = () => {
+			return store.getState();
+		};
+		const dispatch = getDispatch(getState, store.dispatch);
 
 		const spatialFilter = {};
 		const styleKey = 'xxx';
@@ -110,7 +135,15 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 	});
 
 	it('request and proceed relations, spatial and attribute data for one tile', function () {
-		const getState = () => ({
+		const reducers = combineReducers({
+			app: AppReducers,
+			data: combineReducers({
+				attributeData: AttributeDataReducer,
+				spatialData: SpatialDataReducer,
+			}),
+		});
+
+		const defaultState = {
 			app: {
 				localConfiguration: {
 					apiBackendProtocol: 'http',
@@ -119,15 +152,15 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					requestPageSize: 1,
 				},
 			},
-			data: {
-				spatialData: {
-					indexes: [],
-				},
-				attributeData: {
-					indexes: [],
-				},
-			},
-		});
+		};
+
+		const store = createStore(reducers, defaultState, applyMiddleware(thunk));
+
+		const getState = () => {
+			console.log('xxx', store.getState());
+			return store.getState();
+		};
+		debugger;
 
 		setFetch(function (url, options) {
 			assert.strictEqual(
@@ -248,7 +281,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 			}
 		});
 
-		const dispatch = getDispatch(getState);
+		const dispatch = getDispatch(getState, store.dispatch);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
