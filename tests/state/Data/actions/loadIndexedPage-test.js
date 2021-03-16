@@ -252,7 +252,7 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						},
 					},
 					{
-						type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL',
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 						changedOn: null,
 						filter: null,
 						indexData: [
@@ -487,7 +487,7 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						changedOn: null,
 					},
 					{
-						type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL',
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 						filter: _attributeDataFilter,
 						order: null,
 						indexData: [
@@ -874,7 +874,7 @@ describe('state/Data/actions/loadIndexedPage', function () {
 			return runFunctionActions({dispatch, getState}).then(() => {
 				assert.deepStrictEqual(dispatchedActions, [
 					{
-						type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL',
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 						changedOn: null,
 						filter: null,
 						indexData: [

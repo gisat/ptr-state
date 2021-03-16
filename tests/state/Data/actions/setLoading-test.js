@@ -153,7 +153,7 @@ describe('state/Data/actions/setLoading', function () {
 					changedOn: null,
 				},
 				{
-					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL',
+					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
 						modifiers: {
@@ -249,7 +249,7 @@ describe('state/Data/actions/setLoading', function () {
 		return runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(dispatchedActions, [
 				{
-					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL',
+					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
 						modifiers: {
