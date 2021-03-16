@@ -1,6 +1,5 @@
-import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
-// import {reduxBatch} from '@manaflair/redux-batch';
 import {assert} from 'chai';
 import _ from 'lodash';
 import slash from 'slash';
@@ -9,84 +8,15 @@ import {resetFetch, setFetch} from '../../../../src/state/_common/request';
 import AttributeDataReducer from '../../../../src/state/Data/AttributeData/reducers';
 import SpatialDataReducer from '../../../../src/state/Data/SpatialData/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
+import getStoreSet from '../../_common/helpers/store';
 import {
 	responseWithRelationsSpatialAndAttributeData_1,
 	responseWithRelationsSpatialAndAttributeData_2,
-	// responseWithSpatialRelationsSpatialAndAttributeData,
-	// responseWithSpatialAndAttributeData_2,
 } from './mockData_2';
 
 describe('state/Data/actions/ensureDataAndRelations', function () {
-	// this.timeout(5000);
-	let dispatchedActions = [];
-
-	const clearDispatchedActions = function () {
-		dispatchedActions = [];
-	};
-
-	const getDispatch = (getState, optDispatch) => {
-		return action => {
-			const dispatch = getDispatch(getState, optDispatch);
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					//apply reducer
-					if (optDispatch) {
-						debugger;
-						optDispatch(res);
-					}
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			if (optDispatch) {
-				optDispatch(action);
-			}
-			dispatchedActions.push(action);
-		};
-	};
-
-	const runFunctionActions = function ({dispatch, getState}) {
-		return new Promise((resolve, reject) => {
-			const promises = [];
-			for (let i = 0; i < dispatchedActions.length; i++) {
-				const action = dispatchedActions[i];
-
-				if (typeof action === 'function') {
-					promises.push(action(dispatch, getState));
-					dispatchedActions[i] = null;
-				} else if (action instanceof Promise) {
-					promises.push(action);
-					dispatchedActions[i] = null;
-				} else if (Array.isArray(action)) {
-					dispatchedActions = [...dispatchedActions, ...action];
-					dispatchedActions[i] = null;
-				}
-			}
-
-			dispatchedActions = dispatchedActions.filter(a => a != null);
-
-			if (promises.length > 0) {
-				return Promise.all(promises)
-					.then(() => runFunctionActions({dispatch, getState}))
-					.then(() => resolve());
-			}
-
-			resolve();
-		});
-	};
-
-	afterEach(function () {
-		clearDispatchedActions();
-	});
-
-	//
-	// END OF SETTINGS
-	//
-
 	it('dispatch error befause of missing spatialFilter', function () {
+		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			data: combineReducers({
 				attributeData: AttributeDataReducer,
@@ -117,7 +47,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 		const getState = () => {
 			return store.getState();
 		};
-		const dispatch = getDispatch(getState, store.dispatch);
+		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 
 		const spatialFilter = {};
 		const styleKey = 'xxx';
@@ -137,12 +67,15 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 			)
 		);
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [{type: 'ERROR'}]);
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
+				{type: 'ERROR'},
+			]);
 		});
 	});
 
 	it('request and proceed relations, spatial and attribute data for one tile', function () {
+		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			app: AppReducers,
 			data: combineReducers({
@@ -165,10 +98,8 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 		const store = createStore(reducers, defaultState, applyMiddleware(thunk));
 
 		const getState = () => {
-			console.log('xxx', store.getState());
 			return store.getState();
 		};
-		debugger;
 
 		setFetch(function (url, options) {
 			assert.strictEqual(
@@ -289,8 +220,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 			}
 		});
 
-		// const dispatch = getDispatch(getState, store.dispatch);
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -338,33 +268,13 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 			)
 		);
 
-		const _attributeDataFilter = {
-			layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-			modifiers: modifiers,
-			styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
-		};
-		const _spatialFilter = {
-			layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-			modifiers: modifiers,
-		};
-
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					indexData: [
@@ -381,17 +291,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					order: null,
@@ -426,17 +326,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
@@ -444,17 +334,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					order: null,
@@ -496,17 +376,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					type: 'DATA.ATTRIBUTE_DATA_SOURCES.ADD',
@@ -514,17 +384,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					order: null,
@@ -553,17 +413,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					},
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					order: null,
@@ -596,34 +446,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					type: 'DATA.SPATIAL_RELATIONS.ADD',
 				},
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					count: 2,
@@ -663,34 +493,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
 				},
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					count: 2,
@@ -735,17 +545,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					level: '7',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					indexData: [
@@ -761,59 +561,6 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					changedOn: null,
 				},
 				{
-					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-					filter: {
-						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
-					},
-					order: null,
-					indexData: [
-						{
-							7: {
-								'0,2': true,
-							},
-						},
-					],
-					changedOn: null,
-				},
-				{
-					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
-					filter: {
-						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
-						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
-					},
-					order: null,
-					indexData: [
-						{
-							7: {
-								'0,2': true,
-							},
-						},
-					],
-					changedOn: null,
-				},
-				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_SPATIAL_INDEX',
 					attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
 					data: {
@@ -821,17 +568,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					},
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
 					},
 					order: null,
@@ -864,34 +601,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					type: 'DATA.SPATIAL_RELATIONS.ADD',
 				},
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					count: 2,
@@ -931,34 +648,14 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					],
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
 				},
 				{
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					count: 2,
@@ -1003,17 +700,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 					level: '7',
 					filter: {
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-						modifiers: {
-							scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-							placeKey: {
-								in: [
-									'8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-									'9e28f519-dc30-4ebb-bcc8-97f696d9cf2a',
-								],
-							},
-							caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-							periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-						},
+						modifiers,
 					},
 					order: null,
 					indexData: [
