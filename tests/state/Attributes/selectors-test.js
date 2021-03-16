@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import selectors from '../../../src/state/Attributes/selectors';
 
 describe('state/Attributes/selectors', function () {
-	describe('getAttributes', function () {
+	describe('getAll', function () {
 		const tests = [
 			{
 				name: 'null',
@@ -40,7 +40,7 @@ describe('state/Attributes/selectors', function () {
 		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getAttributes(test.state),
+					selectors.getAll(test.state),
 					test.expectedResult
 				);
 			});

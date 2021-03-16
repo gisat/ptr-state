@@ -21,16 +21,6 @@ const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 
-// TODO refactor
-const getPlacesForActiveScope = createSelector(
-	[getAll, ScopesSelectors.getActiveScopeKey],
-	(models, activeScopeKey) => {
-		return _.filter(models, function (model) {
-			return model.data && model.data.dataset === activeScopeKey;
-		});
-	}
-);
-
 const getActiveView = createSelector([getActive], place => {
 	if (place && place.data && place.data.bbox) {
 		return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
@@ -57,7 +47,6 @@ export default {
 
 	getEditedDataByKey,
 	getIndexed: common.getIndexed(getSubstate),
-	getPlacesForActiveScope,
 	getUpdatePermissionByKey,
 	getSubstate,
 };

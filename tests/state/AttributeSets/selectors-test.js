@@ -31,7 +31,7 @@ describe('state/AttributeSets/selectors', function () {
 		assert.deepStrictEqual(selectors.getActiveKeys(state), ['k1', 'k2']);
 	});
 
-	describe('getAttributeSets', function () {
+	describe('getAll', function () {
 		const tests = [
 			{
 				name: 'null',
@@ -69,84 +69,7 @@ describe('state/AttributeSets/selectors', function () {
 		tests.forEach(test => {
 			it(test.name, function () {
 				assert.deepStrictEqual(
-					selectors.getAttributeSets(test.state),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
-	describe('getByTopics', function () {
-		const tests = [
-			{
-				name: 't0',
-				state: {
-					attributeSets: {
-						byKey: {
-							k1: {n: 1, data: {topic: 't1'}},
-							k2: {n: 2, data: {topic: 't1'}},
-							k3: {n: 3, data: {topic: 't2'}},
-						},
-					},
-				},
-				topics: ['t0'],
-				expectedResult: null,
-			},
-			{
-				name: 't1',
-				state: {
-					attributeSets: {
-						byKey: {
-							k1: {n: 1, data: {topic: 't1'}},
-							k2: {n: 2, data: {topic: 't1'}},
-							k3: {n: 3, data: {topic: 't2'}},
-						},
-					},
-				},
-				topics: ['t1'],
-				expectedResult: [
-					{n: 1, data: {topic: 't1'}},
-					{n: 2, data: {topic: 't1'}},
-				],
-			},
-			{
-				name: 't2',
-				state: {
-					attributeSets: {
-						byKey: {
-							k1: {n: 1, data: {topic: 't1'}},
-							k2: {n: 2, data: {topic: 't1'}},
-							k3: {n: 3, data: {topic: 't2'}},
-						},
-					},
-				},
-				topics: ['t2'],
-				expectedResult: [{n: 3, data: {topic: 't2'}}],
-			},
-			{
-				name: 't1, t2',
-				state: {
-					attributeSets: {
-						byKey: {
-							k1: {n: 1, data: {topic: 't1'}},
-							k2: {n: 2, data: {topic: 't1'}},
-							k3: {n: 3, data: {topic: 't2'}},
-						},
-					},
-				},
-				topics: ['t1', 't2'],
-				expectedResult: [
-					{n: 1, data: {topic: 't1'}},
-					{n: 2, data: {topic: 't1'}},
-					{n: 3, data: {topic: 't2'}},
-				],
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getByTopics(test.state, test.topics),
+					selectors.getAll(test.state),
 					test.expectedResult
 				);
 			});
@@ -176,40 +99,6 @@ describe('state/AttributeSets/selectors', function () {
 			it(test.name, function () {
 				assert.deepStrictEqual(
 					selectors.getStateToSave(test.state),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
-	describe('getUniqueAttributeKeysForTopics', function () {
-		const tests = [
-			{
-				name: 'some',
-				state: {
-					attributeSets: {
-						byKey: {
-							k1: {
-								n: 1,
-								data: {topic: 't1', attributes: ['at1', 'at2']},
-							},
-							k2: {
-								n: 2,
-								data: {topic: 't1', attributes: ['at1', 'at3']},
-							},
-							k3: {n: 3, data: {topic: 't2', attributes: []}},
-						},
-					},
-				},
-				topics: ['t1', 't2'],
-				expectedResult: ['at1', 'at2', 'at3'],
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getUniqueAttributeKeysForTopics(test.state, test.topics),
 					test.expectedResult
 				);
 			});
