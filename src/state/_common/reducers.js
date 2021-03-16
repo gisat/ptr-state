@@ -43,56 +43,60 @@ export default {
 	// Add or update existing index
 	// FIXME - separate add and update functionality
 	addIndex: (state, action) => {
-		let indexes = [];
-		let selectedIndex = {};
+		if (action.data) {
+			let indexes = [];
+			let selectedIndex = {};
 
-		if (state.indexes) {
-			state.indexes.forEach(index => {
-				if (
-					_.isEqual(index.filter, action.filter) &&
-					_.isEqual(index.order, action.order)
-				) {
-					selectedIndex = index;
+			if (state.indexes) {
+				state.indexes.forEach(index => {
+					if (
+						_.isEqual(index.filter, action.filter) &&
+						_.isEqual(index.order, action.order)
+					) {
+						selectedIndex = index;
+					} else {
+						indexes.push(index);
+					}
+				});
+			}
+
+			let index = {
+				...(selectedIndex?.index && {...selectedIndex.index}),
+			};
+			if (action.data.length) {
+				action.data.forEach((model, i) => {
+					index[action.start + i] = model.key;
+				});
+			}
+
+			//
+			// Remove loading indicator if data does not come
+			//
+			if (_.isNumber(action.limit)) {
+				if (!index) {
+					index = {};
 				} else {
-					indexes.push(index);
-				}
-			});
-		}
-
-		let index = {
-			...(selectedIndex?.index && {...selectedIndex.index}),
-		};
-		if (action.data.length) {
-			action.data.forEach((model, i) => {
-				index[action.start + i] = model.key;
-			});
-		}
-
-		//
-		// Remove loading indicator if data does not come
-		//
-		if (_.isNumber(action.limit)) {
-			if (!index) {
-				index = {};
-			} else {
-				for (let i = action.start; i < action.start + action.limit; i++) {
-					if (index[i] === true) {
-						delete index[i];
+					for (let i = action.start; i < action.start + action.limit; i++) {
+						if (index[i] === true) {
+							delete index[i];
+						}
 					}
 				}
 			}
+
+			selectedIndex = {
+				filter: selectedIndex.filter || action.filter,
+				order: selectedIndex.order || action.order,
+				count: selectedIndex.count || action.count,
+				changedOn: action.changedOn,
+				index,
+			};
+			indexes.push(selectedIndex);
+
+			return {...state, indexes: indexes};
+		} else {
+			return state;
 		}
-
-		selectedIndex = {
-			filter: selectedIndex.filter || action.filter,
-			order: selectedIndex.order || action.order,
-			count: selectedIndex.count || action.count,
-			changedOn: action.changedOn,
-			index,
-		};
-		indexes.push(selectedIndex);
-
-		return {...state, indexes: indexes};
 	},
 
 	registerUseIndexed: (state, action) => {
@@ -408,7 +412,11 @@ export default {
 	 * @return {Object}
 	 */
 	updateStore: (state, action) => {
-		const {type, ...data} = action;
-		return {...state, ...data};
+		if (action) {
+			const {type, ...data} = action;
+			return {...state, ...data};
+		} else {
+			return state;
+		}
 	},
 };
