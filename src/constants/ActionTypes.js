@@ -217,7 +217,10 @@ export default utils.deepKeyMirror({
 			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
-				ADD_WITH_SPATIAL: null,
+				REMOVE: null,
+			},
+			SPATIAL_INDEX: {
+				ADD: null,
 				REMOVE: null,
 			},
 		},
