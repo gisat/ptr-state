@@ -301,9 +301,9 @@ function addDataAction(key, data) {
 	};
 }
 
-function removeIndexAction(filter, order) {
+function removeSpatialIndexAction(filter, order) {
 	return {
-		type: actionTypes.INDEX.REMOVE,
+		type: actionTypes.SPATIAL_INDEX.REMOVE,
 		filter,
 		order,
 	};
@@ -382,7 +382,7 @@ function addIndexActionWithSpatialIndex(
 	changedOn
 ) {
 	return {
-		type: actionTypes.INDEX.ADD_WITH_SPATIAL,
+		type: actionTypes.SPATIAL_INDEX.ADD,
 		filter: attributeDataFilter,
 		order,
 		indexData: index,
@@ -431,7 +431,7 @@ function actionUpdateStore(data) {
 export default {
 	addLoadingIndex,
 	addLoadingSpatialIndex,
-	removeIndex: removeIndexAction,
+	removeSpatialIndex: removeSpatialIndexAction,
 	receiveIndexed,
 	updateStore: actionUpdateStore,
 	receiveIndexedAttributeEndPoint,

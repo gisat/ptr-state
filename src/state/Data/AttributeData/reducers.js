@@ -146,7 +146,7 @@ const addWithIndex = (
 	return {...state, byDataSourceKey, indexes: stateWithUpdatedIndexes.indexes};
 };
 
-const addIndexWithSpatial = (state, action) => {
+const addSpatialIndex = (state, action) => {
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
 		action.filter,
@@ -168,7 +168,7 @@ const addIndexWithSpatial = (state, action) => {
  * @param {Object} action
  * @return {Object}
  */
-const removeIndex = (state, action) => {
+const removeSpatialIndex = (state, action) => {
 	const updatedIndexes = commonHelpers.removeIndex(
 		state.spatialIndexes,
 		action.filter,
@@ -210,10 +210,10 @@ export default (state = INITIAL_STATE, action) => {
 			return update(state, action.key, action.data);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD:
 			return common.addIndex(state, action);
-		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.ADD_WITH_SPATIAL:
-			return addIndexWithSpatial(state, action);
-		case ActionTypes.DATA.ATTRIBUTE_DATA.INDEX.REMOVE:
-			return removeIndex(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD:
+			return addSpatialIndex(state, action);
+		case ActionTypes.DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.REMOVE:
+			return removeSpatialIndex(state, action);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE_STORE:
 			return common.updateStore(state, action.data);
 		default:

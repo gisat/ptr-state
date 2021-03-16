@@ -182,7 +182,9 @@ function loadMissingRelationsAndData(
 				if (allSourcesAreUnsupported) {
 					// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
 					dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
-					dispatch(attributeData.removeIndex(attributeDataFilter, order));
+					dispatch(
+						attributeData.removeSpatialIndex(attributeDataFilter, order)
+					);
 				}
 			});
 		} else {
@@ -493,7 +495,9 @@ function ensureDataAndRelations(
 					if (restRelationsPages === 0 && allSourcesAreUnsupported) {
 						// AttributeData and spatialData index represented by spatialRelationsFilter, attributeRelationsFilter and order can be deleted
 						dispatch(spatialData.removeIndex(spatialRelationsFilter, order));
-						dispatch(attributeData.removeIndex(attributeDataFilter, order));
+						dispatch(
+							attributeData.removeSpatialIndex(attributeDataFilter, order)
+						);
 						return;
 					} else {
 						const preloadSpatialDataSources = spatialDataSources.map(sds => ({
