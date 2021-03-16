@@ -122,12 +122,6 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	it('getActiveKey', function () {
-		const state = {sub: {activeKey: 'k'}};
-
-		assert.strictEqual(selectors.getActiveKey(getSubState)(state), 'k');
-	});
-
 	it('getActiveKeys', function () {
 		const state = {sub: {activeKeys: ['k1', 'k2']}};
 

@@ -1,5 +1,8 @@
 import {assert} from 'chai';
 
+// import all reducers due to coverage overview
+import {baseStores} from '../src/index';
+
 function testCache(testingFunction, params, expectedResult, otherParams) {
 	it('should be cached', () => {
 		if (!otherParams) {

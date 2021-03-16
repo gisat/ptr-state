@@ -21,4 +21,19 @@ describe('_reducers-test', function () {
 		const output = reducers(undefined, action);
 		assert.equal(output, INITIAL_STATE);
 	});
+
+	// common reducers
+	it('Reducer exists for given action type', function () {
+		const action = {
+			type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
+		};
+		assert.exists(reducers(INITIAL_STATE, action));
+	});
+
+	it('Reducer exists for given action type 2', function () {
+		const action = {
+			type: 'DATA.ATTRIBUTE_DATA.UPDATE_STORE',
+		};
+		assert.exists(reducers(INITIAL_STATE, action));
+	});
 });
