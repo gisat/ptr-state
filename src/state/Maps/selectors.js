@@ -4,7 +4,13 @@ import {
 	createSelector as createRecomputeSelector,
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
-import _, {flatten as _flatten} from 'lodash';
+import {
+	flatten as _flatten,
+	isEmpty as _isEmpty,
+	includes as _includes,
+	find as _find,
+	forEach as _forEach,
+} from 'lodash';
 
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 import {mapConstants} from '@gisatcz/ptr-core';
@@ -33,23 +39,23 @@ const isMapSetInUse = createCachedSelector(
 	[getAllMapSetsInUse, (state, mapSetKey) => mapSetKey],
 	(mapSetsInUse, mapSetKey) => {
 		if (mapSetsInUse.length && mapSetKey) {
-			return !!_.includes(mapSetsInUse, mapSetKey);
+			return !!_includes(mapSetsInUse, mapSetKey);
 		} else {
 			return false;
 		}
 	}
-)((state, mapSetKey) => mapSetKey);
+)((state, mapSetKey) => (mapSetKey ? mapSetKey : ''));
 
 const isMapInUse = createCachedSelector(
 	[getAllMapsInUse, (state, mapKey) => mapKey],
 	(mapsInUse, mapKey) => {
 		if (mapsInUse.length && mapKey) {
-			return !!_.includes(mapsInUse, mapKey);
+			return !!_includes(mapsInUse, mapKey);
 		} else {
 			return false;
 		}
 	}
-)((state, mapKey) => mapKey);
+)((state, mapKey) => (mapKey ? mapKey : ''));
 
 /**
  * @param state {Object}
@@ -66,7 +72,7 @@ const getMapByKey = createSelector(
  * @param state {Object}
  */
 const getMapSets = createSelector([getMapSetsAsObject], sets => {
-	if (sets && !_.isEmpty(sets)) {
+	if (sets && !_isEmpty(sets)) {
 		return Object.values(sets);
 	} else {
 		return null;
@@ -102,9 +108,9 @@ const getMapSetByKey = createSelector(
 const getMapSetByMapKey = createSelector(
 	[getMapSets, (state, mapKey) => mapKey],
 	(sets, mapKey) => {
-		if (sets && !_.isEmpty(sets) && mapKey) {
+		if (sets && !_isEmpty(sets) && mapKey) {
 			return (
-				_.find(sets, set => set.maps && _.includes(set.maps, mapKey)) || null
+				_find(sets, set => set.maps && _includes(set.maps, mapKey)) || null
 			);
 		} else {
 			return null;
@@ -122,7 +128,7 @@ const getMapSetActiveMapKey = createSelector(
 	[getActiveMapKey, getMapSetByKey],
 	(mapKey, set) => {
 		if (set) {
-			let mapKeyInSet = _.includes(set.maps, mapKey);
+			let mapKeyInSet = _includes(set.maps, mapKey);
 			return set.activeMapKey || (mapKeyInSet && mapKey) || null;
 		} else {
 			return null;
@@ -205,7 +211,7 @@ const getMapSetMapKeys = createSelector([getMapSetByKey], set => {
 const getMapSetMaps = createSelector(
 	[getMapsAsObject, getMapSetMapKeys],
 	(maps, mapKeys) => {
-		if (maps && mapKeys?.length) {
+		if (!_isEmpty(maps) && mapKeys?.length) {
 			return mapKeys.map(key => maps[key]);
 		} else {
 			return null;
@@ -445,7 +451,7 @@ const getLayerStateByLayerKeyAndMapKey = createSelector(
 	[getLayersStateByMapKey, (state, mapKey, layerKey) => layerKey],
 	(layers, layerKey) => {
 		if (layers) {
-			const layer = _.find(layers, layer => layer.key === layerKey);
+			const layer = _find(layers, layer => layer.key === layerKey);
 			return layer || null;
 		} else {
 			return null;
@@ -498,10 +504,9 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 
 			const relationsFilter = {};
 			// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-			const modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			relationsFilter.modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
 				mergedMetadataKeys
 			);
-			relationsFilter.modifiers = modifiers;
 
 			// add layerTemplate od areaTreeLevelKey
 			if (layer.layerTemplateKey) {
@@ -518,29 +523,64 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 );
 
 /**
+ * @param {string} mapKey
+ * @param {number} mapWidth
+ * @param {number} mapHeight
+ */
+const getSpatialFilterByMapKey = createCachedSelector(
+	[
+		getViewByMapKey,
+		(state, mapKey, mapWidth) => mapWidth,
+		(state, mapKey, mapWidth, mapHeight) => mapHeight,
+	],
+	(view, mapWidth, mapHeight) => {
+		if (view?.center && view?.boxRange && mapWidth && mapHeight) {
+			const tiles = helpers.getTiles(
+				mapWidth,
+				mapHeight,
+				view.center,
+				view.boxRange
+			);
+			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
+
+			return {
+				tiles,
+				level,
+			};
+		} else {
+			return null;
+		}
+	}
+)((state, mapKey, mapWidth, mapHeight) => `${mapKey}_${mapWidth}_${mapHeight}`);
+
+/**
  * @param layerState {Object}
  */
 const getAttributeDataFilterFromLayerState = createRecomputeSelector(
 	layerState => {
-		const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
-			layerState
-		);
-		if (commonFilter) {
-			let attributeFilter = {...commonFilter};
-			const attributeDataFilterExtension = {
-				...(layerState?.options?.attributeFilter && {
-					attributeFilter: layerState.options.attributeFilter,
-				}),
-				...(layerState?.options?.dataSourceKeys && {
-					dataSourceKeys: layerState.options.dataSourceKeys,
-				}),
-				...(layerState?.options?.featureKeys && {
-					featureKeys: layerState.options.featureKeys,
-				}),
-				...(layerState?.styleKey && {styleKey: layerState.styleKey}),
-			};
+		if (layerState) {
+			const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
+				layerState
+			);
+			if (!_isEmpty(commonFilter)) {
+				let attributeFilter = {...commonFilter};
+				const attributeDataFilterExtension = {
+					...(layerState?.options?.attributeFilter && {
+						attributeFilter: layerState.options.attributeFilter,
+					}),
+					...(layerState?.options?.dataSourceKeys && {
+						dataSourceKeys: layerState.options.dataSourceKeys,
+					}),
+					...(layerState?.options?.featureKeys && {
+						featureKeys: layerState.options.featureKeys,
+					}),
+					...(layerState?.styleKey && {styleKey: layerState.styleKey}),
+				};
 
-			return {...attributeFilter, ...attributeDataFilterExtension};
+				return {...attributeFilter, ...attributeDataFilterExtension};
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
@@ -553,16 +593,20 @@ const getAttributeDataFilterFromLayerState = createRecomputeSelector(
  */
 const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
 	layerState => {
-		const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
-			layerState
-		);
-		if (commonFilter) {
-			let attributeFilter = {...commonFilter};
-			if (layerState.styleKey) {
-				// add styleKey
-				attributeFilter.styleKey = layerState.styleKey;
+		if (layerState) {
+			const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
+				layerState
+			);
+			if (!_isEmpty(commonFilter)) {
+				let attributeFilter = {...commonFilter};
+				if (layerState.styleKey) {
+					// add styleKey
+					attributeFilter.styleKey = layerState.styleKey;
+				}
+				return attributeFilter;
+			} else {
+				return null;
 			}
-			return attributeFilter;
 		} else {
 			return null;
 		}
@@ -755,7 +799,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	if (layersState) {
 		let finalLayers = [];
 
-		_.forEach(layersState, layerState => {
+		_forEach(layersState, layerState => {
 			// layer is already defined by the end format suitable for presentational map component
 			if (layerState.type) {
 				if (layerState.type === 'vector' && layerState.options?.selected) {
@@ -790,7 +834,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 					attributeRelationsFilter
 				);
 				if (spatialDataSources) {
-					_.forEach(spatialDataSources, dataSource => {
+					_forEach(spatialDataSources, dataSource => {
 						finalLayers.push(
 							getFinalLayerByDataSourceAndLayerState(
 								dataSource,
@@ -814,43 +858,20 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	}
 }, recomputeSelectorOptions);
 
-const getSpatialFilterByMapKey = createCachedSelector(
-	[
-		getViewByMapKey,
-		(state, mapKey, mapWidth) => mapWidth,
-		(state, mapKey, mapWidth, mapHeight) => mapHeight,
-	],
-	(view, mapWidth, mapHeight) => {
-		if (mapWidth && mapHeight) {
-			const tiles = helpers.getTiles(
-				mapWidth,
-				mapHeight,
-				view.center,
-				view.boxRange
-			);
-			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
-
-			if (tiles && level) {
-				return {
-					tiles,
-					level,
-				};
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
-)((state, mapKey, mapWidth, mapHeight) => `${mapKey}_${mapWidth}_${mapHeight}`);
-
 export default {
 	isMapInUse,
 	isMapSetInUse,
 
+	getSubstate,
+
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,
 	getAllMapsInUse,
+	getAllMapSetsInUse,
+
+	getAttributeDataFilterFromLayerState,
+	getAttributeRelationsFilterFromLayerState,
+
 	getBackgroundLayerStateByMapKey,
 	getFilterByActiveByMapKey,
 	getLayerStateByLayerKeyAndMapKey,
@@ -882,6 +903,7 @@ export default {
 	getMapSetViewLimits,
 
 	getSpatialFilterByMapKey,
+	getSpatialRelationsFilterFromLayerState,
 
 	getViewByMapKey,
 	getViewportByMapKey,
