@@ -3,7 +3,7 @@ import {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import _ from 'lodash';
 import commonHelpers from '../../_common/helpers';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	...DEFAULT_INITIAL_STATE,
 	byDataSourceKey: {},
 };

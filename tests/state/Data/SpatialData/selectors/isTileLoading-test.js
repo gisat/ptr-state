@@ -144,6 +144,26 @@ describe('state/Data/SpatialData/selectors/isTileLoading', function () {
 		);
 	});
 
+	it('Should return false, if no level or tile given', function () {
+		const filter = {
+			modifiers: {
+				scopeKey: 'scope1',
+			},
+		};
+
+		const expectedResult = false;
+
+		assert.deepStrictEqual(
+			selectors.isTileLoading(filter, null, '2.815,15.125'),
+			expectedResult
+		);
+
+		assert.deepStrictEqual(
+			selectors.isTileLoading(filter, 7, null),
+			expectedResult
+		);
+	});
+
 	after(function () {
 		setState(null);
 	});
