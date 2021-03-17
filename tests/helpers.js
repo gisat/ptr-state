@@ -23,6 +23,42 @@ function testCache(testingFunction, params, expectedResult, otherParams) {
 	});
 }
 
+/**
+ * @param reducers {function}
+ * @param state {Object}
+ * @param actionTypes {Array}
+ */
+function baseReducersTestSet(reducers, state, actionTypes) {
+	it('Should return the same state no matching action type', function () {
+		const action = {
+			type: 'CREEPY_ACTION',
+		};
+
+		const output = reducers(state, action);
+		assert.equal(output, state);
+	});
+
+	it('Should return the default state if no state given', function () {
+		const action = {
+			type: 'CREEPY_ACTION',
+		};
+
+		const output = reducers(undefined, action);
+		assert.equal(output, state);
+	});
+
+	actionTypes &&
+		actionTypes.forEach(type => {
+			it('Reducer exists for given action types ' + type, function () {
+				const action = {
+					type,
+				};
+				assert.exists(reducers(state, action));
+			});
+		});
+}
+
 export default {
 	testCache,
+	baseReducersTestSet,
 };
