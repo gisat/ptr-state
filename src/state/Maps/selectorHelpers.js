@@ -32,14 +32,14 @@ const mergeBackgroundLayerWithLayers = createCachedSelector(
 		let finalLayers = [];
 
 		if (layers) {
-			finalLayers = layers || [];
+			finalLayers = [...layers];
 		}
 
 		if (backgroundLayer) {
 			finalLayers = [backgroundLayer, ...finalLayers];
 		}
 
-		return finalLayers?.length ? finalLayers : null;
+		return finalLayers.length ? finalLayers : null;
 	}
 )(
 	(backgroundLayer, layers) =>
@@ -96,12 +96,11 @@ const getView = (map, set) => {
 			}
 
 			let mapSetView = set.data?.view;
-			let view = mapUtils.view.mergeViews(
+			return mapUtils.view.mergeViews(
 				mapConstants.defaultMapView,
 				mapSetView,
 				mapView
 			);
-			return !_.isEmpty(view) ? view : null;
 		} else {
 			let view = map.data?.view;
 			return mapUtils.view.mergeViews(mapConstants.defaultMapView, view);
@@ -146,23 +145,27 @@ const getTiles = createCachedSelector(
 		(mapWidth, mapHeight, center, boxRange) => boxRange,
 	],
 	(mapWidth, mapHeight, center, boxRange) => {
-		const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(
-			mapWidth,
-			mapHeight,
-			boxRange
-		);
-		const tileGrid = grid.getTileGrid(
-			mapWidth,
-			mapHeight,
-			levelBoxRange,
-			center,
-			true
-		);
-		return tileGrid.flat(1);
+		if (mapWidth && mapHeight && center && boxRange) {
+			const levelBoxRange = mapUtils.view.getNearestZoomLevelBoxRange(
+				mapWidth,
+				mapHeight,
+				boxRange
+			);
+			const tileGrid = grid.getTileGrid(
+				mapWidth,
+				mapHeight,
+				levelBoxRange,
+				center,
+				true
+			);
+			return tileGrid.flat(1);
+		} else {
+			return null;
+		}
 	}
 )(
 	(mapWidth, mapHeight, center, boxRange) =>
-		`${mapWidth}${mapHeight}${center.lon}${center.lat}${boxRange}`
+		`${mapWidth}${mapHeight}${center?.lon}${center?.lat}${boxRange}`
 );
 
 export default {
