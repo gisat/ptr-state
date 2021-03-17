@@ -214,6 +214,8 @@ function loadMissingAttributeData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
+		// console.log("loadMissingAttributeData",spatialFilter);
+
 		const state = getState();
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const PAGE_SIZE = getPageSize(localConfig);
@@ -364,6 +366,7 @@ function loadMissingSpatialData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
+		// console.log("loadMissingSpatialData",spatialFilter);
 		//
 		//which spatial data to load
 		//
@@ -442,6 +445,7 @@ function ensureDataAndRelations(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
+		// console.log("ensureDataAndRelations", spatialFilter);
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = getPageSize(localConfig);
 
@@ -657,53 +661,97 @@ function ensure(
 		);
 		const filterHasSpatialOrAreaRelations = hasSpatialOrAreaRelations(
 			getState(),
-			// areaTreeLevelKey,
-			// layerTemplateKey,
 			spatialRelationsFilter,
 			order
 		);
 
-		//
-		// Skip over load request on already loaded/loading data
-		//
-		if (!filterHasSpatialOrAreaRelations && missingSpatialData) {
-			return dispatch(
-				ensureDataAndRelations(
-					spatialFilter,
-					styleKey,
-					order,
-					spatialRelationsFilter,
-					attributeRelationsFilter,
-					attributeDataFilter
+		const loadRelationsAndData =
+			!filterHasSpatialOrAreaRelations && missingSpatialData;
+
+		let modifiedSpatialFilterForAttributes = {...spatialFilter};
+		let modifiedSpatialFilterForSpatial = {...spatialFilter};
+
+		// If spatial relations are loaded and spatial and attribute date are missing,
+		// find which only attribute tile are missing and which attribute tiles load with spatial data.
+		if (!loadRelationsAndData && missingAttributesData) {
+			const missingAttributeDataTiles =
+				getMissingTiles(attributeDataIndex, spatialFilter) || [];
+			const missingSpatialDataTiles =
+				getMissingTiles(spatialDataIndex, spatialFilter) || [];
+
+			const missingAttributeDataTilesToLoad = _.difference(
+				missingAttributeDataTiles,
+				missingSpatialDataTiles
+			);
+			const missingSpatialAndAttributeDataTiles = _.intersection(
+				missingAttributeDataTiles,
+				missingSpatialDataTiles
+			);
+
+			modifiedSpatialFilterForAttributes.tiles = missingAttributeDataTilesToLoad.map(
+				t => tileAsArray(t)
+			);
+
+			modifiedSpatialFilterForSpatial.tiles = missingSpatialAndAttributeDataTiles.map(
+				t => tileAsArray(t)
+			);
+		}
+
+		const promises = [];
+
+		if (loadRelationsAndData) {
+			promises.push(
+				dispatch(
+					ensureDataAndRelations(
+						spatialFilter,
+						styleKey,
+						order,
+						spatialRelationsFilter,
+						attributeRelationsFilter,
+						attributeDataFilter
+					)
 				)
 			);
 		}
 
-		if (missingSpatialData) {
-			return dispatch(
-				loadMissingSpatialData(
-					spatialFilter,
-					styleKey,
-					order,
-					spatialRelationsFilter,
-					attributeRelationsFilter,
-					attributeDataFilter
+		if (
+			filterHasSpatialOrAreaRelations &&
+			missingSpatialData &&
+			!_.isEmpty(modifiedSpatialFilterForSpatial.tiles)
+		) {
+			promises.push(
+				dispatch(
+					loadMissingSpatialData(
+						modifiedSpatialFilterForSpatial,
+						styleKey,
+						order,
+						spatialRelationsFilter,
+						attributeRelationsFilter,
+						attributeDataFilter
+					)
 				)
 			);
 		}
 
-		if (missingAttributesData) {
-			return dispatch(
-				loadMissingAttributeData(
-					spatialFilter,
-					styleKey,
-					order,
-					spatialRelationsFilter,
-					attributeRelationsFilter,
-					attributeDataFilter
+		if (
+			!loadRelationsAndData &&
+			!_.isEmpty(modifiedSpatialFilterForAttributes.tiles)
+		) {
+			promises.push(
+				dispatch(
+					loadMissingAttributeData(
+						modifiedSpatialFilterForAttributes,
+						styleKey,
+						order,
+						spatialRelationsFilter,
+						attributeRelationsFilter,
+						attributeDataFilter
+					)
 				)
 			);
 		}
+
+		return Promise.all(promises);
 	};
 }
 
