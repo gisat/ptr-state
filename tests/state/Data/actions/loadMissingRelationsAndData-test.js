@@ -472,7 +472,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 				'http://localhost/backend/rest/data/filtered',
 				slash(url)
 			);
-			debugger;
 			//check for first request
 			if (
 				_.isEqual(options, {
@@ -661,7 +660,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 		};
 
 		return runFunctionActions({dispatch, getState}).then(() => {
-			debugger;
 			assert.deepStrictEqual(dispatchedActions, [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
