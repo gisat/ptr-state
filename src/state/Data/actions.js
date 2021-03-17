@@ -99,10 +99,8 @@ function loadMissingRelationsAndData(
 		let tilesPagination = 0;
 		for (let i = 1; i <= remainingRelationsPageCount; i++) {
 			//load only needed relations
-			const loadAttributeRelations =
-				attributeRelationsCount <= remainingRelationsPageCount;
-			const loadSpatialRelations =
-				spatialRelationsCount <= remainingRelationsPageCount;
+			const loadAttributeRelations = attributeRelationsCount - i > 0;
+			const loadSpatialRelations = spatialRelationsCount - i > 0;
 			const relations = {
 				offset: i * PAGE_SIZE,
 				limit: PAGE_SIZE,
