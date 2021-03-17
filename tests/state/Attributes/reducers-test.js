@@ -39,7 +39,7 @@ describe('state/Attributes/reducers', function () {
 					byKey: {
 						k1: {
 							key: 'k1',
-							data: {name: 'first', color: '#008000'},
+							data: {name: 'first'},
 						},
 						k2: {key: 'k2', data: {name: 'second', color: 'green'}},
 					},

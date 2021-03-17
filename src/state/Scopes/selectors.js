@@ -49,10 +49,4 @@ export default {
 
 	getStateToSave,
 	getSubstate,
-
-	// TODO handle following obsolete exports
-	getActiveScopeData: getActive,
-	getActiveScopeKey: getActiveKey,
-	getScopes: getAll,
-	getScopeData: getByKey,
 };
