@@ -79,7 +79,8 @@ describe('state/Data/actions/processResult', function () {
 		};
 		const styleKey = '460372b1-4fce-4676-92be-b1656a5415f5';
 		const loadGeometry = true;
-		const loadRelations = false;
+		const loadAttributeRelations = true;
+		const loadSpatialRelations = true;
 		const order = null;
 		const layerTemplateKey = '11c7cc1b-9834-4e85-aba6-eab5571705e4';
 		const spatialRelationsFilter = {
@@ -99,7 +100,8 @@ describe('state/Data/actions/processResult', function () {
 			actions.processResult(
 				responseWithSpatialAndAttributeData,
 				loadGeometry,
-				loadRelations,
+				loadAttributeRelations,
+				loadSpatialRelations,
 				order,
 				spatialRelationsFilter,
 				attributeRelationsFilter,
@@ -213,7 +215,8 @@ describe('state/Data/actions/processResult', function () {
 		};
 		const styleKey = '460372b1-4fce-4676-92be-b1656a5415f5';
 		const loadGeometry = true;
-		const loadRelations = true;
+		const loadAttributeRelations = true;
+		const loadSpatialRelations = true;
 		const order = null;
 		const layerTemplateKey = '11c7cc1b-9834-4e85-aba6-eab5571705e4';
 		const spatialRelationsFilter = {
@@ -233,7 +236,8 @@ describe('state/Data/actions/processResult', function () {
 			actions.processResult(
 				responseWithRelationsSpatialAndAttributeData,
 				loadGeometry,
-				loadRelations,
+				loadAttributeRelations,
+				loadSpatialRelations,
 				order,
 				spatialRelationsFilter,
 				attributeRelationsFilter,

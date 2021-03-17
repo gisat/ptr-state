@@ -16,7 +16,8 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 		};
 		const styleKey = '460372b1-4fce-4676-92be-b1656a5415f5';
 		const loadGeometry = true;
-		const loadRelations = true;
+		const loadAttributeRelations = true;
+		const loadSpatialRelations = true;
 		const layerTemplateKey = '11c7cc1b-9834-4e85-aba6-eab5571705e4';
 		const spatialRelationsFilter = {
 			layerTemplateKey: layerTemplateKey,
@@ -51,7 +52,8 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 			attributeDataFilter,
 			spatialIndex,
 			loadGeometry,
-			loadRelations,
+			loadAttributeRelations,
+			loadSpatialRelations,
 			spatialFilter
 		);
 
@@ -69,7 +71,10 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 			},
 			layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
 			styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
-			relations: {},
+			relations: {
+				attribute: true,
+				spatial: true,
+			},
 			data: {
 				featureKeys: [18502],
 				spatialIndex: {
@@ -83,7 +88,6 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 					],
 				},
 				geometry: true,
-				relations: true,
 			},
 		});
 	});
@@ -101,7 +105,8 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 		};
 		const styleKey = undefined;
 		const loadGeometry = false;
-		const loadRelations = false;
+		const loadAttributeRelations = false;
+		const loadSpatialRelations = false;
 		const spatialRelationsFilter = {};
 		const attributeRelationsFilter = {
 			...spatialRelationsFilter,
@@ -132,7 +137,8 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 			attributeDataFilter,
 			spatialIndex,
 			loadGeometry,
-			loadRelations,
+			loadAttributeRelations,
+			loadSpatialRelations,
 			spatialFilter
 		);
 
@@ -140,6 +146,8 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 			relations: {
 				offset: 100,
 				limit: 5,
+				attribute: false,
+				spatial: false,
 			},
 			data: {
 				featureKeys: [18502],
@@ -156,7 +164,6 @@ describe('state/Data/actions/composeDataEndpointPayload', function () {
 					},
 				},
 				geometry: false,
-				relations: false,
 				dataSourceKeys: ['dsKey1', 'dsKey2'],
 			},
 		});

@@ -168,6 +168,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						relations: {
 							offset: 0,
 							limit: 100,
+							attribute: false,
+							spatial: false,
 						},
 						data: {
 							spatialFilter: {
@@ -175,7 +177,6 @@ describe('state/Data/actions/loadIndexedPage', function () {
 								level: 7,
 							},
 							geometry: true,
-							relations: false,
 						},
 					}),
 					credentials: 'include',
@@ -212,7 +213,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 				level: 7,
 			};
 			const loadGeometry = true;
-			const loadRelations = false;
+			const loadAttributeRelations = false;
+			const loadSpatialRelations = false;
 			const order = null;
 			const spatialRelationsFilter = {
 				layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
@@ -226,7 +228,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 					spatialIndex,
 					spatialFilter,
 					loadGeometry,
-					loadRelations,
+					loadAttributeRelations,
+					loadSpatialRelations,
 					order,
 					spatialRelationsFilter,
 					attributeRelationsFilter,
@@ -366,6 +369,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						relations: {
 							offset: 0,
 							limit: 100,
+							attribute: true,
+							spatial: true,
 						},
 						data: {
 							featureKeys: [18502],
@@ -374,7 +379,6 @@ describe('state/Data/actions/loadIndexedPage', function () {
 								level: 7,
 							},
 							geometry: true,
-							relations: true,
 						},
 					}),
 					credentials: 'include',
@@ -423,7 +427,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 				level: 7,
 			};
 			const loadGeometry = true;
-			const loadRelations = true;
+			const loadAttributeRelations = true;
+			const loadSpatialRelations = true;
 			const order = null;
 			const layerTemplateKey = '11c7cc1b-9834-4e85-aba6-eab5571705e4';
 			const spatialRelationsFilter = {
@@ -445,7 +450,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 					spatialIndex,
 					spatialFilter,
 					loadGeometry,
-					loadRelations,
+					loadAttributeRelations,
+					loadSpatialRelations,
 					order,
 					spatialRelationsFilter,
 					attributeRelationsFilter,
@@ -805,6 +811,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 						relations: {
 							offset: 0,
 							limit: 100,
+							attribute: false,
+							spatial: false,
 						},
 						data: {
 							spatialFilter: {
@@ -812,7 +820,6 @@ describe('state/Data/actions/loadIndexedPage', function () {
 								level: 7,
 							},
 							geometry: false,
-							relations: false,
 						},
 					}),
 					credentials: 'include',
@@ -849,7 +856,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 				level: 7,
 			};
 			const loadGeometry = false;
-			const loadRelations = false;
+			const loadAttributeRelations = false;
+			const loadSpatialRelations = false;
 			const order = null;
 			const spatialRelationsFilter = {
 				layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
@@ -863,7 +871,8 @@ describe('state/Data/actions/loadIndexedPage', function () {
 					spatialIndex,
 					spatialFilter,
 					loadGeometry,
-					loadRelations,
+					loadAttributeRelations,
+					loadSpatialRelations,
 					order,
 					spatialRelationsFilter,
 					attributeRelationsFilter,
