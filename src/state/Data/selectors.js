@@ -1,6 +1,7 @@
 import {createSelector as createRecomputeSelector} from '@jvitela/recompute';
 import _ from 'lodash';
 import stringify from 'fast-stringify';
+import {CacheFifo} from '@gisatcz/ptr-utils';
 
 import attributeRelations from './AttributeRelations/selectors';
 import attributeDataSources from './AttributeDataSources/selectors';
@@ -9,7 +10,6 @@ import components from './Components/selectors';
 import spatialRelations from './SpatialRelations/selectors';
 import spatialDataSources from './SpatialDataSources/selectors';
 import spatialData from './SpatialData/selectors';
-import {CacheFifo} from '@gisatcz/ptr-utils';
 import {tileAsString} from './helpers';
 import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 
@@ -104,7 +104,7 @@ const getTile = createRecomputeSelector(
 				attributeDataFilter,
 				spatialRelationsFilter,
 				level,
-				tileAsString: tileString,
+				tileString,
 				spatialDataSourceKey,
 				styleKey,
 			};

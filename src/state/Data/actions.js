@@ -334,7 +334,8 @@ function loadMissingAttributeData(
 							loadRelations,
 							order,
 							spatialRelationsFilter,
-							attributeRelationsFilter
+							attributeRelationsFilter,
+							attributeDataFilter
 						)
 					)
 				);
