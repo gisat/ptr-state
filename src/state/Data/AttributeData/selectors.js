@@ -109,7 +109,10 @@ const getAttributesByDataSourceKeysForFeatureKey = createRecomputeSelector(
 						const value = dataSourceData[featureKey];
 						const attributeKey =
 							attributeDataSourceKeyAttributeKeyPairs[dataSourceKey];
-						attributes[attributeKey] = value;
+
+						if (attributeKey) {
+							attributes[attributeKey] = value;
+						}
 					}
 				});
 

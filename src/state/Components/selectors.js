@@ -5,7 +5,6 @@ import {
 } from '@jvitela/recompute';
 import _ from 'lodash';
 
-const getSubstate = state => state.components;
 const getAllByKey = state => state.components;
 const getAllByKeyObserver = createRecomputeObserver(getAllByKey);
 
@@ -36,5 +35,5 @@ export default {
 
 	getByComponentKey_recompute,
 
-	getSubstate,
+	getSubstate: getAllByKey,
 };

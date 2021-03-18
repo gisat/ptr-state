@@ -512,7 +512,6 @@ describe('state/Data/Components/helpers', function () {
 
 		it('Get loadedPages with dataIndex, start 100, pageSize 1000, pages [0], count 105, lenght 10', function () {
 			const askedPages = [0];
-			debugger;
 			const moctDataIndex = {100: true, 101: true, 102: true, 103: true};
 			assert.deepStrictEqual(
 				getLoadedPages(moctDataIndex, 100, 1000, askedPages, 104, 20),

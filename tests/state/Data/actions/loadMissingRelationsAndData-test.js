@@ -165,6 +165,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 					relations: {
 						offset: 1,
 						limit: 1,
+						attribute: false,
+						spatial: true,
 					},
 					data: {
 						spatialIndex: {
@@ -178,7 +180,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 							level: 7,
 						},
 						geometry: true,
-						relations: true,
 					},
 				}),
 				credentials: 'include',
@@ -471,7 +472,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 				'http://localhost/backend/rest/data/filtered',
 				slash(url)
 			);
-
 			//check for first request
 			if (
 				_.isEqual(options, {
@@ -492,6 +492,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 						relations: {
 							offset: 1,
 							limit: 1,
+							attribute: false,
+							spatial: true,
 						},
 						data: {
 							spatialIndex: {
@@ -506,7 +508,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 								level: 7,
 							},
 							geometry: true,
-							relations: true,
 						},
 					}),
 					credentials: 'include',
@@ -550,7 +551,10 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 						},
 						layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
 						styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
-						relations: {},
+						relations: {
+							attribute: false,
+							spatial: false,
+						},
 						data: {
 							spatialIndex: {
 								tiles: [[0, 2]],
@@ -564,7 +568,6 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 								level: 7,
 							},
 							geometry: true,
-							relations: false,
 						},
 					}),
 					credentials: 'include',

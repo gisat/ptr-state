@@ -3,7 +3,7 @@
 // first of two response with relations and geometry
 //
 export const responseWithRelationsSpatialAndAttributeData_1 = {
-	data: {
+	spatialAttributeRelationsDataSources: {
 		spatialRelations: [
 			{
 				key: '8b0e266c-40d4-4bfe-ad75-964d9af1f57f',
@@ -63,50 +63,50 @@ export const responseWithRelationsSpatialAndAttributeData_1 = {
 				},
 			},
 		],
-		spatialData: {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
+		total: {
+			spatialRelations: 2,
+			attributeRelations: 1,
+		},
+		limit: 100,
+		offset: 0,
+	},
+	spatialData: {
+		'85e35be5-1706-402a-86ad-851397bae7aa': {
+			data: {
+				18502: {
+					type: 'MultiPolygon',
+					coordinates: [
+						[
 							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
+								[2.50647283, 50.63433838],
+								[2.5012393, 50.63986206],
+								[2.50829029, 50.64472198],
+								[2.50647283, 50.63433838],
 							],
 						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18502],
-					},
+					],
 				},
 			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {},
-				spatialIndex: {
-					7: {
-						'0,1': [],
-					},
+			spatialIndex: {
+				7: {
+					'0,1': [18502],
 				},
 			},
 		},
-		attributeData: {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18502: '27',
+		'848e2559-936d-4262-a808-4c87aa60217d': {
+			data: {},
+			spatialIndex: {
+				7: {
+					'0,1': [],
+				},
 			},
 		},
 	},
-	total: {
-		spatialRelations: 2,
-		attributeRelations: 1,
+	attributeData: {
+		'55f48ed1-ee67-47bd-a044-8985662ec29f': {
+			18502: '27',
+		},
 	},
-	limit: 100,
-	offset: 0,
 };
 
 //
@@ -114,7 +114,7 @@ export const responseWithRelationsSpatialAndAttributeData_1 = {
 // second of two response with relations and geometry
 //
 export const responseWithRelationsSpatialAndAttributeData_2 = {
-	data: {
+	spatialAttributeRelationsDataSources: {
 		spatialRelations: [
 			{
 				key: '5d35a80c-e4bc-4054-9b04-7ae9829198ee',
@@ -146,48 +146,48 @@ export const responseWithRelationsSpatialAndAttributeData_2 = {
 			},
 		],
 		attributeDataSources: [],
-		spatialData: {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18503: {
-						type: 'MultiPolygon',
-						coordinates: [
+		total: {
+			spatialRelations: 2,
+			attributeRelations: 1,
+		},
+		limit: 100,
+		offset: 0,
+	},
+	spatialData: {
+		'85e35be5-1706-402a-86ad-851397bae7aa': {
+			data: {
+				18503: {
+					type: 'MultiPolygon',
+					coordinates: [
+						[
 							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
+								[2.50647283, 50.63433838],
+								[2.5012393, 50.63986206],
+								[2.50829029, 50.64472198],
+								[2.50647283, 50.63433838],
 							],
 						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,2': [18503],
-					},
+					],
 				},
 			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {},
-				spatialIndex: {
-					7: {
-						'0,2': [],
-					},
+			spatialIndex: {
+				7: {
+					'0,2': [18503],
 				},
 			},
 		},
-		attributeData: {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18503: '30',
+		'848e2559-936d-4262-a808-4c87aa60217d': {
+			data: {},
+			spatialIndex: {
+				7: {
+					'0,2': [],
+				},
 			},
 		},
 	},
-	total: {
-		spatialRelations: 2,
-		attributeRelations: 1,
+	attributeData: {
+		'55f48ed1-ee67-47bd-a044-8985662ec29f': {
+			18503: '30',
+		},
 	},
-	limit: 100,
-	offset: 0,
 };

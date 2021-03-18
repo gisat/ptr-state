@@ -319,6 +319,19 @@ export const DataSelectorsState = {
 						type: 'wmts',
 					},
 				},
+				spatialDataSource6: {
+					key: 'spatialDataSource6',
+					data: {
+						type: 'wmts',
+						url: 'https://background.fromstate',
+					},
+				},
+				spatialDataSource7: {
+					key: 'spatialDataSource7',
+					data: {
+						type: 'wtfType',
+					},
+				},
 			},
 			indexes: [
 				{
@@ -343,6 +356,18 @@ export const DataSelectorsState = {
 						},
 					},
 					index: {1: 'spatialDataSource5'},
+				},
+				{
+					filter: {
+						layerTemplateKey: 'layerTemplateWmts',
+					},
+					index: {1: 'spatialDataSource6'},
+				},
+				{
+					filter: {
+						layerTemplateKey: 'layerTemplateUnsupportedLayerType',
+					},
+					index: {1: 'spatialDataSource7'},
 				},
 			],
 		},
@@ -388,6 +413,20 @@ export const DataSelectorsState = {
 						spatialDataSourceKey: 'spatialDataSource5',
 					},
 				},
+				spatialRelation6: {
+					key: 'spatialRelation6',
+					data: {
+						layerTemplateKey: 'layerTemplateWmts',
+						spatialDataSourceKey: 'spatialDataSource6',
+					},
+				},
+				spatialRelation7: {
+					key: 'spatialRelation7',
+					data: {
+						layerTemplateKey: 'layerTemplateUnsupportedLayerType',
+						spatialDataSourceKey: 'spatialDataSource6',
+					},
+				},
 			},
 			indexes: [
 				{
@@ -412,6 +451,18 @@ export const DataSelectorsState = {
 						},
 					},
 					index: {1: 'spatialRelation5'},
+				},
+				{
+					filter: {
+						layerTemplateKey: 'layerTemplateWmts',
+					},
+					index: {1: 'spatialRelation6'},
+				},
+				{
+					filter: {
+						layerTemplateKey: 'layerTemplateUnsupportedLayerType',
+					},
+					index: {1: 'spatialRelation7'},
 				},
 			],
 		},

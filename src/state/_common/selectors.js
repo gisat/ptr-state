@@ -932,7 +932,8 @@ const _mergeIntervals = intervals => {
  * @param filterByActive {Object}
  */
 const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(
-	getActiveKeysByFilterByActive
+	(state, filterByActive) =>
+		getActiveKeysByFilterByActive(state, filterByActive)
 );
 
 const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
@@ -1006,7 +1007,9 @@ const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomput
 			componentState.metadataModifiers,
 			componentState.filterByActive
 		);
-		relationsFilter.modifiers = modifiers;
+		if (!_.isEmpty(modifiers)) {
+			relationsFilter.modifiers = modifiers;
+		}
 
 		// add layerTemplate od areaTreeLevelKey
 		if (componentState.layerTemplateKey) {
