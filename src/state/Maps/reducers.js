@@ -1,7 +1,7 @@
 import ActionTypes from '../../constants/ActionTypes';
-import _, {indexOf as _indexOf} from 'lodash';
+import {indexOf as _indexOf, isEmpty as _isEmpty} from 'lodash';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	activeSetKey: null,
 	activeMapKey: null,
 	inUse: {
@@ -14,22 +14,26 @@ const INITIAL_STATE = {
 
 const removeMapFromSet = (state, setKey, mapKey) => {
 	if (setKey && mapKey) {
-		const index = _indexOf(state.sets[setKey].maps, mapKey);
-		let updatedMaps = [
-			...state.sets[setKey].maps.slice(0, index),
-			...state.sets[setKey].maps.slice(index + 1),
-		];
+		const index = _indexOf(state.sets[setKey]?.maps, mapKey);
+		if (index > -1) {
+			let updatedMaps = [
+				...state.sets[setKey].maps.slice(0, index),
+				...state.sets[setKey].maps.slice(index + 1),
+			];
 
-		return {
-			...state,
-			sets: {
-				...state.sets,
-				[setKey]: {
-					...state.sets[setKey],
-					maps: updatedMaps,
+			return {
+				...state,
+				sets: {
+					...state.sets,
+					[setKey]: {
+						...state.sets[setKey],
+						maps: updatedMaps,
+					},
 				},
-			},
-		};
+			};
+		} else {
+			return state;
+		}
 	} else {
 		return state;
 	}
@@ -85,22 +89,26 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
  * @return {Object} state
  */
 const setMapViewport = (state, mapKey, width, height) => {
-	return {
-		...state,
-		maps: {
-			...state.maps,
-			[mapKey]: {
-				...state.maps[mapKey],
-				data: {
-					...state.maps[mapKey].data,
-					viewport: {
-						width,
-						height,
+	if (mapKey && width && height) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						viewport: {
+							width,
+							height,
+						},
 					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -164,21 +172,25 @@ const update = (state, data) => {
  * @return {Object} state
  */
 const updateMapView = (state, mapKey, updates) => {
-	return {
-		...state,
-		maps: {
-			...state.maps,
-			[mapKey]: {
-				...state.maps[mapKey],
-				data: {
-					...state.maps[mapKey].data,
-					view: state.maps[mapKey].data.view
-						? {...state.maps[mapKey].data.view, ...updates}
-						: updates,
+	if (updates && !_isEmpty(updates)) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						view: state.maps[mapKey].data.view
+							? {...state.maps[mapKey].data.view, ...updates}
+							: updates,
+					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -189,7 +201,7 @@ const updateMapView = (state, mapKey, updates) => {
  * @return {Object} state
  */
 const updateSetView = (state, setKey, updates) => {
-	if (updates && !_.isEmpty(updates)) {
+	if (updates && !_isEmpty(updates)) {
 		return {
 			...state,
 			sets: {
@@ -210,46 +222,72 @@ const updateSetView = (state, setKey, updates) => {
 	}
 };
 
+/**
+ * Remove map usage
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} state
+ */
 const mapUseClear = (state, mapKey) => {
 	if (mapKey) {
 		const index = _indexOf(state.inUse.maps, mapKey);
-		let updatedInUse = [
-			...state.inUse.maps.slice(0, index),
-			...state.inUse.maps.slice(index + 1),
-		];
+		if (index > -1) {
+			let updatedInUse = [
+				...state.inUse.maps.slice(0, index),
+				...state.inUse.maps.slice(index + 1),
+			];
 
-		return {
-			...state,
-			inUse: {
-				...state.inUse,
-				maps: updatedInUse,
-			},
-		};
+			return {
+				...state,
+				inUse: {
+					...state.inUse,
+					maps: updatedInUse,
+				},
+			};
+		} else {
+			return state;
+		}
 	} else {
 		return state;
 	}
 };
 
+/**
+ * Remove map set usage
+ * @param state {Object}
+ * @param mapSetKey {string}
+ * @return {Object} state
+ */
 const mapSetUseClear = (state, mapSetKey) => {
 	if (mapSetKey) {
 		const index = _indexOf(state.inUse.sets, mapSetKey);
-		let updatedInUse = [
-			...state.inUse.sets.slice(0, index),
-			...state.inUse.sets.slice(index + 1),
-		];
+		if (index > -1) {
+			let updatedInUse = [
+				...state.inUse.sets.slice(0, index),
+				...state.inUse.sets.slice(index + 1),
+			];
 
-		return {
-			...state,
-			inUse: {
-				...state.inUse,
-				sets: updatedInUse,
-			},
-		};
+			return {
+				...state,
+				inUse: {
+					...state.inUse,
+					sets: updatedInUse,
+				},
+			};
+		} else {
+			return state;
+		}
 	} else {
 		return state;
 	}
 };
 
+/**
+ * Register map usage
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} state
+ */
 const mapUseRegister = (state, mapKey) => {
 	if (mapKey) {
 		return {
@@ -264,6 +302,12 @@ const mapUseRegister = (state, mapKey) => {
 	}
 };
 
+/**
+ * Register map set usage
+ * @param state {Object}
+ * @param mapSetKey {string}
+ * @return {Object} state
+ */
 const mapSetUseRegister = (state, mapSetKey) => {
 	if (mapSetKey) {
 		return {
