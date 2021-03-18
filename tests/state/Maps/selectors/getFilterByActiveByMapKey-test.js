@@ -1,7 +1,7 @@
 import Select from '../../../../src/state/Select';
 import {assert} from 'chai';
 import testHelpers from '../../../helpers';
-import state from './_state';
+import {MapsSelectorsState as state} from './_state';
 
 describe('getFilterByActiveByMapKey', function () {
 	it('should return merged filter by active', () => {

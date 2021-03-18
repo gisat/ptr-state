@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import selectors from '../../../../src/state/Maps/selectors';
-import state from './_state';
+import {MapsSelectorsState as state} from './_state';
 
 describe('isMapInUse-test', function () {
 	it('should return true, if map is in use', () => {

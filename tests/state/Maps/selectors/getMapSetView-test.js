@@ -1,7 +1,7 @@
 import {mapConstants} from '@gisatcz/ptr-core';
 import Select from '../../../../src/state/Select';
 import {assert} from 'chai';
-import state from './_state';
+import {MapsSelectorsState as state} from './_state';
 
 describe('getMapSetView', function () {
 	it('should return map set view for given setKey, if set exists', () => {

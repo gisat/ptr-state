@@ -5,6 +5,7 @@ import {
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
 import {
+	compact as _compact,
 	flatten as _flatten,
 	isEmpty as _isEmpty,
 	includes as _includes,
@@ -658,11 +659,13 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					? configuration.singleTile
 					: false;
 
+			const styles = rest.styles;
+
 			options = {
 				params: {
 					...params,
+					...(styles && {styles}),
 					layers: rest.layers,
-					styles: rest.styles,
 				},
 				singleTile,
 				url,
@@ -735,7 +738,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		return {
 			key: layerKey + '_' + spatialDataSource.key,
 			layerKey,
-			opacity: opacity || 1,
+			opacity: opacity || opacity === 0 ? opacity : 1,
 			name,
 			type,
 			options,
@@ -763,20 +766,24 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 				layerState
 			);
 			if (spatialDataSources) {
-				return spatialDataSources.map(dataSource => {
-					const dataSourceType = dataSource?.data?.type;
+				const layers = _compact(
+					spatialDataSources.map(dataSource => {
+						const dataSourceType = dataSource?.data?.type;
 
-					// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
-					if (dataSourceType === 'wmts' || dataSourceType === 'wms') {
-						return getFinalLayerByDataSourceAndLayerState(
-							dataSource,
-							layerState,
-							layerKey
-						);
-					} else {
-						return null;
-					}
-				});
+						// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
+						if (dataSourceType === 'wmts' || dataSourceType === 'wms') {
+							return getFinalLayerByDataSourceAndLayerState(
+								dataSource,
+								layerState,
+								layerKey
+							);
+						} else {
+							return null;
+						}
+					})
+				);
+
+				return layers.length ? layers : null;
 			} else {
 				return null;
 			}
@@ -874,6 +881,7 @@ export default {
 
 	getBackgroundLayerStateByMapKey,
 	getFilterByActiveByMapKey,
+	getFinalLayerByDataSourceAndLayerState,
 	getLayerStateByLayerKeyAndMapKey,
 	getLayersStateByMapKey,
 	getMetadataModifiersByMapKey,

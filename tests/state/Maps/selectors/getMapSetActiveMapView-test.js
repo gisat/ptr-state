@@ -1,6 +1,6 @@
 import Select from '../../../../src/state/Select';
 import {assert} from 'chai';
-import state from './_state';
+import {MapsSelectorsState as state} from './_state';
 
 describe('getMapSetActiveMapView', function () {
 	it('should return null, if there is no activeMapKey for map set', () => {

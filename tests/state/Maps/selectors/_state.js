@@ -1,4 +1,4 @@
-export default {
+export const MapsSelectorsState = {
 	scopes: {},
 	scenarios: {},
 	cases: {},
@@ -142,6 +142,78 @@ export default {
 		inUse: {
 			maps: ['map1', 'map2'],
 			sets: ['set1'],
+		},
+	},
+};
+
+export const MapsSelectorsState_2 = {
+	maps: {
+		maps: {
+			map1: {
+				key: 'map1',
+				name: 'Map 1',
+				data: {
+					backgroundLayer: {
+						key: 'definedBackground',
+						type: 'wmts',
+						options: {
+							url: 'https://background.defined',
+						},
+					},
+					view: {
+						center: {
+							lat: 0,
+							lon: 0,
+						},
+						boxRange: 50000,
+					},
+					viewport: {
+						width: 50,
+						height: 50,
+					},
+				},
+			},
+			map2: {
+				key: 'map1',
+				name: 'Map 1',
+				data: {
+					backgroundLayer: {
+						layerTemplateKey: 'layerTemplateWmts',
+					},
+					view: {
+						center: {
+							lat: 0,
+							lon: 0,
+						},
+						boxRange: 50000,
+					},
+					viewport: {
+						width: 50,
+						height: 50,
+					},
+				},
+			},
+			map3: {
+				key: 'map3',
+				name: 'Map 3',
+				data: {
+					backgroundLayer: {
+						key: 'definedBackground',
+						options: {
+							url: 'https://background.defined',
+						},
+					},
+				},
+			},
+			map4: {
+				key: 'map4',
+				name: 'Map 4',
+				data: {
+					backgroundLayer: {
+						layerTemplateKey: 'layerTemplateUnsupportedLayerType',
+					},
+				},
+			},
 		},
 	},
 };

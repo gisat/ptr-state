@@ -1,6 +1,6 @@
 import Select from '../../../../src/state/Select';
 import {assert} from 'chai';
-import state from './_state';
+import {MapsSelectorsState as state} from './_state';
 
 describe('getViewLimitsByMapKey', function () {
 	it('should return null, if map for given key does not exist', () => {
