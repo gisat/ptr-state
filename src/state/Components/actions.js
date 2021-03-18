@@ -14,14 +14,6 @@ function update(component, data) {
 	};
 }
 
-function updateStateFromView(components) {
-	return dispatch => {
-		if (components) {
-			dispatch(updateStore(components));
-		}
-	};
-}
-
 // ============ actions ===========
 function actionUpdate(component, data) {
 	return {
