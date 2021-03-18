@@ -29,6 +29,7 @@ export const DataSelectorsState = {
 							scopeKey: 'scope1',
 							placeKey: 'place1',
 						},
+						styleKey: 'style1',
 					},
 					index: {
 						6: {
@@ -293,18 +294,22 @@ export const DataSelectorsState = {
 					key: 'spatialDataSource1',
 					data: {
 						type: 'tiledVector',
+						fidColumnName: 'fid',
+						geometryColumnName: 'geom',
 					},
 				},
 				spatialDataSource2: {
 					key: 'spatialDataSource2',
 					data: {
 						type: 'tiledVector',
+						fidColumnName: 'fid',
 					},
 				},
 				spatialDataSource3: {
 					key: 'spatialDataSource3',
 					data: {
 						type: 'tiledVector',
+						fidColumnName: 'fid',
 					},
 				},
 				spatialDataSource4: {

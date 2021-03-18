@@ -651,7 +651,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		let options = {...dataSourceOptions, ...layerStateOptions};
 
 		if (type === 'wmts') {
-			options.url = dataSourceOptions.url || dataSourceOptions.urls[0];
+			options.url = dataSourceOptions.url || dataSourceOptions.urls?.[0];
 		} else if (type === 'wms') {
 			const {url, params, configuration, ...rest} = dataSourceOptions;
 			const singleTile =

@@ -147,6 +147,9 @@ export const MapsSelectorsState = {
 };
 
 export const MapsSelectorsState_2 = {
+	places: {
+		activeKey: 'place1',
+	},
 	maps: {
 		maps: {
 			map1: {
@@ -160,6 +163,17 @@ export const MapsSelectorsState_2 = {
 							url: 'https://background.defined',
 						},
 					},
+					layers: [
+						{
+							key: 'layer1',
+							filterByActive: {
+								place: true,
+							},
+							metadataModifiers: {
+								scopeKey: 'scope1',
+							},
+						},
+					],
 					view: {
 						center: {
 							lat: 0,
@@ -174,8 +188,8 @@ export const MapsSelectorsState_2 = {
 				},
 			},
 			map2: {
-				key: 'map1',
-				name: 'Map 1',
+				key: 'map2',
+				name: 'Map 2',
 				data: {
 					backgroundLayer: {
 						layerTemplateKey: 'layerTemplateWmts',
@@ -203,6 +217,11 @@ export const MapsSelectorsState_2 = {
 							url: 'https://background.defined',
 						},
 					},
+					layers: [
+						{
+							layerTemplateKey: 'layerTemplateUnsupportedLayerType',
+						},
+					],
 				},
 			},
 			map4: {
@@ -212,6 +231,17 @@ export const MapsSelectorsState_2 = {
 					backgroundLayer: {
 						layerTemplateKey: 'layerTemplateUnsupportedLayerType',
 					},
+					layers: [
+						{
+							key: 'layerDefinedDirectly',
+							type: 'vector',
+							options: {
+								selected: {
+									selection1: {},
+								},
+							},
+						},
+					],
 				},
 			},
 		},
