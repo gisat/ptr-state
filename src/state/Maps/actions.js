@@ -461,6 +461,24 @@ function updateStateFromView(data) {
 	};
 }
 
+function setMapViewport(mapKey, width, height) {
+	return (dispatch, getState) => {
+		if ((mapKey, width, height)) {
+			const currentViewport = Select.maps.getViewportByMapKey(
+				getState(),
+				mapKey
+			);
+			if (
+				!currentViewport ||
+				currentViewport.width !== width ||
+				currentViewport.height !== height
+			) {
+				dispatch(actionSetMapViewport(mapKey, width, height));
+			}
+		}
+	};
+}
+
 /* ==================================================
  * ACTIONS
  * ================================================== */
@@ -571,7 +589,7 @@ export default {
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
-	setMapViewport: actionSetMapViewport,
+	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
 	updateStateFromView,
