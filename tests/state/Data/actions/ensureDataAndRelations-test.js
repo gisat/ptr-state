@@ -106,7 +106,7 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 				'http://localhost/backend/rest/data/filtered',
 				slash(url)
 			);
-			debugger;
+
 			if (
 				_.isEqual(options, {
 					body: JSON.stringify({
@@ -132,8 +132,8 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 						data: {
 							spatialFilter: {
 								tiles: [
-									[0, 1],
-									[0, 2],
+									['0', '1'],
+									['0', '2'],
 								],
 								level: 7,
 							},
@@ -187,11 +187,11 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 							spatial: true,
 						},
 						data: {
-							spatialIndex: {tiles: [[0, 2]]},
+							spatialIndex: {tiles: [['0', '2']]},
 							spatialFilter: {
 								tiles: [
-									[0, 1],
-									[0, 2],
+									['0', '1'],
+									['0', '2'],
 								],
 								level: 7,
 							},
@@ -253,8 +253,8 @@ describe('state/Data/actions/ensureDataAndRelations', function () {
 
 		const spatialFilter = {
 			tiles: [
-				[0, 1],
-				[0, 2],
+				['0', '1'],
+				['0', '2'],
 			],
 			level: 7,
 		};

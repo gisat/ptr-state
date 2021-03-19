@@ -245,10 +245,10 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 				// or
 				// Prepare empty tile for new data if tile does not exists.
 				if (
-					!indexByLevelByTileByDataSourceKey[level][tile] ||
+					!indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] ||
 					_.isEmpty(attributeData)
 				) {
-					indexByLevelByTileByDataSourceKey[level][tile] = {};
+					indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] = {};
 				}
 
 				if (!_.isEmpty(attributeData)) {
@@ -265,21 +265,21 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 
 						//Add to existing index
 						if (
-							indexByLevelByTileByDataSourceKey?.[level]?.[tile]?.[
-								attributeDataSourceKey
-							]
+							indexByLevelByTileByDataSourceKey?.[level]?.[
+								tileAsString(tile)
+							]?.[attributeDataSourceKey]
 						) {
-							indexByLevelByTileByDataSourceKey[level][tile][
+							indexByLevelByTileByDataSourceKey[level][tileAsString(tile)][
 								attributeDataSourceKey
 							] = [
-								...indexByLevelByTileByDataSourceKey[level][tile][
+								...indexByLevelByTileByDataSourceKey[level][tileAsString(tile)][
 									attributeDataSourceKey
 								],
 								...indexes,
 							];
 						} else {
 							//Create new tile and insert dsKey index data
-							indexByLevelByTileByDataSourceKey[level][tile][
+							indexByLevelByTileByDataSourceKey[level][tileAsString(tile)][
 								attributeDataSourceKey
 							] = indexes;
 						}

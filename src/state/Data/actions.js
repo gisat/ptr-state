@@ -14,9 +14,9 @@ import commonActions from '../_common/actions';
 import Select from '../Select';
 import {
 	getMissingTiles,
-	tileAsArray,
 	tileAsString,
 	getPageSize,
+	tileAsStringArray,
 } from './helpers';
 import {TILED_VECTOR_LAYER_TYPES} from './constants';
 import helpers from '../_common/helpers';
@@ -253,9 +253,6 @@ function loadMissingAttributeData(
 		//diff loaded attribute data from index with wanted spatial data
 		const missingAttributeDataTiles =
 			getMissingTiles(attributeDataIndex, spatialFilter) || [];
-		const missingAttributeDataTilesAsArrays = missingAttributeDataTiles.map(
-			tileAsArray
-		);
 
 		// Load relations and data sources in first request if they are not already loaded.
 		const attributeRelations = Select.data.attributeRelations.getIndex(
@@ -278,10 +275,11 @@ function loadMissingAttributeData(
 		// Modified spatial filter with only missing attribute data tiles
 		const spatialFilterWithMissingTiles = {
 			...spatialFilter,
-			tiles: missingAttributeDataTilesAsArrays,
+			tiles: missingAttributeDataTiles,
 		};
 		// Relations for given filters are missing
 		if (loadAttributeRelationsAndDS) {
+			// Only if spatialIndex is null then is set whole spatialFilter.tiles as loading true in one step
 			const spatialIndex = null;
 			const loadAttributeRelations = true;
 			const loadSpatialRelations = false;
@@ -480,8 +478,9 @@ function ensureDataAndRelations(
 		const loadGeometry = true;
 		const loadAttributeRelations = true;
 		const loadSpatialRelations = true;
-		const spatialIndex = null;
 		if (spatialFilter && !_.isEmpty(spatialFilter)) {
+			// Only if spatialIndex is null then is set whole spatialFilter.tiles as loading true in one step
+			const spatialIndex = null;
 			return dispatch(
 				loadIndexedPage(
 					styleKey,
@@ -667,6 +666,9 @@ function ensure(
 			...attributeDataFilterExtension,
 		};
 
+		// ensure string datatype for tiles in filter
+		spatialFilter.tiles = spatialFilter.tiles.map(tileAsStringArray);
+
 		// Order for spatialData if null at the moment
 		const order = null;
 
@@ -720,13 +722,9 @@ function ensure(
 				missingSpatialDataTiles
 			);
 
-			modifiedSpatialFilterForAttributes.tiles = missingAttributeDataTilesToLoad.map(
-				t => tileAsArray(t)
-			);
+			modifiedSpatialFilterForAttributes.tiles = missingAttributeDataTilesToLoad;
 
-			modifiedSpatialFilterForSpatial.tiles = missingSpatialAndAttributeDataTiles.map(
-				t => tileAsArray(t)
-			);
+			modifiedSpatialFilterForSpatial.tiles = missingSpatialAndAttributeDataTiles;
 		}
 
 		const promises = [];
@@ -1039,7 +1037,7 @@ function setLoading(
 					tileAsString(tile)
 				);
 				if (!loading) {
-					return [...acc, tile];
+					return [...acc, tileAsStringArray(tile)];
 				} else {
 					return acc;
 				}
@@ -1055,7 +1053,7 @@ function setLoading(
 					tileAsString(tile)
 				);
 				if (!loading) {
-					return [...acc, tile];
+					return [...acc, tileAsStringArray(tile)];
 				} else {
 					return acc;
 				}

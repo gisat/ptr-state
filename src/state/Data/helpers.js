@@ -7,6 +7,66 @@ import {
 import {configDefaults} from '@gisatcz/ptr-core';
 
 /**
+ * Determinate decimal precision of number
+ * @param {Number} number
+ * @returns {Number}
+ */
+export const precision = number => {
+	if (!Number.isFinite(number)) {
+		return 0;
+	}
+	let e = 1,
+		p = 0;
+	while (Math.round(number * e) / e !== number) {
+		e *= 10;
+		p++;
+	}
+
+	return p;
+};
+
+/**
+ * Finite numbers are transformed to the decimal format and to the string.
+ * Example: 2e-2 -> "0.02"
+ * Example: 0.02 -> "0.02"
+ * @param {Number} number
+ * @returns {string?}
+ */
+const getNumberInDecimalString = number => {
+	if (!Number.isFinite(number)) {
+		return null;
+	}
+
+	const numberPrecision = precision(number);
+	return number.toFixed(numberPrecision);
+};
+
+/**
+ * Returns array of strings representing given tile
+ * @param {Array|string} tile
+ * @returns {Array}
+ */
+export const tileAsStringArray = tile => {
+	if (
+		_isArray(tile) &&
+		typeof tile[0] === 'string' &&
+		typeof tile[1] === 'string'
+	) {
+		return tile;
+	} else if (_isArray(tile)) {
+		const arrTile = tileAsArray(tile);
+		if (arrTile) {
+			// return arrTile.map(getNumberInDecimalString).join(',');
+			return arrTile.map(getNumberInDecimalString);
+		} else {
+			return null;
+		}
+	} else {
+		return null;
+	}
+};
+
+/**
  * Returns string representing given tile
  * @param {Array|string} tile
  * @returns {string}
@@ -14,13 +74,9 @@ import {configDefaults} from '@gisatcz/ptr-core';
 export const tileAsString = tile => {
 	if (typeof tile === 'string') {
 		return tile;
-	} else if (_isArray(tile)) {
-		const arrTile = tileAsArray(tile);
-		if (arrTile) {
-			return arrTile.join(',');
-		} else {
-			return null;
-		}
+	} else {
+		const stringTile = tileAsStringArray(tile);
+		return stringTile ? stringTile.join(',') : null;
 	}
 };
 
@@ -55,7 +111,7 @@ export const tileAsArray = tile => {
  * @param {Object} filter Required filter
  * @param {Array.<string|Array.<number>>} filter.tiles
  * @param {number} filter.level
- * @returns {Array?} Array of missing tiles in string format
+ * @returns {Array?} Array of missing tiles in stringArray format
  */
 export const getMissingTiles = (index, filter) => {
 	if (index && index.index && filter && _isArray(filter.tiles)) {
@@ -67,27 +123,26 @@ export const getMissingTiles = (index, filter) => {
 					//tileData === true means it is loading, so we mark them as not missing
 					if (tileData) {
 						//re-save tile as array to prevent negative zero
-						return [...acc, tileAsArray(tileKey).join(',')];
+						return [...acc, tileAsString(tileKey)];
 					} else {
 						return acc;
 					}
 				},
 				[]
 			);
-
-			const missingTiles = filter.tiles
-				.filter(tile => !loadedTilesInIndex.includes(tileAsString(tile)))
-				.map(tile => tileAsString(tile));
+			const missingTiles = filter.tiles.filter(
+				tile => !loadedTilesInIndex.includes(tileAsString(tile))
+			);
 			return missingTiles;
 		} else {
 			// no data for requested level
 			// all tiles are missing
-			return filter.tiles.map(tile => tileAsString(tile));
+			return filter.tiles.map(tile => tileAsStringArray(tile));
 		}
 	} else {
 		if (_isArray(filter?.tiles)) {
 			// all tiles are missing
-			return filter.tiles.map(tile => tileAsString(tile));
+			return filter.tiles.map(tile => tileAsStringArray(tile));
 		} else {
 			//filter is not defined
 			return null;

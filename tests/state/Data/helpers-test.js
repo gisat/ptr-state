@@ -40,6 +40,18 @@ describe('state/Data/helpers', function () {
 		it('Convert string tile to string [`90,-180`]', function () {
 			assert.strictEqual(tileAsString(['90,-180']), '90,-180');
 		});
+
+		it('Convert string tile to string [`0,1e10-2`]', function () {
+			assert.strictEqual(tileAsString([0, 1e-2]), '0,0.01');
+		});
+
+		it('Convert string tile to string [`0,1e10-5`]', function () {
+			assert.strictEqual(tileAsString([0, 1e-5]), '0,0.00001');
+		});
+
+		it('Convert string tile to string [`0,0.0000000001`]', function () {
+			assert.strictEqual(tileAsString([0, 0.0000000001]), '0,0.0000000001');
+		});
 	});
 
 	describe('tileAsArray', function () {
@@ -61,6 +73,13 @@ describe('state/Data/helpers', function () {
 			assert.deepStrictEqual(
 				tileAsArray('90.000000000000001,-180.000000000000001'),
 				[90.000000000000001, -180.000000000000001]
+			);
+		});
+
+		it('Convert string tile to array 90.000000000000001,0.000000000000001', function () {
+			assert.deepStrictEqual(
+				tileAsArray('90.000000000000001,0.000000000000001'),
+				[90.000000000000001, 0.000000000000001]
 			);
 		});
 
@@ -110,22 +129,22 @@ describe('state/Data/helpers', function () {
 			const index = null;
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for empty index.', function () {
 			const index = {};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for null index.index.', function () {
@@ -134,11 +153,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for empty index.index.', function () {
@@ -147,11 +166,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for null index.index.[0]', function () {
@@ -162,11 +181,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for empty index.index.[0]', function () {
@@ -177,11 +196,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles for empty index for same filter level', function () {
@@ -192,11 +211,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 
 		it('Get missing tiles [] for tiles that are loading.', function () {
@@ -209,7 +228,7 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
@@ -245,7 +264,7 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
@@ -268,17 +287,17 @@ describe('state/Data/helpers', function () {
 
 			const filter = {
 				tiles: [
-					[0, 0],
-					[1, 0],
-					[2, 0],
+					['0', '0'],
+					['1', '0'],
+					['2', '0'],
 				],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['1,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['1', '0']]);
 		});
 
-		it('Get missing tiles [] for loaded tiles with negative zero [-0,-0].', function () {
+		it('Get missing tiles [[0, 0]] for loaded tiles with negative zero [-0,-0].', function () {
 			const index = {
 				index: {
 					1: {
@@ -290,11 +309,12 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[0, 0]],
+				// tiles: [[0, 0]], FIXME test this format
+				tiles: [['0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), []);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['0', '0']]);
 		});
 		it('Get missing tiles [] for loaded tiles with negative zero in filter [-0,-0].', function () {
 			const index = {
@@ -308,7 +328,8 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[-0, -0]],
+				// tiles: [[-0, -0]], //fixme test this format
+				tiles: [['-0', '-0']], //fixme test this format
 				level: 1,
 			};
 
@@ -323,11 +344,11 @@ describe('state/Data/helpers', function () {
 			};
 
 			const filter = {
-				tiles: [[-0, 0]],
+				tiles: [['-0', '0']],
 				level: 1,
 			};
 
-			assert.deepStrictEqual(getMissingTiles(index, filter), ['0,0']);
+			assert.deepStrictEqual(getMissingTiles(index, filter), [['-0', '0']]);
 		});
 
 		it('Return null if filter tiles is missing', function () {
