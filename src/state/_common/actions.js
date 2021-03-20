@@ -321,8 +321,15 @@ const useKeys = (
 	categoryPath = DEFAULT_CATEGORY_PATH
 ) => {
 	return (keys, componentId) => {
-		return dispatch => {
-			dispatch(actionUseKeysRegister(actionTypes, componentId, keys));
+		return (dispatch, getState) => {
+			const state = getState();
+			const isRegistered = commonSelectors.haveAllKeysRegisteredUse(
+				getSubstate
+			)(state, componentId, keys);
+			if (!isRegistered) {
+				dispatch(actionUseKeysRegister(actionTypes, componentId, keys));
+			}
+
 			return dispatch(
 				ensureKeys(getSubstate, dataType, actionTypes, keys, categoryPath)
 			);

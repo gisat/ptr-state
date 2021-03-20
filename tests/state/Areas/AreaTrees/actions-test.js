@@ -300,10 +300,7 @@ describe('state/Areas/AreaTrees/actions', function () {
 		});
 
 		return actions
-			.useKeys(
-				['k1', 'k2'],
-				'cid'
-			)(dispatch)
+			.useKeys(['k1', 'k2'], 'cid')(dispatch, getState)
 			.then(function () {
 				return runFunctionActions({dispatch, getState});
 			})

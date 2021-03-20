@@ -4,7 +4,7 @@ import {
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
 import createCachedSelector from 're-reselect';
-import _ from 'lodash';
+import _, {difference as _difference} from 'lodash';
 import commonHelpers from './helpers';
 
 const activeScopeKey = state => state.scopes.activeKey;
@@ -96,6 +96,10 @@ const getActiveKey = getSubstate => {
 
 const getActiveKeys = getSubstate => {
 	return state => getSubstate(state).activeKeys;
+};
+
+const getKeysInUse = getSubstate => {
+	return state => getSubstate(state).inUse?.keys;
 };
 
 const getActive = getSubstate => {
@@ -517,7 +521,7 @@ const getKeysToLoad = getSubstate => {
 
 const getUsedKeys = getSubstate => {
 	return state => {
-		let inUse = getSubstate(state).inUse.keys;
+		let inUse = getSubstate(state).inUse?.keys;
 		if (inUse) {
 			let keys = _.uniq(_.flatten(Object.values(inUse)));
 			return keys.length ? keys : null;
@@ -525,6 +529,20 @@ const getUsedKeys = getSubstate => {
 			return null;
 		}
 	};
+};
+
+const getUsedKeysForComponent = getSubstate => {
+	return createCachedSelector(
+		[getKeysInUse(getSubstate), (state, componentKey) => componentKey],
+		(usedKeys, componentKey) => {
+			return usedKeys &&
+				componentKey &&
+				usedKeys[componentKey] &&
+				usedKeys[componentKey].length
+				? usedKeys[componentKey]
+				: null;
+		}
+	)((state, componentKey) => `${componentKey}`);
 };
 
 const getIndexedDataUses = getSubstate => {
@@ -1021,6 +1039,20 @@ const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomput
 	}
 );
 
+const haveAllKeysRegisteredUse = getSubstate => {
+	return createCachedSelector(
+		[getUsedKeysForComponent(getSubstate), (state, componentKey, keys) => keys],
+		(usedKeys, keys) => {
+			if (usedKeys && keys?.length) {
+				const notIncluded = _difference(keys, usedKeys);
+				return !notIncluded.length;
+			} else {
+				return false;
+			}
+		}
+	)((state, componentKey, keys) => `${componentKey}_${keys}`);
+};
+
 export default {
 	getActive,
 	getActiveModels,
@@ -1065,7 +1097,10 @@ export default {
 	getUsesForIndex,
 	getUsedIndexPages,
 	getUsedKeys,
+	getUsedKeysForComponent,
 	getUsesWithActiveDependency,
+
+	haveAllKeysRegisteredUse,
 
 	_mergeIntervals,
 

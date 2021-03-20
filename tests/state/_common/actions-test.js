@@ -1363,18 +1363,6 @@ describe('state/_common/actions', function () {
 
 	it('useKeys', function () {
 		const getSubState = state => state.sub;
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1387,6 +1375,18 @@ describe('state/_common/actions', function () {
 				byKey: {k1: {key: 'k1'}, k2: {key: 'k2'}},
 			},
 		});
+		const dispatch = action => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
 
 		return actions
 			.useKeys(
@@ -1396,10 +1396,7 @@ describe('state/_common/actions', function () {
 					USE: {KEYS: {REGISTER: 'REGISTER'}},
 				},
 				'user'
-			)(
-				['k1', 'k2'],
-				'cid'
-			)(dispatch)
+			)(['k1', 'k2'], 'cid')(dispatch, getState)
 			.then(function () {
 				return runFunctionActions({dispatch, getState});
 			})
