@@ -12,13 +12,18 @@ const getActiveModels = common.getActiveModels(getSubstate);
 const getByKey = common.getByKey(getSubstate);
 const getByKeys = common.getByKeys(getSubstate);
 const getByKeysAsObject = common.getByKeysAsObject(getSubstate);
-const getDataByKey = common.getDataByKey(getSubstate);
 
+const getDataByKey = common.getDataByKey(getSubstate);
+const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
+
+const getEditedActive = common.getEditedActive(getSubstate);
 const getEditedAll = common.getEditedAll(getSubstate);
 const getEditedAllAsObject = common.getEditedAllAsObject(getSubstate);
 const getEditedByKey = common.getEditedByKey(getSubstate);
-
+const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 const getEditedKeys = common.getEditedKeys(getSubstate);
+
+const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
 
 const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
@@ -34,12 +39,17 @@ export default {
 	getByKeys,
 	getByKeysAsObject,
 	getDataByKey,
+	getDeletePermissionByKey,
+
+	getEditedActive,
 	getEditedAll,
 	getEditedAllAsObject,
 	getEditedByKey,
+	getEditedDataByKey,
 	getEditedKeys,
 
 	getSubstate,
+	getUpdatePermissionByKey,
 	getUsedKeysForComponent,
 
 	haveAllKeysRegisteredUse,

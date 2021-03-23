@@ -27,6 +27,10 @@ const getKeysInUse = getSubstate => {
 	return state => getSubstate(state).inUse?.keys;
 };
 
+const getEditedAllAsObject = getSubstate => {
+	return state => getSubstate(state).editedByKey;
+};
+
 const activeScopeKey = state => state.scopes.activeKey;
 
 /**
@@ -114,11 +118,7 @@ const getActive = getSubstate => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getActiveKey(getSubstate)],
 		(models, activeKey) => {
-			if (models && models[activeKey]) {
-				return models[activeKey];
-			} else {
-				return null;
-			}
+			return models?.[activeKey] || null;
 		}
 	);
 };
@@ -301,94 +301,114 @@ const getByKeys = getSubstate => {
  */
 const getDataByKey = getSubstate => {
 	return createSelector([getByKey(getSubstate)], model => {
-		if (model && model.data) {
-			return model.data;
-		} else {
-			return null;
-		}
+		return model?.data || null;
 	});
 };
 
+/**
+ * True, if current user or guest has a permission to delete the model. Call with:
+ * state {Object}
+ * key {string}
+ * @param getSubstate {function}
+ * @return {bool}
+ */
 const getDeletePermissionByKey = getSubstate => {
 	return createSelector([getByKey(getSubstate)], model => {
-		if (model && model.permissions) {
-			return (
-				(model.permissions.activeUser && model.permissions.activeUser.delete) ||
-				(model.permissions.guest && model.permissions.guest.delete)
-			);
-		} else {
-			return false;
-		}
+		return (
+			model?.permissions?.activeUser?.delete ||
+			model?.permissions?.guest?.delete ||
+			false
+		);
 	});
 };
 
+/**
+ * True, if current user or guest has a permission to update the model. Call with:
+ * state {Object}
+ * key {string}
+ * @param getSubstate {function}
+ * @return {bool}
+ */
 const getUpdatePermissionByKey = getSubstate => {
 	return createSelector([getByKey(getSubstate)], model => {
-		if (model && model.permissions) {
-			return (
-				(model.permissions.activeUser && model.permissions.activeUser.update) ||
-				(model.permissions.guest && model.permissions.guest.update)
-			);
-		} else {
-			return false;
-		}
+		return (
+			model?.permissions?.activeUser?.update ||
+			model?.permissions?.guest?.update ||
+			false
+		);
 	});
 };
 
+/**
+ * Get all edited models. Call with:
+ * state {Object}
+ * @param getSubstate {function}
+ * @return {Object}
+ */
 const getEditedAll = getSubstate => {
-	return state => {
-		let data = getSubstate(state).editedByKey;
-		return data ? Object.values(data) : null;
-	};
+	return createSelector([getEditedAllAsObject(getSubstate)], editedAsObject => {
+		return editedAsObject ? Object.values(editedAsObject) : null;
+	});
 };
 
-const getEditedAllAsObject = getSubstate => {
-	return state => getSubstate(state).editedByKey;
-};
-
+/**
+ * Get active edited model. Call with:
+ * state {Object}
+ * @param getSubstate {function}
+ * @return {Object} edited active model
+ */
 const getEditedActive = getSubstate => {
 	return createSelector(
 		[getEditedAllAsObject(getSubstate), getActiveKey(getSubstate)],
 		(models, activeKey) => {
-			if (models && models[activeKey]) {
-				return models[activeKey];
-			} else {
-				return null;
-			}
+			return models?.[activeKey] || null;
 		}
 	);
 };
 
+/**
+ * Get edited model with given key. Call with:
+ * state {Object}
+ * key {string} model key
+ * @param getSubstate {function}
+ * @return {Object} edited model
+ */
 const getEditedByKey = getSubstate => {
-	return (state, key) => {
-		let allEditedData = getEditedAllAsObject(getSubstate)(state);
-		if (
-			key &&
-			allEditedData &&
-			!_.isEmpty(allEditedData) &&
-			allEditedData[key]
-		) {
-			return allEditedData[key];
-		} else {
-			return null;
+	return createCachedSelector(
+		[getEditedAllAsObject(getSubstate), (state, key) => key],
+		(allData, key) => {
+			if (key && allData && !_isEmpty(allData) && allData[key]) {
+				return allData[key];
+			} else {
+				return null;
+			}
 		}
-	};
+	)((state, key) => key);
 };
 
+/**
+ * Get edited model's data by given key. Call with:
+ * state {Object}
+ * keys {Array} model keys
+ * @param getSubstate {function}
+ * @return {Object} edited model data
+ */
 const getEditedDataByKey = getSubstate => {
 	return createSelector([getEditedByKey(getSubstate)], model => {
-		if (model && model.data) {
-			return model.data;
-		} else {
-			return null;
-		}
+		return model?.data || null;
 	});
 };
 
+/**
+ * Get edited models keys. Call with:
+ * state {Object}
+ * @param getSubstate {function}
+ * @return {Array} edited keys
+ */
 const getEditedKeys = getSubstate => {
-	return createSelector([getEditedAll(getSubstate)], edited => {
-		if (edited && !_.isEmpty(edited)) {
-			return edited.map(model => model.key);
+	return createSelector([getEditedAllAsObject(getSubstate)], edited => {
+		if (edited && !_isEmpty(edited)) {
+			return Object.keys(edited);
 		}
 		return null;
 	});

@@ -18,7 +18,13 @@ const getByKeysAsObject = common.getByKeysAsObject(getSubstate);
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 
+const getEditedActive = common.getEditedActive(getSubstate);
+const getEditedAll = common.getEditedAll(getSubstate);
+const getEditedAllAsObject = common.getEditedAllAsObject(getSubstate);
+const getEditedByKey = common.getEditedByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
+const getEditedKeys = common.getEditedKeys(getSubstate);
+
 const getIndexed = common.getIndexed(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
@@ -50,7 +56,13 @@ export default {
 	getDataByKey,
 	getDeletePermissionByKey,
 
+	getEditedActive,
+	getEditedAll,
+	getEditedAllAsObject,
+	getEditedByKey,
 	getEditedDataByKey,
+	getEditedKeys,
+
 	getIndexed,
 	getUpdatePermissionByKey,
 	getUsedKeysForComponent,
