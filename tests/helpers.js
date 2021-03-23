@@ -29,7 +29,7 @@ function testCache(testingFunction, params, expectedResult, otherParams) {
  * @param actionTypes {Array}
  */
 function baseReducersTestSet(reducers, state, actionTypes) {
-	it('Should return the same state no matching action type', function () {
+	it('Should return the same state if no matching action type', function () {
 		const action = {
 			type: 'CREEPY_ACTION',
 		};
@@ -58,7 +58,42 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 		});
 }
 
+/**
+ * @param selectors {Object} exported selectors for given substore
+ * @param substore {string}
+ * @param options {Object}
+ */
+function baseSelectorsTestSet(selectors, substore, options) {
+	if (options.expectedSelectors) {
+		it('Should export all expected selectors', function () {
+			assert.containsAllKeys(selectors, options.expectedSelectors);
+		});
+	}
+
+	it('Should select substate', function () {
+		const state = {
+			[substore]: {
+				activeKey: 'key1',
+				byKey: {
+					key1: 'Something',
+				},
+			},
+		};
+
+		const expectedOutput = {
+			activeKey: 'key1',
+			byKey: {
+				key1: 'Something',
+			},
+		};
+
+		const output = selectors.getSubstate(state);
+		assert.deepStrictEqual(output, expectedOutput);
+	});
+}
+
 export default {
 	testCache,
 	baseReducersTestSet,
+	baseSelectorsTestSet,
 };
