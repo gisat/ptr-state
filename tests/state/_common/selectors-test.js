@@ -211,52 +211,6 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	describe('getIndex', function () {
-		const tests = [
-			{
-				name: 'none',
-				state: {
-					sub: {
-						indexes: [
-							{filter: 'fil2', order: 'desc'},
-							{filter: 'fil', order: 'desc'},
-							{filter: 'fil', order: 'asc'},
-							{filter: 'fil2', order: 'asc'},
-						],
-					},
-				},
-				filter: 'fil-not-present',
-				order: 'asc',
-				expectedResult: null,
-			},
-			{
-				name: 'some',
-				state: {
-					sub: {
-						indexes: [
-							{filter: 'fil2', order: 'desc'},
-							{filter: 'fil', order: 'desc'},
-							{filter: 'fil', order: 'asc'},
-							{filter: 'fil2', order: 'asc'},
-						],
-					},
-				},
-				filter: 'fil',
-				order: 'asc',
-				expectedResult: {filter: 'fil', order: 'asc'},
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getIndex(getSubState)(test.state, test.filter, test.order),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
 	it('getIndexed', function () {
 		const state = {
 			sub: {
@@ -302,40 +256,6 @@ describe('state/_common/selectors', function () {
 		);
 	});
 
-	it('getIndexes', function () {
-		assert.strictEqual(
-			selectors.getIndexes(state => state.sub)({
-				sub: {indexes: 'indexes'},
-			}),
-			'indexes'
-		);
-	});
-
-	describe('getIndexChangedOn', function () {
-		const indexes = [
-			{filter: 'fil2', order: 'desc'},
-			{filter: 'fil', order: 'desc', changedOn: '2020-01-01'},
-			{filter: 'fil', order: 'asc'},
-			{filter: 'fil2', order: 'asc'},
-		];
-		const filter = 'fil';
-		const state = {sub: {indexes}};
-
-		it('nil changedOn', function () {
-			assert.deepStrictEqual(
-				selectors.getIndexChangedOn(getSubState)(state, filter, 'asc'),
-				null
-			);
-		});
-
-		it('changedOn', function () {
-			assert.deepStrictEqual(
-				selectors.getIndexChangedOn(getSubState)(state, filter, 'desc'),
-				'2020-01-01'
-			);
-		});
-	});
-
 	it('getIndexPage', function () {
 		const state = {
 			sub: {
@@ -367,29 +287,6 @@ describe('state/_common/selectors', function () {
 		assert.deepStrictEqual(
 			selectors.getIndexPage(getSubState)(state, filter, order, start, length),
 			expectedResult
-		);
-	});
-
-	// getIndexPage selector returns object on which getIndexedPage accesses `length` property?
-	// it.skip('getIndexedPage', function () {});
-
-	it('getIndexTotal', function () {
-		const state = {
-			sub: {
-				indexes: [
-					{filter: 'fil2', order: 'desc'},
-					{filter: 'fil', order: 'desc'},
-					{filter: 'fil', order: 'asc', count: 5},
-					{filter: 'fil2', order: 'asc'},
-				],
-			},
-		};
-		const filter = 'fil';
-		const order = 'asc';
-
-		assert.strictEqual(
-			selectors.getIndexTotal(getSubState)(state, filter, order),
-			5
 		);
 	});
 

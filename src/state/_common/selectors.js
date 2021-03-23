@@ -11,6 +11,8 @@ import _, {
 } from 'lodash';
 import commonHelpers from './helpers';
 
+const activeScopeKey = state => state.scopes.activeKey;
+
 const getActiveKey = getSubstate => {
 	return state => getSubstate(state).activeKey;
 };
@@ -31,7 +33,21 @@ const getEditedAllAsObject = getSubstate => {
 	return state => getSubstate(state).editedByKey;
 };
 
-const activeScopeKey = state => state.scopes.activeKey;
+const getIndexes = getSubstate => {
+	return state => getSubstate(state).indexes;
+};
+
+/**
+ * Get indexes value from given state on given path.
+ * Optional param indexPath has default value "indexes". Call with:
+ * state {Object}
+ * indexPath {string}
+ * @param getSubstate {function}
+ * @return {Object} index
+ */
+const getIndexesByPath = getSubstate => {
+	return (state, indexPath = 'indexes') => _.get(getSubstate(state), indexPath);
+};
 
 /**
  * Get all but removed models in byKey
@@ -414,13 +430,13 @@ const getEditedKeys = getSubstate => {
 	});
 };
 
-const getIndexes = getSubstate => {
-	return state => getSubstate(state).indexes;
-};
-
 /**
- * Get whole index by given filter and order
- * @param getSubstate
+ * Get whole index by given filter and order. Call with:
+ * state {Object}
+ * filter {Object}
+ * order {Array}
+ * @param getSubstate {function}
+ * @return {Object} index
  */
 const getIndex = getSubstate => {
 	return createSelector(
@@ -436,16 +452,13 @@ const getIndex = getSubstate => {
 };
 
 /**
- * Get indexes value from given state on given path.
- * Optional param indexPath has default value "indexes"
- */
-const getIndexesByPath = getSubstate => {
-	return (state, indexPath = 'indexes') => _.get(getSubstate(state), indexPath);
-};
-
-/**
- * Get whole index by given filter and order and optional indexPath
- * Beside getIndex indexPath is first optional parameter, filter and order folows.
+ * Get whole index by given filter and order and optional indexPath. Call with:
+ * state {Object}
+ * indexPath {string} [optional]
+ * filter {Object}
+ * order {Array}
+ * @param getSubstate {function}
+ * @return {Object} index
  */
 const getIndexByPath = getSubstate => {
 	return createSelector(
@@ -460,16 +473,21 @@ const getIndexByPath = getSubstate => {
 	);
 };
 
+/**
+ * Get changeOn of filtered index
+ * state {Object}
+ * filter {Object}
+ * order {Array}
+ * @param getSubstate {function}
+ * @return {string}
+ */
 const getIndexChangedOn = getSubstate => {
 	return createSelector([getIndex(getSubstate)], index => {
-		if (index && index.changedOn) {
-			return index.changedOn;
-		} else {
-			return null;
-		}
+		return index?.changedOn || null;
 	});
 };
 
+// TODO clarify
 const getIndexPage = getSubstate => {
 	return createSelector(
 		[
@@ -492,6 +510,7 @@ const getIndexPage = getSubstate => {
 	);
 };
 
+// TODO clarify
 /**
  * Get a page of data
  * call with (state, filter, order, start, length)
@@ -508,11 +527,16 @@ const getIndexedPage = getSubstate => {
 };
 
 /**
- * call with (state, filter, order)
+ * Get count of indexed items. Call with:
+ * state {Object}
+ * filter {Object}
+ * order {Array}
+ * @param getSubstate {function}
+ * @return {number}
  */
 const getIndexTotal = getSubstate => {
 	return createSelector([getIndex(getSubstate)], index => {
-		if (index && (index.count || index.count === 0)) {
+		if (index?.count > -1) {
 			return index.count;
 		} else {
 			return null;
@@ -520,6 +544,7 @@ const getIndexTotal = getSubstate => {
 	});
 };
 
+// TODO clarify
 /**
  *
  * @param {func} getSubstate
@@ -540,6 +565,7 @@ const getIndexesByFilteredItem = getSubstate => {
 	);
 };
 
+// TODO really needed?
 /**
  * @param {Array} array
  *
@@ -1136,6 +1162,7 @@ export default {
 	getIndexByPath,
 	getIndexed,
 	getIndexes,
+	getIndexesByPath,
 	getIndexChangedOn,
 	getIndexPage,
 	getIndexedPage,
