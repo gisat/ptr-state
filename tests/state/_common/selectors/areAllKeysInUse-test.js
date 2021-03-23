@@ -1,10 +1,13 @@
 import {assert} from 'chai';
+import {sampleSubstoreName} from '../../../constants';
 import commonSelectors from '../../../../src/state/_common/selectors';
 
-const haveAllKeysRegisteredUse = storePath => {
-	const getSubstate = state => state[storePath];
+describe('haveAllKeysRegisteredUse', () => {
+	const getSubstate = state => state[sampleSubstoreName];
 	const state = {
-		[storePath]: {inUse: {keys: {componentA: ['key1', 'key2', 'key3']}}},
+		[sampleSubstoreName]: {
+			inUse: {keys: {componentA: ['key1', 'key2', 'key3']}},
+		},
 	};
 
 	it('should return true, if all of the keys have registered use for given component', () => {
@@ -52,7 +55,7 @@ const haveAllKeysRegisteredUse = storePath => {
 
 	it('should return false, if no keys registered at all', () => {
 		const state = {
-			[storePath]: {inUse: {keys: {}}},
+			[sampleSubstoreName]: {inUse: {keys: {}}},
 		};
 		const componentKey = 'componentA';
 		const keys = ['key1'];
@@ -63,6 +66,4 @@ const haveAllKeysRegisteredUse = storePath => {
 		);
 		assert.isFalse(output);
 	});
-};
-
-describe('haveAllKeysRegisteredUse', () => haveAllKeysRegisteredUse('sub'));
+});

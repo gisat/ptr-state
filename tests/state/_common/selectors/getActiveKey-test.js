@@ -1,9 +1,10 @@
 import {assert} from 'chai';
+import {sampleSubstoreName} from '../../../constants';
 import commonSelectors from '../../../../src/state/_common/selectors';
 
-const getActiveKey = storePath => {
-	const getSubstate = state => state[storePath];
-	const state = {[storePath]: {activeKey: 'key1'}};
+describe('getActiveKey', () => {
+	const getSubstate = state => state[sampleSubstoreName];
+	const state = {[sampleSubstoreName]: {activeKey: 'key1'}};
 
 	it('should return active key', () => {
 		const expectedResult = 'key1';
@@ -12,10 +13,8 @@ const getActiveKey = storePath => {
 	});
 
 	it('should return null if there is no active key', () => {
-		const state = {[storePath]: {activeKey: null}};
+		const state = {[sampleSubstoreName]: {activeKey: null}};
 		const output = commonSelectors.getActiveKey(getSubstate)(state);
 		assert.isNull(output);
 	});
-};
-
-describe('getActiveKey', () => getActiveKey('sub'));
+});
