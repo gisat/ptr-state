@@ -804,8 +804,8 @@ function receiveUpdated(
 
 			let indexes = [];
 			data.forEach(model => {
-				let original = originalData[model.key];
-				let edited = editedData[model.key].data;
+				let original = originalData?.[model.key];
+				let edited = editedData?.[model.key]?.data;
 				_.forIn(edited, (value, key) => {
 					if (model.data[key] === value) {
 						dispatch(

@@ -10,8 +10,10 @@ const getAllForActiveScope = common.getAllForActiveScope(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getActiveKeys = common.getActiveKeys(getSubstate);
 const getActive = common.getActive(getSubstate);
-const getActivePlaces = common.getActiveModels(getSubstate);
+const getActiveModels = common.getActiveModels(getSubstate);
 const getByKey = common.getByKey(getSubstate);
+const getByKeys = common.getByKeys(getSubstate);
+const getByKeysAsObject = common.getByKeysAsObject(getSubstate);
 
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
@@ -38,10 +40,12 @@ export default {
 	getActiveKey,
 	getActiveKeys,
 	getActive,
-	getActivePlaces,
+	getActiveModels,
 	getActiveView,
 
 	getByKey,
+	getByKeys,
+	getByKeysAsObject,
 
 	getDataByKey,
 	getDeletePermissionByKey,

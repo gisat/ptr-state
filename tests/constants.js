@@ -1,8 +1,23 @@
 export const sampleSubstoreName = 'sub';
 
-export const expectedMetadataSelectors = [
+const baseMetadataSelectors = [
+	'getActive',
 	'getActiveKey',
+	'getAll',
+	'getAllAsObject',
+	'getByKey',
+	'getByKeys',
+	'getByKeysAsObject',
+	'getDataByKey',
 	'getSubstate',
 	'getUsedKeysForComponent',
 	'haveAllKeysRegisteredUse',
 ];
+
+export const expectedMetadataSelectors = [
+	...baseMetadataSelectors,
+	'getActiveKeys',
+	'getActiveModels',
+];
+
+export const expectedScopesSelectors = [...baseMetadataSelectors];

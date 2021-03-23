@@ -1,10 +1,10 @@
 import selectors from '../../../../src/state/Scopes/selectors';
-import {expectedMetadataSelectors} from '../../../constants';
+import {expectedScopesSelectors} from '../../../constants';
 import testHelpers from '../../../helpers';
 
 describe('_selectors-test', () => {
 	const options = {
-		expectedSelectors: expectedMetadataSelectors,
+		expectedSelectors: expectedScopesSelectors,
 	};
 	testHelpers.baseSelectorsTestSet(selectors, 'scopes', options);
 });

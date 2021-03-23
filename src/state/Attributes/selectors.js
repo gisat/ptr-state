@@ -5,10 +5,13 @@ const getSubstate = state => state.attributes;
 const getAll = common.getAll(getSubstate);
 const getActive = common.getActive(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
+const getActiveKeys = common.getActiveKeys(getSubstate);
+const getActiveModels = common.getActiveModels(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
 
 const getByKey = common.getByKey(getSubstate);
 const getByKeys = common.getByKeys(getSubstate);
+const getByKeysAsObject = common.getByKeysAsObject(getSubstate);
 
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
@@ -26,11 +29,14 @@ export default {
 
 	getActive,
 	getActiveKey,
+	getActiveKeys,
+	getActiveModels,
 
 	getAllAsObject,
 
 	getByKey,
 	getByKeys,
+	getByKeysAsObject,
 
 	getDataByKey,
 	getDeletePermissionByKey,

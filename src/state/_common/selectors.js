@@ -4,39 +4,52 @@ import {
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
 import createCachedSelector from 're-reselect';
-import _, {difference as _difference} from 'lodash';
+import _, {
+	difference as _difference,
+	pickBy as _pickBy,
+	isEmpty as _isEmpty,
+} from 'lodash';
 import commonHelpers from './helpers';
+
+const getActiveKey = getSubstate => {
+	return state => getSubstate(state).activeKey;
+};
+
+const getActiveKeys = getSubstate => {
+	return state => getSubstate(state).activeKeys;
+};
+
+const getAllByKey = getSubstate => {
+	return state => getSubstate(state).byKey;
+};
+
+const getKeysInUse = getSubstate => {
+	return state => getSubstate(state).inUse?.keys;
+};
 
 const activeScopeKey = state => state.scopes.activeKey;
 
 /**
- *
- * @param {*} getSubstate
- * @returns {Object}
- */
-const getAllByKey = getSubstate => {
-	return state => {
-		return getSubstate(state).byKey;
-	};
-};
-
-/**
- *
- * @param {*} getSubstate
- * @returns {Object}
+ * Get all but removed models in byKey
+ * @param getSubstate {function}
+ * @returns {Object} all models except removed from by key
  */
 const getAllNotRemovedAsObject = getSubstate => {
 	return createSelector([getAllByKey(getSubstate)], byKey => {
-		return _.pickBy(byKey, item => !item.hasOwnProperty('removed'));
+		if (byKey) {
+			return _pickBy(byKey, item => !item.hasOwnProperty('removed'));
+		} else {
+			return null;
+		}
 	});
 };
 
 const getAllAsObject = getAllNotRemovedAsObject;
 
 /**
- *
- * @param {*} getSubstate
- * @returns {Array|null}
+ * Get all but removed models as a collection
+ * @param getSubstate {function}
+ * @returns {Array|null} all models except removed as a collection
  */
 const getAll = getSubstate => {
 	return createSelector([getAllAsObject(getSubstate)], byKey => {
@@ -44,6 +57,7 @@ const getAll = getSubstate => {
 	});
 };
 
+// TODO clarify
 function modelsFromIndex(models, index) {
 	if (!index || !index.index) {
 		return null;
@@ -67,6 +81,7 @@ function modelsFromIndex(models, index) {
 	return nonEmptyArray(indexedModels);
 }
 
+// TODO clarify
 const getAllForActiveScope = getSubstate => {
 	return createSelector(
 		[
@@ -90,18 +105,11 @@ const getAllForActiveScope = getSubstate => {
 	);
 };
 
-const getActiveKey = getSubstate => {
-	return state => getSubstate(state).activeKey;
-};
-
-const getActiveKeys = getSubstate => {
-	return state => getSubstate(state).activeKeys;
-};
-
-const getKeysInUse = getSubstate => {
-	return state => getSubstate(state).inUse?.keys;
-};
-
+/**
+ * Get active model
+ * @param getSubstate {func}
+ * @return {Object} Active model
+ */
 const getActive = getSubstate => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getActiveKey(getSubstate)],
@@ -115,6 +123,11 @@ const getActive = getSubstate => {
 	);
 };
 
+/**
+ * Get active models
+ * @param getSubstate {func}
+ * @return {Array} A collection of active models
+ */
 const getActiveModels = getSubstate => {
 	return createSelector(
 		[getAllAsObject(getSubstate), getActiveKeys(getSubstate)],
@@ -133,11 +146,12 @@ const getActiveModels = getSubstate => {
 					}
 				});
 			}
-			return nonEmptyArray(activeModels);
+			return activeModels.length ? activeModels : null;
 		}
 	);
 };
 
+// TODO clarify
 const getByFilterOrder = getSubstate => {
 	return createSelector(
 		[
@@ -158,6 +172,7 @@ const getByFilterOrder = getSubstate => {
 	);
 };
 
+// TODO clarify
 const getIndexed = getSubstate => {
 	//todo proper memoization && unify with old getIndexedPage etc.
 	return createCachedSelector(
@@ -219,11 +234,18 @@ const getIndexed = getSubstate => {
 	});
 };
 
+/**
+ * Get model with given key. Call with:
+ * state {Object}
+ * key {string} model key
+ * @param getSubstate {function}
+ * @return {Object} selected model
+ */
 const getByKey = getSubstate => {
 	return createCachedSelector(
 		[getAllAsObject(getSubstate), (state, key) => key],
 		(allData, key) => {
-			if (key && allData && !_.isEmpty(allData) && allData[key]) {
+			if (key && allData && !_isEmpty(allData) && allData[key]) {
 				return allData[key];
 			} else {
 				return null;
@@ -232,6 +254,13 @@ const getByKey = getSubstate => {
 	)((state, key) => key);
 };
 
+/**
+ * Get models by given keys. Call with:
+ * state {Object}
+ * keys {Array} model keys
+ * @param getSubstate {function}
+ * @return {Object} selected models
+ */
 const getByKeysAsObject = getSubstate => {
 	return createCachedSelector(
 		[getAllAsObject(getSubstate), (state, keys) => keys],
@@ -246,27 +275,30 @@ const getByKeysAsObject = getSubstate => {
 	)((state, keys) => `${keys}`);
 };
 
-// TODO test + use getByKeysAsObject?
+/**
+ * Get models by given keys. Call with:
+ * state {Object}
+ * keys {Array} model keys
+ * @param getSubstate {function}
+ * @return {Array} selected models
+ */
 const getByKeys = getSubstate => {
-	return createCachedSelector(
-		[getAllAsObject(getSubstate), (state, keys) => keys],
-		(allData, keys) => {
-			if (keys && keys.length && allData && !_.isEmpty(allData)) {
-				let data = [];
-				_.each(keys, key => {
-					if (allData[key]) {
-						data.push(allData[key]);
-					}
-				});
-
-				return nonEmptyArray(data);
-			} else {
-				return null;
-			}
+	return createCachedSelector([getByKeysAsObject(getSubstate)], asObject => {
+		if (asObject) {
+			return Object.values(asObject);
+		} else {
+			return null;
 		}
-	)((state, keys) => `${keys}`);
+	})((state, keys) => `${keys}`);
 };
 
+/**
+ * Get model's data by given keys. Call with:
+ * state {Object}
+ * keys {Array} model keys
+ * @param getSubstate {function}
+ * @return {Object} selected model data
+ */
 const getDataByKey = getSubstate => {
 	return createSelector([getByKey(getSubstate)], model => {
 		if (model && model.data) {
@@ -1055,16 +1087,17 @@ const haveAllKeysRegisteredUse = getSubstate => {
 
 export default {
 	getActive,
-	getActiveModels,
 	getActiveKey,
 	getActiveKeys,
-	getActiveKeysByFilterByActive,
+	getActiveKeysByFilterByActive, // TODO
+	getActiveModels,
 	getAll,
-	getAllActiveKeys,
+	getAllActiveKeys, // TODO
 	getAllAsObject,
-	getAllForActiveScope,
+	getAllByKey,
+	getAllForActiveScope, // TODO
 
-	getByFilterOrder,
+	getByFilterOrder, // TODO
 	getByKey,
 	getByKeysAsObject,
 	getByKeys,
