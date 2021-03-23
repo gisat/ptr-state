@@ -66,7 +66,11 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 function baseSelectorsTestSet(selectors, substore, options) {
 	if (options.expectedSelectors) {
 		it('Should export all expected selectors', function () {
-			assert.containsAllKeys(selectors, options.expectedSelectors);
+			assert.containsAllKeys(
+				selectors,
+				options.expectedSelectors,
+				`Failing for ${substore}`
+			);
 		});
 	}
 
@@ -88,7 +92,7 @@ function baseSelectorsTestSet(selectors, substore, options) {
 		};
 
 		const output = selectors.getSubstate(state);
-		assert.deepStrictEqual(output, expectedOutput);
+		assert.deepStrictEqual(output, expectedOutput, `Failing for ${substore}`);
 	});
 }
 

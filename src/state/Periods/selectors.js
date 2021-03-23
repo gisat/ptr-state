@@ -23,6 +23,9 @@ const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 const getIndexed = common.getIndexed(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
+
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 /**
  * Both start and end time must be defined, otherwise all available periods are returned.
@@ -73,10 +76,9 @@ export default {
 	getEditedDataByKey,
 	getIndexed,
 	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
+
+	haveAllKeysRegisteredUse,
 
 	getSubstate,
-
-	// TODO handle old selectors export
-	getActivePeriod: getActive,
-	getPeriods: getAll,
 };

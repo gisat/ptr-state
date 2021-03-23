@@ -9,7 +9,10 @@ const getByKey = common.getByKey(getSubstate);
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
+const getIndexed = common.getIndexed(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 export default {
 	getActiveKey,
@@ -23,8 +26,11 @@ export default {
 
 	getEditedDataByKey,
 
-	getIndexed: common.getIndexed(getSubstate),
+	getIndexed,
 
 	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
 	getSubstate,
+
+	haveAllKeysRegisteredUse,
 };

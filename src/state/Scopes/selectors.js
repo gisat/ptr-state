@@ -17,10 +17,13 @@ const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
 
 const getIndexed = common.getIndexed(getSubstate);
 
 const getStateToSave = common.getStateToSave(getSubstate);
+
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 const getActiveScopeConfiguration = createSelector([getActive], scope => {
 	return scope && scope.data && scope.data.configuration
@@ -37,16 +40,20 @@ export default {
 
 	getByFilterOrder,
 
-	getDataByKey,
+	getByKey,
 	getByKeys,
+	getDataByKey,
 	getDeletePermissionByKey,
 
 	getEditedDataByKey,
 
 	getIndexed,
 
-	getUpdatePermissionByKey,
-
 	getStateToSave,
 	getSubstate,
+
+	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
+
+	haveAllKeysRegisteredUse,
 };

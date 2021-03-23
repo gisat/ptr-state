@@ -1,9 +1,6 @@
 import {createSelector} from 'reselect';
-import _ from 'lodash';
-
-import common from '../_common/selectors';
-import ScopesSelectors from '../Scopes/selectors';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
+import common from '../_common/selectors';
 
 const getSubstate = state => state.places;
 
@@ -14,12 +11,17 @@ const getActiveKey = common.getActiveKey(getSubstate);
 const getActiveKeys = common.getActiveKeys(getSubstate);
 const getActive = common.getActive(getSubstate);
 const getActivePlaces = common.getActiveModels(getSubstate);
+const getByKey = common.getByKey(getSubstate);
 
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
+const getIndexed = common.getIndexed(getSubstate);
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
+
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 const getActiveView = createSelector([getActive], place => {
 	if (place && place.data && place.data.bbox) {
@@ -30,7 +32,6 @@ const getActiveView = createSelector([getActive], place => {
 });
 
 export default {
-	getPlaces: getAll,
 	getAll,
 	getAllAsObject,
 	getAllForActiveScope,
@@ -40,13 +41,16 @@ export default {
 	getActivePlaces,
 	getActiveView,
 
-	getByKey: common.getByKey(getSubstate),
+	getByKey,
 
 	getDataByKey,
 	getDeletePermissionByKey,
 
 	getEditedDataByKey,
-	getIndexed: common.getIndexed(getSubstate),
+	getIndexed,
 	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
 	getSubstate,
+
+	haveAllKeysRegisteredUse,
 };

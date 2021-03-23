@@ -16,6 +16,9 @@ const getEditedAllAsObject = common.getEditedAllAsObject(getSubstate);
 const getEditedByKey = common.getEditedByKey(getSubstate);
 
 const getEditedKeys = common.getEditedKeys(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
+
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 export default {
 	getActive,
@@ -31,4 +34,7 @@ export default {
 	getEditedKeys,
 
 	getSubstate,
+	getUsedKeysForComponent,
+
+	haveAllKeysRegisteredUse,
 };
