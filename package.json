@@ -26,7 +26,7 @@
 	},
 	"dependencies": {
 		"@gisatcz/ptr-core": "^1.3.11",
-		"@gisatcz/ptr-tile-grid": "^0.0.7",
+		"@gisatcz/ptr-tile-grid": "0.0.8",
 		"@gisatcz/ptr-utils": "^1.3.11",
 		"@jvitela/recompute": "0.3.3",
 		"@manaflair/redux-batch": "1.0.0",
@@ -37,8 +37,8 @@
 		"path": "0.12.7",
 		"query-string": "6.14.0",
 		"re-reselect": "4.0.0",
-		"react-dom": "^16.13.1",
 		"react": "^16.13.1",
+		"react-dom": "^16.13.1",
 		"react-redux": "7.2.2",
 		"redux": "4.0.5",
 		"redux-logger": "3.0.6",
