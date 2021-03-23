@@ -64,6 +64,7 @@ describe('state/Data/actions/loadIndexedPage', function () {
 
 	afterEach(function () {
 		clearDispatchedActions();
+		resetFetch();
 	});
 
 	describe('loadIndexedPage', function () {

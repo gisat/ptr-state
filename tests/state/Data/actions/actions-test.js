@@ -1,5 +1,6 @@
 import {assert} from 'chai';
 import actions from '../../../../src/state/Data/actions';
+import {resetFetch} from '../../../../src/state/_common/request';
 
 describe('state/Data/actions', function () {
 	this.timeout(5000);
@@ -57,6 +58,7 @@ describe('state/Data/actions', function () {
 
 	afterEach(function () {
 		clearDispatchedActions();
+		resetFetch();
 	});
 
 	describe('getRestRelationsPages', function () {

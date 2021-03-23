@@ -65,6 +65,7 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 
 	afterEach(function () {
 		clearDispatchedActions();
+		resetFetch();
 	});
 
 	//
