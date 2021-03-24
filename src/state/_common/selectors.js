@@ -27,6 +27,10 @@ const getKeysInUse = getSubstate => {
 	return state => getSubstate(state).inUse?.keys;
 };
 
+const getIndexesInUse = getSubstate => {
+	return state => getSubstate(state).inUse?.indexes;
+};
+
 const getEditedAllAsObject = getSubstate => {
 	return state => getSubstate(state).editedByKey;
 };
@@ -354,7 +358,16 @@ const getIndexChangedOn = getSubstate => {
 	});
 };
 
-// TODO clarify
+/**
+ * Get indexes page. Call with:
+ * state {Object}
+ * filter {Object}
+ * order {Array}
+ * start {number} from 1 to n. Default 1.
+ * length {number} from 1 to n. If no length specified, then is equal to total
+ * @param getSubstate {function}
+ * @return {Object} {7: 'key1', 8: null, ...}
+ */
 const getIndexPage = getSubstate => {
 	return createSelector(
 		[
@@ -363,7 +376,7 @@ const getIndexPage = getSubstate => {
 			(state, filter, order, start, length) => length,
 		],
 		(index, start, length) => {
-			if (index && index.index) {
+			if (index?.index && start && length) {
 				let indexed = {};
 				for (let o = start; o < start + length && o <= index.count; o++) {
 					let key = index.index[o];
@@ -469,7 +482,7 @@ const getIndexTotal = getSubstate => {
 	});
 };
 
-// TODO clarify
+// TODO @vdubr please help
 /**
  *
  * @param {func} getSubstate
@@ -490,18 +503,12 @@ const getIndexesByFilteredItem = getSubstate => {
 	);
 };
 
-// TODO really needed?
-/**
- * @param {Array} array
- *
- * @returns {Array|null} Non empty array or null.
- */
-function nonEmptyArray(array) {
-	return array.length ? array : null;
-}
-
 /**
  * Compare keys with loaded models and return which keys need to be loaded
+ * state {Object}
+ * keys {Array}
+ * @param getSubstate {function}
+ * @return {Array} keys to load
  */
 const getKeysToLoad = getSubstate => {
 	return createSelector(
@@ -511,9 +518,10 @@ const getKeysToLoad = getSubstate => {
 				if (!models) {
 					return keys;
 				} else {
-					return nonEmptyArray(
-						keys.filter(key => !models[key] || models[key].outdated)
+					const filteredKeys = keys.filter(
+						key => !models[key] || models[key].outdated
 					);
+					return filteredKeys.length ? filteredKeys : null;
 				}
 			} else {
 				return null;
@@ -522,18 +530,13 @@ const getKeysToLoad = getSubstate => {
 	);
 };
 
-const getUsedKeys = getSubstate => {
-	return state => {
-		let inUse = getSubstate(state).inUse?.keys;
-		if (inUse) {
-			let keys = _.uniq(_.flatten(Object.values(inUse)));
-			return keys.length ? keys : null;
-		} else {
-			return null;
-		}
-	};
-};
-
+/**
+ * Get a list of keys used by given component
+ * state {Object}
+ * componentKey {string}
+ * @param getSubstate {function}
+ * @return {Array} used keys
+ */
 const getUsedKeysForComponent = getSubstate => {
 	return createCachedSelector(
 		[getKeysInUse(getSubstate), (state, componentKey) => componentKey],
@@ -548,142 +551,31 @@ const getUsedKeysForComponent = getSubstate => {
 	)((state, componentKey) => `${componentKey}`);
 };
 
-const getIndexedDataUses = getSubstate => {
-	return state => {
-		if (getSubstate(state) && getSubstate(state).inUse) {
-			return getSubstate(state).inUse.indexes;
-		} else {
-			return null;
+/**
+ * True, if all given keys are registered for given component
+ * state {Object}
+ * componentKey {string}
+ * keys {Array}
+ * @param getSubstate {function}
+ * @return {boolean}
+ */
+const haveAllKeysRegisteredUse = getSubstate => {
+	return createCachedSelector(
+		[getUsedKeysForComponent(getSubstate), (state, componentKey, keys) => keys],
+		(usedKeys, keys) => {
+			if (usedKeys && keys?.length) {
+				const notIncluded = _difference(keys, usedKeys);
+				return !notIncluded.length;
+			} else {
+				return false;
+			}
 		}
-	};
+	)((state, componentKey, keys) => `${componentKey}_${keys}`);
 };
-
-const getAllActiveKeys = createSelector(
-	[
-		state => state.scopes && state.scopes.activeKey,
-		state => state.cases && state.cases.activeKey,
-		state => state.cases && state.cases.activeKeys,
-		state => state.scenarios && state.scenarios.activeKey,
-		state => state.scenarios && state.scenarios.activeKeys,
-		state => state.places && state.places.activeKey,
-		state => state.places && state.places.activeKeys,
-		state => state.periods && state.periods.activeKey,
-		state => state.periods && state.periods.activeKeys,
-		state => state.attributes && state.attributes.activeKey,
-		state => state.attributes && state.attributes.activeKeys,
-		state => state.layerTemplates && state.layerTemplates.activeKey,
-		state => state.areaTreeLevelKeys && state.areaTreeLevelKeys.activeKey,
-		state => state.specific && state.specific.apps,
-		state => state.app && state.app.key,
-	],
-	(
-		activeScopeKey,
-		activeCaseKey,
-		activeCaseKeys,
-		activeScenarioKey,
-		activeScenarioKeys,
-		activePlaceKey,
-		activePlaceKeys,
-		activePeriodKey,
-		activePeriodKeys,
-		activeAttributeKey,
-		activeAttributeKeys,
-		activeLayerTemplateKey,
-		activeAreaTreeLevelKey,
-		apps,
-		appKey
-	) => {
-		let activeKeys = {
-			activeScopeKey: activeScopeKey || null,
-			activeCaseKey: activeCaseKey || null,
-			activeCaseKeys: activeCaseKeys || null,
-			activeScenarioKey: activeScenarioKey || null,
-			activeScenarioKeys: activeScenarioKeys || null,
-			activePlaceKey: activePlaceKey || null,
-			activePlaceKeys: activePlaceKeys || null,
-			activePeriodKey: activePeriodKey || null,
-			activePeriodKeys: activePeriodKeys || null,
-			activeAttributeKey: activeAttributeKey || null,
-			activeAttributeKeys: activeAttributeKeys || null,
-			activeLayerTemplateKey: activeLayerTemplateKey || null,
-			activeAreaTreeLevelKey: activeAreaTreeLevelKey || null,
-		};
-
-		// for BO usage
-		if (apps) {
-			activeKeys.activeApplicationKey = apps.activeKey;
-		} else if (appKey) {
-			activeKeys.activeApplicationKey = appKey;
-		}
-
-		return activeKeys;
-	}
-);
-
-const getActiveKeysByFilterByActive = createCachedSelector(
-	[getAllActiveKeys, (state, filterByActive) => filterByActive],
-	(activeKeys, filterByActive) => {
-		if (filterByActive && !_.isEmpty(filterByActive)) {
-			let keys = {};
-
-			if (filterByActive.scope && activeKeys.activeScopeKey) {
-				keys.scopeKey = activeKeys.activeScopeKey;
-			}
-			if (filterByActive.place) {
-				if (activeKeys.activePlaceKey) {
-					keys.placeKey = activeKeys.activePlaceKey;
-				} else if (activeKeys.activePlaceKeys) {
-					keys.placeKeys = activeKeys.activePlaceKeys;
-				}
-			}
-			if (filterByActive.scenario) {
-				if (activeKeys.activeScenarioKey) {
-					keys.scenarioKey = activeKeys.activeScenarioKey;
-				} else if (activeKeys.activeScenarioKeys) {
-					keys.scenarioKeys = activeKeys.activeScenarioKeys;
-				}
-			}
-			if (filterByActive.case) {
-				if (activeKeys.activeCaseKey) {
-					keys.caseKey = activeKeys.activeCaseKey;
-				} else if (activeKeys.activeCaseKeys) {
-					keys.caseKeys = activeKeys.activeCaseKeys;
-				}
-			}
-			if (filterByActive.period) {
-				if (activeKeys.activePeriodKey) {
-					keys.periodKey = activeKeys.activePeriodKey;
-				} else if (activeKeys.activePeriodKeys) {
-					keys.periodKeys = activeKeys.activePeriodKeys;
-				}
-			}
-			if (filterByActive.attribute) {
-				if (activeKeys.activeAttributeKey) {
-					keys.attributeKey = activeKeys.activeAttributeKey;
-				} else if (activeKeys.activeAttributeKeys) {
-					keys.attributeKeys = activeKeys.activeAttributeKeys;
-				}
-			}
-			if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
-				keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
-			}
-			if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
-				keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
-			}
-			if (filterByActive.application && activeKeys.activeApplicationKey) {
-				keys.applicationKey = activeKeys.activeApplicationKey;
-			}
-
-			return !_.isEmpty(keys) ? keys : null;
-		} else {
-			return null;
-		}
-	}
-)((state, filterByActive) => JSON.stringify(filterByActive));
 
 const getUsedIndexPages = getSubstate => {
 	return createSelector(
-		[getIndexedDataUses(getSubstate), getAllActiveKeys],
+		[getIndexesInUse(getSubstate), getAllActiveKeys],
 		(indexedDataUses, activeKeys) => {
 			let groupedUses = [];
 			let finalUsedIndexes = [];
@@ -739,7 +631,7 @@ const getUsedIndexPages = getSubstate => {
 
 const getUsesForIndex = getSubstate => {
 	return createCachedSelector(
-		getIndexedDataUses(getSubstate),
+		getIndexesInUse(getSubstate),
 		(state, filter) => filter,
 		(state, filter, order) => order,
 		getAllActiveKeys,
@@ -808,7 +700,7 @@ const getUsesWithActiveDependency = getSubstate => {
 	 */
 	return createSelector(
 		[
-			getIndexedDataUses(getSubstate),
+			getIndexesInUse(getSubstate),
 			getAllActiveKeys,
 			(state, filterByActive) => filterByActive,
 		],
@@ -947,6 +839,130 @@ const _mergeIntervals = intervals => {
 	);
 };
 
+/* 	--- Selectors accross stores --------------------------------------------- */
+const getAllActiveKeys = createSelector(
+	[
+		state => state.scopes && state.scopes.activeKey,
+		state => state.cases && state.cases.activeKey,
+		state => state.cases && state.cases.activeKeys,
+		state => state.scenarios && state.scenarios.activeKey,
+		state => state.scenarios && state.scenarios.activeKeys,
+		state => state.places && state.places.activeKey,
+		state => state.places && state.places.activeKeys,
+		state => state.periods && state.periods.activeKey,
+		state => state.periods && state.periods.activeKeys,
+		state => state.attributes && state.attributes.activeKey,
+		state => state.attributes && state.attributes.activeKeys,
+		state => state.layerTemplates && state.layerTemplates.activeKey,
+		state => state.areaTreeLevelKeys && state.areaTreeLevelKeys.activeKey,
+		state => state.specific && state.specific.apps,
+		state => state.app && state.app.key,
+	],
+	(
+		activeScopeKey,
+		activeCaseKey,
+		activeCaseKeys,
+		activeScenarioKey,
+		activeScenarioKeys,
+		activePlaceKey,
+		activePlaceKeys,
+		activePeriodKey,
+		activePeriodKeys,
+		activeAttributeKey,
+		activeAttributeKeys,
+		activeLayerTemplateKey,
+		activeAreaTreeLevelKey,
+		apps,
+		appKey
+	) => {
+		let activeKeys = {
+			activeScopeKey: activeScopeKey || null,
+			activeCaseKey: activeCaseKey || null,
+			activeCaseKeys: activeCaseKeys || null,
+			activeScenarioKey: activeScenarioKey || null,
+			activeScenarioKeys: activeScenarioKeys || null,
+			activePlaceKey: activePlaceKey || null,
+			activePlaceKeys: activePlaceKeys || null,
+			activePeriodKey: activePeriodKey || null,
+			activePeriodKeys: activePeriodKeys || null,
+			activeAttributeKey: activeAttributeKey || null,
+			activeAttributeKeys: activeAttributeKeys || null,
+			activeLayerTemplateKey: activeLayerTemplateKey || null,
+			activeAreaTreeLevelKey: activeAreaTreeLevelKey || null,
+		};
+
+		// for BO usage
+		if (apps) {
+			activeKeys.activeApplicationKey = apps.activeKey;
+		} else if (appKey) {
+			activeKeys.activeApplicationKey = appKey;
+		}
+
+		return activeKeys;
+	}
+);
+
+const getActiveKeysByFilterByActive = createCachedSelector(
+	[getAllActiveKeys, (state, filterByActive) => filterByActive],
+	(activeKeys, filterByActive) => {
+		if (filterByActive && !_.isEmpty(filterByActive)) {
+			let keys = {};
+
+			if (filterByActive.scope && activeKeys.activeScopeKey) {
+				keys.scopeKey = activeKeys.activeScopeKey;
+			}
+			if (filterByActive.place) {
+				if (activeKeys.activePlaceKey) {
+					keys.placeKey = activeKeys.activePlaceKey;
+				} else if (activeKeys.activePlaceKeys) {
+					keys.placeKeys = activeKeys.activePlaceKeys;
+				}
+			}
+			if (filterByActive.scenario) {
+				if (activeKeys.activeScenarioKey) {
+					keys.scenarioKey = activeKeys.activeScenarioKey;
+				} else if (activeKeys.activeScenarioKeys) {
+					keys.scenarioKeys = activeKeys.activeScenarioKeys;
+				}
+			}
+			if (filterByActive.case) {
+				if (activeKeys.activeCaseKey) {
+					keys.caseKey = activeKeys.activeCaseKey;
+				} else if (activeKeys.activeCaseKeys) {
+					keys.caseKeys = activeKeys.activeCaseKeys;
+				}
+			}
+			if (filterByActive.period) {
+				if (activeKeys.activePeriodKey) {
+					keys.periodKey = activeKeys.activePeriodKey;
+				} else if (activeKeys.activePeriodKeys) {
+					keys.periodKeys = activeKeys.activePeriodKeys;
+				}
+			}
+			if (filterByActive.attribute) {
+				if (activeKeys.activeAttributeKey) {
+					keys.attributeKey = activeKeys.activeAttributeKey;
+				} else if (activeKeys.activeAttributeKeys) {
+					keys.attributeKeys = activeKeys.activeAttributeKeys;
+				}
+			}
+			if (filterByActive.layerTemplate && activeKeys.activeLayerTemplateKey) {
+				keys.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+			}
+			if (filterByActive.areaTreeLevel && activeKeys.activeAreaTreeLevelKey) {
+				keys.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+			}
+			if (filterByActive.application && activeKeys.activeApplicationKey) {
+				keys.applicationKey = activeKeys.activeApplicationKey;
+			}
+
+			return !_.isEmpty(keys) ? keys : null;
+		} else {
+			return null;
+		}
+	}
+)((state, filterByActive) => JSON.stringify(filterByActive));
+
 /* 	--- Recompute observers -------------------------------------------------- */
 
 /**
@@ -1042,28 +1058,12 @@ const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomput
 	}
 );
 
-const haveAllKeysRegisteredUse = getSubstate => {
-	return createCachedSelector(
-		[getUsedKeysForComponent(getSubstate), (state, componentKey, keys) => keys],
-		(usedKeys, keys) => {
-			if (usedKeys && keys?.length) {
-				const notIncluded = _difference(keys, usedKeys);
-				return !notIncluded.length;
-			} else {
-				return false;
-			}
-		}
-	)((state, componentKey, keys) => `${componentKey}_${keys}`);
-};
-
 export default {
 	getActive,
 	getActiveKey,
 	getActiveKeys,
-	getActiveKeysByFilterByActive, // TODO
 	getActiveModels,
 	getAll,
-	getAllActiveKeys, // TODO
 	getAllAsObject,
 	getAllByKey,
 
@@ -1091,6 +1091,7 @@ export default {
 	getIndexTotal,
 	getIndexesByFilteredItem,
 
+	getKeysInUse,
 	getKeysToLoad,
 
 	getStateToSave,
@@ -1098,13 +1099,16 @@ export default {
 	getUpdatePermissionByKey,
 	getUsesForIndex,
 	getUsedIndexPages,
-	getUsedKeys,
 	getUsedKeysForComponent,
 	getUsesWithActiveDependency,
 
 	haveAllKeysRegisteredUse,
 
 	_mergeIntervals,
+
+	// selectors across stores
+	getActiveKeysByFilterByActive, // TODO
+	getAllActiveKeys, // TODO
 
 	// recompute observers
 	getActiveKeysByFilterByActiveObserver,

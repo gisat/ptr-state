@@ -898,7 +898,7 @@ function refreshUses(
 
 			let state = getState();
 
-			let usedKeys = commonSelectors.getUsedKeys(getSubstate)(state);
+			let usedKeys = commonSelectors.getKeysInUse(getSubstate)(state);
 			dispatch(
 				ensureKeys(getSubstate, dataType, actionTypes, usedKeys, categoryPath)
 			);

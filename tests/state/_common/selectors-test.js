@@ -71,40 +71,6 @@ describe('state/_common/selectors', function () {
 		});
 	});
 
-	it('getIndexPage', function () {
-		const state = {
-			sub: {
-				indexes: [
-					{
-						filter: 'fil',
-						order: 'asc',
-						count: 7,
-						index: {
-							1: 'first',
-							2: 'second',
-							3: 'third',
-							4: 'fourth',
-							5: 'fifth',
-							6: 'sixth',
-							7: 'seventh',
-						},
-					},
-				],
-			},
-		};
-		const filter = 'fil';
-		const order = 'asc';
-		const start = 3;
-		const length = 2;
-
-		const expectedResult = {3: 'third', 4: 'fourth'};
-
-		assert.deepStrictEqual(
-			selectors.getIndexPage(getSubState)(state, filter, order, start, length),
-			expectedResult
-		);
-	});
-
 	it('getIndexesByFilteredItem', function () {
 		const state = {
 			sub: {
@@ -311,22 +277,6 @@ describe('state/_common/selectors', function () {
 
 		assert.deepStrictEqual(
 			selectors.getUsedIndexPages(getSubState)(state),
-			expectedResult
-		);
-	});
-
-	it('getUsedKeys', function () {
-		const state = {
-			sub: {
-				inUse: {
-					keys: ['k1', 'k2', 'k3', ['k1', 'k3', 'k4']],
-				},
-			},
-		};
-		const expectedResult = ['k1', 'k2', 'k3', 'k4'];
-
-		assert.deepStrictEqual(
-			selectors.getUsedKeys(getSubState)(state),
 			expectedResult
 		);
 	});
