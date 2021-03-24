@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import actions from '../../../../../src/state/Data/attributeDataSources/actions';
+import actions from '../../../../../src/state/Data/AttributeDataSources/actions';
 import getStoreSet from '../../../_common/helpers/store';
 describe('state/Data/AttributeDataSources/actions', function () {
 	it('add', function () {
