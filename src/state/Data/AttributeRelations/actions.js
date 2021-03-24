@@ -1,5 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
+import _ from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
