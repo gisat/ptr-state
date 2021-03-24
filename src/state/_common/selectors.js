@@ -844,7 +844,7 @@ const _mergeIntervals = intervals => {
 	);
 };
 
-/* 	--- Selectors accross stores --------------------------------------------- */
+/* 	--- Selectors across stores --------------------------------------------- */
 
 /**
  * Get activeKey/activeKeys from all relevant substores
@@ -1074,17 +1074,17 @@ const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomput
 	componentState => {
 		const relationsFilter = {};
 		const modifiers = getMergedModifiersInRequestFormat_recompute(
-			componentState.metadataModifiers,
-			componentState.filterByActive
+			componentState?.metadataModifiers,
+			componentState?.filterByActive
 		);
 		if (!_.isEmpty(modifiers)) {
 			relationsFilter.modifiers = modifiers;
 		}
 
 		// add layerTemplate od areaTreeLevelKey
-		if (componentState.layerTemplateKey) {
+		if (componentState?.layerTemplateKey) {
 			relationsFilter.layerTemplateKey = componentState.layerTemplateKey;
-		} else if (componentState.areaTreeLevelKey) {
+		} else if (componentState?.areaTreeLevelKey) {
 			relationsFilter.areaTreeLevelKey = componentState.areaTreeLevelKey;
 		}
 		return relationsFilter;
@@ -1132,7 +1132,7 @@ export default {
 	getUpdatePermissionByKey,
 	getUsesForIndex, //TODO test
 	getUsedIndexPages, //TODO test
-	getUsedKeysForComponent, //TODO test
+	getUsedKeysForComponent,
 	getUsesWithActiveDependency, //TODO test
 
 	haveAllKeysRegisteredUse,
