@@ -22,6 +22,8 @@ const getEditedByKey = common.getEditedByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
 const getEditedKeys = common.getEditedKeys(getSubstate);
 
+const getIndexed = common.getIndexed(getSubstate);
+
 const getStateToSave = common.getStateToSave(getSubstate);
 
 const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
@@ -49,6 +51,8 @@ export default {
 	getEditedByKey,
 	getEditedDataByKey,
 	getEditedKeys,
+
+	getIndexed,
 
 	getUpdatePermissionByKey,
 	getUsedKeysForComponent,

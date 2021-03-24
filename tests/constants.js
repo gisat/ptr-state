@@ -16,6 +16,7 @@ const baseMetadataSelectors = [
 	'getEditedByKey',
 	'getEditedDataByKey',
 	'getEditedKeys',
+	'getIndexed',
 	'getSubstate',
 	'getUpdatePermissionByKey',
 	'getUsedKeysForComponent',

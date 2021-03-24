@@ -11,8 +11,6 @@ import _, {
 } from 'lodash';
 import commonHelpers from './helpers';
 
-const activeScopeKey = state => state.scopes.activeKey;
-
 const getActiveKey = getSubstate => {
 	return state => getSubstate(state).activeKey;
 };
@@ -77,54 +75,6 @@ const getAll = getSubstate => {
 	});
 };
 
-// TODO clarify
-function modelsFromIndex(models, index) {
-	if (!index || !index.index) {
-		return null;
-	}
-
-	const indexedModels = [];
-	for (let i = 1; i <= index.count; i++) {
-		const modelKey = index.index[i];
-		if (modelKey) {
-			const indexedModel = models[modelKey];
-			if (indexedModel) {
-				indexedModels.push(indexedModel);
-			} else {
-				indexedModels.push({key: modelKey});
-			}
-		} else {
-			indexedModels.push(null);
-		}
-	}
-
-	return nonEmptyArray(indexedModels);
-}
-
-// TODO clarify
-const getAllForActiveScope = getSubstate => {
-	return createSelector(
-		[
-			getAllAsObject(getSubstate),
-			getIndexes(getSubstate),
-			activeScopeKey,
-			(state, order) => order,
-		],
-		(models, indexes, activeScopeKey, order) => {
-			if (models && indexes && activeScopeKey) {
-				const filter = {
-					scopeKey: activeScopeKey,
-				};
-				const index = commonHelpers.getIndex(indexes, filter, order);
-
-				return modelsFromIndex(models, index);
-			}
-
-			return null;
-		}
-	);
-};
-
 /**
  * Get active model
  * @param getSubstate {func}
@@ -165,89 +115,6 @@ const getActiveModels = getSubstate => {
 			return activeModels.length ? activeModels : null;
 		}
 	);
-};
-
-// TODO clarify
-const getByFilterOrder = getSubstate => {
-	return createSelector(
-		[
-			getAllAsObject(getSubstate),
-			getIndexes(getSubstate),
-			(state, filter) => filter,
-			(state, filter, order) => order,
-		],
-		(models, indexes, filter, order) => {
-			if (models && indexes) {
-				const index = commonHelpers.getIndex(indexes, filter, order);
-
-				return modelsFromIndex(models, index);
-			} else {
-				return null;
-			}
-		}
-	);
-};
-
-// TODO clarify
-const getIndexed = getSubstate => {
-	//todo proper memoization && unify with old getIndexedPage etc.
-	return createCachedSelector(
-		[
-			getAllAsObject(getSubstate),
-			getIndexes(getSubstate),
-			getAllActiveKeys,
-			(state, filterByActive) => filterByActive,
-			(state, filterByActive, filter) => filter,
-			(state, filterByActive, filter, order) => order,
-			(state, filterByActive, filter, order, start) => start,
-			(state, filterByActive, filter, order, start, length) => length,
-		],
-		(
-			models,
-			indexes,
-			activeKeys,
-			filterByActive,
-			filter,
-			order,
-			start,
-			length
-		) => {
-			if (models && indexes) {
-				let mergedFilter = commonHelpers.mergeFilters(
-					activeKeys,
-					filterByActive,
-					filter
-				);
-				let index = commonHelpers.getIndex(indexes, mergedFilter, order);
-				if (index && index.index) {
-					let indexedModels = [];
-					let end = Math.min(start + length - 1, index.count);
-					for (let i = start; i <= end; i++) {
-						let modelKey = index.index[i];
-						if (modelKey) {
-							let indexedModel = models[modelKey];
-							if (indexedModel) {
-								indexedModels.push(indexedModel);
-							} else {
-								indexedModels.push({key: modelKey});
-							}
-						} else {
-							indexedModels.push(null);
-						}
-					}
-					return indexedModels.length ? indexedModels : null;
-				} else {
-					return null;
-				}
-			} else {
-				return null;
-			}
-		}
-	)((state, filterByActive, filter, order, start, length) => {
-		return `${JSON.stringify(filterByActive)}:${JSON.stringify(
-			filter
-		)}:${JSON.stringify(order)}:${start}:${length}`;
-	});
 };
 
 /**
@@ -510,20 +377,78 @@ const getIndexPage = getSubstate => {
 	);
 };
 
-// TODO clarify
 /**
- * Get a page of data
- * call with (state, filter, order, start, length)
+ * Get indexed models. Call with:
+ * state {Object}
+ * filterByActive {Object}
+ * filter {Object}
+ * order {Array}
+ * start {number} from 1 to n. Default 1.
+ * length {number} from 1 to n. If no length specified, then is equal to total
+ * @param getSubstate {function}
+ * @return {Array} collection of models
  */
-const getIndexedPage = getSubstate => {
-	return createSelector(
-		[getIndexPage(getSubstate), getAllAsObject(getSubstate)],
-		(page, models) => {
-			return (
-				(page && page.length && page.map(key => models[key] || null)) || null
-			); //todo check loading
+const getIndexed = getSubstate => {
+	return createCachedSelector(
+		[
+			getAllAsObject(getSubstate),
+			getIndexes(getSubstate),
+			getAllActiveKeys,
+			(state, filterByActive) => filterByActive,
+			(state, filterByActive, filter) => filter,
+			(state, filterByActive, filter, order) => order,
+			(state, filterByActive, filter, order, start) => start,
+			(state, filterByActive, filter, order, start, length) => length,
+		],
+		(
+			models,
+			indexes,
+			activeKeys,
+			filterByActive,
+			filter,
+			order,
+			start,
+			length
+		) => {
+			if (models && indexes) {
+				let mergedFilter = commonHelpers.mergeFilters(
+					activeKeys,
+					filterByActive,
+					filter
+				);
+				let index = commonHelpers.getIndex(indexes, mergedFilter, order);
+				if (index?.index) {
+					let indexedModels = [];
+					start = start || 1;
+					length = length || index.count;
+
+					let end = Math.min(start + length - 1, index.count);
+					for (let i = start; i <= end; i++) {
+						let modelKey = index.index[i];
+						if (modelKey) {
+							let indexedModel = models[modelKey];
+							if (indexedModel) {
+								indexedModels.push(indexedModel);
+							} else {
+								indexedModels.push({key: modelKey});
+							}
+						} else {
+							indexedModels.push(null);
+						}
+					}
+					return indexedModels.length ? indexedModels : null;
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
 		}
-	);
+	)((state, filterByActive, filter, order, start, length) => {
+		return `${JSON.stringify(filterByActive)}:${JSON.stringify(
+			filter
+		)}:${JSON.stringify(order)}:${start}:${length}`;
+	});
 };
 
 /**
@@ -1141,9 +1066,7 @@ export default {
 	getAllActiveKeys, // TODO
 	getAllAsObject,
 	getAllByKey,
-	getAllForActiveScope, // TODO
 
-	getByFilterOrder, // TODO
 	getByKey,
 	getByKeysAsObject,
 	getByKeys,
@@ -1165,7 +1088,6 @@ export default {
 	getIndexesByPath,
 	getIndexChangedOn,
 	getIndexPage,
-	getIndexedPage,
 	getIndexTotal,
 	getIndexesByFilteredItem,
 

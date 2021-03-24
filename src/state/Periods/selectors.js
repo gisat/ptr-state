@@ -8,7 +8,6 @@ const getSubstate = state => state.periods;
 
 const getAll = common.getAll(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
-const getAllForActiveScope = common.getAllForActiveScope(getSubstate);
 const getActive = common.getActive(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getActiveKeys = common.getActiveKeys(getSubstate);
@@ -71,7 +70,6 @@ export default {
 	getActiveModels,
 	getAll,
 	getAllAsObject,
-	getAllForActiveScope,
 
 	getByKey,
 	getByKeys,

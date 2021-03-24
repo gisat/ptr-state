@@ -3,9 +3,6 @@ const getSubstate = state => state.layerTrees;
 
 const getAll = common.getAll(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
-const getAllForActiveScope = common.getAllForActiveScope(getSubstate);
-
-const getByFilterOrder = common.getByFilterOrder(getSubstate);
 
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
@@ -16,9 +13,6 @@ const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
 export default {
 	getAll,
 	getAllAsObject,
-	getAllForActiveScope,
-
-	getByFilterOrder,
 
 	getDataByKey,
 	getDeletePermissionByKey,
