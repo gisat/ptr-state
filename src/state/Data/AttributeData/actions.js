@@ -431,8 +431,9 @@ function actionUpdateStore(data) {
 export default {
 	addLoadingIndex,
 	addLoadingSpatialIndex,
-	removeSpatialIndex: removeSpatialIndexAction,
+	getIndexDataBySpatialData,
 	receiveIndexed,
-	updateStore: actionUpdateStore,
 	receiveIndexedAttributeEndPoint,
+	removeSpatialIndex: removeSpatialIndexAction,
+	updateStore: actionUpdateStore,
 };
