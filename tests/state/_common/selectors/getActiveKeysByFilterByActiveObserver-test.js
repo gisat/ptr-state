@@ -1,7 +1,8 @@
 import {assert} from 'chai';
 import commonSelectors from '../../../../src/state/_common/selectors';
+import {setState} from '@jvitela/recompute';
 
-describe('getActiveKeysByFilterByActive', function () {
+describe('getActiveKeysByFilterByActiveObserver', function () {
 	const state = {
 		app: {
 			key: 'testing',
@@ -39,6 +40,10 @@ describe('getActiveKeysByFilterByActive', function () {
 		},
 	};
 
+	before(function () {
+		setState(state);
+	});
+
 	it('should omit metadata which do not have active key or keys', () => {
 		const filterByActive = {
 			scenario: true,
@@ -54,8 +59,7 @@ describe('getActiveKeysByFilterByActive', function () {
 			areaTreeLevelKey: 'areaTreeLevel1',
 			applicationKey: 'testing',
 		};
-		const output = commonSelectors.getActiveKeysByFilterByActive(
-			state,
+		const output = commonSelectors.getActiveKeysByFilterByActiveObserver(
 			filterByActive
 		);
 		assert.deepStrictEqual(output, expectedResult);
@@ -74,8 +78,7 @@ describe('getActiveKeysByFilterByActive', function () {
 			placeKeys: ['placeA', 'placeB'],
 			layerTemplateKey: 'ltA',
 		};
-		const output = commonSelectors.getActiveKeysByFilterByActive(
-			state,
+		const output = commonSelectors.getActiveKeysByFilterByActiveObserver(
 			filterByActive
 		);
 		assert.deepStrictEqual(output, expectedResult);
@@ -90,8 +93,7 @@ describe('getActiveKeysByFilterByActive', function () {
 		const expectedResult = {
 			scopeKey: 'scopeA',
 		};
-		const output = commonSelectors.getActiveKeysByFilterByActive(
-			state,
+		const output = commonSelectors.getActiveKeysByFilterByActiveObserver(
 			filterByActive
 		);
 		assert.deepStrictEqual(output, expectedResult);
@@ -102,8 +104,7 @@ describe('getActiveKeysByFilterByActive', function () {
 			areaTreeLevelKey: true,
 		};
 
-		const output = commonSelectors.getActiveKeysByFilterByActive(
-			state,
+		const output = commonSelectors.getActiveKeysByFilterByActiveObserver(
 			filterByActive
 		);
 		assert.isNull(output);
@@ -111,10 +112,13 @@ describe('getActiveKeysByFilterByActive', function () {
 
 	it('should return null if filter by active is null', () => {
 		const filterByActive = null;
-		const output = commonSelectors.getActiveKeysByFilterByActive(
-			state,
+		const output = commonSelectors.getActiveKeysByFilterByActiveObserver(
 			filterByActive
 		);
 		assert.isNull(output);
+	});
+
+	after(function () {
+		setState(null);
 	});
 });

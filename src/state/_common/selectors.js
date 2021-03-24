@@ -845,23 +845,29 @@ const _mergeIntervals = intervals => {
 };
 
 /* 	--- Selectors accross stores --------------------------------------------- */
+
+/**
+ * Get activeKey/activeKeys from all relevant substores
+ * @param state {Object}
+ * @return {Object}
+ */
 const getAllActiveKeys = createSelector(
 	[
-		state => state.scopes && state.scopes.activeKey,
-		state => state.cases && state.cases.activeKey,
-		state => state.cases && state.cases.activeKeys,
-		state => state.scenarios && state.scenarios.activeKey,
-		state => state.scenarios && state.scenarios.activeKeys,
-		state => state.places && state.places.activeKey,
-		state => state.places && state.places.activeKeys,
-		state => state.periods && state.periods.activeKey,
-		state => state.periods && state.periods.activeKeys,
-		state => state.attributes && state.attributes.activeKey,
-		state => state.attributes && state.attributes.activeKeys,
-		state => state.layerTemplates && state.layerTemplates.activeKey,
-		state => state.areaTreeLevelKeys && state.areaTreeLevelKeys.activeKey,
-		state => state.specific && state.specific.apps,
-		state => state.app && state.app.key,
+		state => state.scopes?.activeKey,
+		state => state.cases?.activeKey,
+		state => state.cases?.activeKeys,
+		state => state.scenarios?.activeKey,
+		state => state.scenarios?.activeKeys,
+		state => state.places?.activeKey,
+		state => state.places?.activeKeys,
+		state => state.periods?.activeKey,
+		state => state.periods?.activeKeys,
+		state => state.attributes?.activeKey,
+		state => state.attributes?.activeKeys,
+		state => state.layerTemplates?.activeKey,
+		state => state.areas?.areaTreeLevels?.activeKey,
+		state => state.specific?.apps,
+		state => state.app?.key,
 	],
 	(
 		activeScopeKey,
@@ -907,6 +913,12 @@ const getAllActiveKeys = createSelector(
 	}
 );
 
+/**
+ * Get activeKey/activeKeys by filterByActive from all relevant substores
+ * @param state {Object}
+ * @param filterByActive {Object}
+ * @return {Object}
+ */
 const getActiveKeysByFilterByActive = createCachedSelector(
 	[getAllActiveKeys, (state, filterByActive) => filterByActive],
 	(activeKeys, filterByActive) => {
@@ -971,19 +983,31 @@ const getActiveKeysByFilterByActive = createCachedSelector(
 /* 	--- Recompute observers -------------------------------------------------- */
 
 /**
- * @param filterByActive {Object}
+ * Get activeKey/activeKeys by filterByActive from all relevant substores. Call with:
+ * filterByActive {Object}
+ * @return {Object}
  */
 const getActiveKeysByFilterByActiveObserver = createRecomputeObserver(
 	(state, filterByActive) =>
 		getActiveKeysByFilterByActive(state, filterByActive)
 );
 
+/**
+ * Get all indexes from substore
+ * @return {Object}
+ */
 const getIndexesObserver = createRecomputeObserver((state, getSubstate) =>
 	getIndexes(getSubstate)(state)
 );
 
 /* --- Recompute selectors -------------------------------------------------- */
 
+/**
+ * Get whole index by given filter and order. Call with:
+ * filter {Object}
+ * order {Array}
+ * @return {Object}
+ */
 const getIndex_recompute = getSubstate => {
 	return createRecomputeSelector((filter, order) => {
 		const indexes = getIndexesObserver(getSubstate);
@@ -996,9 +1020,10 @@ const getIndex_recompute = getSubstate => {
 };
 
 /**
- * Merge metadata modifiers with filter by active
- * @params metadataModifiers {Object} {placeKey: "uuid", scopeKey: "uuid", ...}
- * @params filterByActive {Object} {place: true, case: true, ...}
+ * Merge metadata modifiers with filter by active.
+ * @param metadataModifiers {Object} {placeKey: "uuid", scopeKey: "uuid", ...}
+ * @param filterByActive {Object} {place: true, case: true, ...}
+ * @param {Object} Merged modifiers
  */
 const getMergedModifiers_recompute = createRecomputeSelector(
 	(metadataModifiers, filterByActive) => {
@@ -1022,8 +1047,9 @@ const getMergedModifiers_recompute = createRecomputeSelector(
 
 /**
  * Merge metadata modifiers with filter by active and return it in request-like format
- * @params metadataModifiers {Object}
- * @params filterByActive {Object}
+ * @param metadataModifiers {Object}
+ * @param filterByActive {Object}
+ * @return {Object} Merged modifiers in request-like format
  */
 const getMergedModifiersInRequestFormat_recompute = createRecomputeSelector(
 	(metadataModifiers, filterByActive) => {
@@ -1040,7 +1066,9 @@ const getMergedModifiersInRequestFormat_recompute = createRecomputeSelector(
 );
 
 /**
+ * Get common filter for data relations
  * @params componentState {Object}
+ * @return {Object} relations filter
  */
 const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomputeSelector(
 	componentState => {
@@ -1111,7 +1139,6 @@ export default {
 
 	_mergeIntervals,
 
-	// TODO test all bellow
 	// selectors across stores
 	getActiveKeysByFilterByActive,
 	getAllActiveKeys,

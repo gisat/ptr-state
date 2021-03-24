@@ -53,4 +53,15 @@ describe('getKeysToLoad', () => {
 		const output = commonSelectors.getKeysToLoad(getSubstate)(state2, keys);
 		assert.deepStrictEqual(output, expectedResult);
 	});
+
+	it('return all keys, if byKey is null', () => {
+		const state2 = {
+			...state,
+			[sampleSubstoreName]: {...state[sampleSubstoreName], byKey: null},
+		};
+		const keys = ['k1', 'k2', 'k7', 'k9'];
+		const expectedResult = ['k1', 'k2', 'k7', 'k9'];
+		const output = commonSelectors.getKeysToLoad(getSubstate)(state2, keys);
+		assert.deepStrictEqual(output, expectedResult);
+	});
 });

@@ -4,73 +4,6 @@ import selectors from '../../../src/state/_common/selectors';
 describe('state/_common/selectors', function () {
 	const getSubState = state => state.sub;
 
-	describe('getAllActiveKeys', function () {
-		const tests = [
-			{
-				name: 'none specified',
-				state: {},
-				expectedResult: {
-					activeAreaTreeLevelKey: null,
-					activeAttributeKey: null,
-					activeAttributeKeys: null,
-					activeCaseKey: null,
-					activeCaseKeys: null,
-					activeLayerTemplateKey: null,
-					activePeriodKey: null,
-					activePeriodKeys: null,
-					activePlaceKey: null,
-					activePlaceKeys: null,
-					activeScenarioKey: null,
-					activeScenarioKeys: null,
-					activeScopeKey: null,
-				},
-			},
-			{
-				name: 'all specified',
-				state: {
-					scopes: {activeKey: 'scopesKey'},
-					cases: {activeKey: 'casesKey', activeKeys: ['c1', 'c2']},
-					scenarios: {activeKey: 'scenariosKey'},
-					places: {activeKey: 'placesKey', activeKeys: ['p1', 'p2']},
-					periods: {
-						activeKey: 'periodsKey',
-						activeKeys: ['ps1', 'ps2'],
-					},
-					attributes: {activeKey: 'attributesKey', activeKeys: ['a1', 'a2']},
-					layerTemplates: {activeKey: 'layerTemplatesKey'},
-					areaTreeLevelKeys: {activeKey: 'areaTreeLevelKey'},
-					specific: {apps: {activeKey: 'appsKey'}},
-					app: {key: 'appKey'},
-				},
-				expectedResult: {
-					activeApplicationKey: 'appsKey',
-					activeAreaTreeLevelKey: 'areaTreeLevelKey',
-					activeAttributeKey: 'attributesKey',
-					activeAttributeKeys: ['a1', 'a2'],
-					activeCaseKey: 'casesKey',
-					activeCaseKeys: ['c1', 'c2'],
-					activeLayerTemplateKey: 'layerTemplatesKey',
-					activePeriodKey: 'periodsKey',
-					activePeriodKeys: ['ps1', 'ps2'],
-					activePlaceKey: 'placesKey',
-					activePlaceKeys: ['p1', 'p2'],
-					activeScenarioKey: 'scenariosKey',
-					activeScenarioKeys: null,
-					activeScopeKey: 'scopesKey',
-				},
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getAllActiveKeys(test.state),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
 	it('getIndexesByFilteredItem', function () {
 		const state = {
 			sub: {
@@ -97,38 +30,6 @@ describe('state/_common/selectors', function () {
 			selectors.getIndexesByFilteredItem(getSubState)(state, item),
 			expectedResult
 		);
-	});
-
-	describe('getStateToSave', function () {
-		const tests = [
-			{
-				name: 'default state',
-				getSubState: state => state.sub,
-				state: {sub: {}},
-				expectedResult: {},
-			},
-			{
-				name: 'active key',
-				getSubState: state => state.sub,
-				state: {sub: {activeKey: 'actv'}},
-				expectedResult: {activeKey: 'actv'},
-			},
-			{
-				name: 'active keys',
-				getSubState: state => state.sub,
-				state: {sub: {activeKeys: ['k1', 'k2']}},
-				expectedResult: {activeKeys: ['k1', 'k2']},
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					selectors.getStateToSave(test.getSubState)(test.state),
-					test.expectedResult
-				);
-			});
-		});
 	});
 
 	it('getUsesForIndex', function () {
