@@ -33,13 +33,11 @@ const getStateToSave = common.getStateToSave(getSubstate);
 const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 export default {
-	getAll,
-
 	getActive,
 	getActiveKey,
 	getActiveKeys,
 	getActiveModels,
-
+	getAll,
 	getAllAsObject,
 
 	getByKey,

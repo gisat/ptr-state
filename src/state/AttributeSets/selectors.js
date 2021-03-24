@@ -54,11 +54,11 @@ export default {
 
 	getIndexed,
 
-	getUpdatePermissionByKey,
-	getUsedKeysForComponent,
-
 	getStateToSave,
 	getSubstate,
+
+	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
 
 	haveAllKeysRegisteredUse,
 };

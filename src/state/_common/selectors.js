@@ -782,6 +782,11 @@ const getUsesWithActiveDependency = getSubstate => {
 	);
 };
 
+/**
+ * Get all data from substore which should be saved (to the view for instance)
+ * @param getSubstate {function}
+ * @return {Object} substore state to save
+ */
 const getStateToSave = getSubstate => {
 	return state => {
 		const activeKey = getSubstate(state).activeKey;
@@ -1097,18 +1102,19 @@ export default {
 	getStateToSave,
 
 	getUpdatePermissionByKey,
-	getUsesForIndex,
-	getUsedIndexPages,
-	getUsedKeysForComponent,
-	getUsesWithActiveDependency,
+	getUsesForIndex, //TODO test
+	getUsedIndexPages, //TODO test
+	getUsedKeysForComponent, //TODO test
+	getUsesWithActiveDependency, //TODO test
 
 	haveAllKeysRegisteredUse,
 
 	_mergeIntervals,
 
+	// TODO test all bellow
 	// selectors across stores
-	getActiveKeysByFilterByActive, // TODO
-	getAllActiveKeys, // TODO
+	getActiveKeysByFilterByActive,
+	getAllActiveKeys,
 
 	// recompute observers
 	getActiveKeysByFilterByActiveObserver,
