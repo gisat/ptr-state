@@ -189,6 +189,7 @@ function isCorrespondingIndex(index, filter, order) {
 	);
 }
 
+// TODO @vdubr please help
 function itemFitFilter(filter, item) {
 	// null filter fit
 	if (filter === null) {
@@ -373,6 +374,78 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 	}
 }
 
+/**
+ * @param interval {Object}
+ * @return {boolean}
+ */
+function isInterval(interval) {
+	return interval?.start && interval?.length;
+}
+
+/**
+ * Return only intervals which really are intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getValidIntervals(intervals) {
+	return intervals.filter(isInterval);
+}
+
+/**
+ * Return sorted intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getSortedValidIntervals(intervals) {
+	return _.sortBy(getValidIntervals(intervals), ['start', 'length']);
+}
+
+/**
+ * @param earlier {Object} interval
+ * @param later {Object} interval
+ * @return {boolean}
+ */
+function areIntervalsOverlapped(earlier, later) {
+	return later.start <= earlier.start + earlier.length;
+}
+
+/**
+ * Merge relevant intervals together
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function mergeIntervals(intervals) {
+	const sortedIntervals = getSortedValidIntervals(intervals);
+	if (sortedIntervals.length === 0) {
+		return null;
+	}
+
+	//merge intervals
+	return _.tail(sortedIntervals).reduce(
+		(mergedIntervals, interval) => {
+			const last = mergedIntervals.pop();
+			if (areIntervalsOverlapped(last, interval)) {
+				//merge last & current
+				const end = Math.max(
+					last.start + last.length,
+					interval.start + interval.length
+				);
+				return [
+					...mergedIntervals,
+					{
+						start: last.start,
+						length: end - last.start,
+					},
+				];
+			} else {
+				//add both
+				return [...mergedIntervals, last, interval];
+			}
+		},
+		[_.head(sortedIntervals)]
+	);
+}
+
 export default {
 	convertModifiersToRequestFriendlyFormat,
 	removeIndex,
@@ -384,4 +457,11 @@ export default {
 	mergeMetadataKeys,
 	isCorrespondingIndex,
 	itemFitFilter,
+
+	// intervals TODO test
+	areIntervalsOverlapped,
+	isInterval,
+	getValidIntervals,
+	getSortedValidIntervals,
+	mergeIntervals,
 };

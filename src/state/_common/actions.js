@@ -393,7 +393,7 @@ function refreshIndex(
 ) {
 	return (dispatch, getState) => {
 		let state = getState();
-		let usesForIndex = commonSelectors.getUsesForIndex(getSubstate)(
+		let usesForIndex = commonSelectors.getUsedIndexPage(getSubstate)(
 			state,
 			filter,
 			order

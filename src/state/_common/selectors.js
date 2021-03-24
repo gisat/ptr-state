@@ -573,6 +573,11 @@ const haveAllKeysRegisteredUse = getSubstate => {
 	)((state, componentKey, keys) => `${componentKey}_${keys}`);
 };
 
+/**
+ * Return all used index pages for given substate
+ * @param getSubstate {function}
+ * @return {Array} a collection of used pages {filter: Object, order: Array, uses: [{start: number, length: number}]}
+ */
 const getUsedIndexPages = getSubstate => {
 	return createSelector(
 		[getIndexesInUse(getSubstate), getAllActiveKeys],
@@ -620,7 +625,7 @@ const getUsedIndexPages = getSubstate => {
 					finalUsedIndexes.push({
 						filter: index.filter,
 						order: index.order,
-						uses: _mergeIntervals(Object.values(index.inUse)),
+						uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
 					});
 				}
 			});
@@ -629,7 +634,14 @@ const getUsedIndexPages = getSubstate => {
 	);
 };
 
-const getUsesForIndex = getSubstate => {
+/**
+ * Return used index page for given substate, filter & order. Call with:
+ * filter {Object}
+ * order {Array}
+ * @param getSubstate {function}
+ * @return {Object} used page {filter: Object, order: Array, uses: [{start: number, length: number}]}
+ */
+const getUsedIndexPage = getSubstate => {
 	return createCachedSelector(
 		getIndexesInUse(getSubstate),
 		(state, filter) => filter,
@@ -676,7 +688,7 @@ const getUsesForIndex = getSubstate => {
 				return {
 					filter: index.filter,
 					order: index.order,
-					uses: _mergeIntervals(Object.values(index.inUse)),
+					uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
 				};
 			} else {
 				return null;
@@ -693,11 +705,13 @@ const getUsesForIndex = getSubstate => {
 	});
 };
 
+/**
+ * Return all uses with active dependency. Call with:
+ * filterByActive {Object}
+ * @param getSubstate {function}
+ * @return {Array} a collection of used pages {filter: Object, order: Array, uses: [{start: number, length: number}]}
+ */
 const getUsesWithActiveDependency = getSubstate => {
-	/**
-	 * @param state {Object}
-	 * @param filterByActive {Object} Something like {scope: true}
-	 */
 	return createSelector(
 		[
 			getIndexesInUse(getSubstate),
@@ -770,7 +784,7 @@ const getUsesWithActiveDependency = getSubstate => {
 						usedIndexes.push({
 							filter: index.filter,
 							order: index.order,
-							uses: _mergeIntervals(Object.values(index.inUse)),
+							uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
 						});
 					}
 				});
@@ -801,47 +815,6 @@ const getStateToSave = getSubstate => {
 
 		return {};
 	};
-};
-
-function isInterval(interval) {
-	return interval && interval.start && interval.length;
-}
-
-function intervalsOverlap(earlier, later) {
-	return later.start <= earlier.start + earlier.length;
-}
-
-const _mergeIntervals = intervals => {
-	const validIntervals = intervals.filter(isInterval);
-	const sortedIntervals = _.sortBy(validIntervals, ['start', 'length']);
-	if (sortedIntervals.length === 0) {
-		return null;
-	}
-
-	//merge intervals
-	return _.tail(sortedIntervals).reduce(
-		(mergedIntervals, interval) => {
-			const last = mergedIntervals.pop();
-			if (intervalsOverlap(last, interval)) {
-				//merge last & current
-				const end = Math.max(
-					last.start + last.length,
-					interval.start + interval.length
-				);
-				return [
-					...mergedIntervals,
-					{
-						start: last.start,
-						length: end - last.start,
-					},
-				];
-			} else {
-				//add both
-				return [...mergedIntervals, last, interval];
-			}
-		},
-		[_.head(sortedIntervals)]
-	);
 };
 
 /* 	--- Selectors across stores --------------------------------------------- */
@@ -1130,14 +1103,12 @@ export default {
 	getStateToSave,
 
 	getUpdatePermissionByKey,
-	getUsesForIndex, //TODO test
+	getUsedIndexPage, //TODO test
 	getUsedIndexPages, //TODO test
 	getUsedKeysForComponent,
 	getUsesWithActiveDependency, //TODO test
 
 	haveAllKeysRegisteredUse,
-
-	_mergeIntervals,
 
 	// selectors across stores
 	getActiveKeysByFilterByActive,

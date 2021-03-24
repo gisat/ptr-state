@@ -189,4 +189,114 @@ describe('state/_common/helpers', function () {
 			assert.equal(helpers.removeIndex(indexes, {}, []), indexes);
 		});
 	});
+
+	describe('mergeIntervals', function () {
+		const tests = [
+			{
+				name: 'empty',
+				intervals: [],
+				expectedResult: null,
+			},
+			{
+				name: 'single',
+				intervals: [
+					{
+						start: 5,
+						length: 3,
+					},
+				],
+				expectedResult: [
+					{
+						start: 5,
+						length: 3,
+					},
+				],
+			},
+			{
+				name: 'non overlapping unsorted',
+				intervals: [
+					{
+						start: 10,
+						length: 2,
+					},
+					{
+						start: 3,
+						length: 4,
+					},
+					{
+						start: 8,
+						length: 1,
+					},
+				],
+				expectedResult: [
+					{
+						start: 3,
+						length: 4,
+					},
+					{
+						start: 8,
+						length: 1,
+					},
+					{
+						start: 10,
+						length: 2,
+					},
+				],
+			},
+			{
+				name: 'overlapping unsorted',
+				intervals: [
+					{
+						start: 12,
+						length: 1,
+					},
+					{
+						start: 10,
+						length: 2,
+					},
+					{
+						start: 7,
+						length: 3,
+					},
+				],
+				expectedResult: [
+					{
+						start: 7,
+						length: 6,
+					},
+				],
+			},
+			{
+				name: 'mixed',
+				intervals: [
+					{
+						start: 12,
+						length: 1,
+					},
+					{
+						name: 'invalid interval',
+					},
+					null,
+					{
+						start: 10,
+						length: 2,
+					},
+					{start: 20, length: 5},
+				],
+				expectedResult: [
+					{start: 10, length: 3},
+					{start: 20, length: 5},
+				],
+			},
+		];
+
+		tests.forEach(test => {
+			it(test.name, function () {
+				assert.deepStrictEqual(
+					helpers.mergeIntervals(test.intervals),
+					test.expectedResult
+				);
+			});
+		});
+	});
 });
