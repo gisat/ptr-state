@@ -1,68 +1,10 @@
 import {assert} from 'chai';
 import actions from '../../../../src/state/Data/actions';
+import getStoreSet from '../../_common/helpers/store';
 
 describe('state/Data/actions/setLoading', function () {
-	let dispatchedActions = [];
-
-	const clearDispatchedActions = function () {
-		dispatchedActions = [];
-	};
-
-	const getDispatch = getState => {
-		return action => {
-			const dispatch = getDispatch(getState);
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-	};
-
-	const runFunctionActions = function ({dispatch, getState}) {
-		return new Promise((resolve, reject) => {
-			const promises = [];
-			for (let i = 0; i < dispatchedActions.length; i++) {
-				const action = dispatchedActions[i];
-
-				if (typeof action === 'function') {
-					promises.push(action(dispatch, getState));
-					dispatchedActions[i] = null;
-				} else if (action instanceof Promise) {
-					promises.push(action);
-					dispatchedActions[i] = null;
-				} else if (Array.isArray(action)) {
-					dispatchedActions = [...dispatchedActions, ...action];
-					dispatchedActions[i] = null;
-				}
-			}
-
-			dispatchedActions = dispatchedActions.filter(a => a != null);
-
-			if (promises.length > 0) {
-				return Promise.all(promises)
-					.then(() => runFunctionActions({dispatch, getState}))
-					.then(() => resolve());
-			}
-
-			resolve();
-		});
-	};
-
-	afterEach(function () {
-		clearDispatchedActions();
-	});
-
-	//
-	// END OF SETTINGS
-	//
-
 	it('Set loading for spatial and attribute data', function () {
+		const storeHelpers = getStoreSet();
 		const getState = () => ({
 			data: {
 				spatialData: {
@@ -73,7 +15,7 @@ describe('state/Data/actions/setLoading', function () {
 				},
 			},
 		});
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -124,8 +66,8 @@ describe('state/Data/actions/setLoading', function () {
 			)
 		);
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
 					filter: {
@@ -184,6 +126,7 @@ describe('state/Data/actions/setLoading', function () {
 		});
 	});
 	it('Set loading for attribute data', function () {
+		const storeHelpers = getStoreSet();
 		const getState = () => ({
 			data: {
 				attributeData: {
@@ -195,7 +138,7 @@ describe('state/Data/actions/setLoading', function () {
 			},
 		});
 
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -246,8 +189,8 @@ describe('state/Data/actions/setLoading', function () {
 			)
 		);
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 					filter: {
@@ -280,6 +223,7 @@ describe('state/Data/actions/setLoading', function () {
 		});
 	});
 	it('Do not dispatch any action cause tiles are empty', function () {
+		const storeHelpers = getStoreSet();
 		const getState = () => ({
 			data: {
 				attributeData: {
@@ -290,7 +234,7 @@ describe('state/Data/actions/setLoading', function () {
 				},
 			},
 		});
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -338,8 +282,8 @@ describe('state/Data/actions/setLoading', function () {
 			)
 		);
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, []);
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), []);
 		});
 	});
 });

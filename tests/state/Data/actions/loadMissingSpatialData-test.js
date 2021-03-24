@@ -15,7 +15,7 @@ import getStoreSet from '../../_common/helpers/store';
 import {
 	responseWithSpatialData_1,
 	responseWithSpatialData_2,
-} from './mockData_4_spatialData';
+} from './mockData/mockData_4_spatialData';
 
 describe('state/Data/actions/loadMissingSpatialData', function () {
 	afterEach(function () {

@@ -18,7 +18,7 @@ import {
 	responseWithRelationsSpatialAndAttributeData_2,
 	responseWithAttributeData_1,
 	responseWithAttributeData_2,
-} from './mockData_3';
+} from './mockData/mockData_3';
 
 describe('state/Data/actions/loadMissingAttributeData', function () {
 	afterEach(function () {

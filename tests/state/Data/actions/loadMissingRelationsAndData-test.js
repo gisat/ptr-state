@@ -3,76 +3,20 @@ import _ from 'lodash';
 import slash from 'slash';
 import actions from '../../../../src/state/Data/actions';
 import {resetFetch, setFetch} from '../../../../src/state/_common/request';
-
+import getStoreSet from '../../_common/helpers/store';
 import {
 	responseWithSpatialRelationsSpatialAndAttributeData,
 	responseWithSpatialAndAttributeData_2,
-} from './mockData';
+} from './mockData/mockData';
 
 describe('state/Data/actions/loadMissingRelationsAndData', function () {
-	// this.timeout(5000);
-	let dispatchedActions = [];
-
-	const clearDispatchedActions = function () {
-		dispatchedActions = [];
-	};
-
-	const getDispatch = getState => {
-		return action => {
-			const dispatch = getDispatch(getState);
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-	};
-
-	const runFunctionActions = function ({dispatch, getState}) {
-		return new Promise((resolve, reject) => {
-			const promises = [];
-			for (let i = 0; i < dispatchedActions.length; i++) {
-				const action = dispatchedActions[i];
-
-				if (typeof action === 'function') {
-					promises.push(action(dispatch, getState));
-					dispatchedActions[i] = null;
-				} else if (action instanceof Promise) {
-					promises.push(action);
-					dispatchedActions[i] = null;
-				} else if (Array.isArray(action)) {
-					dispatchedActions = [...dispatchedActions, ...action];
-					dispatchedActions[i] = null;
-				}
-			}
-
-			dispatchedActions = dispatchedActions.filter(a => a != null);
-
-			if (promises.length > 0) {
-				return Promise.all(promises)
-					.then(() => runFunctionActions({dispatch, getState}))
-					.then(() => resolve());
-			}
-
-			resolve();
-		});
-	};
-
 	afterEach(function () {
-		clearDispatchedActions();
 		resetFetch();
 	});
 
-	//
-	// END OF SETTINGS
-	//
-
 	it('dispatch nothing', function () {
+		const storeHelpers = getStoreSet();
+
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -90,7 +34,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 				},
 			},
 		});
-		const dispatch = getDispatch(getState);
+
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const loadGeometry = false;
 		const spatialFilter = {};
@@ -118,12 +63,13 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 			)
 		);
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, []);
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), []);
 		});
 	});
 
 	it('request and proceed relations, spatial and attribute data for one tile', function () {
+		const storeHelpers = getStoreSet();
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -206,7 +152,7 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 			});
 		});
 
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -271,8 +217,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 			modifiers: modifiers,
 		};
 
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
 					//FIXME remane spatialFilter to filter
@@ -449,6 +395,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 		//	- second asking fust for thirth page of tile data
 		//
 
+		const storeHelpers = getStoreSet();
+
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -594,7 +542,7 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 			}
 		});
 
-		const dispatch = getDispatch(getState);
+		const dispatch = storeHelpers.getDispatch(getState);
 
 		const modifiers = {
 			scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
@@ -650,18 +598,8 @@ describe('state/Data/actions/loadMissingRelationsAndData', function () {
 			)
 		);
 
-		const _attributeDataFilter = {
-			layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-			modifiers: modifiers,
-			styleKey: '460372b1-4fce-4676-92be-b1656a5415f5',
-		};
-		const _spatialFilter = {
-			layerTemplateKey: '11c7cc1b-9834-4e85-aba6-eab5571705e4',
-			modifiers: modifiers,
-		};
-
-		return runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(dispatchedActions, [
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
 					filter: {

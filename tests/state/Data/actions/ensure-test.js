@@ -15,17 +15,17 @@ import getStoreSet from '../../_common/helpers/store';
 import {
 	responseWithSpatialData_1,
 	responseWithSpatialData_2,
-} from './mockData_4_spatialData';
+} from './mockData/mockData_4_spatialData';
 
 import {
 	responseWithAttributeData_1,
 	responseWithAttributeData_2,
-} from './mockData_3';
+} from './mockData/mockData_3';
 
 import {
 	responseWithRelationsSpatialAndAttributeData_1,
 	responseWithRelationsSpatialAndAttributeData_2,
-} from './mockData_2';
+} from './mockData/mockData_2';
 
 describe('state/Data/actions/ensure', function () {
 	afterEach(function () {
