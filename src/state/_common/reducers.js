@@ -17,26 +17,45 @@ export const DEFAULT_INITIAL_STATE = {
 };
 
 export default {
+	/**
+	 * Add models to store or update them
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.data {Array} A collection of models to add
+	 * @return {Object} updated state
+	 */
 	add: (state, action) => {
-		let newData = {...state.byKey};
-		if (action.data && action.data.length) {
+		if (action?.data?.length) {
+			let newData = {...state.byKey};
 			action.data.forEach(model => {
 				newData[model.key] = {...newData[model.key], ...model};
 				delete newData[model.key].outdated;
 				delete newData[model.key].unreceived;
 			});
+
+			return {...state, byKey: newData};
+		} else {
+			return state;
 		}
-		return {...state, byKey: newData};
 	},
 
+	/**
+	 * Add just keys and mark as unreceived for unreceived models
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.keys {Array} A list of unreceived keys
+	 * @return {Object} updated state
+	 */
 	addUnreceivedKeys: (state, action) => {
-		let newData = {...state.byKey};
-		if (action.keys && action.keys.length) {
+		if (action?.keys?.length) {
+			let newData = {...state.byKey};
 			action.keys.forEach(key => {
 				newData[key] = {key, unreceived: true};
 			});
+			return {...state, byKey: newData};
+		} else {
+			return state;
 		}
-		return {...state, byKey: newData};
 	},
 
 	//

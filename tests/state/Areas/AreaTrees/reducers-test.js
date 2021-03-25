@@ -8,13 +8,13 @@ describe('state/Areas/AreaTrees/reducers', function () {
 				name: 'no data',
 				state: {byKey: null},
 				action: {type: 'AREAS.AREA_TREES.ADD'},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'empty data',
 				state: {byKey: null},
 				action: {type: 'AREAS.AREA_TREES.ADD', data: []},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'some data',
@@ -61,7 +61,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 					byKey: null,
 				},
 				action: {type: 'AREAS.AREA_TREES.ADD_UNRECEIVED'},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'empty keys',
@@ -70,7 +70,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 					type: 'AREAS.AREA_TREES.ADD_UNRECEIVED',
 					keys: [],
 				},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'some keys',

@@ -4,70 +4,8 @@ import reducers, {
 } from '../../../src/state/_common/reducers';
 
 describe('state/_common/reducers', function () {
-	describe('add', function () {
-		const tests = [
-			{
-				name: 'no data',
-				state: {byKey: null},
-				action: {},
-				expectedResult: {byKey: {}},
-			},
-			{
-				name: 'empty data',
-				state: {byKey: null},
-				action: {data: []},
-				expectedResult: {byKey: {}},
-			},
-			{
-				name: 'some data',
-				state: {byKey: null},
-				action: {
-					data: [
-						{
-							key: 'k1',
-							name: 'first',
-						},
-						{
-							key: 'k2',
-							name: 'second',
-							outdated: true,
-							unreceived: true,
-						},
-					],
-				},
-				expectedResult: {
-					byKey: {
-						k1: {key: 'k1', name: 'first'},
-						k2: {key: 'k2', name: 'second'},
-					},
-				},
-			},
-		];
-
-		tests.forEach(test => {
-			it(test.name, function () {
-				assert.deepStrictEqual(
-					reducers.add(test.state, test.action),
-					test.expectedResult
-				);
-			});
-		});
-	});
-
 	describe('addUnreceivedKeys', function () {
 		const tests = [
-			{
-				name: 'no keys',
-				state: {byKey: null},
-				action: {},
-				expectedResult: {byKey: {}},
-			},
-			{
-				name: 'empty keys',
-				state: {byKey: null},
-				action: {keys: []},
-				expectedResult: {byKey: {}},
-			},
 			{
 				name: 'some keys',
 				state: {byKey: null},
