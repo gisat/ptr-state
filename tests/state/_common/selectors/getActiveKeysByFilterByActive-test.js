@@ -81,6 +81,64 @@ describe('getActiveKeysByFilterByActive', function () {
 		assert.deepStrictEqual(output, expectedResult);
 	});
 
+	it('should return active keys', () => {
+		const state2 = {
+			scenarios: {
+				activeKey: 'scenario1',
+			},
+			cases: {
+				activeKey: 'case1',
+			},
+			periods: {
+				activeKeys: ['period1'],
+			},
+			attributes: {
+				activeKey: null,
+				activeKeys: ['attribute1'],
+			},
+		};
+
+		const filterByActive = {
+			case: true,
+			period: true,
+			scenario: true,
+			attribute: true,
+		};
+
+		const expectedResult = {
+			scenarioKey: 'scenario1',
+			periodKeys: ['period1'],
+			attributeKeys: ['attribute1'],
+			caseKey: 'case1',
+		};
+		const output = commonSelectors.getActiveKeysByFilterByActive(
+			state2,
+			filterByActive
+		);
+		assert.deepStrictEqual(output, expectedResult);
+	});
+
+	it('should return active keys 2', () => {
+		const state2 = {
+			scenarios: {
+				activeKeys: ['scenario1'],
+			},
+		};
+
+		const filterByActive = {
+			scenario: true,
+		};
+
+		const expectedResult = {
+			scenarioKeys: ['scenario1'],
+		};
+		const output = commonSelectors.getActiveKeysByFilterByActive(
+			state2,
+			filterByActive
+		);
+		assert.deepStrictEqual(output, expectedResult);
+	});
+
 	it('should omit missing metadata', () => {
 		const filterByActive = {
 			scope: true,

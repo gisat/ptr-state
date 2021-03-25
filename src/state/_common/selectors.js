@@ -4,12 +4,20 @@ import {
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
 import createCachedSelector from 're-reselect';
-import _, {
+import {
 	difference as _difference,
-	pickBy as _pickBy,
+	each as _each,
+	find as _find,
+	get as _get,
+	isEqual as _isEqual,
 	isEmpty as _isEmpty,
+	map as _map,
+	pick as _pick,
+	pickBy as _pickBy,
+	reduce as _reduce,
 } from 'lodash';
 import commonHelpers from './helpers';
+import {use} from 'chai';
 
 const getActiveKey = getSubstate => {
 	return state => getSubstate(state).activeKey;
@@ -48,7 +56,7 @@ const getIndexes = getSubstate => {
  * @return {Object} index
  */
 const getIndexesByPath = getSubstate => {
-	return (state, indexPath = 'indexes') => _.get(getSubstate(state), indexPath);
+	return (state, indexPath = 'indexes') => _get(getSubstate(state), indexPath);
 };
 
 /**
@@ -103,12 +111,7 @@ const getActiveModels = getSubstate => {
 		[getAllAsObject(getSubstate), getActiveKeys(getSubstate)],
 		(models, activeKeys) => {
 			let activeModels = [];
-			if (
-				models &&
-				!_.isEmpty(models) &&
-				activeKeys &&
-				!_.isEmpty(activeKeys)
-			) {
+			if (models && !_isEmpty(models) && activeKeys && !_isEmpty(activeKeys)) {
 				activeKeys.map(key => {
 					let model = models[key];
 					if (model) {
@@ -152,9 +155,9 @@ const getByKeysAsObject = getSubstate => {
 	return createCachedSelector(
 		[getAllAsObject(getSubstate), (state, keys) => keys],
 		(allData, keys) => {
-			if (keys && keys.length && allData && !_.isEmpty(allData)) {
-				let data = _.pick(allData, keys);
-				return _.isEmpty(data) ? null : data;
+			if (keys && keys.length && allData && !_isEmpty(allData)) {
+				let data = _pick(allData, keys);
+				return _isEmpty(data) ? null : data;
 			} else {
 				return null;
 			}
@@ -492,7 +495,7 @@ const getIndexesByFilteredItem = getSubstate => {
 	return createSelector(
 		[getIndexes(getSubstate), (state, item) => item],
 		(indexes, item) => {
-			if (!_.isEmpty(indexes)) {
+			if (!_isEmpty(indexes)) {
 				return indexes.filter(index =>
 					commonHelpers.itemFitFilter(index.filter, item)
 				);
@@ -584,8 +587,8 @@ const getUsedIndexPages = getSubstate => {
 		(indexedDataUses, activeKeys) => {
 			let groupedUses = [];
 			let finalUsedIndexes = [];
-			if (!_.isEmpty(indexedDataUses)) {
-				_.each(indexedDataUses, usedIndexes => {
+			if (!_isEmpty(indexedDataUses)) {
+				_each(indexedDataUses, usedIndexes => {
 					usedIndexes.forEach(usedIndex => {
 						let mergedFilter = commonHelpers.mergeFilters(
 							activeKeys,
@@ -593,10 +596,10 @@ const getUsedIndexPages = getSubstate => {
 							usedIndex.filter
 						);
 
-						let existingIndex = _.find(groupedUses, use => {
+						let existingIndex = _find(groupedUses, use => {
 							return (
-								_.isEqual(use.filter, mergedFilter) &&
-								_.isEqual(use.order, usedIndex.order)
+								_isEqual(use.filter, mergedFilter) &&
+								_isEqual(use.order, usedIndex.order)
 							);
 						});
 						if (existingIndex) {
@@ -620,15 +623,21 @@ const getUsedIndexPages = getSubstate => {
 				});
 			}
 
-			_.each(groupedUses, index => {
-				if (index.inUse && Object.keys(index.inUse).length) {
-					finalUsedIndexes.push({
-						filter: index.filter,
-						order: index.order,
-						uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
-					});
-				}
-			});
+			if (!_isEmpty(groupedUses)) {
+				_each(groupedUses, groupedUse => {
+					if (groupedUse?.inUse?.length) {
+						const uses = commonHelpers.mergeIntervals(groupedUse.inUse);
+						if (uses) {
+							finalUsedIndexes.push({
+								filter: groupedUse.filter,
+								order: groupedUse.order,
+								uses,
+							});
+						}
+					}
+				});
+			}
+
 			return finalUsedIndexes.length ? finalUsedIndexes : null;
 		}
 	);
@@ -643,53 +652,12 @@ const getUsedIndexPages = getSubstate => {
  */
 const getUsedIndexPage = getSubstate => {
 	return createCachedSelector(
-		getIndexesInUse(getSubstate),
+		getUsedIndexPages(getSubstate),
 		(state, filter) => filter,
 		(state, filter, order) => order,
-		getAllActiveKeys,
-		(indexedDataUses, filter, order, activeKeys) => {
-			let index = null;
-			if (!_.isEmpty(indexedDataUses)) {
-				_.each(indexedDataUses, usedIndexes => {
-					_.each(usedIndexes, usedIndex => {
-						let mergedFilter = commonHelpers.mergeFilters(
-							activeKeys,
-							usedIndex.filterByActive,
-							usedIndex.filter
-						);
-
-						if (
-							_.isEqual(filter, mergedFilter) &&
-							_.isEqual(order, usedIndex.order)
-						) {
-							if (index) {
-								index.inUse.push({
-									start: usedIndex.start,
-									length: usedIndex.length,
-								});
-							} else {
-								index = {
-									filter: filter,
-									order: usedIndex.order,
-									inUse: [
-										{
-											start: usedIndex.start,
-											length: usedIndex.length,
-										},
-									],
-								};
-							}
-						}
-					});
-				});
-			}
-
-			if (index) {
-				return {
-					filter: index.filter,
-					order: index.order,
-					uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
-				};
+		(usedIndexPages, filter, order) => {
+			if (usedIndexPages) {
+				return _find(usedIndexPages, {filter, order});
 			} else {
 				return null;
 			}
@@ -697,7 +665,7 @@ const getUsedIndexPage = getSubstate => {
 	)((state, filter, order) => {
 		let stringOrder = JSON.stringify(order);
 		let stringFilter = JSON.stringify(
-			_.map(filter, (value, key) => {
+			_map(filter, (value, key) => {
 				return `${key}:${value}`;
 			}).sort()
 		);
@@ -727,13 +695,13 @@ const getUsesWithActiveDependency = getSubstate => {
 			let groupedUses = []; // uses grouped by filter
 			let usedIndexes = [];
 
-			if (filterByActive && !_.isEmpty(indexedDataUses)) {
+			if (filterByActive && !_isEmpty(indexedDataUses)) {
 				// loop through components
-				_.map(indexedDataUses, componentUsedIndexes => {
+				_map(indexedDataUses, componentUsedIndexes => {
 					// loop through uses for component
-					_.map(componentUsedIndexes, usedIndex => {
+					_map(componentUsedIndexes, usedIndex => {
 						if (
-							_.reduce(
+							_reduce(
 								filterByActive,
 								(accumulator, value, index) =>
 									accumulator &&
@@ -751,10 +719,10 @@ const getUsesWithActiveDependency = getSubstate => {
 								usedIndex.filter
 							);
 
-							let existingIndex = _.find(groupedUses, use => {
+							let existingIndex = _find(groupedUses, use => {
 								return (
-									_.isEqual(use.filter, mergedFilter) &&
-									_.isEqual(use.order, usedIndex.order)
+									_isEqual(use.filter, mergedFilter) &&
+									_isEqual(use.order, usedIndex.order)
 								);
 							});
 							if (existingIndex) {
@@ -779,15 +747,21 @@ const getUsesWithActiveDependency = getSubstate => {
 				});
 
 				// loop through uses grouped by filter and merge intervals
-				_.map(groupedUses, index => {
-					if (index.inUse && Object.keys(index.inUse).length) {
-						usedIndexes.push({
-							filter: index.filter,
-							order: index.order,
-							uses: commonHelpers.mergeIntervals(Object.values(index.inUse)),
-						});
-					}
-				});
+				if (!_isEmpty(groupedUses)) {
+					_map(groupedUses, groupedUse => {
+						if (groupedUse?.inUse?.length) {
+							const uses = commonHelpers.mergeIntervals(groupedUse.inUse);
+							if (uses) {
+								usedIndexes.push({
+									filter: groupedUse.filter,
+									order: groupedUse.order,
+									uses,
+								});
+							}
+						}
+					});
+				}
+
 				return usedIndexes.length ? usedIndexes : null;
 			} else {
 				return null;
@@ -895,7 +869,7 @@ const getAllActiveKeys = createSelector(
 const getActiveKeysByFilterByActive = createCachedSelector(
 	[getAllActiveKeys, (state, filterByActive) => filterByActive],
 	(activeKeys, filterByActive) => {
-		if (filterByActive && !_.isEmpty(filterByActive)) {
+		if (filterByActive && !_isEmpty(filterByActive)) {
 			let keys = {};
 
 			if (filterByActive.scope && activeKeys.activeScopeKey) {
@@ -946,7 +920,7 @@ const getActiveKeysByFilterByActive = createCachedSelector(
 				keys.applicationKey = activeKeys.activeApplicationKey;
 			}
 
-			return !_.isEmpty(keys) ? keys : null;
+			return !_isEmpty(keys) ? keys : null;
 		} else {
 			return null;
 		}
@@ -1050,7 +1024,7 @@ const getCommmonDataRelationsFilterFromComponentState_recompute = createRecomput
 			componentState?.metadataModifiers,
 			componentState?.filterByActive
 		);
-		if (!_.isEmpty(modifiers)) {
+		if (!_isEmpty(modifiers)) {
 			relationsFilter.modifiers = modifiers;
 		}
 
@@ -1103,10 +1077,10 @@ export default {
 	getStateToSave,
 
 	getUpdatePermissionByKey,
-	getUsedIndexPage, //TODO test
-	getUsedIndexPages, //TODO test
+	getUsedIndexPage,
+	getUsedIndexPages,
 	getUsedKeysForComponent,
-	getUsesWithActiveDependency, //TODO test
+	getUsesWithActiveDependency,
 
 	haveAllKeysRegisteredUse,
 

@@ -1,5 +1,15 @@
 import createCachedSelector from 're-reselect';
-import _, {isNumber as _isNumber} from 'lodash';
+import {
+	find as _find,
+	head as _head,
+	isEqual as _isEqual,
+	isEmpty as _isEmpty,
+	isNumber as _isNumber,
+	isObject as _isObject,
+	reduce as _reduce,
+	sortBy as _sortBy,
+	tail as _tail,
+} from 'lodash';
 
 /**
  * Return index for given filter and order
@@ -15,7 +25,7 @@ const getIndex = createCachedSelector(
 	],
 	(indexes, filter, order) => {
 		if (indexes) {
-			const index = _.find(indexes, index =>
+			const index = _find(indexes, index =>
 				isCorrespondingIndex(index, filter, order)
 			);
 			return index ? index : null;
@@ -27,12 +37,12 @@ const getIndex = createCachedSelector(
 	return `${JSON.stringify(filter)}${JSON.stringify(order)}`;
 });
 
-// TODO check the usage if it makes sense
+// TODO @vdubr please check the usage if it makes sense
 function getUniqueIndexes(indexes) {
-	if (!_.isEmpty(indexes)) {
+	if (!_isEmpty(indexes)) {
 		return indexes.reduce((uniqueIndexes, index) => {
 			if (
-				_.find(
+				_find(
 					uniqueIndexes,
 					i => i && isCorrespondingIndex(index, i.filter, i.order)
 				)
@@ -56,8 +66,8 @@ function getUniqueIndexes(indexes) {
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	if (indexes && !_.isEmpty(indexes)) {
-		const clearedIndexes = _.reduce(
+	if (indexes && !_isEmpty(indexes)) {
+		const clearedIndexes = _reduce(
 			indexes,
 			(acc, index) => {
 				const indexToBeCleared = isCorrespondingIndex(index, filter, order);
@@ -104,7 +114,7 @@ function getUpdatedIndexes(
 
 	if (state[indexesPath]) {
 		state[indexesPath].forEach(index => {
-			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)) {
+			if (_isEqual(index.filter, filter) && _isEqual(index.order, order)) {
 				selectedIndex = index;
 			} else {
 				indexes.push(index);
@@ -184,12 +194,12 @@ function getUpdatedByDataSourceKey(currentByDataSourceKey, update = {}) {
  */
 function isCorrespondingIndex(index, filter, order) {
 	return (
-		_.isEqual(index.filter || null, filter || null) &&
-		_.isEqual(index.order || null, order || null)
+		_isEqual(index.filter || null, filter || null) &&
+		_isEqual(index.order || null, order || null)
 	);
 }
 
-// TODO @vdubr please help
+// TODO @vdubr please help with comments & proper testing
 function itemFitFilter(filter, item) {
 	// null filter fit
 	if (filter === null) {
@@ -213,7 +223,7 @@ function itemFitFilter(filter, item) {
 			// "column2": {
 			// 	"like": "hleda se podobnost, castecny vyskyt"
 			// },
-			if (_.isObject(value) && value['like']) {
+			if (_isObject(value) && value['like']) {
 				//now we dont deal like filter, refrest indexes
 				return true;
 			}
@@ -221,14 +231,14 @@ function itemFitFilter(filter, item) {
 			// "column3": {
 			// 	"in": ["existuje", "v", "poli", "prvku"]
 			// },
-			if (_.isObject(value) && value['in']) {
+			if (_isObject(value) && value['in']) {
 				return value.in.includes(item.data[key]);
 			}
 
 			// "column4": {
 			// 	"notin": ["neexistuje", "v", "poli", "prvku"]
 			// }
-			if (_.isObject(value) && value['notin']) {
+			if (_isObject(value) && value['notin']) {
 				return !value.notin.includes(item.data[key]);
 			}
 		}
@@ -312,7 +322,7 @@ function mergeFilters(activeKeys, filterByActive, filter) {
 		}
 
 		const finalFilter = {...activeKeysFilter, ...filter};
-		return _.isEmpty(finalFilter) ? null : finalFilter;
+		return _isEmpty(finalFilter) ? null : finalFilter;
 	} else {
 		return filter;
 	}
@@ -368,7 +378,7 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 			modifiersForRequest.periodKey = modifiers.periodKey;
 		}
 
-		return !_.isEmpty(modifiersForRequest) ? modifiersForRequest : null;
+		return !_isEmpty(modifiersForRequest) ? modifiersForRequest : null;
 	} else {
 		return null;
 	}
@@ -406,7 +416,7 @@ function getValidIntervals(intervals) {
  * @return {Array}
  */
 function getSortedValidIntervals(intervals) {
-	return _.sortBy(getValidIntervals(intervals), ['start', 'length']);
+	return _sortBy(getValidIntervals(intervals), ['start', 'length']);
 }
 
 /**
@@ -434,7 +444,7 @@ function mergeIntervals(intervals) {
 	}
 
 	//merge intervals
-	return _.tail(sortedIntervals).reduce(
+	return _tail(sortedIntervals).reduce(
 		(mergedIntervals, interval) => {
 			const last = mergedIntervals.pop();
 			if (areIntervalsOverlappedOrSubsequent(last, interval)) {
@@ -455,7 +465,7 @@ function mergeIntervals(intervals) {
 				return [...mergedIntervals, last, interval];
 			}
 		},
-		[_.head(sortedIntervals)]
+		[_head(sortedIntervals)]
 	);
 }
 

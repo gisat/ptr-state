@@ -50,6 +50,37 @@ describe('getUsedIndexPages', () => {
 							length: 3,
 						},
 					],
+					ComponentD: [
+						{
+							filter: {
+								scopeKey: 'scope1',
+							},
+							filterByActive: {
+								place: true,
+							},
+							order: null,
+							start: 12,
+							length: 4,
+						},
+						{
+							filter: {
+								scopeKey: 'scope2',
+							},
+							order: null,
+							start: 3,
+							length: 3,
+						},
+					],
+					ComponentE: [
+						{
+							filter: {
+								scopeKey: 'scope2',
+							},
+							order: null,
+							start: 1,
+							length: 5,
+						},
+					],
 				},
 			},
 		},
@@ -70,12 +101,39 @@ describe('getUsedIndexPages', () => {
 					},
 					{
 						start: 12,
-						length: 3,
+						length: 4,
+					},
+				],
+			},
+			{
+				filter: {
+					scopeKey: 'scope2',
+				},
+				order: null,
+				uses: [
+					{
+						start: 1,
+						length: 5,
 					},
 				],
 			},
 		];
 		const output = commonSelectors.getUsedIndexPages(getSubstate)(state);
 		assert.deepStrictEqual(output, expectedOutput);
+	});
+
+	it('should return null, if no indexed usages', () => {
+		const state2 = {
+			places: {
+				activeKey: 'place1',
+			},
+			[sampleSubstoreName]: {
+				inUse: {
+					indexes: {},
+				},
+			},
+		};
+		const output = commonSelectors.getUsedIndexPages(getSubstate)(state2);
+		assert.isNull(output);
 	});
 });
