@@ -452,6 +452,72 @@ const componentUseRegister = componentKey => {
 };
 
 /**
+ * Compose payload for request from given parameters
+ * @param {Object} commonFilter
+ * @param {Object} relations
+ * @param {Object} attributeDataPagination
+ * @param {Object} attributeDataFilterExtension
+ * @param {Object?} order
+ * @returns {Object}
+ */
+const getPayload = (
+	commonFilter,
+	relationsPagination,
+	attributeDataPagination,
+	attributeDataFilterExtension,
+	order
+) => {
+	const {
+		attributeFilter,
+		dataSourceKeys,
+		featureKeys,
+		spatialFilter,
+	} = attributeDataFilterExtension;
+
+	const {
+		layerTemplateKey,
+		areaTreeLevelKey,
+		attributeKeys,
+		modifiers,
+	} = commonFilter;
+
+	// Create payload
+	const payload = {
+		modifiers,
+
+		// which layer you want
+		...(layerTemplateKey && {layerTemplateKey}),
+		...(areaTreeLevelKey && {areaTreeLevelKey}),
+
+		// which attributes you want
+		...(attributeKeys && {attributeKeys}),
+
+		// pagination for relations (& data sources)
+		// TODO add support for relations:false on BE
+		// ...(loadRelations && {relations: usedRelationsPagination}),
+		relations: relationsPagination,
+
+		data: {
+			...(attributeDataPagination && attributeDataPagination),
+
+			...(attributeFilter && {attributeFilter}),
+
+			attributeOrder: order || null,
+
+			// list of specific features you want
+			...(featureKeys && {featureKeys}),
+
+			// extent
+			...(spatialFilter && {spatialFilter}),
+
+			// use data source keys instead of LayerTemplateKey/AreaTreeLevelKey + modifiers
+			...(dataSourceKeys && {dataSourceKeys}),
+		},
+	};
+	return payload;
+};
+
+/**
  *
  * @param {Array?} order
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
@@ -474,20 +540,6 @@ function loadIndexedPage(
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
 		const relationsOrder = null;
-
-		const {
-			layerTemplateKey,
-			areaTreeLevelKey,
-			attributeKeys,
-			modifiers,
-		} = commonFilter;
-
-		const {
-			attributeFilter,
-			dataSourceKeys,
-			featureKeys,
-			spatialFilter,
-		} = attributeDataFilterExtension;
 
 		const relationsFilter = {...commonFilter};
 		const attributeDataFilter = {
@@ -531,39 +583,13 @@ function loadIndexedPage(
 			usedAttributeDataPagination.data = false;
 		}
 
-		// Create payload
-		const payload = {
-			modifiers,
-
-			// which layer you want
-			...(layerTemplateKey && {layerTemplateKey}),
-			...(areaTreeLevelKey && {areaTreeLevelKey}),
-
-			// which attributes you want
-			...(attributeKeys && {attributeKeys}),
-
-			// pagination for relations (& data sources)
-			// TODO add support for relations:false on BE
-			// ...(loadRelations && {relations: usedRelationsPagination}),
-			relations: usedRelationsPagination,
-
-			data: {
-				...usedAttributeDataPagination,
-
-				...(attributeFilter && {attributeFilter}),
-
-				attributeOrder: order || null,
-
-				// list of specific features you want
-				...(featureKeys && {featureKeys}),
-
-				// extent
-				...(spatialFilter && {spatialFilter}),
-
-				// use data source keys instead of LayerTemplateKey/AreaTreeLevelKey + modifiers
-				...(dataSourceKeys && {dataSourceKeys}),
-			},
-		};
+		const payload = getPayload(
+			commonFilter,
+			usedRelationsPagination,
+			usedAttributeDataPagination,
+			attributeDataFilterExtension,
+			order
+		);
 
 		return request(localConfig, apiPath, 'POST', null, payload, undefined, null)
 			.then(result => {
@@ -656,6 +682,7 @@ export default {
 	ensure,
 	ensureDataAndRelations,
 	ensureWithFilterByActive,
+	getPayload,
 	loadIndexedPage,
 	loadMissingRelationsAndData,
 	setAttributeKeys: actionSetAttributeKeys,
