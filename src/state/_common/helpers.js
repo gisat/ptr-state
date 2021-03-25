@@ -1,5 +1,5 @@
 import createCachedSelector from 're-reselect';
-import _ from 'lodash';
+import _, {isNumber as _isNumber} from 'lodash';
 
 /**
  * Return index for given filter and order
@@ -375,11 +375,20 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 }
 
 /**
+ * Check if given input is natural number
+ * @param input
+ * @return {boolean}
+ */
+function isNaturalNumber(input) {
+	return _isNumber(input) && input > 0 && input % 1 === 0;
+}
+
+/**
  * @param interval {Object}
  * @return {boolean}
  */
 function isInterval(interval) {
-	return interval?.start && interval?.length;
+	return isNaturalNumber(interval?.start) && isNaturalNumber(interval?.length);
 }
 
 /**
@@ -388,7 +397,7 @@ function isInterval(interval) {
  * @return {Array}
  */
 function getValidIntervals(intervals) {
-	return intervals.filter(isInterval);
+	return intervals.filter(interval => isInterval(interval));
 }
 
 /**
@@ -405,8 +414,12 @@ function getSortedValidIntervals(intervals) {
  * @param later {Object} interval
  * @return {boolean}
  */
-function areIntervalsOverlapped(earlier, later) {
-	return later.start <= earlier.start + earlier.length;
+function areIntervalsOverlappedOrSubsequent(earlier, later) {
+	if (isInterval(earlier) && isInterval(later)) {
+		return later.start <= earlier.start + earlier.length;
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -424,7 +437,7 @@ function mergeIntervals(intervals) {
 	return _.tail(sortedIntervals).reduce(
 		(mergedIntervals, interval) => {
 			const last = mergedIntervals.pop();
-			if (areIntervalsOverlapped(last, interval)) {
+			if (areIntervalsOverlappedOrSubsequent(last, interval)) {
 				//merge last & current
 				const end = Math.max(
 					last.start + last.length,
@@ -458,9 +471,10 @@ export default {
 	isCorrespondingIndex,
 	itemFitFilter,
 
-	// intervals TODO test
-	areIntervalsOverlapped,
+	// intervals
+	areIntervalsOverlappedOrSubsequent,
 	isInterval,
+	isNaturalNumber,
 	getValidIntervals,
 	getSortedValidIntervals,
 	mergeIntervals,
