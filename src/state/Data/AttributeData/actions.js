@@ -112,23 +112,6 @@ function addDataAndIndexBasedOnSpatialData(
 }
 
 /**
- * If given attributeDataKey is already in state update its data otherwise add data to state.
- * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
- */
-function addOrUpdateData(attributeData) {
-	return (dispatch, getState) => {
-		const state = getState();
-		for (const key of Object.keys(attributeData)) {
-			if (_.isEmpty(state.data.attributeData.byDataSourceKey[key])) {
-				dispatch(addDataAction(key, attributeData[key]));
-			} else {
-				dispatch(updateDataAction(key, attributeData[key]));
-			}
-		}
-	};
-}
-
-/**
  * Create and add index for given attribute data based on related spatial data index.
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
@@ -188,11 +171,12 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 }
 
 /**
- * Create new index based on given level and tiles with loading indicator.
+ * Create new index based on pagination with loading indicator.
+ * @param {Object} pagination
+ * @param {Number} pagination.limit
+ * @param {Number} pagination.offset
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
- * @param {Number} level
- * @param {Array.[Array]} tiles
  */
 function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const changedOn = null;
@@ -293,27 +277,11 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 }
 
 // ============ actions ============
-function addDataAction(key, data) {
-	return {
-		type: actionTypes.ADD,
-		key,
-		data,
-	};
-}
-
 function removeSpatialIndexAction(filter, order) {
 	return {
 		type: actionTypes.SPATIAL_INDEX.REMOVE,
 		filter,
 		order,
-	};
-}
-
-function updateDataAction(key, data) {
-	return {
-		type: actionTypes.UPDATE,
-		key,
-		data,
 	};
 }
 
@@ -431,8 +399,9 @@ function actionUpdateStore(data) {
 export default {
 	addLoadingIndex,
 	addLoadingSpatialIndex,
-	removeSpatialIndex: removeSpatialIndexAction,
+	getIndexDataBySpatialData,
 	receiveIndexed,
-	updateStore: actionUpdateStore,
 	receiveIndexedAttributeEndPoint,
+	removeSpatialIndex: removeSpatialIndexAction,
+	updateStore: actionUpdateStore, //do we use it?
 };

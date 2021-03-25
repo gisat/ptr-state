@@ -615,7 +615,12 @@ function loadIndexedPage(
 }
 
 // Actions ------------------------------------------------------------------------------------------------------------
-
+/**
+ *
+ * @param componentKey {string}
+ * @param attributeKeys {Array}
+ * @returns
+ */
 const actionSetAttributeKeys = (componentKey, attributeKeys) => {
 	return {
 		type: ActionTypes.DATA.COMPONENTS.COMPONENT.SET.ATTRIBUTE_KEYS,

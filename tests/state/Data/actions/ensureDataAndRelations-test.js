@@ -12,9 +12,12 @@ import getStoreSet from '../../_common/helpers/store';
 import {
 	responseWithRelationsSpatialAndAttributeData_1,
 	responseWithRelationsSpatialAndAttributeData_2,
-} from './mockData_2';
+} from './mockData/mockData_2';
 
 describe('state/Data/actions/ensureDataAndRelations', function () {
+	afterEach(function () {
+		resetFetch();
+	});
 	it('dispatch error befause of missing spatialFilter', function () {
 		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
