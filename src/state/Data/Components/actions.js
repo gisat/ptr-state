@@ -518,6 +518,60 @@ const getPayload = (
 };
 
 /**
+ * Process result into smaller actions that pass loaded data into store.
+ * @param {Object} result Result from BE
+ * @param {bool} loadRelations Wether BE should return relations
+ * @param {Object} relationsFilter Filter object with modifiers
+ * @param {Object?} relationsOrder Order object for relations
+ * @param {Object} attributeDataFilter Object contains values extended by commonFilter.
+ * @param {Object?} order Order object for attributes
+ * @param {Number} relationsLimit Numeric limitation for loading relations
+ * @returns
+ */
+const processResult = (
+	result,
+	loadRelations,
+	relationsFilter,
+	relationsOrder,
+	attributeDataFilter,
+	order,
+	relationsLimit
+) => {
+	return dispatch => {
+		if (result.attributeData || result.attributeRelationsDataSources) {
+			if (loadRelations) {
+				const changes = null;
+				dispatch(
+					attributeRelations.receiveIndexed(
+						result.attributeRelationsDataSources.attributeRelations,
+						relationsFilter,
+						relationsOrder,
+						result.attributeRelationsDataSources.offset + 1,
+						result.attributeRelationsDataSources.total,
+						changes,
+						relationsLimit
+					)
+				);
+			}
+
+			if (result.attributeData.attributeData) {
+				const changes = null;
+				dispatch(
+					attributeData.receiveIndexedAttributeEndPoint(
+						result.attributeData,
+						attributeDataFilter,
+						order,
+						result.attributeData.offset + 1,
+						result.attributeData.total,
+						changes
+					)
+				);
+			}
+		}
+	};
+};
+
+/**
  *
  * @param {Array?} order
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
@@ -597,34 +651,18 @@ function loadIndexedPage(
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
 					if (result.attributeData || result.attributeRelationsDataSources) {
-						if (loadRelations) {
-							const changes = null;
-							dispatch(
-								attributeRelations.receiveIndexed(
-									result.attributeRelationsDataSources.attributeRelations,
-									relationsFilter,
-									relationsOrder,
-									result.attributeRelationsDataSources.offset + 1,
-									result.attributeRelationsDataSources.total,
-									changes,
-									usedRelationsPagination.limit
-								)
-							);
-						}
-
-						if (result.attributeData.attributeData) {
-							const changes = null;
-							dispatch(
-								attributeData.receiveIndexedAttributeEndPoint(
-									result.attributeData,
-									attributeDataFilter,
-									order,
-									result.attributeData.offset + 1,
-									result.attributeData.total,
-									changes
-								)
-							);
-						}
+						const relationsLimit = usedRelationsPagination.limit;
+						dispatch(
+							processResult(
+								result,
+								loadRelations,
+								relationsFilter,
+								relationsOrder,
+								attributeDataFilter,
+								order,
+								relationsLimit
+							)
+						);
 						return result;
 					} else {
 						const error = new Error('no data');
@@ -685,6 +723,7 @@ export default {
 	getPayload,
 	loadIndexedPage,
 	loadMissingRelationsAndData,
+	processResult,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	updateComponent,
