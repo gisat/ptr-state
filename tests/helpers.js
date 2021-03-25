@@ -32,6 +32,7 @@ function testCache(testingFunction, params, expectedResult, otherParams) {
 /**
  * @param reducers {function}
  * @param state {Object}
+ * @param actionTypes {Array}
  */
 function baseReducersTestSet(reducers, state, actionTypes) {
 	it('Should return the same state if no matching action type', function () {
@@ -67,15 +68,9 @@ function baseReducersMetadataTestSet(reducers, state, actionTypesPath) {
 	const expectedSpecificMetadataActionTypes = getExpectedSpecificMetadataActionTypes(
 		actionTypesPath
 	);
-	const expectedCommonMetadataActionTypes = getExpectedCommonMetadataActionTypes();
 	const specificMetadataActionTypes = getSpecificMetadataTypes(actionTypesPath);
 
-	const actionTypesInReducer = [
-		...expectedSpecificMetadataActionTypes,
-		...expectedCommonMetadataActionTypes,
-	];
-
-	baseReducersTestSet(reducers, state, actionTypesInReducer);
+	baseReducersTestSet(reducers, state, null);
 
 	it('Should have defined expected action types', function () {
 		assert.includeMembers(

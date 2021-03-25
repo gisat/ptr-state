@@ -2,52 +2,73 @@ import {assert} from 'chai';
 import commonReducers from '../../../../src/state/_common/reducers';
 import {CommonReducersState as state} from './_state';
 
-describe('addUnreceivedKeys', () => {
-	it('should add unreceived models', () => {
-		const action = {
+const tests = [
+	{
+		name: 'should add unreceived models',
+		action: {
 			keys: ['keyA', 'keyB'],
-		};
-		const expectedState = {
-			...state,
-			byKey: {
-				...state.byKey,
-				keyA: {
-					key: 'keyA',
-					unreceived: true,
+		},
+		test: (action, reducers) => {
+			const expectedState = {
+				...state,
+				byKey: {
+					...state.byKey,
+					keyA: {
+						key: 'keyA',
+						unreceived: true,
+					},
+					keyB: {
+						key: 'keyB',
+						unreceived: true,
+					},
 				},
-				keyB: {
-					key: 'keyB',
-					unreceived: true,
-				},
-			},
-		};
-		const returnedState = commonReducers.addUnreceivedKeys(state, action);
-		assert.deepStrictEqual(returnedState, expectedState);
-	});
-
-	it('should rewrite existing models', () => {
-		const action = {
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.addUnreceivedKeys(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'should rewrite existing models',
+		action: {
 			keys: ['key1'],
-		};
-		const expectedState = {
-			...state,
-			byKey: {
-				...state.byKey,
-				key1: {
-					key: 'key1',
-					unreceived: true,
+		},
+		test: (action, reducers) => {
+			const expectedState = {
+				...state,
+				byKey: {
+					...state.byKey,
+					key1: {
+						key: 'key1',
+						unreceived: true,
+					},
 				},
-			},
-		};
-		const returnedState = commonReducers.addUnreceivedKeys(state, action);
-		assert.deepStrictEqual(returnedState, expectedState);
-	});
-
-	it('should return original state if no keys given', () => {
-		const action = {
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.addUnreceivedKeys(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'should return original state if no keys given',
+		action: {
 			keys: [],
-		};
-		const returnedState = commonReducers.addUnreceivedKeys(state, action);
-		assert.deepStrictEqual(returnedState, state);
+		},
+		test: (action, reducers) => {
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.addUnreceivedKeys(state, action);
+			assert.deepStrictEqual(returnedState, state);
+		},
+	},
+];
+
+describe('addUnreceivedKeys', () => {
+	tests.forEach(test => {
+		it(test.name, () => test.test(test.action));
 	});
 });
+
+export default tests;

@@ -2,9 +2,10 @@ import {assert} from 'chai';
 import commonReducers from '../../../../src/state/_common/reducers';
 import {CommonReducersState as state} from './_state';
 
-describe('add', () => {
-	it('should add models', () => {
-		const action = {
+const tests = [
+	{
+		name: 'should add models',
+		action: {
 			data: [
 				{
 					key: 'keyA',
@@ -21,33 +22,37 @@ describe('add', () => {
 					},
 				},
 			],
-		};
-		const expectedState = {
-			...state,
-			byKey: {
-				...state.byKey,
-				keyA: {
-					key: 'keyA',
-					data: {
-						nameInternal: 'Mili',
-						nameDisplay: 'Milan',
+		},
+		test: (action, reducers) => {
+			const expectedState = {
+				...state,
+				byKey: {
+					...state.byKey,
+					keyA: {
+						key: 'keyA',
+						data: {
+							nameInternal: 'Mili',
+							nameDisplay: 'Milan',
+						},
+					},
+					keyB: {
+						key: 'keyB',
+						data: {
+							nameInternal: 'Tom',
+							nameDisplay: 'Tomas',
+						},
 					},
 				},
-				keyB: {
-					key: 'keyB',
-					data: {
-						nameInternal: 'Tom',
-						nameDisplay: 'Tomas',
-					},
-				},
-			},
-		};
-		const returnedState = commonReducers.add(state, action);
-		assert.deepStrictEqual(returnedState, expectedState);
-	});
-
-	it('should update models', () => {
-		const action = {
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.add(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'should update models',
+		action: {
 			data: [
 				{
 					key: 'key1',
@@ -62,31 +67,35 @@ describe('add', () => {
 					},
 				},
 			],
-		};
-		const expectedState = {
-			...state,
-			byKey: {
-				...state.byKey,
-				key1: {
-					key: 'key1',
-					data: {
-						nameInternal: 'Albicek',
+		},
+		test: (action, reducers) => {
+			const expectedState = {
+				...state,
+				byKey: {
+					...state.byKey,
+					key1: {
+						key: 'key1',
+						data: {
+							nameInternal: 'Albicek',
+						},
+					},
+					key2: {
+						key: 'key2',
+						data: {
+							nameInternal: 'Bertik',
+						},
 					},
 				},
-				key2: {
-					key: 'key2',
-					data: {
-						nameInternal: 'Bertik',
-					},
-				},
-			},
-		};
-		const returnedState = commonReducers.add(state, action);
-		assert.deepStrictEqual(returnedState, expectedState);
-	});
-
-	it('should add models and delete outdated or unreceived', () => {
-		const action = {
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.add(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'should add models and delete outdated or unreceived',
+		action: {
 			data: [
 				{
 					key: 'keyA',
@@ -105,36 +114,52 @@ describe('add', () => {
 					unreceived: true,
 				},
 			],
-		};
-		const expectedState = {
-			...state,
-			byKey: {
-				...state.byKey,
-				keyA: {
-					key: 'keyA',
-					data: {
-						nameInternal: 'Mili',
-						nameDisplay: 'Milan',
+		},
+		test: (action, reducers) => {
+			const expectedState = {
+				...state,
+				byKey: {
+					...state.byKey,
+					keyA: {
+						key: 'keyA',
+						data: {
+							nameInternal: 'Mili',
+							nameDisplay: 'Milan',
+						},
+					},
+					keyB: {
+						key: 'keyB',
+						data: {
+							nameInternal: 'Tom',
+							nameDisplay: 'Tomas',
+						},
 					},
 				},
-				keyB: {
-					key: 'keyB',
-					data: {
-						nameInternal: 'Tom',
-						nameDisplay: 'Tomas',
-					},
-				},
-			},
-		};
-		const returnedState = commonReducers.add(state, action);
-		assert.deepStrictEqual(returnedState, expectedState);
-	});
-
-	it('should return original state if no data given', () => {
-		const action = {
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.add(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'should return original state if no data given',
+		action: {
 			data: [],
-		};
-		const returnedState = commonReducers.add(state, action);
-		assert.deepStrictEqual(returnedState, state);
+		},
+		test: (action, reducers) => {
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.add(state, action);
+			assert.deepStrictEqual(returnedState, state);
+		},
+	},
+];
+
+describe('add', () => {
+	tests.forEach(test => {
+		it(test.name, () => test.test(test.action));
 	});
 });
+
+export default tests;

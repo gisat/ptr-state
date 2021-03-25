@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, {isEqual as _isEqual, isNumber as _isNumber} from 'lodash';
 import commonHelpers from './helpers';
 
 export const DEFAULT_INITIAL_STATE = {
@@ -58,19 +58,30 @@ export default {
 		}
 	},
 
-	//
-	// Add or update existing index
-	// FIXME - separate add and update functionality
+	// TODO clarify
+	/**
+	 * Add new or updated existing index
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.data {Array} A collection of models to add
+	 * @param action.filter {Object}
+	 * @param action.order {Array}
+	 * @param action.start {number}
+	 * @param action.length {number}
+	 * @param action.count {number}
+	 * @param action.changedOn {string}
+	 * @return {Object} updated state
+	 */
 	addIndex: (state, action) => {
-		if (action.data) {
+		if (action?.data) {
 			let indexes = [];
 			let selectedIndex = {};
 
 			if (state.indexes) {
 				state.indexes.forEach(index => {
 					if (
-						_.isEqual(index.filter, action.filter) &&
-						_.isEqual(index.order, action.order)
+						_isEqual(index.filter, action.filter) &&
+						_isEqual(index.order, action.order)
 					) {
 						selectedIndex = index;
 					} else {
@@ -91,7 +102,7 @@ export default {
 			//
 			// Remove loading indicator if data does not come
 			//
-			if (_.isNumber(action.limit)) {
+			if (_isNumber(action.limit)) {
 				if (!index) {
 					index = {};
 				} else {
@@ -118,6 +129,19 @@ export default {
 		}
 	},
 
+	/**
+	 * Register usage of indexed data
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.data {Array} A collection of models to add
+	 * @param action.componentId {string}
+	 * @param action.filterByActive {Object}
+	 * @param action.filter {Object}
+	 * @param action.order {Array}
+	 * @param action.start {number}
+	 * @param action.length {number}
+	 * @return {Object} updated state
+	 */
 	registerUseIndexed: (state, action) => {
 		let newUse = {
 			filterByActive: action.filterByActive,
