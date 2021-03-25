@@ -1,7 +1,7 @@
 import ActionTypes from '../../constants/ActionTypes';
 import common, {DEFAULT_INITIAL_STATE} from '../_common/reducers';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	...DEFAULT_INITIAL_STATE,
 };
 
@@ -27,8 +27,10 @@ export default (state = INITIAL_STATE, action) => {
 			return common.clearIndex(state, action);
 		case ActionTypes.TAGS.MARK_DELETED:
 			return common.markDeleted(state, action);
-		case ActionTypes.TAGS.USE.KEYS.REGISTER:
-			return common.useKeysRegister(state, action);
+		case ActionTypes.TAGS.SET_ACTIVE_KEY:
+			return common.setActive(state, action);
+		case ActionTypes.TAGS.SET_ACTIVE_KEYS:
+			return common.setActiveMultiple(state, action);
 		case ActionTypes.TAGS.USE.KEYS.CLEAR:
 			return common.useKeysClear(state, action);
 		case ActionTypes.TAGS.USE.INDEXED.REGISTER:

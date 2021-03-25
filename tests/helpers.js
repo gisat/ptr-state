@@ -1,4 +1,10 @@
 import {assert} from 'chai';
+import flat from 'flat';
+import ActionTypes from '../src/constants/ActionTypes';
+import {
+	expectedCommonMetadataActionTypes,
+	expectedSpecificMetadataActionTypes,
+} from './constants';
 
 // import all reducers due to coverage overview
 import {baseStores} from '../src/index';
@@ -26,7 +32,6 @@ function testCache(testingFunction, params, expectedResult, otherParams) {
 /**
  * @param reducers {function}
  * @param state {Object}
- * @param actionTypes {Array}
  */
 function baseReducersTestSet(reducers, state, actionTypes) {
 	it('Should return the same state if no matching action type', function () {
@@ -56,6 +61,32 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 				assert.exists(reducers(state, action));
 			});
 		});
+}
+
+function baseReducersMetadataTestSet(reducers, state, actionTypesPath) {
+	const expectedSpecificMetadataActionTypes = getExpectedSpecificMetadataActionTypes(
+		actionTypesPath
+	);
+	const expectedCommonMetadataActionTypes = getExpectedCommonMetadataActionTypes();
+	const specificMetadataActionTypes = getSpecificMetadataTypes(actionTypesPath);
+
+	const actionTypesInReducer = [
+		...expectedSpecificMetadataActionTypes,
+		...expectedCommonMetadataActionTypes,
+	];
+
+	baseReducersTestSet(reducers, state, actionTypesInReducer);
+
+	it('Should have defined expected action types', function () {
+		assert.includeMembers(
+			specificMetadataActionTypes,
+			expectedSpecificMetadataActionTypes
+		);
+	});
+}
+
+function baseReducersDataTestSet(reducers, state, actionTypes) {
+	baseReducersTestSet(reducers, state, actionTypes);
 }
 
 /**
@@ -96,8 +127,40 @@ function baseSelectorsTestSet(selectors, substore, options) {
 	});
 }
 
+/**
+ * @param substoreActionTypesPath {string} 'TAGS', 'SCOPES', ...
+ * @return {string[]}
+ */
+function getExpectedSpecificMetadataActionTypes(substoreActionTypesPath) {
+	return [...expectedSpecificMetadataActionTypes].map(
+		actionType => `${substoreActionTypesPath}.${actionType}`
+	);
+}
+
+/**
+ * @return {string[]}
+ */
+function getExpectedCommonMetadataActionTypes() {
+	return expectedCommonMetadataActionTypes;
+}
+
+/**
+ * Get action types for given substore
+ * @param substoreActionTypesPath {string}
+ * @return {string[]}
+ */
+function getSpecificMetadataTypes(substoreActionTypesPath) {
+	return Object.values(flat(ActionTypes[substoreActionTypesPath]));
+}
+
 export default {
 	testCache,
 	baseReducersTestSet,
+	baseReducersDataTestSet,
+	baseReducersMetadataTestSet,
 	baseSelectorsTestSet,
+
+	getSpecificMetadataTypes,
+	getExpectedCommonMetadataActionTypes,
+	getExpectedSpecificMetadataActionTypes,
 };

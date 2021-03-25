@@ -346,26 +346,30 @@ export default {
 	 * action.filter
 	 * */
 	clearIndex: (state, action) => {
-		const indexes = state.indexes.map(index => {
-			const correspondIndex = commonHelpers.isCorrespondingIndex(
-				index,
-				action.filter,
-				action.order
-			);
-			if (correspondIndex) {
-				index.outdated = index.index;
-				index.outdatedCount = index.count;
-				index.index = null;
-				index.count = null;
-				index.changedOn = null;
-			}
-			return index;
-		});
+		if (state.indexes) {
+			const indexes = state.indexes.map(index => {
+				const correspondIndex = commonHelpers.isCorrespondingIndex(
+					index,
+					action.filter,
+					action.order
+				);
+				if (correspondIndex) {
+					index.outdated = index.index;
+					index.outdatedCount = index.count;
+					index.index = null;
+					index.count = null;
+					index.changedOn = null;
+				}
+				return index;
+			});
 
-		return {
-			...state,
-			indexes: [...indexes],
-		};
+			return {
+				...state,
+				indexes: [...indexes],
+			};
+		} else {
+			return state;
+		}
 	},
 
 	dataSetOutdated: (state, action) => {
