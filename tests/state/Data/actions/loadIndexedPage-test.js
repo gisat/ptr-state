@@ -23,6 +23,7 @@ describe('state/Data/actions/loadIndexedPage', function () {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
 					apiBackendPath: 'backend',
+					requestPageSize: 1,
 				},
 				data: {
 					spatialData: {
