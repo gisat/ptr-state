@@ -95,6 +95,8 @@ function ensureDataAndRelations(
 				throw response;
 			}
 
+			setState(getState());
+
 			const attributeDataIndex =
 				Select.data.components.getIndexForAttributeDataByComponentKey(
 					componentKey

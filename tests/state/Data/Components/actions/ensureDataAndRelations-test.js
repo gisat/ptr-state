@@ -1,20 +1,30 @@
 import {assert} from 'chai';
+import {setState} from '@jvitela/recompute';
+import {createStore, combineReducers} from 'redux';
 import _ from 'lodash';
 import slash from 'slash';
 import actions from '../../../../../src/state/Data/Components/actions';
 import {resetFetch, setFetch} from '../../../../../src/state/_common/request';
 import getStoreSet from '../../../_common/helpers/store';
 
+import AttributeDataReducer from '../../../../../src/state/Data/AttributeData/reducers';
+import AttributeRelationsReducer from '../../../../../src/state/Data/AttributeRelations/reducers';
+import AttributeDataSourcesReducer from '../../../../../src/state/Data/AttributeDataSources/reducers';
+import ComponentsReducer from '../../../../../src/state/Data/Components/reducers';
+import SpatialDataReducer from '../../../../../src/state/Data/SpatialData/reducers';
+import SpatialRelationsReducer from '../../../../../src/state/Data/SpatialRelations/reducers';
+import SpatialDataSourcesReducer from '../../../../../src/state/Data/SpatialDataSources/reducers';
+import AppReducers from '../../../../../src/state/App/reducers';
+
 import {
-	oneAndLastResponseOfSecondPageOfRelations,
-	oneAndLastResponseOfSecondPageOfAttributeData,
-	oneAndLastResponseOfSecondPageOfAttributeAndRelationsData,
+	veryFirstResponseOfSecondPageOfAttributeAndRelationsData,
 	firstResponseOfSecondPageOfAttributeAndRelationsData,
 	secondResponseOfSecondPageOfAttributeAndRelationsData,
 	thirthResponseOfSecondPageOfAttributeAndRelationsData,
 } from './mockData/_1';
 
-describe('state/Data/Components/actions/loadMissingRelationsAndData', function () {
+describe('state/Data/Components/actions/ensureDataAndRelations', function () {
+	this.timeout(5000);
 	afterEach(function () {
 		resetFetch();
 	});
@@ -72,561 +82,58 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 		const order = null;
 		const commonFilter = {};
 		const attributeDataFilterExtension = {};
-		const remainingRelationsPages = [];
-		const remainingAttributeDataPages = [];
 		const start = 1;
 		const length = 2;
 		const PAGE_SIZE = 1;
+		const loadRelations = false;
+		const loadData = false;
+		const attributePagination = {};
+		const relationsPagination = {};
 
 		dispatch(
-			actions.loadMissingRelationsAndData(
+			actions.ensureDataAndRelations(
 				componentKey,
 				order,
 				commonFilter,
 				attributeDataFilterExtension,
-				remainingRelationsPages,
-				remainingAttributeDataPages,
 				start,
 				length,
-				PAGE_SIZE
+				PAGE_SIZE,
+				loadRelations,
+				loadData,
+				attributePagination,
+				relationsPagination
 			)
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), []);
-		});
-	});
-
-	it('dispatch actions for load relations', function () {
-		const storeHelpers = getStoreSet();
-
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: 'backend',
-					requestPageSize: 1,
-				},
-			},
-			data: {
-				components: {
-					components: {
-						byKey: [],
-					},
-				},
-				spatialData: {
-					indexes: [],
-				},
-				attributeData: {
-					indexes: [],
-				},
-			},
-		});
-
-		const dispatch = storeHelpers.getDispatch(getState);
-
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/backend/rest/attributeData/filtered',
-				slash(url)
-			);
-
-			if (
-				_.isEqual(JSON.parse(options.body), {
-					relations: {
-						offset: 1,
-						limit: 1,
-						relations: true,
-					},
-					data: {
-						offset: 0,
-						limit: 0,
-						data: false,
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-						attributeOrder: null,
-					},
-				})
-			) {
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(oneAndLastResponseOfSecondPageOfRelations);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
-		});
-
-		const componentKey = 'table';
-		const order = null;
-		const commonFilter = {appKey: 'testKey'};
-		const attributeDataFilterExtension = {
-			attributeFilter: {xxx: {in: [11]}},
-		};
-		const remainingRelationsPages = [1];
-		const remainingAttributeDataPages = [];
-		const start = 1;
-		const length = 2;
-		const PAGE_SIZE = 1;
-		dispatch(
-			actions.loadMissingRelationsAndData(
-				componentKey,
-				order,
-				commonFilter,
-				attributeDataFilterExtension,
-				remainingRelationsPages,
-				remainingAttributeDataPages,
-				start,
-				length,
-				PAGE_SIZE
-			)
-		);
-
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			//ends with error cause empty data was returned
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
-					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
-					filter: {
-						appKey: 'testKey',
-					},
-					order: null,
-					data: [
-						{
-							key: true,
-						},
-					],
-					start: 2,
-					count: null,
-					changedOn: null,
-				},
-				{
-					data: [
-						{
-							key: '530c6982-af2a-4c2a-8fad-69c07f7d76e7',
-							data: {
-								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
-								scenarioKey: null,
-								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-								attributeSetKey: null,
-								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
-								areaTreeLevelKey: null,
-								applicationKey: null,
-							},
-						},
-					],
-					filter: {
-						appKey: 'testKey',
-					},
-					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
-				},
-				{
-					filter: {
-						appKey: 'testKey',
-					},
-					order: null,
-					count: 1,
-					start: 2,
-					data: [
-						{
-							key: '530c6982-af2a-4c2a-8fad-69c07f7d76e7',
-							data: {
-								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
-								scenarioKey: null,
-								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-								attributeSetKey: null,
-								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
-								areaTreeLevelKey: null,
-								applicationKey: null,
-							},
-						},
-					],
-					changedOn: null,
-					limit: 1,
-					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
+					type: 'ERROR',
 				},
 			]);
 		});
 	});
 
-	it('dispatch actions for load attribute data', function () {
+	it('dispatch actions for load data and relations in four requests', function () {
 		const storeHelpers = getStoreSet();
+		const reducers = combineReducers({
+			app: AppReducers,
+			data: combineReducers({
+				attributeData: AttributeDataReducer,
+				attributeRelations: AttributeRelationsReducer,
+				attributeDataSources: AttributeDataSourcesReducer,
+				components: ComponentsReducer,
+				spatialData: SpatialDataReducer,
+				spatialRelations: SpatialRelationsReducer,
+				spatialDataSources: SpatialDataSourcesReducer,
+			}),
+		});
 
-		const getState = () => ({
+		const defaultState = {
 			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: 'backend',
-					requestPageSize: 1,
-				},
-			},
-			data: {
-				components: {
-					components: {
-						byKey: [],
-					},
-				},
-				spatialData: {
-					indexes: [],
-				},
-				attributeData: {
-					indexes: [],
-				},
-			},
-		});
-
-		const dispatch = storeHelpers.getDispatch(getState);
-
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/backend/rest/attributeData/filtered',
-				slash(url)
-			);
-
-			if (
-				_.isEqual(JSON.parse(options.body), {
-					relations: {
-						offset: 0,
-						limit: 0,
-						relations: false,
-					},
-					data: {
-						offset: 1,
-						limit: 1,
-						data: true,
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-						attributeOrder: null,
-					},
-				})
-			) {
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(
-							oneAndLastResponseOfSecondPageOfAttributeData
-						);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
-		});
-
-		const componentKey = 'table';
-		const order = null;
-		const commonFilter = {appKey: 'testKey'};
-		const attributeDataFilterExtension = {
-			attributeFilter: {xxx: {in: [11]}},
-		};
-		const remainingRelationsPages = [];
-		const remainingAttributeDataPages = [1];
-		const start = 1;
-		const length = 2;
-		const PAGE_SIZE = 1;
-		dispatch(
-			actions.loadMissingRelationsAndData(
-				componentKey,
-				order,
-				commonFilter,
-				attributeDataFilterExtension,
-				remainingRelationsPages,
-				remainingAttributeDataPages,
-				start,
-				length,
-				PAGE_SIZE
-			)
-		);
-
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
-				{
-					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
-					filter: {
-						appKey: 'testKey',
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-					},
-					order: null,
-					data: [
-						{
-							key: true,
-						},
-					],
-					start: 2,
-					count: null,
-					changedOn: null,
-				},
-				{
-					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
-					filter: {
-						appKey: 'testKey',
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-					},
-					order: null,
-					total: 1,
-					start: 2,
-					index: [18502],
-					data: {
-						'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-							18502: '27',
-						},
-					},
-					changedOn: null,
-				},
-			]);
-		});
-	});
-
-	it('dispatch actions for load data and relations', function () {
-		const storeHelpers = getStoreSet();
-
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: 'backend',
-					requestPageSize: 1,
-				},
-			},
-			data: {
-				components: {
-					components: {
-						byKey: [],
-					},
-				},
-				spatialData: {
-					indexes: [],
-				},
-				attributeData: {
-					indexes: [],
-				},
-			},
-		});
-
-		const dispatch = storeHelpers.getDispatch(getState);
-
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/backend/rest/attributeData/filtered',
-				slash(url)
-			);
-
-			if (
-				_.isEqual(JSON.parse(options.body), {
-					relations: {
-						offset: 1,
-						limit: 1,
-						relations: true,
-					},
-					data: {
-						offset: 1,
-						limit: 1,
-						data: true,
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-						attributeOrder: null,
-					},
-				})
-			) {
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(
-							oneAndLastResponseOfSecondPageOfAttributeAndRelationsData
-						);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
-		});
-
-		const componentKey = 'table';
-		const order = null;
-		const commonFilter = {appKey: 'testKey'};
-		const attributeDataFilterExtension = {
-			attributeFilter: {xxx: {in: [11]}},
-		};
-		const remainingRelationsPages = [1];
-		const remainingAttributeDataPages = [1];
-		const start = 1;
-		const length = 2;
-		const PAGE_SIZE = 1;
-		dispatch(
-			actions.loadMissingRelationsAndData(
-				componentKey,
-				order,
-				commonFilter,
-				attributeDataFilterExtension,
-				remainingRelationsPages,
-				remainingAttributeDataPages,
-				start,
-				length,
-				PAGE_SIZE
-			)
-		);
-
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
-				{
-					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
-					filter: {
-						appKey: 'testKey',
-					},
-					order: null,
-					data: [
-						{
-							key: true,
-						},
-					],
-					start: 2,
-					count: null,
-					changedOn: null,
-				},
-				{
-					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
-					filter: {
-						appKey: 'testKey',
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-					},
-					order: null,
-					data: [
-						{
-							key: true,
-						},
-					],
-					start: 2,
-					count: null,
-					changedOn: null,
-				},
-				{
-					data: [
-						{
-							key: '530c6982-af2a-4c2a-8fad-69c07f7d76e7',
-							data: {
-								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
-								scenarioKey: null,
-								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-								attributeSetKey: null,
-								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
-								areaTreeLevelKey: null,
-								applicationKey: null,
-							},
-						},
-					],
-					filter: {
-						appKey: 'testKey',
-					},
-					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
-				},
-				{
-					filter: {
-						appKey: 'testKey',
-					},
-					order: null,
-					count: 1,
-					start: 2,
-					data: [
-						{
-							key: '530c6982-af2a-4c2a-8fad-69c07f7d76e7',
-							data: {
-								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
-								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
-								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
-								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
-								scenarioKey: null,
-								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
-								attributeSetKey: null,
-								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
-								areaTreeLevelKey: null,
-								applicationKey: null,
-							},
-						},
-					],
-					changedOn: null,
-					limit: 1,
-					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
-				},
-				{
-					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
-					filter: {
-						appKey: 'testKey',
-						attributeFilter: {
-							xxx: {
-								in: [11],
-							},
-						},
-					},
-					order: null,
-					total: 1,
-					start: 2,
-					index: [18502],
-					data: {
-						'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-							18502: '27',
-						},
-					},
-					changedOn: null,
-				},
-			]);
-		});
-	});
-
-	it('dispatch actions for load data and relations in three requests', function () {
-		const storeHelpers = getStoreSet();
-
-		const getState = () => ({
-			app: {
+				key: 'testKey',
 				localConfiguration: {
 					apiBackendProtocol: 'http',
 					apiBackendHost: 'localhost',
@@ -637,7 +144,19 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 			data: {
 				components: {
 					components: {
-						byKey: [],
+						byKey: {
+							table: {
+								// start: 0
+								attributeFilter: {
+									xxx: {
+										in: [11],
+									},
+								},
+								filterByActive: {
+									application: true,
+								},
+							},
+						},
 					},
 				},
 				spatialData: {
@@ -647,9 +166,14 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 					indexes: [],
 				},
 			},
-		});
+		};
 
-		const dispatch = storeHelpers.getDispatch(getState);
+		const store = createStore(reducers, defaultState);
+		setState(store.getState());
+		const getState = () => {
+			return store.getState();
+		};
+		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 
 		setFetch(function (url, options) {
 			assert.strictEqual(
@@ -659,6 +183,44 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 
 			if (
 				_.isEqual(JSON.parse(options.body), {
+					modifiers: {applicationKey: {in: 'testKey'}},
+					relations: {
+						offset: 0,
+						limit: 2,
+						relations: true,
+					},
+					data: {
+						offset: 0,
+						limit: 2,
+						data: true,
+						attributeFilter: {
+							xxx: {
+								in: [11],
+							},
+						},
+						attributeOrder: null,
+					},
+				})
+			) {
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve(
+							veryFirstResponseOfSecondPageOfAttributeAndRelationsData
+						);
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: options.body,
+				});
+			}
+
+			if (
+				_.isEqual(JSON.parse(options.body), {
+					modifiers: {applicationKey: {in: 'testKey'}},
 					relations: {
 						offset: 2,
 						limit: 2,
@@ -694,6 +256,7 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 			}
 			if (
 				_.isEqual(JSON.parse(options.body), {
+					modifiers: {applicationKey: {in: 'testKey'}},
 					relations: {
 						offset: 0,
 						limit: 0,
@@ -730,6 +293,7 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 
 			if (
 				_.isEqual(JSON.parse(options.body), {
+					modifiers: {applicationKey: {in: 'testKey'}},
 					relations: {
 						offset: 0,
 						limit: 0,
@@ -767,36 +331,218 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 
 		const componentKey = 'table';
 		const order = null;
-		const commonFilter = {appKey: 'testKey'};
+		const commonFilter = {modifiers: {applicationKey: {in: 'testKey'}}};
 		const attributeDataFilterExtension = {
 			attributeFilter: {xxx: {in: [11]}},
 		};
-		const remainingRelationsPages = [1];
-		const remainingAttributeDataPages = [1, 2, 3];
 		const start = 1;
-		const length = 7;
+		const length = 100;
 		const PAGE_SIZE = 2;
+		const loadRelations = true;
+		const loadData = true;
+		const attributePagination = {
+			offset: 0,
+			limit: 2,
+		};
+		const relationsPagination = {
+			offset: 0,
+			limit: 2,
+		};
+
 		dispatch(
-			actions.loadMissingRelationsAndData(
+			actions.ensureDataAndRelations(
 				componentKey,
 				order,
 				commonFilter,
 				attributeDataFilterExtension,
-				remainingRelationsPages,
-				remainingAttributeDataPages,
 				start,
 				length,
-				PAGE_SIZE
+				PAGE_SIZE,
+				loadRelations,
+				loadData,
+				attributePagination,
+				relationsPagination
 			)
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			debugger;
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
+					},
+					order: null,
+					data: [
+						{
+							key: true,
+						},
+						{
+							key: true,
+						},
+					],
+					start: 1,
+					count: null,
+					changedOn: null,
+				},
+				{
+					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
+					filter: {
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
+						attributeFilter: {
+							xxx: {
+								in: [11],
+							},
+						},
+					},
+					order: null,
+					data: [
+						{
+							key: true,
+						},
+						{
+							key: true,
+						},
+					],
+					start: 1,
+					count: null,
+					changedOn: null,
+				},
+				{
+					data: [
+						{
+							key: 'aaac6982-af2a-4c2a-8fad-69c07f7d76e7',
+							data: {
+								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
+								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
+								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
+								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
+								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
+								scenarioKey: null,
+								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
+								attributeSetKey: null,
+								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
+								areaTreeLevelKey: null,
+								applicationKey: null,
+							},
+						},
+						{
+							key: 'bbbc6982-af2a-4c2a-8fad-69c07f7d76e7',
+							data: {
+								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
+								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
+								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
+								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
+								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
+								scenarioKey: null,
+								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
+								attributeSetKey: null,
+								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
+								areaTreeLevelKey: null,
+								applicationKey: null,
+							},
+						},
+					],
+					filter: {
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
+					},
+					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
+				},
+				{
+					filter: {
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
+					},
+					order: null,
+					count: 4,
+					start: 1,
+					data: [
+						{
+							key: 'aaac6982-af2a-4c2a-8fad-69c07f7d76e7',
+							data: {
+								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
+								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
+								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
+								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
+								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
+								scenarioKey: null,
+								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
+								attributeSetKey: null,
+								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
+								areaTreeLevelKey: null,
+								applicationKey: null,
+							},
+						},
+						{
+							key: 'bbbc6982-af2a-4c2a-8fad-69c07f7d76e7',
+							data: {
+								scopeKey: 'c81d59c8-0b4c-4df3-9c20-375f977660d3',
+								periodKey: '439af632-5804-4fc0-b641-a9c34cc6a853',
+								placeKey: '8b65f2c9-bd6a-4d92-bc09-af604761f2f1',
+								attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
+								layerTemplateKey: '758b72dd-76a8-4792-8e9f-bbf13784e992',
+								scenarioKey: null,
+								caseKey: '4c2afea6-0964-458e-88a7-a65318554487',
+								attributeSetKey: null,
+								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
+								areaTreeLevelKey: null,
+								applicationKey: null,
+							},
+						},
+					],
+					changedOn: null,
+					limit: 2,
+					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
+				},
+				{
+					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
+					filter: {
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
+						attributeFilter: {
+							xxx: {
+								in: [11],
+							},
+						},
+					},
+					order: null,
+					total: 7,
+					start: 1,
+					index: [18500, 18501],
+					data: {
+						'55f48ed1-ee67-47bd-a044-8985662ec29f': {
+							18500: '0',
+							18503: '1',
+						},
+					},
+					changedOn: null,
+				},
+				{
+					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
+					filter: {
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 					},
 					order: null,
 					data: [
@@ -814,7 +560,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -837,7 +587,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -860,7 +614,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -913,13 +671,21 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 						},
 					],
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 					},
 					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
 				},
 				{
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 					},
 					order: null,
 					count: 4,
@@ -965,7 +731,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -987,7 +757,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -1009,7 +783,11 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						appKey: 'testKey',
+						modifiers: {
+							applicationKey: {
+								in: 'testKey',
+							},
+						},
 						attributeFilter: {
 							xxx: {
 								in: [11],
