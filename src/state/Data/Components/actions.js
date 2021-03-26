@@ -47,7 +47,7 @@ function updateComponent(componentKey, update) {
  * Useful if no indexes are registered for relations and attribute data.
  * Function has two phases, it loads data and relations in first and determinate and loads what is missing in second phase.
  * @param {String} componentKey Related component
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {Number} start Position of first asked item after ordered.
@@ -148,13 +148,14 @@ function ensureDataAndRelations(
  * Helper function. Usually second step in requesting data.
  * Load all relations and attributeData based on its remaining page counts.
  * @param {String} componentKey
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
- * @param {Array} remainingRelationsPages
- * @param {Array} remainingAttributeDataPages [0,1,2,3] || [2,5]
- * @param {Array} start
- * @param {Array} PAGE_SIZE
+ * @param {Array} remainingRelationsPages Missing page indexes of ralations defined in array. [0,1,2,3] || [2,5]
+ * @param {Array} remainingAttributeDataPages Missing page indexes of attributes defined in array. [0,1,2,3] || [2,5]
+ * @param {Array} start Starting position of first requested item. Defualt is 1.
+ * @param {Array} length Length of asked attributeData
+ * @param {Number} PAGE_SIZE How many attribute data items will be in one request.
  * @return {function} Return promise.
  */
 function loadMissingRelationsAndData(
@@ -453,11 +454,11 @@ const componentUseRegister = componentKey => {
 
 /**
  * Compose payload for request from given parameters
- * @param {Object} commonFilter
- * @param {Object} relations
- * @param {Object} attributeDataPagination
- * @param {Object} attributeDataFilterExtension
- * @param {Object?} order
+ * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
+ * @param {Object} relationsPagination Pagination for relations. Example `{relations: true, limit:100, offset:0}`.
+ * @param {Object?} attributeDataPagination Pagination for attributeData. Example `{data: true, limit:100, offset:0}`.
+ * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
+ * @param {Array?} order Order object for attributes
  * @returns {Object}
  */
 const getPayload = (
@@ -524,7 +525,7 @@ const getPayload = (
  * @param {Object} relationsFilter Filter object with modifiers
  * @param {Object?} relationsOrder Order object for relations
  * @param {Object} attributeDataFilter Object contains values extended by commonFilter.
- * @param {Object?} order Order object for attributes
+ * @param {Array?} order Order object for attributes
  * @param {Number} relationsLimit Numeric limitation for loading relations
  * @returns
  */
@@ -573,7 +574,7 @@ const processResult = (
 
 /**
  *
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {bool} loadRelations Whether response should contain relations

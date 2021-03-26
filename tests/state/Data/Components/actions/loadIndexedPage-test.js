@@ -264,8 +264,6 @@ describe('state/Data/Components/actions/loadIndexedPage', function () {
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			console.log(storeHelpers.getDispatchedActions());
-			debugger;
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
