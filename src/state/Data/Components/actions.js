@@ -294,7 +294,8 @@ const ensure = componentKey => {
 		let loadRelations = true;
 		let loadData = true;
 
-		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
 
 		// Attribute data page size is same like app page size
 		// In case of need PAGE_SIZE could be modified here
