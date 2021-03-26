@@ -367,6 +367,11 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 			modifiersForRequest.periodKey = modifiers.periodKey;
 		}
 
+		//FIXME
+		if (modifiers.applicationKey) {
+			modifiersForRequest.applicationKey = {in: modifiers.applicationKey};
+		}
+
 		return !_.isEmpty(modifiersForRequest) ? modifiersForRequest : null;
 	} else {
 		return null;
