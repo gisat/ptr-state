@@ -407,7 +407,7 @@ export default {
 		}
 	},
 
-	// todo test && clarify
+	// TODO @vdubr clarify & test
 	removeEditedPropertyValues: (state, action) => {
 		const dataTypeSingular = action.dataType.slice(0, -1);
 		const keyProperty = dataTypeSingular + 'Key';
