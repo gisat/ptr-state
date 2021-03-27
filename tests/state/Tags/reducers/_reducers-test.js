@@ -8,6 +8,12 @@ import addUnreceivedKeys from '../../_common/reducers/addUnreceivedKeys-test';
 import markDeleted from '../../_common/reducers/markDeleted-test';
 import registerUseIndexed from '../../_common/reducers/registerUseIndexed-test';
 import remove from '../../_common/reducers/remove-test';
+import removeEdited from '../../_common/reducers/removeEdited-test';
+import removeEditedActive from '../../_common/reducers/removeEditedActive-test';
+import removeEditedProperty from '../../_common/reducers/removeEditedProperty-test';
+import setActive from '../../_common/reducers/setActive-test';
+import setActiveMultiple from '../../_common/reducers/setActiveMultiple-test';
+import updateEdited from '../../_common/reducers/updateEdited-test';
 import useIndexedClear from '../../_common/reducers/useIndexedClear-test';
 import useIndexedClearAll from '../../_common/reducers/useIndexedClearAll-test';
 import useKeysClear from '../../_common/reducers/useKeysClear-test';
@@ -58,6 +64,63 @@ describe('registerUseIndexed', () => {
 describe('remove', () => {
 	remove.forEach(test => {
 		const action = {...test.action, type: ActionTypes.TAGS.DELETE};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('removeEdited', () => {
+	removeEdited.forEach(test => {
+		const action = {...test.action, type: ActionTypes.TAGS.EDITED.REMOVE};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('removeEditedActive', () => {
+	removeEditedActive.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.TAGS.EDITED.REMOVE_ACTIVE,
+		};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('removeEditedProperty', () => {
+	removeEditedProperty.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.TAGS.EDITED.REMOVE_PROPERTY,
+		};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('setActive', () => {
+	setActive.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.TAGS.SET_ACTIVE_KEY,
+		};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('setActiveMultiple', () => {
+	setActiveMultiple.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.TAGS.SET_ACTIVE_KEYS,
+		};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('updateEdited', () => {
+	updateEdited.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.TAGS.EDITED.UPDATE,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });

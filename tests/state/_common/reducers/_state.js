@@ -1,4 +1,5 @@
 export const CommonReducersState = {
+	activeKey: 'key1',
 	byKey: {
 		key1: {
 			key: 'key1',
@@ -12,6 +13,21 @@ export const CommonReducersState = {
 			data: {
 				nameDisplay: 'Berty',
 				nameInternal: 'Bert',
+			},
+		},
+	},
+	editedByKey: {
+		key1: {
+			key: 'key1',
+			data: {
+				nameDisplay: 'Alb',
+			},
+		},
+		key201: {
+			key: 'key201',
+			data: {
+				nameInternal: 'Cyril',
+				nameDisplay: 'Cyr',
 			},
 		},
 	},

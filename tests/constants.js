@@ -38,6 +38,7 @@ export const expectedSpecificMetadataActionTypes = [
 	'DELETE',
 	'MARK_DELETED',
 	'EDITED.REMOVE',
+	'EDITED.REMOVE_ACTIVE',
 	'EDITED.REMOVE_PROPERTY',
 	'EDITED.UPDATE',
 	'ENSURE.ERROR',

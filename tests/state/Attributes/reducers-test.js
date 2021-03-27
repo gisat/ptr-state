@@ -59,7 +59,7 @@ describe('state/Attributes/reducers', function () {
 					keys: ['k1', 'k2', 'k3'],
 				},
 				expectedResult: {
-					editedByKey: {},
+					editedByKey: null,
 				},
 			},
 		];

@@ -1,9 +1,13 @@
-import _, {
+import {
+	difference as _difference,
+	each as _each,
 	find as _find,
 	findIndex as _findIndex,
+	forIn as _forIn,
+	includes as _includes,
 	isEmpty as _isEmpty,
 	isEqual as _isEqual,
-	isNumber as _isNumber,
+	map as _map,
 	omit as _omit,
 	union as _union,
 } from 'lodash';
@@ -319,62 +323,103 @@ export default {
 		}
 	},
 
+	/**
+	 * Remove edited models
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.keys {Array} list of model keys to remove
+	 * @return {Object} updated state
+	 */
 	removeEdited: (state, action) => {
-		let newData = state.editedByKey
-			? _.omit(state.editedByKey, action.keys)
-			: null;
-		return {...state, editedByKey: newData};
-	},
+		if (action.keys?.length && state.editedByKey) {
+			const updatedEditedByKey = _omit(state.editedByKey, action.keys);
 
-	removeEditedActive: state => {
-		let newData = state.editedByKey
-			? _.omit(state.editedByKey, state.activeKey)
-			: null;
-		return {...state, editedByKey: newData};
-	},
-
-	removeEditedProperty: (state, action) => {
-		let newEditedModelData =
-			state.editedByKey &&
-			state.editedByKey[action.key] &&
-			state.editedByKey[action.key].data
-				? _.omit(state.editedByKey[action.key].data, action.property)
-				: null;
-
-		if (newEditedModelData && !_.isEmpty(newEditedModelData)) {
 			return {
 				...state,
-				editedByKey: {
-					...state.editedByKey,
-					[action.key]: {
-						...state.editedByKey[action.key],
-						data: newEditedModelData,
-					},
-				},
+				editedByKey: _isEmpty(updatedEditedByKey) ? null : updatedEditedByKey,
 			};
-		} else if (newEditedModelData && _.isEmpty(newEditedModelData)) {
-			let editedModels = {...state.editedByKey};
-			delete editedModels[action.key];
-
-			return {...state, editedByKey: editedModels};
 		} else {
 			return state;
 		}
 	},
 
-	// todo test
+	/**
+	 * Remove edited active model
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @return {Object} updated state
+	 */
+	removeEditedActive: (state, action) => {
+		if (state.activeKey && state.editedByKey) {
+			const updatedEditedByKey = _omit(state.editedByKey, state.activeKey);
+
+			return {
+				...state,
+				editedByKey: _isEmpty(updatedEditedByKey) ? null : updatedEditedByKey,
+			};
+		} else {
+			return state;
+		}
+	},
+
+	/**
+	 * Remove edited model property
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.key {Array} edited model key
+	 * @param action.property {Array} edited model property
+	 * @return {Object} updated state
+	 */
+	removeEditedProperty: (state, action) => {
+		if (action.key && state.editedByKey) {
+			const editedModel = state.editedByKey[action.key];
+			const editedModelData = editedModel?.data;
+			if (editedModelData?.hasOwnProperty(action.property)) {
+				const {
+					[action.property]: propertyToRemove,
+					...restProps
+				} = editedModelData;
+
+				if (_isEmpty(restProps)) {
+					let editedModels = {...state.editedByKey};
+					delete editedModels[action.key];
+					return {
+						...state,
+						editedByKey: _isEmpty(editedModels) ? null : editedModels,
+					};
+				} else {
+					return {
+						...state,
+						editedByKey: {
+							...state.editedByKey,
+							[action.key]: {
+								...state.editedByKey[action.key],
+								data: restProps,
+							},
+						},
+					};
+				}
+			} else {
+				return state;
+			}
+		} else {
+			return state;
+		}
+	},
+
+	// todo test && clarify
 	removeEditedPropertyValues: (state, action) => {
 		const dataTypeSingular = action.dataType.slice(0, -1);
 		const keyProperty = dataTypeSingular + 'Key';
 		const keysProperty = dataTypeSingular + 'Keys';
 
 		let editedData = {...state.editedByKey};
-		if (!_.isEmpty(editedData)) {
+		if (!_isEmpty(editedData)) {
 			let updatedEdited = {};
 			let propertyUpdated = false;
-			_.forIn(editedData, (model, key) => {
+			_forIn(editedData, (model, key) => {
 				if (model.data && model.data[keyProperty]) {
-					let keyExists = _.includes(action.keys, model.data[keyProperty]);
+					let keyExists = _includes(action.keys, model.data[keyProperty]);
 					if (keyExists) {
 						updatedEdited[key] = {
 							...model,
@@ -385,7 +430,7 @@ export default {
 						updatedEdited[key] = model;
 					}
 				} else if (model.data && model.data[keysProperty]) {
-					let updatedKeys = _.difference(model.data[keysProperty], action.keys);
+					let updatedKeys = _difference(model.data[keysProperty], action.keys);
 					if (updatedKeys.length !== model.data[keysProperty]) {
 						updatedEdited[key] = {
 							...model,
@@ -405,17 +450,38 @@ export default {
 		}
 	},
 
+	/**
+	 * Set active key
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.key {string|null} key
+	 * @return {Object} state
+	 */
 	setActive: (state, action) => {
 		return {...state, activeKey: action.key, activeKeys: null};
 	},
 
+	/**
+	 * Set active keys
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.keys {array|null} keys
+	 * @return {Object} state
+	 */
 	setActiveMultiple: (state, action) => {
 		return {...state, activeKeys: action.keys, activeKey: null};
 	},
 
+	/**
+	 * Add or update edited models
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.data {Object} update
+	 * @return {Object} updated state
+	 */
 	updateEdited: (state, action) => {
-		let newEditedData = {...state.editedByKey};
-		if (action.data && action.data.length) {
+		if (action.data?.length) {
+			let newEditedData = {...state.editedByKey};
 			action.data.forEach(model => {
 				if (newEditedData[model.key]) {
 					newEditedData[model.key] = {
@@ -429,12 +495,14 @@ export default {
 					newEditedData[model.key] = model;
 				}
 			});
+			return {...state, editedByKey: newEditedData};
+		} else {
+			return state;
 		}
-		return {...state, editedByKey: newEditedData};
 	},
 
 	clearIndexes: (state, action) => {
-		let indexes = _.map(state.indexes, index => {
+		let indexes = _map(state.indexes, index => {
 			return {
 				...index,
 				index: null,
@@ -486,7 +554,7 @@ export default {
 	dataSetOutdated: (state, action) => {
 		if (state.byKey) {
 			let byKey = {};
-			_.each(state.byKey, (model, key) => {
+			_each(state.byKey, (model, key) => {
 				byKey[key] = {
 					...model,
 					outdated: true,
@@ -504,7 +572,7 @@ export default {
 	cleanupOnLogout: (state, action) => {
 		if (state.byKey) {
 			let byKey = {};
-			_.each(state.byKey, (model, key) => {
+			_each(state.byKey, (model, key) => {
 				if (model.permissions && model.permissions.guest.get) {
 					byKey[key] = {
 						...model,

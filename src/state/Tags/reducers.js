@@ -15,6 +15,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.remove(state, action);
 		case ActionTypes.TAGS.EDITED.REMOVE:
 			return common.removeEdited(state, action);
+		case ActionTypes.TAGS.EDITED.REMOVE_ACTIVE:
+			return common.removeEditedActive(state, action);
 		case ActionTypes.TAGS.EDITED.REMOVE_PROPERTY:
 			return common.removeEditedProperty(state, action);
 		case ActionTypes.TAGS.EDITED.UPDATE:
