@@ -49,6 +49,7 @@ export const expectedSpecificMetadataActionTypes = [
 	'SET_ACTIVE_KEY',
 	'SET_ACTIVE_KEYS',
 	'USE.INDEXED.CLEAR',
+	'USE.INDEXED.CLEAR_ALL',
 	'USE.INDEXED.REGISTER',
 	'USE.KEYS.CLEAR',
 	'USE.KEYS.REGISTER',

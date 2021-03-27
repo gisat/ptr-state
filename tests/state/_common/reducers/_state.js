@@ -16,7 +16,10 @@ export const CommonReducersState = {
 		},
 	},
 	inUse: {
-		keys: [],
+		keys: {
+			ComponentA: ['key1', 'key2'],
+			ComponentB: ['key3'],
+		},
 		indexes: {
 			ComponentA: [
 				{
@@ -90,4 +93,54 @@ export const CommonReducersState = {
 			],
 		},
 	},
+	indexes: [
+		{
+			filter: {
+				scopeKey: 'scope1',
+			},
+			order: null,
+			count: 4,
+			index: {1: 'A', 2: 'C', 3: 'B'},
+		},
+		{
+			filter: {
+				scopeKey: 'scope1',
+			},
+			order: [['nameInternal', 'ascending']],
+			count: 3,
+			index: {1: 'A', 2: 'B', 3: 'C'},
+		},
+		{
+			filter: {
+				scopeKey: 'scope2',
+			},
+			order: null,
+			count: 6,
+			index: {1: 'A', 2: 'B', 3: 'C', 4: true, 5: true, 6: true},
+		},
+		{
+			filter: {
+				scopeKey: 'scope3',
+			},
+			order: null,
+			count: 6,
+			index: {4: 'E', 5: 'F', 6: 'G'},
+		},
+		{
+			filter: {
+				scopeKey: 'scope4',
+			},
+			order: null,
+			count: 10,
+			index: {},
+		},
+		{
+			filter: {
+				scopeKey: 'scope5',
+			},
+			order: null,
+			count: 6,
+			index: {2: true, 3: 'C', 4: true},
+		},
+	],
 };

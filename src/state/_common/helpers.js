@@ -469,6 +469,24 @@ function mergeIntervals(intervals) {
 	);
 }
 
+/**
+ * Add keys to index
+ * @param index {Object}
+ * @param models {Object} Collection of models
+ * @param start {Number}
+ * @return {Object} index
+ */
+function registerModelsToIndex(index, models, start) {
+	if (models?.length && index && start > -1) {
+		models.forEach((model, i) => {
+			index[start + i] = model.key;
+		});
+		return index;
+	} else {
+		return index;
+	}
+}
+
 export default {
 	convertModifiersToRequestFriendlyFormat,
 	removeIndex,
@@ -480,6 +498,7 @@ export default {
 	mergeMetadataKeys,
 	isCorrespondingIndex,
 	itemFitFilter,
+	registerModelsToIndex,
 
 	// intervals
 	areIntervalsOverlappedOrSubsequent,

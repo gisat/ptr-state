@@ -598,6 +598,7 @@ export default utils.deepKeyMirror({
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {

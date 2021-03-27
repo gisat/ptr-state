@@ -33,10 +33,14 @@ export default (state = INITIAL_STATE, action) => {
 			return common.setActiveMultiple(state, action);
 		case ActionTypes.TAGS.USE.KEYS.CLEAR:
 			return common.useKeysClear(state, action);
+		case ActionTypes.TAGS.USE.KEYS.REGISTER:
+			return common.useKeysRegister(state, action);
 		case ActionTypes.TAGS.USE.INDEXED.REGISTER:
 			return common.registerUseIndexed(state, action);
 		case ActionTypes.TAGS.USE.INDEXED.CLEAR:
 			return common.useIndexedClear(state, action);
+		case ActionTypes.TAGS.USE.INDEXED.CLEAR_ALL:
+			return common.useIndexedClearAll(state, action);
 
 		case ActionTypes.COMMON.DATA.SET_OUTDATED:
 			return common.dataSetOutdated(state, action);

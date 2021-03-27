@@ -1,4 +1,12 @@
-import _, {isEqual as _isEqual, isNumber as _isNumber} from 'lodash';
+import _, {
+	find as _find,
+	findIndex as _findIndex,
+	isEmpty as _isEmpty,
+	isEqual as _isEqual,
+	isNumber as _isNumber,
+	omit as _omit,
+	union as _union,
+} from 'lodash';
 import commonHelpers from './helpers';
 
 export const DEFAULT_INITIAL_STATE = {
@@ -58,7 +66,6 @@ export default {
 		}
 	},
 
-	// TODO clarify
 	/**
 	 * Add new or updated existing index
 	 * @param state {Object}
@@ -74,56 +81,60 @@ export default {
 	 */
 	addIndex: (state, action) => {
 		if (action?.data) {
-			let indexes = [];
-			let selectedIndex = {};
+			const updatedIndexes = state.indexes ? [...state.indexes] : [];
+			const indexOfIndex = updatedIndexes.length
+				? _findIndex(state.indexes, index => {
+						return (
+							_isEqual(index.filter, action.filter) &&
+							_isEqual(index.order, action.order)
+						);
+				  })
+				: -1;
 
-			if (state.indexes) {
-				state.indexes.forEach(index => {
-					if (
-						_isEqual(index.filter, action.filter) &&
-						_isEqual(index.order, action.order)
-					) {
-						selectedIndex = index;
-					} else {
-						indexes.push(index);
-					}
-				});
-			}
+			// update existing index
+			if (indexOfIndex > -1) {
+				const updatedIndex = {...updatedIndexes[indexOfIndex]};
 
-			let index = {
-				...(selectedIndex?.index && {...selectedIndex.index}),
-			};
-			if (action.data.length) {
-				action.data.forEach((model, i) => {
-					index[action.start + i] = model.key;
-				});
-			}
+				// register models to index
+				const updatedIndexIndex = commonHelpers.registerModelsToIndex(
+					{...updatedIndex.index},
+					action.data,
+					action.start
+				);
 
-			//
-			// Remove loading indicator if data does not come
-			//
-			if (_isNumber(action.limit)) {
-				if (!index) {
-					index = {};
-				} else {
-					for (let i = action.start; i < action.start + action.limit; i++) {
-						if (index[i] === true) {
-							delete index[i];
+				// Remove loading indicator if data does not come
+				if (action.length) {
+					for (let i = action.start; i < action.start + action.length; i++) {
+						if (updatedIndexIndex[i] === true) {
+							delete updatedIndexIndex[i];
 						}
 					}
 				}
+
+				updatedIndexes[indexOfIndex] = {
+					...updatedIndex,
+					count: action.count || updatedIndex.count || null,
+					changedOn: action.changedOn || updatedIndex.changedOn || null,
+					index: updatedIndexIndex,
+				};
 			}
 
-			selectedIndex = {
-				filter: selectedIndex.filter || action.filter,
-				order: selectedIndex.order || action.order,
-				count: selectedIndex.count || action.count,
-				changedOn: action.changedOn,
-				index,
-			};
-			indexes.push(selectedIndex);
+			// add new index
+			else {
+				updatedIndexes.push({
+					filter: action.filter || null,
+					order: action.order || null,
+					count: action.count || null,
+					changedOn: action.changedOn || null,
+					index: commonHelpers.registerModelsToIndex(
+						{},
+						action.data,
+						action.start
+					),
+				});
+			}
 
-			return {...state, indexes: indexes};
+			return {...state, indexes: updatedIndexes};
 		} else {
 			return state;
 		}
@@ -153,7 +164,7 @@ export default {
 
 		let existingUse = false;
 		if (state.inUse.indexes && state.inUse.indexes[action.componentId]) {
-			existingUse = _.find(state.inUse.indexes[action.componentId], newUse);
+			existingUse = _find(state.inUse.indexes[action.componentId], newUse);
 		}
 
 		// add use if it doesn't already exist
@@ -176,79 +187,136 @@ export default {
 		}
 	},
 
+	/**
+	 * Clear the usage of indexed data
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.componentId {string}
+	 * @return {Object} updated state
+	 */
 	useIndexedClear: (state, action) => {
 		if (
-			state.inUse &&
-			state.inUse.indexes &&
-			state.inUse.indexes.hasOwnProperty(action.componentId)
+			action.componentId &&
+			state.inUse?.indexes?.hasOwnProperty(action.componentId)
 		) {
 			let indexes = {...state.inUse.indexes};
 			delete indexes[action.componentId];
 			return {
 				...state,
-				inUse: {...state.inUse, indexes: _.isEmpty(indexes) ? null : indexes},
+				inUse: {...state.inUse, indexes: _isEmpty(indexes) ? null : indexes},
 			};
 		} else {
-			// do not mutate if no index was changed
 			return state;
 		}
 	},
 
+	/**
+	 * Clear all usages of indexed data
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @return {Object} updated state
+	 */
 	useIndexedClearAll: (state, action) => {
-		if (state.inUse && state.inUse.indexes) {
+		if (state.inUse && state.inUse?.indexes) {
 			return {...state, inUse: {...state.inUse, indexes: null}};
 		} else {
-			// do not mutate if no index was changed
 			return state;
 		}
 	},
 
+	/**
+	 * Register the usage of a model with key
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.componentId {Object} string
+	 * @param action.keys {Array} list of keys
+	 * @return {Object} updated state
+	 */
 	useKeysRegister: (state, action) => {
-		return {
-			...state,
-			inUse: {
-				...state.inUse,
-				keys: {
-					...state.inUse.keys,
-					[action.componentId]:
-						state.inUse.keys && state.inUse.keys[action.componentId]
-							? _.union(state.inUse.keys[action.componentId], action.keys)
+		if (action.componentId && action.keys?.length) {
+			return {
+				...state,
+				inUse: {
+					...state.inUse,
+					keys: {
+						...state.inUse.keys,
+						[action.componentId]: state.inUse.keys?.[action.componentId]
+							? _union(state.inUse.keys[action.componentId], action.keys)
 							: action.keys,
+					},
 				},
-			},
-		};
+			};
+		} else {
+			return state;
+		}
 	},
 
+	/**
+	 * Clear the usage of models for component
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.componentId {string}
+	 * @return {Object} updated state
+	 */
 	useKeysClear: (state, action) => {
-		let keys = {...state.inUse.keys};
-		delete keys[action.componentId];
-
-		return {
-			...state,
-			inUse: {
-				...state.inUse,
-				keys: _.isEmpty(keys) ? null : keys,
-			},
-		};
-	},
-
-	markDeleted: (state, action) => {
-		if (state.byKey && state.byKey[action.key]) {
-			const byKey = {...state.byKey};
-			byKey[action.key].removed = true;
+		if (action.componentId) {
+			let keys = {...state.inUse.keys};
+			delete keys[action.componentId];
 
 			return {
 				...state,
-				byKey,
+				inUse: {
+					...state.inUse,
+					keys: _isEmpty(keys) ? null : keys,
+				},
 			};
 		} else {
 			return state;
 		}
 	},
 
+	/**
+	 * Mark model as deleted
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.key {string}
+	 * @return {Object} updated state
+	 */
+	markDeleted: (state, action) => {
+		if (action.key && state.byKey?.[action.key]) {
+			return {
+				...state,
+				byKey: {
+					...state.byKey,
+					[action.key]: {
+						...state.byKey[action.key],
+						removed: true,
+					},
+				},
+			};
+		} else {
+			return state;
+		}
+	},
+
+	/**
+	 * Remove models from byKey
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.keys {Array} list of model keys to remove
+	 * @return {Object} updated state
+	 */
 	remove: (state, action) => {
-		let newData = state.byKey ? _.omit(state.byKey, action.keys) : null;
-		return {...state, byKey: newData};
+		if (action.keys?.length && state.byKey) {
+			const updatedByKey = _omit(state.byKey, action.keys);
+
+			return {
+				...state,
+				byKey: _isEmpty(updatedByKey) ? null : updatedByKey,
+			};
+		} else {
+			return state;
+		}
 	},
 
 	removeEdited: (state, action) => {
