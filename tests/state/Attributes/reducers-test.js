@@ -297,7 +297,7 @@ describe('state/Attributes/reducers', function () {
 			{
 				name: 'empty',
 				state: {
-					indexes: [],
+					indexes: null,
 				},
 				action: {
 					type: 'ATTRIBUTES.INDEX.CLEAR_ALL',

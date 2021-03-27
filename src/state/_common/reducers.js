@@ -501,56 +501,79 @@ export default {
 		}
 	},
 
-	clearIndexes: (state, action) => {
-		let indexes = _map(state.indexes, index => {
-			return {
-				...index,
-				index: null,
-				count: null,
-				changedOn: null,
-				outdated: index.index,
-				outdatedCount: index.count,
-			};
-		});
-
-		return {
-			...state,
-			indexes: indexes.length ? indexes : null,
-		};
-	},
-
 	/**
-	 * Useful for invalidate data before refresh indexes
-	 * action.order
-	 * action.filter
-	 * */
-	clearIndex: (state, action) => {
-		if (state.indexes) {
-			const indexes = state.indexes.map(index => {
-				const correspondIndex = commonHelpers.isCorrespondingIndex(
-					index,
-					action.filter,
-					action.order
-				);
-				if (correspondIndex) {
-					index.outdated = index.index;
-					index.outdatedCount = index.count;
-					index.index = null;
-					index.count = null;
-					index.changedOn = null;
-				}
-				return index;
+	 * Set indexes as outdated
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @return {Object} updated state
+	 */
+	clearIndexes: (state, action) => {
+		if (state.indexes?.length) {
+			let indexes = _map(state.indexes, index => {
+				return {
+					...index,
+					index: null,
+					count: null,
+					changedOn: null,
+					outdated: index.index,
+					outdatedCount: index.count,
+				};
 			});
 
 			return {
 				...state,
-				indexes: [...indexes],
+				indexes,
 			};
 		} else {
 			return state;
 		}
 	},
 
+	/**
+	 * Useful for invalidate data before refresh indexes
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @param action.filter {Object}
+	 * @param action.order {Array}
+	 * @return {Object} updated state
+	 * */
+	clearIndex: (state, action) => {
+		if (state.indexes?.length) {
+			const indexes = [...state.indexes].map(index => {
+				const correspondIndex = commonHelpers.isCorrespondingIndex(
+					index,
+					action.filter,
+					action.order
+				);
+				if (correspondIndex) {
+					return {
+						...index,
+						outdated: index.index,
+						outdatedCount: index.count,
+						index: null,
+						count: null,
+						changedOn: null,
+					};
+				} else {
+					return index;
+				}
+			});
+
+			return {
+				...state,
+				indexes,
+			};
+		} else {
+			return state;
+		}
+	},
+
+	/**
+	 * Mark all models as outdated
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @return {Object}
+	 */
 	dataSetOutdated: (state, action) => {
 		if (state.byKey) {
 			let byKey = {};
@@ -569,11 +592,17 @@ export default {
 		}
 	},
 
+	/**
+	 * Cleanup on logout
+	 * @param state {Object}
+	 * @param action {Object}
+	 * @return {Object}
+	 */
 	cleanupOnLogout: (state, action) => {
 		if (state.byKey) {
 			let byKey = {};
 			_each(state.byKey, (model, key) => {
-				if (model.permissions && model.permissions.guest.get) {
+				if (model.permissions?.guest?.get) {
 					byKey[key] = {
 						...model,
 						permissions: {

@@ -33,6 +33,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.setActive(state, action);
 		case ActionTypes.TAGS.SET_ACTIVE_KEYS:
 			return common.setActiveMultiple(state, action);
+		case ActionTypes.TAGS.UPDATE_STORE:
+			return common.updateStore(state, action);
 		case ActionTypes.TAGS.USE.KEYS.CLEAR:
 			return common.useKeysClear(state, action);
 		case ActionTypes.TAGS.USE.KEYS.REGISTER:

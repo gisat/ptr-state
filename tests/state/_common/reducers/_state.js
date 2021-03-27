@@ -7,6 +7,13 @@ export const CommonReducersState = {
 				nameDisplay: 'Albi',
 				nameInternal: 'Albert',
 			},
+			permissions: {
+				guest: {
+					get: true,
+					update: true,
+					delete: true,
+				},
+			},
 		},
 		key2: {
 			key: 'key2',

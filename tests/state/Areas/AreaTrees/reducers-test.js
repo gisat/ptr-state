@@ -433,7 +433,7 @@ describe('state/Areas/AreaTrees/reducers', function () {
 			{
 				name: 'empty',
 				state: {
-					indexes: [],
+					indexes: null,
 				},
 				action: {type: 'AREAS.AREA_TREES.INDEX.CLEAR_ALL'},
 				expectedResult: {

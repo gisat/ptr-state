@@ -295,7 +295,7 @@ describe('state/Cases/reducers', function () {
 			{
 				name: 'empty',
 				state: {
-					indexes: [],
+					indexes: null,
 				},
 				action: {type: 'CASES.INDEX.CLEAR_ALL'},
 				expectedResult: {

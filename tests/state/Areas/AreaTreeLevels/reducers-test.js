@@ -437,7 +437,7 @@ describe('state/Areas/AreaTreeLevels/reducers', function () {
 				},
 				action: {type: 'AREAS.AREA_TREE_LEVELS.INDEX.CLEAR_ALL'},
 				expectedResult: {
-					indexes: null,
+					indexes: [],
 				},
 			},
 			{
