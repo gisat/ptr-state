@@ -3,7 +3,7 @@ import common from '../_common/reducers';
 
 import {DEFAULT_INITIAL_STATE} from '../_common/reducers';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	...DEFAULT_INITIAL_STATE,
 };
 
@@ -17,6 +17,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.remove(state, action);
 		case ActionTypes.ATTRIBUTES.EDITED.REMOVE:
 			return common.removeEdited(state, action);
+		case ActionTypes.ATTRIBUTES.EDITED.REMOVE_ACTIVE:
+			return common.removeEditedActive(state, action);
 		case ActionTypes.ATTRIBUTES.EDITED.REMOVE_PROPERTY:
 			return common.removeEditedProperty(state, action);
 		case ActionTypes.ATTRIBUTES.EDITED.UPDATE:
@@ -37,6 +39,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.updateStore(state, action);
 		case ActionTypes.ATTRIBUTES.USE.INDEXED.CLEAR:
 			return common.useIndexedClear(state, action);
+		case ActionTypes.ATTRIBUTES.USE.INDEXED.CLEAR_ALL:
+			return common.useIndexedClearAll(state, action);
 		case ActionTypes.ATTRIBUTES.USE.INDEXED.REGISTER:
 			return common.registerUseIndexed(state, action);
 		case ActionTypes.ATTRIBUTES.USE.KEYS.REGISTER:

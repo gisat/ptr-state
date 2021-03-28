@@ -90,6 +90,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -111,6 +112,7 @@ export default utils.deepKeyMirror({
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -127,6 +129,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -144,9 +147,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -163,6 +168,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -180,9 +186,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -280,6 +288,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -297,9 +306,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -383,6 +394,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -400,9 +412,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -419,6 +433,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -436,9 +451,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -455,6 +472,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -472,9 +490,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {

@@ -41,7 +41,7 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 		};
 
 		const output = reducers(state, action);
-		assert.equal(output, state);
+		assert.equal(output, state, `${actionTypes}`);
 	});
 
 	it('Should return the default state if no state given', function () {
@@ -50,7 +50,7 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 		};
 
 		const output = reducers(undefined, action);
-		assert.equal(output, state);
+		assert.equal(output, state, `${actionTypes}`);
 	});
 
 	actionTypes &&
@@ -75,7 +75,8 @@ function baseReducersMetadataTestSet(reducers, state, actionTypesPath) {
 	it('Should have defined expected action types', function () {
 		assert.includeMembers(
 			specificMetadataActionTypes,
-			expectedSpecificMetadataActionTypes
+			expectedSpecificMetadataActionTypes,
+			`${actionTypesPath}`
 		);
 	});
 }
