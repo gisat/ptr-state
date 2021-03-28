@@ -15,7 +15,7 @@ describe('state/Data/AttributeData/actions/receiveIndexedAttributeEndPoint', fun
 		const attributeDataFilter = {appKey: 'testKey'};
 		const order = null;
 		const changedOn = null;
-		const start = 0;
+		const start = 1;
 		const total = 1;
 
 		const action = actions.receiveIndexedAttributeEndPoint(
@@ -33,7 +33,7 @@ describe('state/Data/AttributeData/actions/receiveIndexedAttributeEndPoint', fun
 			},
 			order: null,
 			total: 1,
-			start: 0,
+			start: 1,
 			index: [18502],
 			data: {
 				'55f48ed1-ee67-47bd-a044-8985662ec29f': {

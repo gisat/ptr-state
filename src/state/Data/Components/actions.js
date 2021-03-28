@@ -47,7 +47,7 @@ function updateComponent(componentKey, update) {
  * Useful if no indexes are registered for relations and attribute data.
  * Function has two phases, it loads data and relations in first and determinate and loads what is missing in second phase.
  * @param {String} componentKey Related component
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {Number} start Position of first asked item after ordered.
@@ -94,6 +94,8 @@ function ensureDataAndRelations(
 				return;
 				throw response;
 			}
+
+			setState(getState());
 
 			const attributeDataIndex =
 				Select.data.components.getIndexForAttributeDataByComponentKey(
@@ -148,13 +150,14 @@ function ensureDataAndRelations(
  * Helper function. Usually second step in requesting data.
  * Load all relations and attributeData based on its remaining page counts.
  * @param {String} componentKey
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
- * @param {Array} remainingRelationsPages
- * @param {Array} remainingAttributeDataPages [0,1,2,3] || [2,5]
- * @param {Array} start
- * @param {Array} PAGE_SIZE
+ * @param {Array} remainingRelationsPages Missing page indexes of ralations defined in array. [0,1,2,3] || [2,5]
+ * @param {Array} remainingAttributeDataPages Missing page indexes of attributes defined in array. [0,1,2,3] || [2,5]
+ * @param {Array} start Starting position of first requested item. Defualt is 1.
+ * @param {Array} length Length of asked attributeData
+ * @param {Number} PAGE_SIZE How many attribute data items will be in one request.
  * @return {function} Return promise.
  */
 function loadMissingRelationsAndData(
@@ -291,7 +294,8 @@ const ensure = componentKey => {
 		let loadRelations = true;
 		let loadData = true;
 
-		const RELATIONS_PAGE_SIZE = getPageSize(state);
+		const localConfig = Select.app.getCompleteLocalConfiguration(state);
+		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
 
 		// Attribute data page size is same like app page size
 		// In case of need PAGE_SIZE could be modified here
@@ -452,8 +456,128 @@ const componentUseRegister = componentKey => {
 };
 
 /**
+ * Compose payload for request from given parameters
+ * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
+ * @param {Object} relationsPagination Pagination for relations. Example `{relations: true, limit:100, offset:0}`.
+ * @param {Object?} attributeDataPagination Pagination for attributeData. Example `{data: true, limit:100, offset:0}`.
+ * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
+ * @param {Array?} order Order object for attributes
+ * @returns {Object}
+ */
+const getPayload = (
+	commonFilter,
+	relationsPagination,
+	attributeDataPagination,
+	attributeDataFilterExtension,
+	order
+) => {
+	const {
+		attributeFilter,
+		dataSourceKeys,
+		featureKeys,
+		spatialFilter,
+	} = attributeDataFilterExtension;
+
+	const {
+		layerTemplateKey,
+		areaTreeLevelKey,
+		attributeKeys,
+		modifiers,
+	} = commonFilter;
+
+	// Create payload
+	const payload = {
+		modifiers,
+
+		// which layer you want
+		...(layerTemplateKey && {layerTemplateKey}),
+		...(areaTreeLevelKey && {areaTreeLevelKey}),
+
+		// which attributes you want
+		...(attributeKeys && {attributeKeys}),
+
+		// pagination for relations (& data sources)
+		// TODO add support for relations:false on BE
+		// ...(loadRelations && {relations: usedRelationsPagination}),
+		relations: relationsPagination,
+
+		data: {
+			...(attributeDataPagination && attributeDataPagination),
+
+			...(attributeFilter && {attributeFilter}),
+
+			attributeOrder: order || null,
+
+			// list of specific features you want
+			...(featureKeys && {featureKeys}),
+
+			// extent
+			...(spatialFilter && {spatialFilter}),
+
+			// use data source keys instead of LayerTemplateKey/AreaTreeLevelKey + modifiers
+			...(dataSourceKeys && {dataSourceKeys}),
+		},
+	};
+	return payload;
+};
+
+/**
+ * Process result into smaller actions that pass loaded data into store.
+ * @param {Object} result Result from BE
+ * @param {bool} loadRelations Wether BE should return relations
+ * @param {Object} relationsFilter Filter object with modifiers
+ * @param {Object?} relationsOrder Order object for relations
+ * @param {Object} attributeDataFilter Object contains values extended by commonFilter.
+ * @param {Array?} order Order object for attributes
+ * @param {Number} relationsLimit Numeric limitation for loading relations
+ * @returns
+ */
+const processResult = (
+	result,
+	loadRelations,
+	relationsFilter,
+	relationsOrder,
+	attributeDataFilter,
+	order,
+	relationsLimit
+) => {
+	return dispatch => {
+		if (result.attributeData || result.attributeRelationsDataSources) {
+			if (loadRelations) {
+				const changes = null;
+				dispatch(
+					attributeRelations.receiveIndexed(
+						result.attributeRelationsDataSources.attributeRelations,
+						relationsFilter,
+						relationsOrder,
+						result.attributeRelationsDataSources.offset + 1,
+						result.attributeRelationsDataSources.total,
+						changes,
+						relationsLimit
+					)
+				);
+			}
+
+			if (result.attributeData.attributeData) {
+				const changes = null;
+				dispatch(
+					attributeData.receiveIndexedAttributeEndPoint(
+						result.attributeData,
+						attributeDataFilter,
+						order,
+						result.attributeData.offset + 1,
+						result.attributeData.total,
+						changes
+					)
+				);
+			}
+		}
+	};
+};
+
+/**
  *
- * @param {Array?} order
+ * @param {Array?} order Order object for attributes
  * @param {Object} commonFilter Common filter object used as a relationsFilter and used in attributeDataFilter.
  * @param {Object} attributeDataFilterExtension Object contains values for extend commonFilter to create attributeDataFilter.
  * @param {bool} loadRelations Whether response should contain relations
@@ -474,20 +598,6 @@ function loadIndexedPage(
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = 'rest/attributeData/filtered';
 		const relationsOrder = null;
-
-		const {
-			layerTemplateKey,
-			areaTreeLevelKey,
-			attributeKeys,
-			modifiers,
-		} = commonFilter;
-
-		const {
-			attributeFilter,
-			dataSourceKeys,
-			featureKeys,
-			spatialFilter,
-		} = attributeDataFilterExtension;
 
 		const relationsFilter = {...commonFilter};
 		const attributeDataFilter = {
@@ -531,39 +641,13 @@ function loadIndexedPage(
 			usedAttributeDataPagination.data = false;
 		}
 
-		// Create payload
-		const payload = {
-			modifiers,
-
-			// which layer you want
-			...(layerTemplateKey && {layerTemplateKey}),
-			...(areaTreeLevelKey && {areaTreeLevelKey}),
-
-			// which attributes you want
-			...(attributeKeys && {attributeKeys}),
-
-			// pagination for relations (& data sources)
-			// TODO add support for relations:false on BE
-			// ...(loadRelations && {relations: usedRelationsPagination}),
-			relations: usedRelationsPagination,
-
-			data: {
-				...usedAttributeDataPagination,
-
-				...(attributeFilter && {attributeFilter}),
-
-				attributeOrder: order || null,
-
-				// list of specific features you want
-				...(featureKeys && {featureKeys}),
-
-				// extent
-				...(spatialFilter && {spatialFilter}),
-
-				// use data source keys instead of LayerTemplateKey/AreaTreeLevelKey + modifiers
-				...(dataSourceKeys && {dataSourceKeys}),
-			},
-		};
+		const payload = getPayload(
+			commonFilter,
+			usedRelationsPagination,
+			usedAttributeDataPagination,
+			attributeDataFilterExtension,
+			order
+		);
 
 		return request(localConfig, apiPath, 'POST', null, payload, undefined, null)
 			.then(result => {
@@ -571,34 +655,18 @@ function loadIndexedPage(
 					throw new Error(result.errors[dataType] || 'no data');
 				} else {
 					if (result.attributeData || result.attributeRelationsDataSources) {
-						if (loadRelations) {
-							const changes = null;
-							dispatch(
-								attributeRelations.receiveIndexed(
-									result.attributeRelationsDataSources.attributeRelations,
-									relationsFilter,
-									relationsOrder,
-									result.attributeRelationsDataSources.offset + 1,
-									result.attributeRelationsDataSources.total,
-									changes,
-									usedRelationsPagination.limit
-								)
-							);
-						}
-
-						if (result.attributeData.attributeData) {
-							const changes = null;
-							dispatch(
-								attributeData.receiveIndexedAttributeEndPoint(
-									result.attributeData,
-									attributeDataFilter,
-									order,
-									result.attributeData.offset + 1,
-									result.attributeData.total,
-									changes
-								)
-							);
-						}
+						const relationsLimit = usedRelationsPagination.limit;
+						dispatch(
+							processResult(
+								result,
+								loadRelations,
+								relationsFilter,
+								relationsOrder,
+								attributeDataFilter,
+								order,
+								relationsLimit
+							)
+						);
 						return result;
 					} else {
 						const error = new Error('no data');
@@ -656,8 +724,10 @@ export default {
 	ensure,
 	ensureDataAndRelations,
 	ensureWithFilterByActive,
+	getPayload,
 	loadIndexedPage,
 	loadMissingRelationsAndData,
+	processResult,
 	setAttributeKeys: actionSetAttributeKeys,
 	updateComponentsStateFromView,
 	updateComponent,
