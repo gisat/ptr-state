@@ -407,49 +407,6 @@ export default {
 		}
 	},
 
-	// TODO @vdubr clarify & test
-	removeEditedPropertyValues: (state, action) => {
-		const dataTypeSingular = action.dataType.slice(0, -1);
-		const keyProperty = dataTypeSingular + 'Key';
-		const keysProperty = dataTypeSingular + 'Keys';
-
-		let editedData = {...state.editedByKey};
-		if (!_isEmpty(editedData)) {
-			let updatedEdited = {};
-			let propertyUpdated = false;
-			_forIn(editedData, (model, key) => {
-				if (model.data && model.data[keyProperty]) {
-					let keyExists = _includes(action.keys, model.data[keyProperty]);
-					if (keyExists) {
-						updatedEdited[key] = {
-							...model,
-							data: {...model.data, [keyProperty]: null},
-						};
-						propertyUpdated = true;
-					} else {
-						updatedEdited[key] = model;
-					}
-				} else if (model.data && model.data[keysProperty]) {
-					let updatedKeys = _difference(model.data[keysProperty], action.keys);
-					if (updatedKeys.length !== model.data[keysProperty]) {
-						updatedEdited[key] = {
-							...model,
-							data: {...model.data, [keysProperty]: updatedKeys},
-						};
-						propertyUpdated = true;
-					} else {
-						updatedEdited[key] = model;
-					}
-				} else {
-					updatedEdited[key] = model;
-				}
-			});
-			return propertyUpdated ? {...state, editedByKey: updatedEdited} : state;
-		} else {
-			return state;
-		}
-	},
-
 	/**
 	 * Set active key
 	 * @param state {Object}
