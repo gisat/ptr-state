@@ -32,9 +32,7 @@ const getStateToSave = common.getStateToSave(getSubstate);
 const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 const getActiveScopeConfiguration = createSelector([getActive], scope => {
-	return scope && scope.data && scope.data.configuration
-		? scope.data.configuration
-		: null;
+	return scope?.data?.configuration || null;
 });
 
 export default {

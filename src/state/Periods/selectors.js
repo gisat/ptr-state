@@ -1,5 +1,5 @@
 import createCachedSelector from 're-reselect';
-import _ from 'lodash';
+import {isEmpty as _isEmpty, pickBy as _pickBy} from 'lodash';
 import moment from 'moment';
 
 import common from '../_common/selectors';
@@ -37,13 +37,21 @@ const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 /**
  * Both start and end time must be defined, otherwise all available periods are returned.
  */
+
+/**
+ * Get periods which are between defined bounds
+ * @param state {Object}
+ * @param start {string} moment-like time string
+ * @param end {string} moment-like time string
+ * @param {Array} Collection of models
+ */
 const getByFullPeriodAsObject = createCachedSelector(
 	[getAllAsObject, (state, start) => start, (state, start, end) => end],
 	(periods, start, end) => {
 		if (periods && start && end) {
-			return _.pickBy(periods, period => {
-				const periodStart = period.data && period.data.start;
-				const periodEnd = period.data && period.data.end;
+			const selectedPeriods = _pickBy(periods, period => {
+				const periodStart = period.data?.start;
+				const periodEnd = period.data?.end;
 
 				if (periodStart && periodEnd) {
 					return (
@@ -55,11 +63,13 @@ const getByFullPeriodAsObject = createCachedSelector(
 				} else if (periodEnd) {
 					return moment(periodEnd).isBetween(start, end, null, '[]');
 				} else {
-					return true;
+					return false;
 				}
 			});
+
+			return _isEmpty(selectedPeriods) ? null : selectedPeriods;
 		} else {
-			return periods;
+			return null;
 		}
 	}
 )((state, start, end) => `${start}_${end}`);

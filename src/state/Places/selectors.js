@@ -31,14 +31,6 @@ const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
 
 const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
-const getActiveView = createSelector([getActive], place => {
-	if (place && place.data && place.data.bbox) {
-		return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
-	} else {
-		return null;
-	}
-});
-
 export default {
 	getAll,
 	getAllAsObject,
@@ -46,7 +38,6 @@ export default {
 	getActiveKeys,
 	getActive,
 	getActiveModels,
-	getActiveView,
 
 	getByKey,
 	getByKeys,
