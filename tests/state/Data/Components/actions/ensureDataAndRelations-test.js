@@ -183,7 +183,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 
 			if (
 				_.isEqual(JSON.parse(options.body), {
-					modifiers: {applicationKey: {in: 'testKey'}},
+					modifiers: {applicationKey: 'testKey'},
 					relations: {
 						offset: 0,
 						limit: 2,
@@ -220,7 +220,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 
 			if (
 				_.isEqual(JSON.parse(options.body), {
-					modifiers: {applicationKey: {in: 'testKey'}},
+					modifiers: {applicationKey: 'testKey'},
 					relations: {
 						offset: 2,
 						limit: 2,
@@ -256,7 +256,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 			}
 			if (
 				_.isEqual(JSON.parse(options.body), {
-					modifiers: {applicationKey: {in: 'testKey'}},
+					modifiers: {applicationKey: 'testKey'},
 					relations: {
 						offset: 0,
 						limit: 0,
@@ -293,7 +293,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 
 			if (
 				_.isEqual(JSON.parse(options.body), {
-					modifiers: {applicationKey: {in: 'testKey'}},
+					modifiers: {applicationKey: 'testKey'},
 					relations: {
 						offset: 0,
 						limit: 0,
@@ -331,7 +331,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 
 		const componentKey = 'table';
 		const order = null;
-		const commonFilter = {modifiers: {applicationKey: {in: 'testKey'}}};
+		const commonFilter = {modifiers: {applicationKey: 'testKey'}};
 		const attributeDataFilterExtension = {
 			attributeFilter: {xxx: {in: [11]}},
 		};
@@ -366,15 +366,12 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			debugger;
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					order: null,
 					data: [
@@ -392,11 +389,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -431,7 +424,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 						{
@@ -447,26 +440,18 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 					],
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
 				},
 				{
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					order: null,
 					count: 4,
@@ -485,7 +470,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 						{
@@ -501,7 +486,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 					],
@@ -512,11 +497,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -530,7 +511,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 					data: {
 						'55f48ed1-ee67-47bd-a044-8985662ec29f': {
 							18500: '0',
-							18503: '1',
+							18501: '1',
 						},
 					},
 					changedOn: null,
@@ -538,11 +519,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					order: null,
 					data: [
@@ -560,11 +537,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -587,11 +560,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -614,11 +583,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.INDEX.ADD',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -650,7 +615,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 						{
@@ -666,26 +631,18 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 					],
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					type: 'DATA.ATTRIBUTE_RELATIONS.ADD',
 				},
 				{
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 					},
 					order: null,
 					count: 4,
@@ -704,7 +661,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 						{
@@ -720,7 +677,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 								attributeSetKey: null,
 								attributeKey: '528ac373-b82f-44cb-a883-4f3ef5b13d07',
 								areaTreeLevelKey: null,
-								applicationKey: null,
+								applicationKey: 'testKey',
 							},
 						},
 					],
@@ -731,11 +688,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -757,11 +710,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
@@ -783,11 +732,7 @@ describe('state/Data/Components/actions/ensureDataAndRelations', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
 					filter: {
-						modifiers: {
-							applicationKey: {
-								in: 'testKey',
-							},
-						},
+						modifiers: {applicationKey: 'testKey'},
 						attributeFilter: {
 							xxx: {
 								in: [11],
