@@ -80,6 +80,14 @@ const apply = (key, actions) => {
 						}
 					});
 
+					if (actions.data.components && data.state.data?.components) {
+						actionCreators.push(
+							actions.data.components.updateComponentsStateFromView(
+								data.state.data.components
+							)
+						);
+					}
+
 					if (actions.specific) {
 						_.each(actions.specific, (storeActions, key) => {
 							if (
