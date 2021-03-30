@@ -408,10 +408,10 @@ function removeMapFromSet(setKey, mapKey) {
  */
 function updateMapAndSetView(mapKey, update) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const set = Select.maps.getMapSetByMapKey(getState(), mapKey);
 		let forSet, forMap;
-
-		if (set && set.sync) {
+		const map = Select.maps.getMapByKey(getState(), mapKey);
+		if (set && set.sync && map) {
 			// pick key-value pairs that are synced for set
 			forSet = _.pickBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
@@ -420,7 +420,7 @@ function updateMapAndSetView(mapKey, update) {
 			forMap = _.omitBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
 			});
-		} else {
+		} else if (map) {
 			forMap = update;
 		}
 
