@@ -319,8 +319,15 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
  * @param styleKey {string}
  */
 function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
-	return dispatch => {
-		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			getState(),
+			mapKey,
+			layerKey
+		);
+		if (layer) {
+			dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+		}
 	};
 }
 
@@ -329,9 +336,13 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
  */
 function setMapSetActiveMapKey(mapKey) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const state = getState();
+		const set = Select.maps.getMapSetByMapKey(state, mapKey);
 		if (set) {
-			dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			const activeMapKey = Select.maps.getMapSetActiveMapKey(state, set.key);
+			if (activeMapKey !== mapKey) {
+				dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			}
 		}
 	};
 }
@@ -400,7 +411,7 @@ function removeMapFromSet(setKey, mapKey) {
 			if (activeMapKey === mapKey) {
 				// check map set map keys again & set first map as active
 				const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
-				if (mapSetMapKeys) {
+				if (!_isEmpty(mapSetMapKeys)) {
 					dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
 				}
 			}
@@ -451,7 +462,9 @@ function updateMapAndSetView(mapKey, update) {
 function updateSetView(setKey, update) {
 	return (dispatch, getState) => {
 		let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
-		dispatch(updateMapAndSetView(activeMapKey, update));
+		if (activeMapKey) {
+			dispatch(updateMapAndSetView(activeMapKey, update));
+		}
 	};
 }
 
@@ -588,12 +601,12 @@ export default {
 	mapSetUseRegister,
 	mapUseClear,
 	mapUseRegister,
-	refreshMapSetUse,
+	refreshMapSetUse, //T
 	removeMapFromSet,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
-	setMapSetBackgroundLayer,
+	setMapSetBackgroundLayer, //T
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
