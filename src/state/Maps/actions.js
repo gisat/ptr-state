@@ -488,8 +488,9 @@ function setMapViewport(mapKey, width, height) {
 				mapKey
 			);
 			if (
-				currentViewport &&
-				(currentViewport.width !== width || currentViewport.height !== height)
+				!currentViewport ||
+				currentViewport?.width !== width ||
+				currentViewport?.height !== height
 			) {
 				dispatch(actionSetMapViewport(mapKey, width, height));
 			}
