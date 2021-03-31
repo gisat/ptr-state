@@ -1,4 +1,10 @@
-import _, {isMatch as _isMatch} from 'lodash';
+import {
+	isMatch as _isMatch,
+	isNumber as _isNumber,
+	omitBy as _omitBy,
+	pickBy as _pickBy,
+	isEmpty as _isEmpty,
+} from 'lodash';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 
 import ActionTypes from '../../constants/ActionTypes';
@@ -313,8 +319,15 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
  * @param styleKey {string}
  */
 function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
-	return dispatch => {
-		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			getState(),
+			mapKey,
+			layerKey
+		);
+		if (layer) {
+			dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+		}
 	};
 }
 
@@ -323,9 +336,13 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
  */
 function setMapSetActiveMapKey(mapKey) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const state = getState();
+		const set = Select.maps.getMapSetByMapKey(state, mapKey);
 		if (set) {
-			dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			const activeMapKey = Select.maps.getMapSetActiveMapKey(state, set.key);
+			if (activeMapKey !== mapKey) {
+				dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			}
 		}
 	};
 }
@@ -394,7 +411,7 @@ function removeMapFromSet(setKey, mapKey) {
 			if (activeMapKey === mapKey) {
 				// check map set map keys again & set first map as active
 				const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
-				if (mapSetMapKeys) {
+				if (!_isEmpty(mapSetMapKeys)) {
 					dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
 				}
 			}
@@ -408,29 +425,29 @@ function removeMapFromSet(setKey, mapKey) {
  */
 function updateMapAndSetView(mapKey, update) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const set = Select.maps.getMapSetByMapKey(getState(), mapKey);
 		let forSet, forMap;
-
-		if (set && set.sync) {
+		const map = Select.maps.getMapByKey(getState(), mapKey);
+		if (set && set.sync && map) {
 			// pick key-value pairs that are synced for set
-			forSet = _.pickBy(update, (updateVal, updateKey) => {
+			forSet = _pickBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
 			});
 
-			forMap = _.omitBy(update, (updateVal, updateKey) => {
+			forMap = _omitBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
 			});
-		} else {
+		} else if (map) {
 			forMap = update;
 		}
 
-		if (forSet && !_.isEmpty(forSet)) {
+		if (forSet && !_isEmpty(forSet)) {
 			//check data integrity
 			forSet = mapUtils.view.ensureViewIntegrity(forSet); //TODO test
 			dispatch(actionUpdateSetView(set.key, forSet));
 		}
 
-		if (forMap && !_.isEmpty(forMap)) {
+		if (forMap && !_isEmpty(forMap)) {
 			//check data integrity
 			forMap = mapUtils.view.ensureViewIntegrity(forMap); //TODO test
 			dispatch(actionUpdateMapView(mapKey, forMap));
@@ -445,7 +462,9 @@ function updateMapAndSetView(mapKey, update) {
 function updateSetView(setKey, update) {
 	return (dispatch, getState) => {
 		let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
-		dispatch(updateMapAndSetView(activeMapKey, update));
+		if (activeMapKey) {
+			dispatch(updateMapAndSetView(activeMapKey, update));
+		}
 	};
 }
 
@@ -463,15 +482,14 @@ function updateStateFromView(data) {
 
 function setMapViewport(mapKey, width, height) {
 	return (dispatch, getState) => {
-		if ((mapKey, width, height)) {
+		if (mapKey && _isNumber(width) && _isNumber(height)) {
 			const currentViewport = Select.maps.getViewportByMapKey(
 				getState(),
 				mapKey
 			);
 			if (
-				!currentViewport ||
-				currentViewport.width !== width ||
-				currentViewport.height !== height
+				currentViewport &&
+				(currentViewport.width !== width || currentViewport.height !== height)
 			) {
 				dispatch(actionSetMapViewport(mapKey, width, height));
 			}
@@ -583,12 +601,12 @@ export default {
 	mapSetUseRegister,
 	mapUseClear,
 	mapUseRegister,
-	refreshMapSetUse,
+	refreshMapSetUse, //T
 	removeMapFromSet,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
-	setMapSetBackgroundLayer,
+	setMapSetBackgroundLayer, //T
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
