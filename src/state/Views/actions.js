@@ -116,11 +116,20 @@ const apply = (key, actions) => {
 	};
 };
 
+const applyAndSetActive = (key, actions) => {
+	return dispatch => {
+		return dispatch(apply(key, actions)).then(() => {
+			dispatch(setActiveKey(key));
+		});
+	};
+};
+
 // ============ export ===========
 
 export default {
 	add,
 	apply,
+	applyAndSetActive,
 	setActiveKey,
 	setActiveKeys,
 	create,

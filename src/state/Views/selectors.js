@@ -9,6 +9,7 @@ import scopesSelectors from '../Scopes/selectors';
 
 const getSubstate = state => state.views;
 
+const getActive = common.getActive(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getActiveKeys = common.getActiveKeys(getSubstate);
 
@@ -42,6 +43,7 @@ const getStateToSave = createSelector(
 );
 
 export default {
+	getActive,
 	getActiveKey,
 	getActiveKeys,
 	getByKeys,
