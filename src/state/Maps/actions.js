@@ -598,6 +598,7 @@ const actionMapUseRegister = mapKey => {
 // ============ export ===========
 export default {
 	ensureWithFilterByActive,
+	layerUse,
 	mapSetUseClear,
 	mapSetUseRegister,
 	mapUseClear,

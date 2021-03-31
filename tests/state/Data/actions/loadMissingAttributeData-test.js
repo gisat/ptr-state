@@ -123,25 +123,27 @@ describe('state/Data/actions/loadMissingAttributeData', function () {
 					apiBackendPath: 'backend',
 					requestPageSize: 1,
 				},
-				data: {
-					attributeData: {
-						indexes: [],
-					},
-					attributeRelations: {
-						indexes: [],
-					},
-					attributeDataSources: {
-						indexes: [],
-					},
-					spatialData: {
-						indexes: [],
-					},
-					spatialRelations: {
-						indexes: [],
-					},
-					spatialDataSources: {
-						indexes: [],
-					},
+			},
+			data: {
+				attributeData: {
+					byDataSourceKey: {},
+					indexes: [],
+				},
+				attributeRelations: {
+					indexes: [],
+				},
+				attributeDataSources: {
+					indexes: [],
+				},
+				spatialData: {
+					byDataSourceKey: {},
+					indexes: [],
+				},
+				spatialRelations: {
+					indexes: [],
+				},
+				spatialDataSources: {
+					indexes: [],
 				},
 			},
 		};
