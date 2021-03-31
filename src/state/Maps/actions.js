@@ -483,14 +483,14 @@ function updateStateFromView(data) {
 function setMapViewport(mapKey, width, height) {
 	return (dispatch, getState) => {
 		if (mapKey && _isNumber(width) && _isNumber(height)) {
-			const currentViewport = Select.maps.getViewportByMapKey(
-				getState(),
-				mapKey
-			);
+			const state = getState();
+			const existingMap = Select.maps.getMapByKey(state, mapKey);
+			const currentViewport = Select.maps.getViewportByMapKey(state, mapKey);
 			if (
-				!currentViewport ||
-				currentViewport?.width !== width ||
-				currentViewport?.height !== height
+				existingMap &&
+				(!currentViewport ||
+					currentViewport?.width !== width ||
+					currentViewport?.height !== height)
 			) {
 				dispatch(actionSetMapViewport(mapKey, width, height));
 			}
