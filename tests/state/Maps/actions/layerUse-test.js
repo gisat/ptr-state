@@ -160,6 +160,10 @@ describe('state/Maps/actions/layerUse', function () {
 			if (
 				_isEqual(options, {
 					body: JSON.stringify({
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 						relations: {
@@ -209,7 +213,7 @@ describe('state/Maps/actions/layerUse', function () {
 			styleKey: 'styleKey1', //cause styleKeyUse
 			key: 'layerKey1',
 			metadataModifiers: {
-				scope: 'scope1',
+				scopeKey: 'scope1',
 			},
 			layerTemplateKey: 'layerTemplateKey1',
 			areaTreeLevelKey: null,
@@ -239,6 +243,10 @@ describe('state/Maps/actions/layerUse', function () {
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					order: null,
@@ -254,6 +262,10 @@ describe('state/Maps/actions/layerUse', function () {
 				{
 					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -317,6 +329,10 @@ describe('state/Maps/actions/layerUse', function () {
 						},
 					],
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -324,6 +340,10 @@ describe('state/Maps/actions/layerUse', function () {
 				},
 				{
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -366,6 +386,10 @@ describe('state/Maps/actions/layerUse', function () {
 						},
 					],
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -373,6 +397,10 @@ describe('state/Maps/actions/layerUse', function () {
 				},
 				{
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -401,6 +429,10 @@ describe('state/Maps/actions/layerUse', function () {
 						18502: '27',
 					},
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 						styleKey: 'styleKey1',
 					},
@@ -433,12 +465,20 @@ describe('state/Maps/actions/layerUse', function () {
 						},
 					],
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					type: 'DATA.SPATIAL_RELATIONS.ADD',
 				},
 				{
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					order: null,
@@ -478,12 +518,20 @@ describe('state/Maps/actions/layerUse', function () {
 						},
 					],
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
 				},
 				{
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					order: null,
@@ -527,6 +575,10 @@ describe('state/Maps/actions/layerUse', function () {
 					},
 					level: '7',
 					filter: {
+						modifiers: {
+							scopeKey: 'scope1',
+							applicationKey: 'testApp',
+						},
 						layerTemplateKey: 'layerTemplateKey1',
 					},
 					order: null,
@@ -542,6 +594,133 @@ describe('state/Maps/actions/layerUse', function () {
 					changedOn: null,
 				},
 			]);
+		});
+	});
+
+	it('Load nothing, spatialDataSource is already loaded and is WMS typy', function () {
+		const storeHelpers = getStoreSet();
+		const reducers = combineReducers({
+			app: AppReducers,
+			data: combineReducers({
+				attributeData: AttributeDataReducer,
+				attributeRelations: AttributeRelationsReducer,
+				attributeDataSources: AttributeDataSourcesReducer,
+				spatialData: SpatialDataReducer,
+				spatialRelations: SpatialRelationsReducer,
+				spatialDataSources: SpatialDataSourcesReducer,
+			}),
+			maps: MapsReducers,
+			styles: StylesReducer,
+		});
+
+		const defaultState = {
+			app: {
+				key: 'testApp',
+				localConfiguration: {
+					apiBackendProtocol: 'http',
+					apiBackendHost: 'localhost',
+					apiBackendPath: 'backend',
+					requestPageSize: 1,
+				},
+			},
+			maps: {
+				inUse: {
+					sets: [],
+				},
+			},
+			data: {
+				attributeData: {
+					indexes: [],
+					byDataSourceKey: {},
+				},
+				attributeRelations: {
+					indexes: [],
+				},
+				attributeDataSources: {
+					indexes: [],
+				},
+				spatialData: {
+					indexes: [],
+					byDataSourceKey: {},
+				},
+				spatialRelations: {
+					indexes: [],
+				},
+				spatialDataSources: {
+					// XXX
+					byKey: {
+						'848e2559-936d-4262-a808-4c87aa60217d': {
+							key: '848e2559-936d-4262-a808-4c87aa60217d',
+							data: {
+								nameInternal: 'gadm36_deu_4',
+								attribution: null,
+								type: 'wms',
+								layerName: null,
+								tableName: 'gadm36_DEU_4',
+								fidColumnName: 'ogc_fid',
+								geometryColumnName: 'geom',
+							},
+						},
+					},
+					indexes: [
+						{
+							changedOn: null,
+							count: 1,
+							filter: {
+								layerTemplateKey: 'layerTemplateKey1',
+								modifiers: {
+									scopeKey: 'scope1',
+									applicationKey: 'testApp',
+								},
+							},
+							index: {1: '848e2559-936d-4262-a808-4c87aa60217d'},
+							order: null,
+						},
+					],
+				},
+			},
+			styles: {
+				indexes: [],
+				inUse: {
+					keys: [],
+				},
+			},
+		};
+
+		const store = createStore(reducers, defaultState);
+
+		setState(store.getState());
+		const getState = () => {
+			return store.getState();
+		};
+		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
+
+		const layerState = {
+			styleKey: 'styleKey1', //cause styleKeyUse
+			key: 'layerKey1',
+			metadataModifiers: {
+				scopeKey: 'scope1',
+			},
+			layerTemplateKey: 'layerTemplateKey1',
+			areaTreeLevelKey: null,
+			filterByActive: {
+				application: true,
+			},
+			options: {
+				attributeFilter: null,
+				dataSourceKeys: null,
+				featureKeys: null,
+			},
+		};
+
+		const spatialFilter = {
+			tiles: [['0', '0']],
+			level: 7,
+		};
+		dispatch(actions.layerUse(layerState, spatialFilter));
+
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), []);
 		});
 	});
 });

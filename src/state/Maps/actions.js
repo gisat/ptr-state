@@ -127,17 +127,6 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 function layerUse(layerState, spatialFilter) {
 	return (dispatch, getState) => {
 		const state = getState();
-		const styleKey = layerState.styleKey || null;
-
-		// TODO ensure style here for now
-		if (styleKey) {
-			dispatch(
-				StylesActions.useKeys(
-					[layerState.styleKey],
-					layerState.key + '_layerUse'
-				)
-			);
-		}
 
 		// modifiers defined by key
 		let metadataDefinedByKey = layerState.metadataModifiers
@@ -171,7 +160,6 @@ function layerUse(layerState, spatialFilter) {
 		const {
 			areaTreeLevelKey,
 			layerTemplateKey,
-			applicationKey,
 			...modifiers
 		} = mergedMetadataKeys;
 
@@ -210,6 +198,18 @@ function layerUse(layerState, spatialFilter) {
 				if (spatialDataSources && !sdsContainsVector) {
 					return;
 				}
+			}
+
+			const styleKey = layerState.styleKey || null;
+
+			// TODO ensure style here for now
+			if (styleKey) {
+				dispatch(
+					StylesActions.useKeys(
+						[layerState.styleKey],
+						layerState.key + '_layerUse'
+					)
+				);
 			}
 
 			const attributeDataFilterExtension = {
