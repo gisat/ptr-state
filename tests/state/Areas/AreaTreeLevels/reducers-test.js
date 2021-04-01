@@ -8,13 +8,13 @@ describe('state/Areas/AreaTreeLevels/reducers', function () {
 				name: 'no data',
 				state: {byKey: null},
 				action: {type: 'AREAS.AREA_TREE_LEVELS.ADD'},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'empty data',
 				state: {byKey: null},
 				action: {type: 'AREAS.AREA_TREE_LEVELS.ADD', data: []},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'some data',
@@ -61,7 +61,7 @@ describe('state/Areas/AreaTreeLevels/reducers', function () {
 					byKey: null,
 				},
 				action: {type: 'AREAS.AREA_TREE_LEVELS.ADD_UNRECEIVED'},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'empty keys',
@@ -70,7 +70,7 @@ describe('state/Areas/AreaTreeLevels/reducers', function () {
 					type: 'AREAS.AREA_TREE_LEVELS.ADD_UNRECEIVED',
 					keys: [],
 				},
-				expectedResult: {byKey: {}},
+				expectedResult: {byKey: null},
 			},
 			{
 				name: 'some keys',
@@ -437,7 +437,7 @@ describe('state/Areas/AreaTreeLevels/reducers', function () {
 				},
 				action: {type: 'AREAS.AREA_TREE_LEVELS.INDEX.CLEAR_ALL'},
 				expectedResult: {
-					indexes: null,
+					indexes: [],
 				},
 			},
 			{

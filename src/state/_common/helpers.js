@@ -1,5 +1,15 @@
 import createCachedSelector from 're-reselect';
-import _ from 'lodash';
+import {
+	find as _find,
+	head as _head,
+	isEqual as _isEqual,
+	isEmpty as _isEmpty,
+	isNumber as _isNumber,
+	isObject as _isObject,
+	reduce as _reduce,
+	sortBy as _sortBy,
+	tail as _tail,
+} from 'lodash';
 
 /**
  * Return index for given filter and order
@@ -15,7 +25,7 @@ const getIndex = createCachedSelector(
 	],
 	(indexes, filter, order) => {
 		if (indexes) {
-			const index = _.find(indexes, index =>
+			const index = _find(indexes, index =>
 				isCorrespondingIndex(index, filter, order)
 			);
 			return index ? index : null;
@@ -27,12 +37,12 @@ const getIndex = createCachedSelector(
 	return `${JSON.stringify(filter)}${JSON.stringify(order)}`;
 });
 
-// TODO check the usage if it makes sense
+// TODO @vdubr please check the usage if it makes sense
 function getUniqueIndexes(indexes) {
-	if (!_.isEmpty(indexes)) {
+	if (!_isEmpty(indexes)) {
 		return indexes.reduce((uniqueIndexes, index) => {
 			if (
-				_.find(
+				_find(
 					uniqueIndexes,
 					i => i && isCorrespondingIndex(index, i.filter, i.order)
 				)
@@ -56,8 +66,8 @@ function getUniqueIndexes(indexes) {
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	if (indexes && !_.isEmpty(indexes)) {
-		const clearedIndexes = _.reduce(
+	if (indexes && !_isEmpty(indexes)) {
+		const clearedIndexes = _reduce(
 			indexes,
 			(acc, index) => {
 				const indexToBeCleared = isCorrespondingIndex(index, filter, order);
@@ -104,7 +114,7 @@ function getUpdatedIndexes(
 
 	if (state[indexesPath]) {
 		state[indexesPath].forEach(index => {
-			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)) {
+			if (_isEqual(index.filter, filter) && _isEqual(index.order, order)) {
 				selectedIndex = index;
 			} else {
 				indexes.push(index);
@@ -184,11 +194,12 @@ function getUpdatedByDataSourceKey(currentByDataSourceKey, update = {}) {
  */
 function isCorrespondingIndex(index, filter, order) {
 	return (
-		_.isEqual(index.filter || null, filter || null) &&
-		_.isEqual(index.order || null, order || null)
+		_isEqual(index.filter || null, filter || null) &&
+		_isEqual(index.order || null, order || null)
 	);
 }
 
+// TODO @vdubr please help with comments & proper testing
 function itemFitFilter(filter, item) {
 	// null filter fit
 	if (filter === null) {
@@ -212,7 +223,7 @@ function itemFitFilter(filter, item) {
 			// "column2": {
 			// 	"like": "hleda se podobnost, castecny vyskyt"
 			// },
-			if (_.isObject(value) && value['like']) {
+			if (_isObject(value) && value['like']) {
 				//now we dont deal like filter, refrest indexes
 				return true;
 			}
@@ -220,14 +231,14 @@ function itemFitFilter(filter, item) {
 			// "column3": {
 			// 	"in": ["existuje", "v", "poli", "prvku"]
 			// },
-			if (_.isObject(value) && value['in']) {
+			if (_isObject(value) && value['in']) {
 				return value.in.includes(item.data[key]);
 			}
 
 			// "column4": {
 			// 	"notin": ["neexistuje", "v", "poli", "prvku"]
 			// }
-			if (_.isObject(value) && value['notin']) {
+			if (_isObject(value) && value['notin']) {
 				return !value.notin.includes(item.data[key]);
 			}
 		}
@@ -311,7 +322,7 @@ function mergeFilters(activeKeys, filterByActive, filter) {
 		}
 
 		const finalFilter = {...activeKeysFilter, ...filter};
-		return _.isEmpty(finalFilter) ? null : finalFilter;
+		return _isEmpty(finalFilter) ? null : finalFilter;
 	} else {
 		return filter;
 	}
@@ -371,9 +382,112 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 			modifiersForRequest.applicationKey = modifiers.applicationKey;
 		}
 
-		return !_.isEmpty(modifiersForRequest) ? modifiersForRequest : null;
+		return !_isEmpty(modifiersForRequest) ? modifiersForRequest : null;
 	} else {
 		return null;
+	}
+}
+
+/**
+ * Check if given input is natural number
+ * @param input
+ * @return {boolean}
+ */
+function isNaturalNumber(input) {
+	return _isNumber(input) && input > 0 && input % 1 === 0;
+}
+
+/**
+ * @param interval {Object}
+ * @return {boolean}
+ */
+function isInterval(interval) {
+	return isNaturalNumber(interval?.start) && isNaturalNumber(interval?.length);
+}
+
+/**
+ * Return only intervals which really are intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getValidIntervals(intervals) {
+	return intervals.filter(interval => isInterval(interval));
+}
+
+/**
+ * Return sorted intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getSortedValidIntervals(intervals) {
+	return _sortBy(getValidIntervals(intervals), ['start', 'length']);
+}
+
+/**
+ * @param earlier {Object} interval
+ * @param later {Object} interval
+ * @return {boolean}
+ */
+function areIntervalsOverlappedOrSubsequent(earlier, later) {
+	if (isInterval(earlier) && isInterval(later)) {
+		return later.start <= earlier.start + earlier.length;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Merge relevant intervals together
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function mergeIntervals(intervals) {
+	const sortedIntervals = getSortedValidIntervals(intervals);
+	if (sortedIntervals.length === 0) {
+		return null;
+	}
+
+	//merge intervals
+	return _tail(sortedIntervals).reduce(
+		(mergedIntervals, interval) => {
+			const last = mergedIntervals.pop();
+			if (areIntervalsOverlappedOrSubsequent(last, interval)) {
+				//merge last & current
+				const end = Math.max(
+					last.start + last.length,
+					interval.start + interval.length
+				);
+				return [
+					...mergedIntervals,
+					{
+						start: last.start,
+						length: end - last.start,
+					},
+				];
+			} else {
+				//add both
+				return [...mergedIntervals, last, interval];
+			}
+		},
+		[_head(sortedIntervals)]
+	);
+}
+
+/**
+ * Add keys to index
+ * @param index {Object}
+ * @param models {Object} Collection of models
+ * @param start {Number}
+ * @return {Object} index
+ */
+function registerModelsToIndex(index, models, start) {
+	if (models?.length && index && start > -1) {
+		models.forEach((model, i) => {
+			index[start + i] = model.key;
+		});
+		return index;
+	} else {
+		return index;
 	}
 }
 
@@ -388,4 +502,13 @@ export default {
 	mergeMetadataKeys,
 	isCorrespondingIndex,
 	itemFitFilter,
+	registerModelsToIndex,
+
+	// intervals
+	areIntervalsOverlappedOrSubsequent,
+	isInterval,
+	isNaturalNumber,
+	getValidIntervals,
+	getSortedValidIntervals,
+	mergeIntervals,
 };

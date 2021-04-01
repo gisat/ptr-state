@@ -1,52 +1,65 @@
 import {createSelector} from 'reselect';
-import _ from 'lodash';
-
-import common from '../_common/selectors';
-import ScopesSelectors from '../Scopes/selectors';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
+import common from '../_common/selectors';
 
 const getSubstate = state => state.places;
 
 const getAll = common.getAll(getSubstate);
 const getAllAsObject = common.getAllAsObject(getSubstate);
-const getAllForActiveScope = common.getAllForActiveScope(getSubstate);
 const getActiveKey = common.getActiveKey(getSubstate);
 const getActiveKeys = common.getActiveKeys(getSubstate);
 const getActive = common.getActive(getSubstate);
-const getActivePlaces = common.getActiveModels(getSubstate);
+const getActiveModels = common.getActiveModels(getSubstate);
+const getByKey = common.getByKey(getSubstate);
+const getByKeys = common.getByKeys(getSubstate);
+const getByKeysAsObject = common.getByKeysAsObject(getSubstate);
 
 const getDataByKey = common.getDataByKey(getSubstate);
 const getDeletePermissionByKey = common.getDeletePermissionByKey(getSubstate);
 
+const getEditedActive = common.getEditedActive(getSubstate);
+const getEditedAll = common.getEditedAll(getSubstate);
+const getEditedAllAsObject = common.getEditedAllAsObject(getSubstate);
+const getEditedByKey = common.getEditedByKey(getSubstate);
 const getEditedDataByKey = common.getEditedDataByKey(getSubstate);
-const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getEditedKeys = common.getEditedKeys(getSubstate);
 
-const getActiveView = createSelector([getActive], place => {
-	if (place && place.data && place.data.bbox) {
-		return mapUtils.view.getViewFromBoundingBox(place.data.bbox, true);
-	} else {
-		return null;
-	}
-});
+const getIndexed = common.getIndexed(getSubstate);
+const getStateToSave = common.getStateToSave(getSubstate);
+const getUpdatePermissionByKey = common.getUpdatePermissionByKey(getSubstate);
+const getUsedKeysForComponent = common.getUsedKeysForComponent(getSubstate);
+
+const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 
 export default {
-	getPlaces: getAll,
 	getAll,
 	getAllAsObject,
-	getAllForActiveScope,
 	getActiveKey,
 	getActiveKeys,
 	getActive,
-	getActivePlaces,
-	getActiveView,
+	getActiveModels,
 
-	getByKey: common.getByKey(getSubstate),
+	getByKey,
+	getByKeys,
+	getByKeysAsObject,
 
 	getDataByKey,
 	getDeletePermissionByKey,
 
+	getEditedActive,
+	getEditedAll,
+	getEditedAllAsObject,
+	getEditedByKey,
 	getEditedDataByKey,
-	getIndexed: common.getIndexed(getSubstate),
-	getUpdatePermissionByKey,
+	getEditedKeys,
+
+	getIndexed,
+
+	getStateToSave,
 	getSubstate,
+
+	getUpdatePermissionByKey,
+	getUsedKeysForComponent,
+
+	haveAllKeysRegisteredUse,
 };

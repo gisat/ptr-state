@@ -188,5 +188,9 @@ describe('state/_common/helpers', function () {
 		it('return same instance of indexes', function () {
 			assert.equal(helpers.removeIndex(indexes, {}, []), indexes);
 		});
+
+		it('return empty array if indexes are empty', function () {
+			assert.deepStrictEqual(helpers.removeIndex([], {}, []), []);
+		});
 	});
 });

@@ -269,126 +269,132 @@ const ensure = componentKey => {
 			state,
 			componentKey
 		);
-		const {attributeOrder: order = null, start = 1, length} = componentState;
 
-		const attributeDataFilterExtension = Select.data.components.getAttributeDataFilterExtensionByComponentKey(
-			componentKey
-		);
+		if (componentState) {
+			const {attributeOrder: order = null, start = 1, length} = componentState;
 
-		const commonFilter = Select.data.components.getCommonFilterByComponentKey(
-			componentKey
-		);
-
-		const relationsFilter = {
-			...commonFilter,
-		};
-
-		const attributeDataIndex =
-			Select.data.components.getIndexForAttributeDataByComponentKey(
+			const attributeDataFilterExtension = Select.data.components.getAttributeDataFilterExtensionByComponentKey(
 				componentKey
-			) || [];
-
-		const attributeRelationsIndex =
-			Select.data.attributeRelations.getIndex(state, relationsFilter) || [];
-
-		let loadRelations = true;
-		let loadData = true;
-
-		const localConfig = Select.app.getCompleteLocalConfiguration(state);
-		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
-
-		// Attribute data page size is same like app page size
-		// In case of need PAGE_SIZE could be modified here
-		const PAGE_SIZE = RELATIONS_PAGE_SIZE;
-
-		let relationsPagination = getPagination(0, 1, RELATIONS_PAGE_SIZE);
-		let attributePagination = getPagination(0, start, PAGE_SIZE, length);
-
-		let missingRelationsPages, missingAttributesPages;
-		// Relations index exist
-		// find if all required relations are loaded
-		if (!_.isEmpty(attributeDataIndex)) {
-			missingRelationsPages = getMissingPages(
-				attributeRelationsIndex,
-				RELATIONS_PAGE_SIZE,
-				1,
-				null
 			);
-			relationsPagination = getPagination(
-				missingRelationsPages[0] || 0,
-				0,
-				RELATIONS_PAGE_SIZE
+
+			const commonFilter = Select.data.components.getCommonFilterByComponentKey(
+				componentKey
 			);
-			if (missingRelationsPages.length > 0) {
-				loadRelations = true;
-			} else {
-				loadRelations = false;
+
+			const relationsFilter = {
+				...commonFilter,
+			};
+
+			const attributeDataIndex =
+				Select.data.components.getIndexForAttributeDataByComponentKey(
+					componentKey
+				) || [];
+
+			const attributeRelationsIndex =
+				Select.data.attributeRelations.getIndex(state, relationsFilter) || [];
+
+			let loadRelations = true;
+			let loadData = true;
+
+			const localConfig = Select.app.getCompleteLocalConfiguration(state);
+			const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
+
+			// Attribute data page size is same like app page size
+			// In case of need PAGE_SIZE could be modified here
+			const PAGE_SIZE = RELATIONS_PAGE_SIZE;
+
+			let relationsPagination = getPagination(0, 1, RELATIONS_PAGE_SIZE);
+			let attributePagination = getPagination(0, start, PAGE_SIZE, length);
+
+			let missingRelationsPages, missingAttributesPages;
+			// Relations index exist
+			// find if all required relations are loaded
+			if (!_.isEmpty(attributeDataIndex)) {
+				missingRelationsPages = getMissingPages(
+					attributeRelationsIndex,
+					RELATIONS_PAGE_SIZE,
+					1,
+					null
+				);
+				relationsPagination = getPagination(
+					missingRelationsPages[0] || 0,
+					0,
+					RELATIONS_PAGE_SIZE
+				);
+				if (missingRelationsPages.length > 0) {
+					loadRelations = true;
+				} else {
+					loadRelations = false;
+				}
 			}
-		}
 
-		// Attribute data index exist
-		// find if all required data are loaded
-		if (!_.isEmpty(attributeDataIndex)) {
-			missingAttributesPages = getMissingPages(
-				attributeDataIndex,
-				PAGE_SIZE,
-				start,
-				length
-			);
-			attributePagination = getPagination(
-				missingAttributesPages[0] || 0,
-				start,
-				PAGE_SIZE,
-				length,
-				attributeDataIndex.count
-			);
-			if (missingAttributesPages.length > 0) {
-				loadData = true;
-			} else {
-				loadData = false;
+			// Attribute data index exist
+			// find if all required data are loaded
+			if (!_.isEmpty(attributeDataIndex)) {
+				missingAttributesPages = getMissingPages(
+					attributeDataIndex,
+					PAGE_SIZE,
+					start,
+					length
+				);
+				attributePagination = getPagination(
+					missingAttributesPages[0] || 0,
+					start,
+					PAGE_SIZE,
+					length,
+					attributeDataIndex.count
+				);
+				if (missingAttributesPages.length > 0) {
+					loadData = true;
+				} else {
+					loadData = false;
+				}
 			}
-		}
 
-		// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
-		if (!_.isEmpty(attributeDataIndex) && !_.isEmpty(attributeRelationsIndex)) {
-			// Some of data or relations are needed
-			if (loadData || loadRelations) {
-				// Load just missing data and relations defined by missingPages
+			// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
+			if (
+				!_.isEmpty(attributeDataIndex) &&
+				!_.isEmpty(attributeRelationsIndex)
+			) {
+				// Some of data or relations are needed
+				if (loadData || loadRelations) {
+					// Load just missing data and relations defined by missingPages
+					return dispatch(
+						loadMissingRelationsAndData(
+							componentKey,
+							order,
+							commonFilter,
+							attributeDataFilterExtension,
+							missingRelationsPages,
+							missingAttributesPages,
+							start,
+							length,
+							PAGE_SIZE
+						)
+					);
+				} else {
+					// All data are loaded
+					return;
+				}
+				// Attribute or relations or both index is not loaded.
+			} else {
+				// Load relations and data
 				return dispatch(
-					loadMissingRelationsAndData(
+					ensureDataAndRelations(
 						componentKey,
 						order,
 						commonFilter,
 						attributeDataFilterExtension,
-						missingRelationsPages,
-						missingAttributesPages,
 						start,
 						length,
-						PAGE_SIZE
+						PAGE_SIZE,
+						loadRelations,
+						loadData,
+						attributePagination,
+						relationsPagination
 					)
 				);
-			} else {
-				// All data are loaded
-				return;
 			}
-			// Attribute or relations or both index is not loaded.
-		} else {
-			// Load relations and data
-			return dispatch(
-				ensureDataAndRelations(
-					componentKey,
-					order,
-					commonFilter,
-					attributeDataFilterExtension,
-					start,
-					length,
-					PAGE_SIZE,
-					loadRelations,
-					loadData,
-					attributePagination,
-					relationsPagination
-				)
-			);
 		}
 	};
 };

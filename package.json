@@ -65,6 +65,7 @@
 		"babel-plugin-lodash": "^3.3.4",
 		"chai": "^4.3.0",
 		"cross-env": "^7.0.3",
+		"flat": "^5.0.2",
 		"husky": "4.3.8",
 		"glob": "^7.1.6",
 		"mocha": "^8.2.1",

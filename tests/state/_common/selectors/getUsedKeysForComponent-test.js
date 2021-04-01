@@ -1,10 +1,11 @@
 import {assert} from 'chai';
+import {sampleSubstoreName} from '../../../constants';
 import commonSelectors from '../../../../src/state/_common/selectors';
 
-const getUsedKeysForComponent = storePath => {
-	const getSubstate = state => state[storePath];
+describe('getUsedKeysForComponent', () => {
+	const getSubstate = state => state[sampleSubstoreName];
 	const state = {
-		[storePath]: {
+		[sampleSubstoreName]: {
 			inUse: {keys: {componentA: ['key1', 'key2', 'key3'], componentB: []}},
 		},
 	};
@@ -44,7 +45,7 @@ const getUsedKeysForComponent = storePath => {
 
 	it('should return null if no keys registered at all', () => {
 		const state = {
-			[storePath]: {inUse: {keys: {}}},
+			[sampleSubstoreName]: {inUse: {keys: {}}},
 		};
 		const componentKey = 'componentA';
 		const output = commonSelectors.getUsedKeysForComponent(getSubstate)(
@@ -53,6 +54,4 @@ const getUsedKeysForComponent = storePath => {
 		);
 		assert.isNull(output);
 	});
-};
-
-describe('getUsedKeysForComponent', () => getUsedKeysForComponent('sub'));
+});

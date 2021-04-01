@@ -393,7 +393,7 @@ function refreshIndex(
 ) {
 	return (dispatch, getState) => {
 		let state = getState();
-		let usesForIndex = commonSelectors.getUsesForIndex(getSubstate)(
+		let usesForIndex = commonSelectors.getUsedIndexPage(getSubstate)(
 			state,
 			filter,
 			order
@@ -804,8 +804,8 @@ function receiveUpdated(
 
 			let indexes = [];
 			data.forEach(model => {
-				let original = originalData[model.key];
-				let edited = editedData[model.key].data;
+				let original = originalData?.[model.key];
+				let edited = editedData?.[model.key]?.data;
 				_.forIn(edited, (value, key) => {
 					if (model.data[key] === value) {
 						dispatch(
@@ -898,7 +898,7 @@ function refreshUses(
 
 			let state = getState();
 
-			let usedKeys = commonSelectors.getUsedKeys(getSubstate)(state);
+			let usedKeys = commonSelectors.getKeysInUse(getSubstate)(state);
 			dispatch(
 				ensureKeys(getSubstate, dataType, actionTypes, usedKeys, categoryPath)
 			);

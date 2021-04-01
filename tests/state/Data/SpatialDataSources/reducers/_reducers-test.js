@@ -9,4 +9,4 @@ const actionTypes = [
 ];
 
 describe('_reducers-test', () =>
-	testHelpers.baseReducersTestSet(reducers, INITIAL_STATE, actionTypes));
+	testHelpers.baseReducersDataTestSet(reducers, INITIAL_STATE, actionTypes));
