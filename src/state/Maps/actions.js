@@ -97,8 +97,6 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 		if (!spatialFilter) {
 			return;
 		}
-		const activeKeys = commonSelectors.getAllActiveKeys(state);
-
 		// uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
 		if (backgroundLayer || layers) {
 			layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);
@@ -113,7 +111,7 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 				// apply layerUse asynchronous on each leyer
 				// it cause better FPS and prevent long synchronous tasks
 				setTimeout(() => {
-					dispatch(layerUse(layer, spatialFilter, activeKeys));
+					dispatch(layerUse(layer, spatialFilter));
 				}, 0)
 			);
 		}
