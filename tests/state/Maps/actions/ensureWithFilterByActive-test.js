@@ -19,15 +19,15 @@ import StylesReducer from '../../../../src/state/Styles/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
 
 import {responseWithRelationsSpatialAndAttributeData_1} from './mockData/data_2';
-import {dispatchedActions} from './mockData/dispatched_actions_3';
+import {dispatchedActions} from './mockData/dispatched_actions_4';
 
-describe('state/Maps/actions/refreshMapSetUse', function () {
+describe('state/Maps/actions/ensureWithFilterByActive', function () {
 	this.timeout(1000);
 	afterEach(function () {
 		resetFetch();
 	});
 
-	it('Dispatch refreshMapSetUse, apply use on each map in set', function (done) {
+	it('Dispatch ensureWithFilterByActive, apply use on each map in set', function (done) {
 		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			app: AppReducers,
@@ -56,7 +56,7 @@ describe('state/Maps/actions/refreshMapSetUse', function () {
 			maps: {
 				...mapsState.maps,
 				...{
-					inUse: {maps: []},
+					inUse: {maps: ['map1', 'map2']},
 					maps: {
 						...mapsState.maps.maps,
 						map1: {
@@ -213,163 +213,7 @@ describe('state/Maps/actions/refreshMapSetUse', function () {
 					data: options.body,
 				});
 			}
-			if (
-				_isEqual(options, {
-					body: JSON.stringify({
-						filter: {
-							key: {
-								in: ['style3'],
-							},
-						},
-					}),
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					method: 'POST',
-				})
-			) {
-				assert.strictEqual(
-					'http://localhost/backend/rest/metadata/filtered/styles',
-					slash(url)
-				);
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve({
-							data: {
-								styles: [
-									{
-										key: 'style2',
-										data: {
-											nameDisplay: null,
-											nameInternal: null,
-											description: null,
-											source: null,
-											nameGeoserver: null,
-											definition: {
-												rules: [
-													{
-														styles: [
-															{
-																attributeKey:
-																	'99bc373-b82f-44cb-a883-4f3ef5b13d07',
-															},
-														],
-													},
-												],
-											},
-											applicationKey: null,
-											tagKeys: null,
-										},
-									},
-								],
-							},
-						});
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
-			if (
-				_isEqual(options, {
-					body: JSON.stringify({
-						layerTemplateKey: 'layerTemplateBackground',
-						relations: {
-							offset: 0,
-							limit: 1,
-							attribute: true,
-							spatial: true,
-						},
-						data: {
-							spatialFilter: {
-								tiles: [['0', '0']],
-								level: 7,
-							},
-							geometry: true,
-						},
-					}),
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					method: 'POST',
-				})
-			) {
-				assert.strictEqual(
-					'http://localhost/backend/rest/data/filtered',
-					slash(url)
-				);
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(
-							responseWithRelationsSpatialAndAttributeData_1
-						);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
-			if (
-				_isEqual(options, {
-					body: JSON.stringify({
-						modifiers: {
-							scopeKey: 'scope1',
-							periodKey: 'period1',
-						},
-						layerTemplateKey: 'layerTemplate2',
-						relations: {
-							offset: 0,
-							limit: 1,
-							attribute: true,
-							spatial: true,
-						},
-						data: {
-							spatialFilter: {
-								tiles: [['0', '0']],
-								level: 7,
-							},
-							geometry: true,
-						},
-					}),
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					method: 'POST',
-				})
-			) {
-				assert.strictEqual(
-					'http://localhost/backend/rest/data/filtered',
-					slash(url)
-				);
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(
-							responseWithRelationsSpatialAndAttributeData_1
-						);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
+
 			if (
 				_isEqual(options, {
 					body: JSON.stringify({
@@ -423,60 +267,9 @@ describe('state/Maps/actions/refreshMapSetUse', function () {
 					data: options.body,
 				});
 			}
-			if (
-				_isEqual(options, {
-					body: JSON.stringify({
-						modifiers: {
-							scopeKey: 'scope1',
-							placeKey: 'place2',
-							periodKey: 'period2',
-						},
-						layerTemplateKey: 'layerTemplate3',
-						styleKey: 'style3',
-						relations: {
-							offset: 0,
-							limit: 1,
-							attribute: true,
-							spatial: true,
-						},
-						data: {
-							spatialFilter: {
-								tiles: [['0', '0']],
-								level: 7,
-							},
-							geometry: true,
-						},
-					}),
-					credentials: 'include',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-					},
-					method: 'POST',
-				})
-			) {
-				assert.strictEqual(
-					'http://localhost/backend/rest/data/filtered',
-					slash(url)
-				);
-				return Promise.resolve({
-					ok: true,
-					json: function () {
-						return Promise.resolve(
-							responseWithRelationsSpatialAndAttributeData_1
-						);
-					},
-					headers: {
-						get: function (name) {
-							return {'Content-type': 'application/json'}[name];
-						},
-					},
-					data: options.body,
-				});
-			}
 		});
 
-		dispatch(actions.refreshMapSetUse('set1'));
+		dispatch(actions.ensureWithFilterByActive({place: true}));
 
 		setTimeout(() => {
 			storeHelpers.runFunctionActions({dispatch, getState}).then(() => {

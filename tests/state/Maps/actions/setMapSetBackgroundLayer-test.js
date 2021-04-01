@@ -474,7 +474,6 @@ describe('state/Maps/actions/setMapSetBackgroundLayer', function () {
 					data: options.body,
 				});
 			}
-			debugger;
 		});
 
 		dispatch(
