@@ -31,6 +31,8 @@ export const expectedMetadataSelectors = [
 ];
 
 export const expectedScopesSelectors = [...baseMetadataSelectors];
+export const expectedStylesSelectors = [...baseMetadataSelectors];
+export const expectedViewsSelectors = [...baseMetadataSelectors];
 
 export const expectedSpecificMetadataActionTypes = [
 	'ADD',

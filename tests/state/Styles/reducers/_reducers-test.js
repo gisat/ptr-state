@@ -1,4 +1,4 @@
-import reducers, {INITIAL_STATE} from '../../../../src/state/Scopes/reducers';
+import reducers, {INITIAL_STATE} from '../../../../src/state/Styles/reducers';
 import testHelpers from '../../../helpers';
 import ActionTypes from '../../../../src/constants/ActionTypes';
 
@@ -24,26 +24,26 @@ import useKeysClear from '../../_common/reducers/useKeysClear-test';
 import useKeysRegister from '../../_common/reducers/useKeysRegister-test';
 
 describe('_reducers', () => {
-	testHelpers.baseReducersMetadataTestSet(reducers, INITIAL_STATE, 'SCOPES');
+	testHelpers.baseReducersMetadataTestSet(reducers, INITIAL_STATE, 'STYLES');
 });
 
 describe('add', () => {
 	add.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.ADD};
+		const action = {...test.action, type: ActionTypes.STYLES.ADD};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('addIndex', () => {
 	addIndex.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.INDEX.ADD};
+		const action = {...test.action, type: ActionTypes.STYLES.INDEX.ADD};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('addUnreceivedKeys', () => {
 	addUnreceivedKeys.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.ADD_UNRECEIVED};
+		const action = {...test.action, type: ActionTypes.STYLES.ADD_UNRECEIVED};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -60,14 +60,14 @@ describe('cleanupOnLogout', () => {
 
 describe('clearIndex', () => {
 	clearIndex.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.INDEX.CLEAR_INDEX};
+		const action = {...test.action, type: ActionTypes.STYLES.INDEX.CLEAR_INDEX};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('clearIndexes', () => {
 	clearIndexes.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.INDEX.CLEAR_ALL};
+		const action = {...test.action, type: ActionTypes.STYLES.INDEX.CLEAR_ALL};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -81,7 +81,7 @@ describe('dataSetOutdated', () => {
 
 describe('markDeleted', () => {
 	markDeleted.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.MARK_DELETED};
+		const action = {...test.action, type: ActionTypes.STYLES.MARK_DELETED};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -90,7 +90,7 @@ describe('registerUseIndexed', () => {
 	registerUseIndexed.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.USE.INDEXED.REGISTER,
+			type: ActionTypes.STYLES.USE.INDEXED.REGISTER,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -98,14 +98,14 @@ describe('registerUseIndexed', () => {
 
 describe('remove', () => {
 	remove.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.DELETE};
+		const action = {...test.action, type: ActionTypes.STYLES.DELETE};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('removeEdited', () => {
 	removeEdited.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.EDITED.REMOVE};
+		const action = {...test.action, type: ActionTypes.STYLES.EDITED.REMOVE};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -114,7 +114,7 @@ describe('removeEditedActive', () => {
 	removeEditedActive.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.EDITED.REMOVE_ACTIVE,
+			type: ActionTypes.STYLES.EDITED.REMOVE_ACTIVE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -124,7 +124,7 @@ describe('removeEditedProperty', () => {
 	removeEditedProperty.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.EDITED.REMOVE_PROPERTY,
+			type: ActionTypes.STYLES.EDITED.REMOVE_PROPERTY,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -134,7 +134,7 @@ describe('setActive', () => {
 	setActive.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.SET_ACTIVE_KEY,
+			type: ActionTypes.STYLES.SET_ACTIVE_KEY,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -144,7 +144,7 @@ describe('updateEdited', () => {
 	updateEdited.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.EDITED.UPDATE,
+			type: ActionTypes.STYLES.EDITED.UPDATE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -154,7 +154,7 @@ describe('updateStore', () => {
 	updateStore.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.UPDATE_STORE,
+			type: ActionTypes.STYLES.UPDATE_STORE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -162,7 +162,7 @@ describe('updateStore', () => {
 
 describe('useIndexedClear', () => {
 	useIndexedClear.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.USE.INDEXED.CLEAR};
+		const action = {...test.action, type: ActionTypes.STYLES.USE.INDEXED.CLEAR};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -171,7 +171,7 @@ describe('useIndexedClearAll', () => {
 	useIndexedClearAll.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.SCOPES.USE.INDEXED.CLEAR_ALL,
+			type: ActionTypes.STYLES.USE.INDEXED.CLEAR_ALL,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -179,14 +179,14 @@ describe('useIndexedClearAll', () => {
 
 describe('useKeysRegister', () => {
 	useKeysRegister.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.USE.KEYS.REGISTER};
+		const action = {...test.action, type: ActionTypes.STYLES.USE.KEYS.REGISTER};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('useKeysClear', () => {
 	useKeysClear.forEach(test => {
-		const action = {...test.action, type: ActionTypes.SCOPES.USE.KEYS.CLEAR};
+		const action = {...test.action, type: ActionTypes.STYLES.USE.KEYS.CLEAR};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
