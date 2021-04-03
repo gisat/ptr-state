@@ -22,9 +22,15 @@ import useIndexedClear from '../../_common/reducers/useIndexedClear-test';
 import useIndexedClearAll from '../../_common/reducers/useIndexedClearAll-test';
 import useKeysClear from '../../_common/reducers/useKeysClear-test';
 import useKeysRegister from '../../_common/reducers/useKeysRegister-test';
+import {expectedScopesActionTypes} from '../../../constants';
 
 describe('_reducers', () => {
-	testHelpers.baseReducersMetadataTestSet(reducers, INITIAL_STATE, 'SCOPES');
+	testHelpers.baseReducersMetadataTestSet(
+		reducers,
+		INITIAL_STATE,
+		'SCOPES',
+		expectedScopesActionTypes
+	);
 });
 
 describe('add', () => {

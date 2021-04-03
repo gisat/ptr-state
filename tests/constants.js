@@ -1,5 +1,6 @@
 export const sampleSubstoreName = 'sub';
 
+// Selectors -------------------------------------------------------------------
 const baseMetadataSelectors = [
 	'getActive',
 	'getActiveKey',
@@ -31,16 +32,17 @@ export const expectedMetadataSelectors = [
 ];
 
 export const expectedScopesSelectors = [...baseMetadataSelectors];
+export const expectedLayerTreesSelectors = [...baseMetadataSelectors];
 export const expectedStylesSelectors = [...baseMetadataSelectors];
 export const expectedViewsSelectors = [...baseMetadataSelectors];
 
-export const expectedSpecificMetadataActionTypes = [
+// Action types ----------------------------------------------------------------
+const baseMetadataActionTypes = [
 	'ADD',
 	'ADD_UNRECEIVED',
 	'DELETE',
 	'MARK_DELETED',
 	'EDITED.REMOVE',
-	'EDITED.REMOVE_ACTIVE',
 	'EDITED.REMOVE_PROPERTY',
 	'EDITED.UPDATE',
 	'ENSURE.ERROR',
@@ -49,14 +51,31 @@ export const expectedSpecificMetadataActionTypes = [
 	'INDEX.CLEAR_ALL',
 	'LOAD.ERROR',
 	'LOAD.REQUEST',
-	'SET_ACTIVE_KEY',
-	'SET_ACTIVE_KEYS',
 	'UPDATE_STORE',
 	'USE.INDEXED.CLEAR',
 	'USE.INDEXED.CLEAR_ALL',
 	'USE.INDEXED.REGISTER',
 	'USE.KEYS.CLEAR',
 	'USE.KEYS.REGISTER',
+];
+
+export const expectedSpecificMetadataActionTypes = [
+	...baseMetadataActionTypes,
+	'EDITED.REMOVE_ACTIVE',
+	'SET_ACTIVE_KEY',
+	'SET_ACTIVE_KEYS',
+];
+
+export const expectedLayerTreesActionTypes = [...baseMetadataActionTypes];
+export const expectedScopesActionTypes = [
+	...baseMetadataActionTypes,
+	'EDITED.REMOVE_ACTIVE',
+	'SET_ACTIVE_KEY',
+];
+export const expectedViewsActionTypes = [
+	...baseMetadataActionTypes,
+	'EDITED.REMOVE_ACTIVE',
+	'SET_ACTIVE_KEY',
 ];
 
 export const expectedCommonMetadataActionTypes = [

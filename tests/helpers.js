@@ -64,9 +64,15 @@ function baseReducersTestSet(reducers, state, actionTypes) {
 		});
 }
 
-function baseReducersMetadataTestSet(reducers, state, actionTypesPath) {
-	const expectedSpecificMetadataActionTypes = getExpectedSpecificMetadataActionTypes(
-		actionTypesPath
+function baseReducersMetadataTestSet(
+	reducers,
+	state,
+	actionTypesPath,
+	expectedActionTypes
+) {
+	const expectedSpecificMetadataActionTypes = getExpectedSpecificActionTypes(
+		actionTypesPath,
+		expectedActionTypes
 	);
 	const specificMetadataActionTypes = getSpecificMetadataTypes(actionTypesPath);
 
@@ -125,12 +131,22 @@ function baseSelectorsTestSet(selectors, substore, options) {
 
 /**
  * @param substoreActionTypesPath {string} 'TAGS', 'SCOPES', ...
+ * @param expectedActionTypes {Array} List of action types
  * @return {string[]}
  */
-function getExpectedSpecificMetadataActionTypes(substoreActionTypesPath) {
-	return [...expectedSpecificMetadataActionTypes].map(
-		actionType => `${substoreActionTypesPath}.${actionType}`
-	);
+function getExpectedSpecificActionTypes(
+	substoreActionTypesPath,
+	expectedActionTypes
+) {
+	if (!expectedActionTypes) {
+		return [...expectedSpecificMetadataActionTypes].map(
+			actionType => `${substoreActionTypesPath}.${actionType}`
+		);
+	} else {
+		return [...expectedActionTypes].map(
+			actionType => `${substoreActionTypesPath}.${actionType}`
+		);
+	}
 }
 
 /**
@@ -158,5 +174,5 @@ export default {
 
 	getSpecificMetadataTypes,
 	getExpectedCommonMetadataActionTypes,
-	getExpectedSpecificMetadataActionTypes,
+	getExpectedSpecificActionTypes,
 };

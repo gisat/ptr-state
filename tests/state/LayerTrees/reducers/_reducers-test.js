@@ -1,4 +1,6 @@
-import reducers, {INITIAL_STATE} from '../../../../src/state/Views/reducers';
+import reducers, {
+	INITIAL_STATE,
+} from '../../../../src/state/LayerTrees/reducers';
 import testHelpers from '../../../helpers';
 import ActionTypes from '../../../../src/constants/ActionTypes';
 
@@ -13,44 +15,44 @@ import markDeleted from '../../_common/reducers/markDeleted-test';
 import registerUseIndexed from '../../_common/reducers/registerUseIndexed-test';
 import remove from '../../_common/reducers/remove-test';
 import removeEdited from '../../_common/reducers/removeEdited-test';
-import removeEditedActive from '../../_common/reducers/removeEditedActive-test';
 import removeEditedProperty from '../../_common/reducers/removeEditedProperty-test';
-import setActive from '../../_common/reducers/setActive-test';
-import setActiveMultiple from '../../_common/reducers/setActiveMultiple-test';
 import updateEdited from '../../_common/reducers/updateEdited-test';
 import updateStore from '../../_common/reducers/updateStore-test';
 import useIndexedClear from '../../_common/reducers/useIndexedClear-test';
 import useIndexedClearAll from '../../_common/reducers/useIndexedClearAll-test';
 import useKeysClear from '../../_common/reducers/useKeysClear-test';
 import useKeysRegister from '../../_common/reducers/useKeysRegister-test';
-import {expectedViewsActionTypes} from '../../../constants';
+import {expectedLayerTreesActionTypes} from '../../../constants';
 
 describe('_reducers', () => {
 	testHelpers.baseReducersMetadataTestSet(
 		reducers,
 		INITIAL_STATE,
-		'VIEWS',
-		expectedViewsActionTypes
+		'LAYER_TREES',
+		expectedLayerTreesActionTypes
 	);
 });
 
 describe('add', () => {
 	add.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.ADD};
+		const action = {...test.action, type: ActionTypes.LAYER_TREES.ADD};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('addIndex', () => {
 	addIndex.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.INDEX.ADD};
+		const action = {...test.action, type: ActionTypes.LAYER_TREES.INDEX.ADD};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('addUnreceivedKeys', () => {
 	addUnreceivedKeys.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.ADD_UNRECEIVED};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.ADD_UNRECEIVED,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -67,14 +69,20 @@ describe('cleanupOnLogout', () => {
 
 describe('clearIndex', () => {
 	clearIndex.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.INDEX.CLEAR_INDEX};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.INDEX.CLEAR_INDEX,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('clearIndexes', () => {
 	clearIndexes.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.INDEX.CLEAR_ALL};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.INDEX.CLEAR_ALL,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -88,7 +96,7 @@ describe('dataSetOutdated', () => {
 
 describe('markDeleted', () => {
 	markDeleted.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.MARK_DELETED};
+		const action = {...test.action, type: ActionTypes.LAYER_TREES.MARK_DELETED};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -97,7 +105,7 @@ describe('registerUseIndexed', () => {
 	registerUseIndexed.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.USE.INDEXED.REGISTER,
+			type: ActionTypes.LAYER_TREES.USE.INDEXED.REGISTER,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -105,23 +113,16 @@ describe('registerUseIndexed', () => {
 
 describe('remove', () => {
 	remove.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.DELETE};
+		const action = {...test.action, type: ActionTypes.LAYER_TREES.DELETE};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('removeEdited', () => {
 	removeEdited.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.EDITED.REMOVE};
-		it(test.name, () => test.test(action, reducers));
-	});
-});
-
-describe('removeEditedActive', () => {
-	removeEditedActive.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.EDITED.REMOVE_ACTIVE,
+			type: ActionTypes.LAYER_TREES.EDITED.REMOVE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -131,17 +132,7 @@ describe('removeEditedProperty', () => {
 	removeEditedProperty.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.EDITED.REMOVE_PROPERTY,
-		};
-		it(test.name, () => test.test(action, reducers));
-	});
-});
-
-describe('setActive', () => {
-	setActive.forEach(test => {
-		const action = {
-			...test.action,
-			type: ActionTypes.VIEWS.SET_ACTIVE_KEY,
+			type: ActionTypes.LAYER_TREES.EDITED.REMOVE_PROPERTY,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -151,7 +142,7 @@ describe('updateEdited', () => {
 	updateEdited.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.EDITED.UPDATE,
+			type: ActionTypes.LAYER_TREES.EDITED.UPDATE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -161,7 +152,7 @@ describe('updateStore', () => {
 	updateStore.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.UPDATE_STORE,
+			type: ActionTypes.LAYER_TREES.UPDATE_STORE,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -169,7 +160,10 @@ describe('updateStore', () => {
 
 describe('useIndexedClear', () => {
 	useIndexedClear.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.USE.INDEXED.CLEAR};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.USE.INDEXED.CLEAR,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
@@ -178,7 +172,7 @@ describe('useIndexedClearAll', () => {
 	useIndexedClearAll.forEach(test => {
 		const action = {
 			...test.action,
-			type: ActionTypes.VIEWS.USE.INDEXED.CLEAR_ALL,
+			type: ActionTypes.LAYER_TREES.USE.INDEXED.CLEAR_ALL,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});
@@ -186,14 +180,20 @@ describe('useIndexedClearAll', () => {
 
 describe('useKeysRegister', () => {
 	useKeysRegister.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.USE.KEYS.REGISTER};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.USE.KEYS.REGISTER,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
 
 describe('useKeysClear', () => {
 	useKeysClear.forEach(test => {
-		const action = {...test.action, type: ActionTypes.VIEWS.USE.KEYS.CLEAR};
+		const action = {
+			...test.action,
+			type: ActionTypes.LAYER_TREES.USE.KEYS.CLEAR,
+		};
 		it(test.name, () => test.test(action, reducers));
 	});
 });
