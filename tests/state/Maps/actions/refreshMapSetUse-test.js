@@ -19,15 +19,15 @@ import StylesReducer from '../../../../src/state/Styles/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
 
 import {responseWithRelationsSpatialAndAttributeData_1} from './mockData/data_2';
-import {dispatchedActions} from './mockData/dispatched_actions_1';
+import {dispatchedActions} from './mockData/dispatched_actions_3';
 
-describe('state/Maps/actions/use', function () {
+describe('state/Maps/actions/refreshMapSetUse', function () {
 	this.timeout(1000);
 	afterEach(function () {
 		resetFetch();
 	});
 
-	it('Load one tile for each layer in map/set state', function (done) {
+	it('Dispatch refreshMapSetUse, apply use on each map in set', function (done) {
 		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			app: AppReducers,
@@ -63,6 +63,23 @@ describe('state/Maps/actions/use', function () {
 							...mapsState.maps.maps.map1,
 							data: {
 								...mapsState.maps.maps.map1.data,
+								viewport: {
+									width: 10,
+									height: 10,
+								},
+								view: {
+									boxRange: 5000,
+									center: {
+										lat: 0.1,
+										lon: 0.1,
+									},
+								},
+							},
+						},
+						map2: {
+							...mapsState.maps.maps.map2,
+							data: {
+								...mapsState.maps.maps.map2.data,
 								viewport: {
 									width: 10,
 									height: 10,
@@ -175,6 +192,69 @@ describe('state/Maps/actions/use', function () {
 															{
 																attributeKey:
 																	'528ac373-b82f-44cb-a883-4f3ef5b13d07',
+															},
+														],
+													},
+												],
+											},
+											applicationKey: null,
+											tagKeys: null,
+										},
+									},
+								],
+							},
+						});
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: options.body,
+				});
+			}
+			if (
+				_isEqual(options, {
+					body: JSON.stringify({
+						filter: {
+							key: {
+								in: ['style3'],
+							},
+						},
+					}),
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					method: 'POST',
+				})
+			) {
+				assert.strictEqual(
+					'http://localhost/backend/rest/metadata/filtered/styles',
+					slash(url)
+				);
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve({
+							data: {
+								styles: [
+									{
+										key: 'style2',
+										data: {
+											nameDisplay: null,
+											nameInternal: null,
+											description: null,
+											source: null,
+											nameGeoserver: null,
+											definition: {
+												rules: [
+													{
+														styles: [
+															{
+																attributeKey:
+																	'99bc373-b82f-44cb-a883-4f3ef5b13d07',
 															},
 														],
 													},
@@ -343,9 +423,61 @@ describe('state/Maps/actions/use', function () {
 					data: options.body,
 				});
 			}
+			if (
+				_isEqual(options, {
+					body: JSON.stringify({
+						modifiers: {
+							scopeKey: 'scope1',
+							placeKey: 'place2',
+							periodKey: 'period2',
+						},
+						layerTemplateKey: 'layerTemplate3',
+						styleKey: 'style3',
+						relations: {
+							offset: 0,
+							limit: 1,
+							attribute: true,
+							spatial: true,
+						},
+						data: {
+							spatialFilter: {
+								tiles: [['0', '0']],
+								level: 7,
+							},
+							geometry: true,
+						},
+					}),
+					credentials: 'include',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					method: 'POST',
+				})
+			) {
+				assert.strictEqual(
+					'http://localhost/backend/rest/data/filtered',
+					slash(url)
+				);
+				return Promise.resolve({
+					ok: true,
+					json: function () {
+						return Promise.resolve(
+							responseWithRelationsSpatialAndAttributeData_1
+						);
+					},
+					headers: {
+						get: function (name) {
+							return {'Content-type': 'application/json'}[name];
+						},
+					},
+					data: options.body,
+				});
+			}
 		});
 
-		dispatch(actions.use('map1', null, null, 10, 10));
+		dispatch(actions.refreshMapSetUse('set1'));
+
 		setTimeout(() => {
 			storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 				if (_isEqual(storeHelpers.getDispatchedActions(), dispatchedActions)) {
