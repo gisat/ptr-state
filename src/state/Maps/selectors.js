@@ -265,6 +265,22 @@ const getMapLayersStateByMapKey = createSelector([getMapByKey], map => {
 /**
  * @param state {Object}
  * @param mapKey {string}
+ * @param layerKey {string}
+ */
+const getMapLayerStateByMapKeyAndLayerKey = createSelector(
+	[getMapLayersStateByMapKey, (state, mapKey, layerKey) => layerKey],
+	(layers, layerKey) => {
+		if (layers && layerKey) {
+			return layers.find(layer => layer.key === layerKey) || null;
+		} else {
+			return null;
+		}
+	}
+);
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
  */
 const getMapSetBackgroundLayerStateByMapKey = createSelector(
 	[getMapSetByMapKey],
@@ -890,6 +906,7 @@ export default {
 	getMapBackgroundLayer,
 	getMapByKey,
 	getMapFilterByActiveByMapKey,
+	getMapLayerStateByMapKeyAndLayerKey,
 	getMapLayersStateByMapKey,
 	getMapLayers,
 	getMapLayersStateWithModifiersByMapKey,
