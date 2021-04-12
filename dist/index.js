@@ -36,7 +36,6 @@ var createCachedSelector = require('re-reselect');
 var _pickBy2 = require('lodash/pickBy');
 var _pick2 = require('lodash/pick');
 var _difference = require('lodash/difference');
-require('chai');
 var _forEach = require('lodash/forEach');
 var _filter = require('lodash/filter');
 var stringify = require('fast-stringify');

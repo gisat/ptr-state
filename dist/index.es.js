@@ -38,7 +38,6 @@ import createCachedSelector from 're-reselect';
 import _pickBy2 from 'lodash/pickBy';
 import _pick2 from 'lodash/pick';
 import _difference from 'lodash/difference';
-import 'chai';
 import _forEach from 'lodash/forEach';
 import _filter from 'lodash/filter';
 import stringify from 'fast-stringify';
