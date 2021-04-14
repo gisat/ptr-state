@@ -1569,14 +1569,6 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('useIndexedClearAll', function () {
-		actions.useIndexedClearAll({
-			USE: {INDEXED: {CLEAR_ALL: 'CLEAR_ALL'}},
-		})()(dispatch);
-
-		assert.deepStrictEqual(dispatchedActions, [{type: 'CLEAR_ALL'}]);
-	});
-
 	it('actionDataSetOutdated', function () {
 		assert.deepStrictEqual(actions.actionDataSetOutdated(), {
 			type: 'COMMON.DATA.SET_OUTDATED',
