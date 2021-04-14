@@ -17,7 +17,6 @@ import {
 	reduce as _reduce,
 } from 'lodash';
 import commonHelpers from './helpers';
-import {use} from 'chai';
 
 const getActiveKey = getSubstate => {
 	return state => getSubstate(state).activeKey;
