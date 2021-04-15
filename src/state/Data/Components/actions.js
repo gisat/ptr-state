@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, {merge as _merge} from 'lodash';
 import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import ActionTypes from '../../../constants/ActionTypes';
@@ -28,16 +28,19 @@ function updateComponentsStateFromView(components) {
 	};
 }
 
+/**
+ * Update component deeply with new data
+ * @param componentKey {string}
+ * @param update {Object}
+ */
 function updateComponent(componentKey, update) {
 	return (dispatch, getState) => {
 		const state = getState();
-		const componentState = Select.data.components.getComponentStateByKey(
-			state,
-			componentKey
-		);
+		const componentState =
+			Select.data.components.getComponentStateByKey(state, componentKey) || {};
 
 		dispatch(
-			actionUpdateComponents({[componentKey]: {...componentState, ...update}})
+			actionUpdateComponents({[componentKey]: _merge(componentState, update)})
 		);
 	};
 }

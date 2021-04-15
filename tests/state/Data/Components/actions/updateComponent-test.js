@@ -59,6 +59,9 @@ describe('state/Data/Components/actions/updateComponent', function () {
 						selected: 11,
 						somethingDeeper: {
 							soDeep: true,
+							nested: {
+								isNested: true,
+							},
 						},
 					},
 					map: {
@@ -79,6 +82,11 @@ describe('state/Data/Components/actions/updateComponent', function () {
 		const update = {
 			selected: 22,
 			order: 'desc',
+			somethingDeeper: {
+				nested: {
+					isNested: false,
+				},
+			},
 		};
 
 		dispatch(actions.updateComponent(componentKey, update));
@@ -93,6 +101,9 @@ describe('state/Data/Components/actions/updateComponent', function () {
 							order: 'desc',
 							somethingDeeper: {
 								soDeep: true,
+								nested: {
+									isNested: false,
+								},
 							},
 						},
 					},
