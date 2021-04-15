@@ -1,4 +1,5 @@
 import ActionTypes from '../../constants/ActionTypes';
+import {stateManagement} from '@gisatcz/ptr-utils';
 import {indexOf as _indexOf, isEmpty as _isEmpty} from 'lodash';
 
 export const INITIAL_STATE = {
@@ -16,10 +17,10 @@ const removeMapFromSet = (state, setKey, mapKey) => {
 	if (setKey && mapKey) {
 		const index = _indexOf(state.sets[setKey]?.maps, mapKey);
 		if (index > -1) {
-			let updatedMaps = [
-				...state.sets[setKey].maps.slice(0, index),
-				...state.sets[setKey].maps.slice(index + 1),
-			];
+			let updatedMaps = stateManagement.removeItemByIndex(
+				state.sets[setKey].maps,
+				index
+			);
 
 			return {
 				...state,
@@ -232,10 +233,10 @@ const mapUseClear = (state, mapKey) => {
 	if (mapKey) {
 		const index = _indexOf(state.inUse.maps, mapKey);
 		if (index > -1) {
-			let updatedInUse = [
-				...state.inUse.maps.slice(0, index),
-				...state.inUse.maps.slice(index + 1),
-			];
+			const updatedInUse = stateManagement.removeItemByIndex(
+				state.inUse.maps,
+				index
+			);
 
 			return {
 				...state,
@@ -262,10 +263,10 @@ const mapSetUseClear = (state, mapSetKey) => {
 	if (mapSetKey) {
 		const index = _indexOf(state.inUse.sets, mapSetKey);
 		if (index > -1) {
-			let updatedInUse = [
-				...state.inUse.sets.slice(0, index),
-				...state.inUse.sets.slice(index + 1),
-			];
+			const updatedInUse = stateManagement.removeItemByIndex(
+				state.inUse.sets,
+				index
+			);
 
 			return {
 				...state,

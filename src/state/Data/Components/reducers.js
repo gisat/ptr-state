@@ -1,5 +1,6 @@
 import {indexOf as _indexOf, isEmpty as _isEmpty} from 'lodash';
 import ActionTypes from '../../../constants/ActionTypes';
+import {stateManagement} from '@gisatcz/ptr-utils';
 
 export const INITIAL_STATE = {
 	components: {
@@ -19,10 +20,10 @@ const componentUseClear = (state, componentKey) => {
 	if (componentKey && !_isEmpty(state.components.inUse)) {
 		const index = _indexOf(state.components.inUse, componentKey);
 		if (index > -1) {
-			let updatedInUse = [
-				...state.components.inUse.slice(0, index),
-				...state.components.inUse.slice(index + 1),
-			];
+			let updatedInUse = stateManagement.removeItemByIndex(
+				state.components.inUse,
+				index
+			);
 
 			return {
 				...state,
