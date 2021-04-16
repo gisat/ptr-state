@@ -168,7 +168,7 @@ function addIndexAction(filter, order, index, changedOn) {
 
 export default {
 	addLoadingIndex,
-	getIndexData, //export for tests
+	getIndexData,
 	removeIndex: removeIndexAction,
 	receiveIndexed,
 };

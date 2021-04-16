@@ -601,12 +601,12 @@ export default {
 	mapSetUseRegister,
 	mapUseClear,
 	mapUseRegister,
-	refreshMapSetUse, //T
+	refreshMapSetUse,
 	removeMapFromSet,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
-	setMapSetBackgroundLayer, //T
+	setMapSetBackgroundLayer,
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,

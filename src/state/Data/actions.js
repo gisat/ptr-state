@@ -1206,17 +1206,17 @@ export default {
 	spatialRelations,
 
 	//export functions
-	composeDataEndpointPayload, //tested
+	composeDataEndpointPayload,
 	ensure,
 	ensureDataAndRelations,
-	getRestRelationsPages, //tested
-	hasMissingAttributesData, //tested
-	hasMissingSpatialData, //tested
-	hasSpatialOrAreaRelations, //tested
-	loadIndexedPage, //tested
+	getRestRelationsPages,
+	hasMissingAttributesData,
+	hasMissingSpatialData,
+	hasSpatialOrAreaRelations,
+	loadIndexedPage,
 	loadMissingAttributeData,
-	loadMissingRelationsAndData, //tested
+	loadMissingRelationsAndData,
 	loadMissingSpatialData,
-	processResult, //tested
-	setLoading, //tested
+	processResult,
+	setLoading,
 };
