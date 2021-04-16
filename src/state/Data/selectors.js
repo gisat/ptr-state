@@ -1,5 +1,5 @@
 import {createSelector as createRecomputeSelector} from '@jvitela/recompute';
-import _ from 'lodash';
+import {map as _map, forIn as _forIn, forEach as _forEach} from 'lodash';
 import stringify from 'fast-stringify';
 import {CacheFifo} from '@gisatcz/ptr-utils';
 
@@ -32,13 +32,13 @@ const getFeatures = createRecomputeSelector(
 		}
 
 		if (data) {
-			return _.map(data, (feature, key) => {
+			return _map(data, (feature, key) => {
 				let properties = {
 					[fidColumnName]: key, // TODO fix dependency on this in ptr-maps
 				};
 
 				if (attributesByDataSourceKey) {
-					_.forIn(
+					_forIn(
 						attributesByDataSourceKey,
 						(features, attributeDataSourceKey) => {
 							const attributeValue = features[key];
@@ -211,7 +211,7 @@ const getTiles = createRecomputeSelector(
 	) => {
 		if (tiles?.length) {
 			let populatedTiles = [];
-			_.forEach(tiles, tile => {
+			_forEach(tiles, tile => {
 				const populatedTile = getTile(
 					dataSourceKey,
 					fidColumnName,

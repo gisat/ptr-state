@@ -1,4 +1,10 @@
-import _ from 'lodash';
+import {
+	isEmpty as _isEmpty,
+	reduce as _reduce,
+	flattenDeep as _flattenDeep,
+	difference as _difference,
+	intersection as _intersection,
+} from 'lodash';
 import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import attributeRelations from './AttributeRelations/actions';
@@ -166,7 +172,7 @@ function loadMissingRelationsAndData(
 				// Check if all spatialDataSources relations from response and preloadedSpatialDataSources are type of "unsupported" like raster/wms/wmts.
 				// If all spatialDataSources are unsupported, then received data are empty and indexes needs to be removed.
 				// If only some of spatialDataSources relations are unsupported, then loading status on index will be replaced by data.
-				const spatialDataSourcesTypes = _.flattenDeep(
+				const spatialDataSourcesTypes = _flattenDeep(
 					response.map(r =>
 						r?.spatialAttributeRelationsDataSources?.spatialDataSources?.map(
 							sds => ({
@@ -182,7 +188,7 @@ function loadMissingRelationsAndData(
 				];
 
 				//test spatialDataSources only if some come from BE
-				const allSourcesAreUnsupported = !_.isEmpty(spatialDataSourcesPairs)
+				const allSourcesAreUnsupported = !_isEmpty(spatialDataSourcesPairs)
 					? spatialDataSourcesPairs.every(
 							ds => !TILED_VECTOR_LAYER_TYPES.includes(ds.type)
 					  )
@@ -266,7 +272,7 @@ function loadMissingAttributeData(
 			order
 		);
 		let loadAttributeRelationsAndDS = !(
-			!_.isEmpty(attributeRelations) && !_.isEmpty(attributeDataSources)
+			!_isEmpty(attributeRelations) && !_isEmpty(attributeDataSources)
 		);
 
 		//load only attribute data
@@ -478,7 +484,7 @@ function ensureDataAndRelations(
 		const loadGeometry = true;
 		const loadAttributeRelations = true;
 		const loadSpatialRelations = true;
-		if (spatialFilter && !_.isEmpty(spatialFilter)) {
+		if (spatialFilter && !_isEmpty(spatialFilter)) {
 			// Only if spatialIndex is null then is set whole spatialFilter.tiles as loading true in one step
 			const spatialIndex = null;
 			return dispatch(
@@ -713,11 +719,11 @@ function ensure(
 			const missingSpatialDataTiles =
 				getMissingTiles(spatialDataIndex, spatialFilter) || [];
 
-			const missingAttributeDataTilesToLoad = _.difference(
+			const missingAttributeDataTilesToLoad = _difference(
 				missingAttributeDataTiles,
 				missingSpatialDataTiles
 			);
-			const missingSpatialAndAttributeDataTiles = _.intersection(
+			const missingSpatialAndAttributeDataTiles = _intersection(
 				missingAttributeDataTiles,
 				missingSpatialDataTiles
 			);
@@ -747,7 +753,7 @@ function ensure(
 		if (
 			filterHasSpatialOrAreaRelations &&
 			missingSpatialData &&
-			!_.isEmpty(modifiedSpatialFilterForSpatial.tiles)
+			!_isEmpty(modifiedSpatialFilterForSpatial.tiles)
 		) {
 			promises.push(
 				dispatch(
@@ -765,7 +771,7 @@ function ensure(
 
 		if (
 			!loadRelationsAndData &&
-			!_.isEmpty(modifiedSpatialFilterForAttributes.tiles)
+			!_isEmpty(modifiedSpatialFilterForAttributes.tiles)
 		) {
 			promises.push(
 				dispatch(
@@ -816,7 +822,7 @@ function processResult(
 		if (
 			!!loadAttributeRelations &&
 			result.spatialAttributeRelationsDataSources.attributeRelations &&
-			!_.isEmpty(result.spatialAttributeRelationsDataSources.attributeRelations)
+			!_isEmpty(result.spatialAttributeRelationsDataSources.attributeRelations)
 		) {
 			const changes = null;
 			dispatch(
@@ -834,7 +840,7 @@ function processResult(
 		if (
 			!!loadAttributeRelations &&
 			result.spatialAttributeRelationsDataSources.attributeDataSources &&
-			!_.isEmpty(
+			!_isEmpty(
 				result.spatialAttributeRelationsDataSources.attributeDataSources
 			)
 		) {
@@ -870,7 +876,7 @@ function processResult(
 		if (
 			!!loadSpatialRelations &&
 			result.spatialAttributeRelationsDataSources.spatialRelations &&
-			!_.isEmpty(result.spatialAttributeRelationsDataSources.spatialRelations)
+			!_isEmpty(result.spatialAttributeRelationsDataSources.spatialRelations)
 		) {
 			const changes = null;
 			dispatch(
@@ -888,7 +894,7 @@ function processResult(
 		if (
 			!!loadSpatialRelations &&
 			result.spatialAttributeRelationsDataSources.spatialDataSources &&
-			!_.isEmpty(result.spatialAttributeRelationsDataSources.spatialDataSources)
+			!_isEmpty(result.spatialAttributeRelationsDataSources.spatialDataSources)
 		) {
 			const changes = null;
 			dispatch(
@@ -1028,7 +1034,7 @@ function setLoading(
 			spatialIndex?.tiles || spatialFilter?.tiles || [];
 
 		//get loading tiles
-		const spatialTilesInNotLoadingState = _.reduce(
+		const spatialTilesInNotLoadingState = _reduce(
 			loadingTilesGeometry,
 			(acc = [], tile) => {
 				const loading = Select.data.spatialData.isTileLoading(
@@ -1044,7 +1050,7 @@ function setLoading(
 			},
 			[]
 		);
-		const attributesTilesInNotLoadingState = _.reduce(
+		const attributesTilesInNotLoadingState = _reduce(
 			loadingTilesGeometry,
 			(acc = [], tile) => {
 				const loading = Select.data.attributeData.isTileLoading(

@@ -1,6 +1,5 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import _ from 'lodash';
-import common from '../../_common/actions';
+import {isEmpty as _isEmpty, forIn as _forIn, reduce as _reduce} from 'lodash';
 import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
@@ -16,7 +15,7 @@ const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
  */
 const receiveIndexed = (spatialData, filter, order, changedOn) => {
 	return dispatch => {
-		if (spatialData && !_.isEmpty(spatialData)) {
+		if (spatialData && !_isEmpty(spatialData)) {
 			return dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
 		}
 	};
@@ -45,7 +44,7 @@ function addDataAndIndex(
 		const level = Object.keys(indexByLevelByTileByDataSourceKey)[0];
 
 		let spatialDataByDataSourceKey = {};
-		_.forIn(
+		_forIn(
 			spatialDataAndIndexByDataSourceKey,
 			(value, spatialDataSourceKey) => {
 				spatialDataByDataSourceKey[spatialDataSourceKey] = value.data;
@@ -76,7 +75,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
-	const loadingTiles = _.reduce(
+	const loadingTiles = _reduce(
 		tiles,
 		(acc, tile) => {
 			const tileId = tileAsString(tile);

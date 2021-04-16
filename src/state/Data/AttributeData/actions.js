@@ -1,6 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import {tileAsString} from '../helpers';
-import _ from 'lodash';
+import {isEmpty as _isEmpty, reduce as _reduce} from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
@@ -22,7 +22,7 @@ const receiveIndexed = (
 	changedOn
 ) => {
 	return dispatch => {
-		if (!_.isEmpty(attributeData)) {
+		if (!_isEmpty(attributeData)) {
 			dispatch(
 				addDataAndIndexBasedOnSpatialData(
 					attributeDataFilter,
@@ -149,7 +149,7 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
-	const loadingTiles = _.reduce(
+	const loadingTiles = _reduce(
 		tiles,
 		(acc, tile) => {
 			const tileId = tileAsString(tile);
@@ -182,7 +182,7 @@ function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const changedOn = null;
 
 	//Fake new data object for common action
-	const data = _.reduce(
+	const data = _reduce(
 		[...Array(pagination.limit)],
 		(acc, val) => {
 			//Use key = true as a loading identificator
@@ -230,12 +230,12 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 				// Prepare empty tile for new data if tile does not exists.
 				if (
 					!indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] ||
-					_.isEmpty(attributeData)
+					_isEmpty(attributeData)
 				) {
 					indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] = {};
 				}
 
-				if (!_.isEmpty(attributeData)) {
+				if (!_isEmpty(attributeData)) {
 					//for all attribute data source keys in attributeData
 					for (const [
 						attributeDataSourceKey,

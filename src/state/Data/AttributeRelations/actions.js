@@ -1,6 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
-import _ from 'lodash';
+import {reduce as _reduce} from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
@@ -58,7 +58,7 @@ function addLoadingIndex(pagination, filter, order) {
 	const changedOn = null;
 
 	//Fake new data object for common action
-	const data = _.reduce(
+	const data = _reduce(
 		[...Array(pagination.limit)],
 		(acc, val) => {
 			//Use key = true as a loading identificator

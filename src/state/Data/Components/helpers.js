@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isNumber as _isNumber, difference as _difference} from 'lodash';
 import {configDefaults} from '@gisatcz/ptr-core';
 import Select from '../../Select';
 
@@ -11,16 +11,16 @@ import Select from '../../Select';
  * @return {Array.<Number>}
  */
 export function getRestPages(count, PAGE_SIZE, optStart = 1, optLength) {
-	optStart = _.isNumber(optStart) ? optStart : 1;
+	optStart = _isNumber(optStart) ? optStart : 1;
 
-	if (_.isNumber(count) && (count === 0 || optStart > count)) {
+	if (_isNumber(count) && (count === 0 || optStart > count)) {
 		return [];
 	} else {
 		let wanted;
-		if (_.isNumber(count)) {
+		if (_isNumber(count)) {
 			wanted = count - optStart + 1;
 			// Request specific number of results
-			if (_.isNumber(optLength)) {
+			if (_isNumber(optLength)) {
 				if (optStart + optLength - 1 > count) {
 					wanted = count - optStart + 1;
 				} else {
@@ -29,7 +29,7 @@ export function getRestPages(count, PAGE_SIZE, optStart = 1, optLength) {
 			}
 		} else {
 			// Request specific number of results
-			if (_.isNumber(optLength)) {
+			if (_isNumber(optLength)) {
 				wanted = optLength;
 			} else {
 				wanted = PAGE_SIZE;
@@ -64,15 +64,15 @@ export function getPagination(
 	optLength,
 	optCount
 ) {
-	optStart = _.isNumber(optStart) ? optStart : 1;
+	optStart = _isNumber(optStart) ? optStart : 1;
 	let limit = pageSize;
 
-	if (_.isNumber(optLength) && pageIndex * pageSize + pageSize > optLength) {
+	if (_isNumber(optLength) && pageIndex * pageSize + pageSize > optLength) {
 		limit = Math.max(0, optLength - pageIndex * pageSize);
 	}
 
 	if (
-		_.isNumber(optCount) &&
+		_isNumber(optCount) &&
 		optStart + pageIndex * pageSize + limit - 1 > optCount
 	) {
 		limit = Math.max(0, optCount - (optStart + pageIndex * pageSize - 1));
@@ -110,13 +110,13 @@ export function getLoadedPages(
 	optCount,
 	optLength
 ) {
-	optStart = _.isNumber(optStart) ? optStart : 1;
+	optStart = _isNumber(optStart) ? optStart : 1;
 	const loadedPages = [];
 	pages.forEach(pageIndex => {
 		let itemsOnPage = 0;
 
-		if (_.isNumber(optCount)) {
-			if (_.isNumber(optLength) && pageSize * (pageIndex + 1) > optLength) {
+		if (_isNumber(optCount)) {
+			if (_isNumber(optLength) && pageSize * (pageIndex + 1) > optLength) {
 				itemsOnPage = optLength - pageSize * pageIndex;
 
 				if (optStart + itemsOnPage > optCount) {
@@ -130,7 +130,7 @@ export function getLoadedPages(
 				itemsOnPage = pageSize;
 			}
 		} else {
-			if (_.isNumber(optLength) && pageSize * (pageIndex + 1) > optLength) {
+			if (_isNumber(optLength) && pageSize * (pageIndex + 1) > optLength) {
 				itemsOnPage = optLength - pageSize * pageIndex;
 			} else {
 				itemsOnPage = pageSize;
@@ -169,7 +169,7 @@ export function getMissingPages(optDataIndex, pageSize, optStart, optLength) {
 		count,
 		optLength
 	);
-	const missingPages = _.difference(restPages, loadedPages);
+	const missingPages = _difference(restPages, loadedPages);
 
 	return missingPages;
 }

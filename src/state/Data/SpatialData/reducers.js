@@ -1,6 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
-import _ from 'lodash';
+import {forIn as _forIn} from 'lodash';
 import commonHelpers from '../../_common/helpers';
 
 export const INITIAL_STATE = {
@@ -135,13 +135,13 @@ function getUpdatedDataForDataSourceKey(
 function getUpdatedByDataSourceKey(state, dataByDataSourceKey, level) {
 	let updatedData = {...state.byDataSourceKey};
 
-	_.forIn(dataByDataSourceKey, (data, dataSourceKey) => {
+	_forIn(dataByDataSourceKey, (data, dataSourceKey) => {
 		if (!updatedData.hasOwnProperty(dataSourceKey)) {
 			updatedData[dataSourceKey] = {};
 		}
 
 		const newFeatures = {};
-		_.forIn(data, (geometry, featureKey) => {
+		_forIn(data, (geometry, featureKey) => {
 			const existingFeature = updatedData[dataSourceKey].hasOwnProperty(
 				featureKey
 			);

@@ -1,4 +1,4 @@
-import _, {merge as _merge} from 'lodash';
+import {merge as _merge, isEmpty as _isEmpty} from 'lodash';
 import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import ActionTypes from '../../../constants/ActionTypes';
@@ -312,7 +312,7 @@ const ensure = componentKey => {
 			let missingRelationsPages, missingAttributesPages;
 			// Relations index exist
 			// find if all required relations are loaded
-			if (!_.isEmpty(attributeDataIndex)) {
+			if (!_isEmpty(attributeDataIndex)) {
 				missingRelationsPages = getMissingPages(
 					attributeRelationsIndex,
 					RELATIONS_PAGE_SIZE,
@@ -333,7 +333,7 @@ const ensure = componentKey => {
 
 			// Attribute data index exist
 			// find if all required data are loaded
-			if (!_.isEmpty(attributeDataIndex)) {
+			if (!_isEmpty(attributeDataIndex)) {
 				missingAttributesPages = getMissingPages(
 					attributeDataIndex,
 					PAGE_SIZE,
@@ -355,10 +355,7 @@ const ensure = componentKey => {
 			}
 
 			// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
-			if (
-				!_.isEmpty(attributeDataIndex) &&
-				!_.isEmpty(attributeRelationsIndex)
-			) {
+			if (!_isEmpty(attributeDataIndex) && !_isEmpty(attributeRelationsIndex)) {
 				// Some of data or relations are needed
 				if (loadData || loadRelations) {
 					// Load just missing data and relations defined by missingPages
