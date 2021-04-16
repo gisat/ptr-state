@@ -81,7 +81,6 @@ const addWithSpatialIndex = (
 			: data,
 	};
 
-	// TODO test commonHelpers.getUpdatedIndexes properly
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
 		filter,
