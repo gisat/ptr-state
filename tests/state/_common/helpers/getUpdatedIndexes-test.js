@@ -180,7 +180,7 @@ describe('getUpdatedIndexes', function () {
 			},
 		]);
 	});
-	it('Add datasource', () => {
+	it('Add override previous datasource in state under same filter, level and tile.', () => {
 		const state = {
 			indexes: [
 				{
@@ -235,7 +235,6 @@ describe('getUpdatedIndexes', function () {
 				index: {
 					7: {
 						'2.8125, 50.625': {
-							dataSourceKey1: ['feature1'],
 							dataSourceKey3: ['feature7'],
 						},
 					},
