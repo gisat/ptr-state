@@ -138,7 +138,6 @@ const getCommonFilterByComponentKey = createRecomputeSelector(componentKey => {
 		const {
 			areaTreeLevelKey: modifiedAreaTreeLevelKey,
 			layerTemplateKey: modifiedLayerTemplateKey,
-			// applicationKey, //FIXME
 			...modifiers
 		} = mergedMetadataKeys;
 
