@@ -48,11 +48,10 @@ function receiveIndexed(
 }
 
 /**
- * Create new index based on given level and tiles with loading indicator.
+ * Create new index with loading indicator based on pagination.
+ * @param {Object} pagination
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
- * @param {Number} level
- * @param {Array.[Array]} tiles
  */
 function addLoadingIndex(pagination, filter, order) {
 	const changedOn = null;

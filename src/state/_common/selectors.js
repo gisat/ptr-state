@@ -484,9 +484,10 @@ const getIndexTotal = getSubstate => {
 	});
 };
 
-// TODO @vdubr please help
 /**
- *
+ * Find all indexes in store where item fit their filter.
+ * state {Object}
+ * item {Object}
  * @param {func} getSubstate
  * @return {Array}
  */

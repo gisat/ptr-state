@@ -140,7 +140,6 @@ const addWithIndex = (
 		changedOn,
 	};
 
-	// TODO test common.addIndex properly
 	const stateWithUpdatedIndexes = common.addIndex(state, addIndexAction);
 
 	return {...state, byDataSourceKey, indexes: stateWithUpdatedIndexes.indexes};
