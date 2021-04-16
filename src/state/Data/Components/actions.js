@@ -567,7 +567,7 @@ const processResult = (
 			if (result.attributeData.attributeData) {
 				const changes = null;
 				dispatch(
-					attributeData.receiveIndexedAttributeEndPoint(
+					attributeData.receiveIndexed(
 						result.attributeData,
 						attributeDataFilter,
 						order,

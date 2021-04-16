@@ -859,10 +859,14 @@ function processResult(
 
 		if (result.spatialData && result.attributeData) {
 			const changes = null;
+			const spatialIndexData = attributeData.getIndexDataBySpatialData(
+				result.spatialData,
+				result.attributeData
+			);
 			dispatch(
-				attributeData.receiveIndexed(
+				attributeData.receiveIndexedWithSpatialIndex(
 					result.attributeData,
-					result.spatialData,
+					spatialIndexData,
 					attributeDataFilter,
 					order,
 					changes
