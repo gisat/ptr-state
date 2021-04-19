@@ -1,14 +1,12 @@
 import {isNumber as _isNumber, difference as _difference} from 'lodash';
-import {configDefaults} from '@gisatcz/ptr-core';
-import Select from '../../Select';
 
 /**
- *
+ * Determinate pages for requested range of the data. Return array which always starts with 0 as a first page.
  * @param {Number} [count] Optional size of data on BE. Usually known after request on BE.
  * @param {Number} PAGE_SIZE Size of pagesize
  * @param {Number} [optStart]  Optional start, if not set, default value 1 is used.
  * @param {Number} [optLength] Optional length of requested data. If set, then last page will not overfloat requested data.
- * @return {Array.<Number>}
+ * @return {Array.<Number>} Page indexes [0,1,2,3]
  */
 export function getRestPages(count, PAGE_SIZE, optStart = 1, optLength) {
 	optStart = _isNumber(optStart) ? optStart : 1;
@@ -49,13 +47,14 @@ export function getRestPages(count, PAGE_SIZE, optStart = 1, optLength) {
 }
 
 /**
- *
- * @param {Number} pageIndex Page index based on count, PAGE_SIZE, start and length
+ * Get pagination object {offset, limit}. Calculate necessary limit and offset from wanted range of the data.
+ * If optLength or optCount passed, then returned pagination object will not overfloat limits.
+ * @param {Number} pageIndex Page index based on count, PAGE_SIZE, start and length.
  * @param {Number} [optStart]  Optional start, if not set, default value 1 is used.
  * @param {Number} pageSize Size of pagesize
  * @param {Number} [optLength] Optional length of requested data. If set, then last page will not overfloat requested data.
  * @param {Number} [optCount] Optional size of data on BE. Usually known after request on BE.
- * @return {Object} {offset:Number, limint: Number}
+ * @return {Object} {offset:Number, limit: Number}
  */
 export function getPagination(
 	pageIndex,
@@ -86,7 +85,7 @@ export function getPagination(
 
 /**
  * Get empty pagination
- * @return {Object} {offset:Number, limint: Number
+ * @return {Object} {offset:Number, limit: Number
  */
 export function getNullishPagination() {
 	return getPagination(0, 1, 0, 0);
