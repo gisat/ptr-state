@@ -77,6 +77,7 @@ function ensureDataAndRelations(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const PAGE_SIZE = getPageSize(localConfig);
@@ -176,6 +177,7 @@ function loadMissingRelationsAndData(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
@@ -267,6 +269,7 @@ function loadMissingRelationsAndData(
 const ensure = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const componentState = Select.data.components.getComponentStateByKey(
 			state,
