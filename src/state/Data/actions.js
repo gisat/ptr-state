@@ -230,8 +230,6 @@ function loadMissingAttributeData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		// console.log("loadMissingAttributeData",spatialFilter);
-
 		const state = getState();
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const PAGE_SIZE = getPageSize(localConfig);
@@ -390,7 +388,6 @@ function loadMissingSpatialData(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		// console.log("loadMissingSpatialData",spatialFilter);
 		//
 		//which spatial data to load
 		//
@@ -470,7 +467,6 @@ function ensureDataAndRelations(
 	attributeDataFilter
 ) {
 	return (dispatch, getState) => {
-		// console.log("ensureDataAndRelations", spatialFilter);
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const PAGE_SIZE = getPageSize(localConfig);
 

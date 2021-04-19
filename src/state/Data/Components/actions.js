@@ -222,8 +222,8 @@ function loadMissingRelationsAndData(
 						attributeDataFilterExtension,
 						loadRelations,
 						loadData,
-						relationsPagination, //pagination for relations
-						attributePagination //pagination for data is same like for relations here
+						relationsPagination,
+						attributePagination
 					)
 				)
 			);
