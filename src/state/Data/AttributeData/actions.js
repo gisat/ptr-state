@@ -1,34 +1,34 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import {tileAsString} from '../helpers';
-import _ from 'lodash';
+import {isEmpty as _isEmpty, reduce as _reduce} from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_DATA;
 
 // ============ creators ===========
 /**
- * It ensure adding index and adding or updating received data from BE.
+ * It ensure adding index and adding or updating received attribute data from BE under given spatial index.
  * Add data to state only when attributeData received, in case of empty attributeData it adds only index.
  * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.
+ * @param {Object} spatialIndexData Spatial index related to the data.
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
  * @param {string?} changedOn
  */
-const receiveIndexed = (
+const receiveIndexedWithSpatialIndex = (
 	attributeData,
-	spatialData,
+	spatialIndexData,
 	attributeDataFilter,
 	order,
 	changedOn
 ) => {
 	return dispatch => {
-		if (!_.isEmpty(attributeData)) {
+		if (!_isEmpty(attributeData)) {
 			dispatch(
 				addDataAndIndexBasedOnSpatialData(
 					attributeDataFilter,
 					order,
 					attributeData,
-					spatialData,
+					spatialIndexData,
 					changedOn
 				)
 			);
@@ -38,8 +38,7 @@ const receiveIndexed = (
 				createAndAddIndexBasedOnSpatialData(
 					attributeDataFilter,
 					order,
-					attributeData,
-					spatialData,
+					spatialIndexData,
 					changedOn
 				)
 			);
@@ -48,7 +47,7 @@ const receiveIndexed = (
 };
 
 /**
- * Ensure adding index and adding or updating received data from BE.
+ * Ensure adding index and adding or updating received attribute data from BE.
  * @param {Object} attributeData
  * @param {Array} attributeData.index
  * @param {Object} attributeData.attributeData
@@ -58,7 +57,7 @@ const receiveIndexed = (
  * @param {Array?} total
  * @param {string?} changedOn
  */
-const receiveIndexedAttributeEndPoint = (
+const receiveIndexed = (
 	attributeData,
 	attributeDataFilter,
 	order,
@@ -82,7 +81,7 @@ const receiveIndexedAttributeEndPoint = (
  *
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}
+ * @param {Object} spatialIndexData Spatial index related to the data.
  * @param order {Array}
  * @param changedOn {string}
  */
@@ -90,12 +89,10 @@ function addDataAndIndexBasedOnSpatialData(
 	attributeDataFilter,
 	order,
 	attributeData,
-	spatialData,
+	spatialIndexData,
 	changedOn
 ) {
 	return dispatch => {
-		const indexData = getIndexDataBySpatialData(spatialData, attributeData);
-
 		for (const attributeDataSourceKey of Object.keys(attributeData)) {
 			dispatch(
 				addDataAndIndexBasedOnSpatialDataAction(
@@ -103,7 +100,7 @@ function addDataAndIndexBasedOnSpatialData(
 					attributeData[attributeDataSourceKey],
 					attributeDataFilter,
 					order,
-					[indexData],
+					[spatialIndexData],
 					changedOn
 				)
 			);
@@ -115,25 +112,19 @@ function addDataAndIndexBasedOnSpatialData(
  * Create and add index for given attribute data based on related spatial data index.
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
- * @param {Object} attributeData Object received from BE contains under attributeDataKey object of data attributes [id]: [value].
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}. SpatialData indexes are used as a templete for attribute data indexes.
+ * @param {Object} spatialIndexData Spatial index related to the data.
  * @param {*} changedOn
  */
 function createAndAddIndexBasedOnSpatialData(
 	attributeDataFilter,
 	order,
-	attributeData,
-	spatialData,
+	spatialIndexData,
 	changedOn
 ) {
-	const indexByLevelByTileByDataSourceKey = getIndexDataBySpatialData(
-		spatialData,
-		attributeData
-	);
 	return addIndexActionWithSpatialIndex(
 		attributeDataFilter,
 		order,
-		[indexByLevelByTileByDataSourceKey],
+		[spatialIndexData],
 		changedOn
 	);
 }
@@ -149,7 +140,7 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
-	const loadingTiles = _.reduce(
+	const loadingTiles = _reduce(
 		tiles,
 		(acc, tile) => {
 			const tileId = tileAsString(tile);
@@ -182,7 +173,7 @@ function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const changedOn = null;
 
 	//Fake new data object for common action
-	const data = _.reduce(
+	const data = _reduce(
 		[...Array(pagination.limit)],
 		(acc, val) => {
 			//Use key = true as a loading identificator
@@ -230,12 +221,12 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 				// Prepare empty tile for new data if tile does not exists.
 				if (
 					!indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] ||
-					_.isEmpty(attributeData)
+					_isEmpty(attributeData)
 				) {
 					indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] = {};
 				}
 
-				if (!_.isEmpty(attributeData)) {
+				if (!_isEmpty(attributeData)) {
 					//for all attribute data source keys in attributeData
 					for (const [
 						attributeDataSourceKey,
@@ -400,8 +391,8 @@ export default {
 	addLoadingIndex,
 	addLoadingSpatialIndex,
 	getIndexDataBySpatialData,
+	receiveIndexedWithSpatialIndex,
 	receiveIndexed,
-	receiveIndexedAttributeEndPoint,
 	removeSpatialIndex: removeSpatialIndexAction,
 	updateStore: actionUpdateStore, //do we use it?
 };

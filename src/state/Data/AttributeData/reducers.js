@@ -81,7 +81,6 @@ const addWithSpatialIndex = (
 			: data,
 	};
 
-	// TODO test commonHelpers.getUpdatedIndexes properly
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
 		filter,
@@ -140,7 +139,6 @@ const addWithIndex = (
 		changedOn,
 	};
 
-	// TODO test common.addIndex properly
 	const stateWithUpdatedIndexes = common.addIndex(state, addIndexAction);
 
 	return {...state, byDataSourceKey, indexes: stateWithUpdatedIndexes.indexes};

@@ -1,290 +1,46 @@
 import {assert} from 'chai';
-import getStoreSet from '../../../_common/helpers/store';
 import actions from '../../../../../src/state/Data/AttributeData/actions';
 
 describe('state/Data/AttributeData/actions/receiveIndexed', function () {
-	it('Dispatch ADD_WITH_SPATIAL_INDEX one datasource', function () {
-		const storeHelpers = getStoreSet();
-		const getState = () => {
-			return () => ({});
-		};
-		const dispatch = storeHelpers.getDispatch(getState);
-		const spatialData = {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18502],
-					},
-				},
-			},
-		};
-
+	it('Dispatch action with data', function () {
 		const attributeData = {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18502: '27',
+			index: [18502],
+			attributeData: {
+				'55f48ed1-ee67-47bd-a044-8985662ec29f': {
+					18502: '27',
+				},
 			},
 		};
 
 		const attributeDataFilter = {appKey: 'testKey'};
 		const order = null;
 		const changedOn = null;
+		const start = 1;
+		const total = 1;
 
-		dispatch(
-			actions.receiveIndexed(
-				attributeData,
-				spatialData,
-				attributeDataFilter,
-				order,
-				changedOn
-			)
+		const action = actions.receiveIndexed(
+			attributeData,
+			attributeDataFilter,
+			order,
+			start,
+			total,
+			changedOn
 		);
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepEqual(storeHelpers.getDispatchedActions(), [
-				{
-					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_SPATIAL_INDEX',
-					attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-					data: {
-						18502: '27',
-					},
-					filter: attributeDataFilter,
-					order,
-					indexData: [
-						{
-							7: {
-								'0,1': {
-									'55f48ed1-ee67-47bd-a044-8985662ec29f': [18502],
-								},
-							},
-						},
-					],
-					changedOn,
-				},
-			]);
-		});
-	});
-
-	it('Dispatch ADD_WITH_SPATIAL_INDEX two datasourcea', function () {
-		const storeHelpers = getStoreSet();
-		const getState = () => {
-			return () => ({});
-		};
-		const dispatch = storeHelpers.getDispatch(getState);
-		const spatialData = {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18502],
-					},
+		assert.deepEqual(action, {
+			type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_INDEX',
+			filter: {
+				appKey: 'testKey',
+			},
+			order: null,
+			total: 1,
+			start: 1,
+			index: [18502],
+			data: {
+				'55f48ed1-ee67-47bd-a044-8985662ec29f': {
+					18502: '27',
 				},
 			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {
-					18503: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18503],
-					},
-				},
-			},
-		};
-
-		const attributeData = {
-			'55f48ed1-ee67-47bd-a044-8985662ec29f': {
-				18502: '27',
-			},
-			'87560e4f-abb7-4d46-aa58-db23dba872a6': {
-				18503: '30',
-			},
-		};
-
-		const attributeDataFilter = {appKey: 'testKey'};
-		const order = null;
-		const changedOn = null;
-
-		dispatch(
-			actions.receiveIndexed(
-				attributeData,
-				spatialData,
-				attributeDataFilter,
-				order,
-				changedOn
-			)
-		);
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepEqual(storeHelpers.getDispatchedActions(), [
-				{
-					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_SPATIAL_INDEX',
-					attributeDataSourceKey: '55f48ed1-ee67-47bd-a044-8985662ec29f',
-					data: {
-						18502: '27',
-					},
-					filter: attributeDataFilter,
-					order,
-					indexData: [
-						{
-							7: {
-								'0,1': {
-									'55f48ed1-ee67-47bd-a044-8985662ec29f': [18502],
-									//FIXME - is it correct?
-									'87560e4f-abb7-4d46-aa58-db23dba872a6': [18503],
-								},
-							},
-						},
-					],
-					changedOn,
-				},
-				{
-					type: 'DATA.ATTRIBUTE_DATA.ADD_WITH_SPATIAL_INDEX',
-					attributeDataSourceKey: '87560e4f-abb7-4d46-aa58-db23dba872a6',
-					data: {
-						18503: '30',
-					},
-					filter: attributeDataFilter,
-					order,
-					indexData: [
-						{
-							7: {
-								'0,1': {
-									//FIXME - is it correct?
-									'55f48ed1-ee67-47bd-a044-8985662ec29f': [18502],
-									'87560e4f-abb7-4d46-aa58-db23dba872a6': [18503],
-								},
-							},
-						},
-					],
-					changedOn,
-				},
-			]);
-		});
-	});
-
-	it('RecieveIndexed with empty attribute data', function () {
-		const storeHelpers = getStoreSet();
-		const getState = () => {
-			return () => ({});
-		};
-		const dispatch = storeHelpers.getDispatch(getState);
-		const spatialData = {
-			'85e35be5-1706-402a-86ad-851397bae7aa': {
-				data: {
-					18502: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18502],
-					},
-				},
-			},
-			'848e2559-936d-4262-a808-4c87aa60217d': {
-				data: {
-					18503: {
-						type: 'MultiPolygon',
-						coordinates: [
-							[
-								[
-									[2.50647283, 50.63433838],
-									[2.5012393, 50.63986206],
-									[2.50829029, 50.64472198],
-									[2.50647283, 50.63433838],
-								],
-							],
-						],
-					},
-				},
-				spatialIndex: {
-					7: {
-						'0,1': [18503],
-					},
-				},
-			},
-		};
-
-		const attributeData = {};
-
-		const attributeDataFilter = {appKey: 'testKey'};
-		const order = null;
-		const changedOn = null;
-
-		dispatch(
-			actions.receiveIndexed(
-				attributeData,
-				spatialData,
-				attributeDataFilter,
-				order,
-				changedOn
-			)
-		);
-		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			assert.deepEqual(storeHelpers.getDispatchedActions(), [
-				{
-					type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
-					filter: attributeDataFilter,
-					order,
-					indexData: [
-						{
-							7: {
-								'0,1': {},
-							},
-						},
-					],
-					changedOn,
-				},
-			]);
+			changedOn: null,
 		});
 	});
 });
