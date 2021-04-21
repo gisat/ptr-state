@@ -87,7 +87,7 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 		dispatch(mapUseRegister(mapKey));
 		const state = getState();
 
-		const spatialFilter = Select.maps.getSpatialFilterByMapKey(
+		const spatialFilter = Select.maps.getVisibleTilesByMapKey(
 			state,
 			mapKey,
 			mapWidth,
@@ -249,7 +249,7 @@ function ensureWithFilterByActive(filterByActive) {
 				const mapViewport = Select.maps.getViewportByMapKey(state, mapKey);
 				if (mapViewport) {
 					const {width, height} = mapViewport;
-					const spatialFilter = Select.maps.getSpatialFilterByMapKey(
+					const spatialFilter = Select.maps.getVisibleTilesByMapKey(
 						state,
 						mapKey,
 						width,

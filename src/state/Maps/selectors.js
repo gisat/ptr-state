@@ -527,8 +527,9 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
  * @param {string} mapKey
  * @param {number} mapWidth
  * @param {number} mapHeight
+ * @return {{tiles: Array, level: number}}
  */
-const getSpatialFilterByMapKey = createCachedSelector(
+const getVisibleTilesByMapKey = createCachedSelector(
 	[
 		getViewByMapKey,
 		(state, mapKey, mapWidth) => mapWidth,
@@ -910,7 +911,7 @@ export default {
 	getMapSetView,
 	getMapSetViewLimits,
 
-	getSpatialFilterByMapKey,
+	getVisibleTilesByMapKey,
 	getSpatialRelationsFilterFromLayerState,
 
 	getViewByMapKey,
