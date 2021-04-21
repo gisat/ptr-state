@@ -172,15 +172,11 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const changedOn = null;
 
-	//Fake new data object for common action
-	const data = _reduce(
-		[...Array(pagination.limit)],
-		(acc, val) => {
-			//Use key = true as a loading identificator
-			return [...acc, {key: true}];
-		},
-		[]
-	);
+	// Fake new data object for common action of size same like pagination.limit
+	// Action "common.addIndex" needs array of data objects with key to create new index.
+	// "data" is a Array of the minimal data for construct index in common actoin.
+	// Use key = true as a loading identificator
+	const data = [...Array(pagination.limit)].map(() => ({key: true}));
 
 	// filter, order, data, start, count, changedOn
 	return addIndexAction(

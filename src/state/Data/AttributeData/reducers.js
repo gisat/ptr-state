@@ -1,4 +1,3 @@
-import {reduce as _reduce} from 'lodash';
 import ActionTypes from '../../../constants/ActionTypes';
 import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import commonHelpers from '../../_common/helpers';
@@ -94,7 +93,7 @@ const addWithSpatialIndex = (
 };
 
 /**
- * Add data and index in one step
+ * Add data and index in one step to save more mutating state
  * @param state {Object}
  * @param index {Array} ordered index
  * @param data {Object} Object with data
@@ -121,14 +120,10 @@ const addWithIndex = (
 		data
 	);
 
-	//Fake new data object for common action
-	const newData = _reduce(
-		index,
-		(acc, val) => {
-			return [...acc, {key: val}];
-		},
-		[]
-	);
+	// Fake new data object for common action
+	// Action "common.addIndex" needs array of data objects with key to create new index.
+	// "newData" is a Array of the minimal data for construct index in common actoin.
+	const newData = index.map(val => ({key: val}));
 
 	const addIndexAction = {
 		filter,
