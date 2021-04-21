@@ -94,7 +94,7 @@ const addWithSpatialIndex = (
 };
 
 /**
- * Add data and index in one step
+ * Add data and index in one step to save more mutating state
  * @param state {Object}
  * @param index {Array} ordered index
  * @param data {Object} Object with data
@@ -121,7 +121,9 @@ const addWithIndex = (
 		data
 	);
 
-	//Fake new data object for common action
+	// Fake new data object for common action
+	// Action "common.addIndex" needs array of data objects with key to create new index.
+	// "newData" is a Array of the minimal data for construct index in common actoin.
 	const newData = _reduce(
 		index,
 		(acc, val) => {
