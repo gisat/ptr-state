@@ -41,27 +41,36 @@ const haveAllKeysRegisteredUse = common.haveAllKeysRegisteredUse(getSubstate);
 /**
  * Get periods which are between defined bounds
  * @param state {Object}
- * @param start {string} moment-like time string
- * @param end {string} moment-like time string
- * @param {Array} Collection of models
+ * @param limitStart {string} moment-like time string
+ * @param limitEnd {string} moment-like time string
+ * @param {Object} Models
  */
-const getByFullPeriodAsObject = createCachedSelector(
-	[getAllAsObject, (state, start) => start, (state, start, end) => end],
-	(periods, start, end) => {
-		if (periods && start && end) {
+const getAsObjectByFullPeriod = createCachedSelector(
+	[
+		getAllAsObject,
+		(state, limitStart) => limitStart,
+		(state, limitStart, limitEnd) => limitEnd,
+	],
+	(periods, limitStart, limitEnd) => {
+		if (periods && limitStart && limitEnd) {
 			const selectedPeriods = _pickBy(periods, period => {
 				const periodStart = period.data?.start;
 				const periodEnd = period.data?.end;
 
 				if (periodStart && periodEnd) {
 					return (
-						moment(periodStart).isBetween(start, end, null, '[]') &&
-						moment(periodEnd).isBetween(start, end, null, '[]')
+						moment(periodStart).isBetween(limitStart, limitEnd, null, '[]') &&
+						moment(periodEnd).isBetween(limitStart, limitEnd, null, '[]')
 					);
 				} else if (periodStart) {
-					return moment(periodStart).isBetween(start, end, null, '[]');
+					return moment(periodStart).isBetween(
+						limitStart,
+						limitEnd,
+						null,
+						'[]'
+					);
 				} else if (periodEnd) {
-					return moment(periodEnd).isBetween(start, end, null, '[]');
+					return moment(periodEnd).isBetween(limitStart, limitEnd, null, '[]');
 				} else {
 					return false;
 				}
@@ -72,7 +81,7 @@ const getByFullPeriodAsObject = createCachedSelector(
 			return null;
 		}
 	}
-)((state, start, end) => `${start}_${end}`);
+)((state, limitStart, limitEnd) => `${limitStart}_${limitEnd}`);
 
 export default {
 	getActive,
@@ -85,7 +94,7 @@ export default {
 	getByKey,
 	getByKeys,
 	getByKeysAsObject,
-	getByFullPeriodAsObject,
+	getAsObjectByFullPeriod,
 
 	getDataByKey,
 	getDeletePermissionByKey,
