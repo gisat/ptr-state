@@ -1,4 +1,3 @@
-import {reduce as _reduce} from 'lodash';
 import ActionTypes from '../../../constants/ActionTypes';
 import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import commonHelpers from '../../_common/helpers';
@@ -124,13 +123,7 @@ const addWithIndex = (
 	// Fake new data object for common action
 	// Action "common.addIndex" needs array of data objects with key to create new index.
 	// "newData" is a Array of the minimal data for construct index in common actoin.
-	const newData = _reduce(
-		index,
-		(acc, val) => {
-			return [...acc, {key: val}];
-		},
-		[]
-	);
+	const newData = index.map(val => ({key: val}));
 
 	const addIndexAction = {
 		filter,
