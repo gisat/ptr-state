@@ -264,7 +264,7 @@ function getIndexDataBySpatialData(spatialData, attributeData) {
 }
 
 // ============ actions ============
-function removeSpatialIndexAction(filter, order) {
+function actionRemoveSpatialIndex(filter, order) {
 	return {
 		type: actionTypes.SPATIAL_INDEX.REMOVE,
 		filter,
@@ -389,6 +389,6 @@ export default {
 	getIndexDataBySpatialData,
 	receiveIndexedWithSpatialIndex,
 	receiveIndexed,
-	removeSpatialIndex: removeSpatialIndexAction,
+	removeSpatialIndex: actionRemoveSpatialIndex,
 	updateStore: actionUpdateStore, //do we use it?
 };
