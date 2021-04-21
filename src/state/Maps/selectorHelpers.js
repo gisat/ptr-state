@@ -29,11 +29,7 @@ const mergeBackgroundLayerWithLayers = createCachedSelector(
 		(backgroundLayer, layers) => layers,
 	],
 	(backgroundLayer, layers) => {
-		let finalLayers = [];
-
-		if (layers) {
-			finalLayers = [...layers];
-		}
+		let finalLayers = layers || [];
 
 		if (backgroundLayer) {
 			finalLayers = [backgroundLayer, ...finalLayers];
