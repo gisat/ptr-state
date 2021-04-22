@@ -502,6 +502,7 @@ function create(
 						items.forEach(item => {
 							indexes =
 								indexes.concat(
+									// Find out indexes which could include new item
 									commonSelectors.getIndexesByFilteredItem(getSubstate)(
 										getState(),
 										item
@@ -829,12 +830,14 @@ function receiveUpdated(
 					}
 				});
 
+				//Find corresponding indexes for new model
 				indexes = indexes.concat(
 					commonSelectors.getIndexesByFilteredItem(getSubstate)(
 						getState() || [],
 						model
 					)
 				);
+				//Find corresponding indexes for original model
 				indexes = indexes.concat(
 					commonSelectors.getIndexesByFilteredItem(getSubstate)(
 						getState() || [],

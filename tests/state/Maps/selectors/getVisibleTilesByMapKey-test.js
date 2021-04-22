@@ -2,7 +2,7 @@ import Select from '../../../../src/state/Select';
 import {assert} from 'chai';
 import {MapsSelectorsState as state} from './_state';
 
-describe('getSpatialFilterByMapKey-test', function () {
+describe('getVisibleTilesByMapKey-test', function () {
 	it('should return spatial filter', () => {
 		const expectedResult = {
 			level: 4,
@@ -11,17 +11,12 @@ describe('getSpatialFilterByMapKey-test', function () {
 				[11.25, 45],
 			],
 		};
-		const output = Select.maps.getSpatialFilterByMapKey(
-			state,
-			'map1',
-			100,
-			100
-		);
+		const output = Select.maps.getVisibleTilesByMapKey(state, 'map1', 100, 100);
 		assert.deepStrictEqual(output, expectedResult);
 	});
 
 	it('should return null, if no map for given key', () => {
-		const output = Select.maps.getSpatialFilterByMapKey(
+		const output = Select.maps.getVisibleTilesByMapKey(
 			state,
 			'mapXY',
 			100,
@@ -31,7 +26,7 @@ describe('getSpatialFilterByMapKey-test', function () {
 	});
 
 	it('should return null, if no width and height given', () => {
-		const output = Select.maps.getSpatialFilterByMapKey(state, 'map1', 0, 0);
+		const output = Select.maps.getVisibleTilesByMapKey(state, 'map1', 0, 0);
 		assert.isNull(output);
 	});
 });

@@ -1,6 +1,5 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
-import _ from 'lodash';
 
 const actionTypes = ActionTypes.DATA.ATTRIBUTE_RELATIONS;
 
@@ -48,24 +47,19 @@ function receiveIndexed(
 }
 
 /**
- * Create new index based on given level and tiles with loading indicator.
+ * Create new index with loading indicator based on pagination.
+ * @param {Object} pagination
  * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
  * @param {Array?} order
- * @param {Number} level
- * @param {Array.[Array]} tiles
  */
 function addLoadingIndex(pagination, filter, order) {
 	const changedOn = null;
 
-	//Fake new data object for common action
-	const data = _.reduce(
-		[...Array(pagination.limit)],
-		(acc, val) => {
-			//Use key = true as a loading identificator
-			return [...acc, {key: true}];
-		},
-		[]
-	);
+	// Fake new data object for common action of size same like pagination.limit
+	// Action "common.addIndex" needs array of data objects with key to create new index.
+	// "data" is a Array of the minimal data for construct index in common actoin.
+	// Use key = true as a loading identificator
+	const data = [...Array(pagination.limit)].map(() => ({key: true}));
 
 	// filter, order, data, start, count, changedOn
 	return addIndexAction(

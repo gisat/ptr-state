@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import selectors from '../../../../src/state/Periods/selectors';
 
-describe('getByFullPeriodAsObject', function () {
+describe('getAsObjectByFullPeriod', function () {
 	const state = {
 		periods: {
 			byKey: {
@@ -64,7 +64,7 @@ describe('getByFullPeriodAsObject', function () {
 			period4: periodsByKey.period4,
 			period6: periodsByKey.period6,
 		};
-		const output = selectors.getByFullPeriodAsObject(state, start, end);
+		const output = selectors.getAsObjectByFullPeriod(state, start, end);
 		assert.deepStrictEqual(output, expectedOutput);
 	});
 
@@ -79,7 +79,7 @@ describe('getByFullPeriodAsObject', function () {
 			period4: periodsByKey.period4,
 			period6: periodsByKey.period6,
 		};
-		const output = selectors.getByFullPeriodAsObject(state, start, end);
+		const output = selectors.getAsObjectByFullPeriod(state, start, end);
 		assert.deepStrictEqual(output, expectedOutput);
 	});
 
@@ -93,7 +93,7 @@ describe('getByFullPeriodAsObject', function () {
 			period3: periodsByKey.period3,
 			period4: periodsByKey.period4,
 		};
-		const output = selectors.getByFullPeriodAsObject(state, start, end);
+		const output = selectors.getAsObjectByFullPeriod(state, start, end);
 		assert.deepStrictEqual(output, expectedOutput);
 	});
 
@@ -105,7 +105,7 @@ describe('getByFullPeriodAsObject', function () {
 		const expectedOutput = {
 			period7: periodsByKey.period7,
 		};
-		const output = selectors.getByFullPeriodAsObject(state, start, end);
+		const output = selectors.getAsObjectByFullPeriod(state, start, end);
 		assert.deepStrictEqual(output, expectedOutput);
 	});
 
@@ -113,20 +113,20 @@ describe('getByFullPeriodAsObject', function () {
 		const start = '2010-12-30T20:00:01';
 		const end = '2010-12-30T20:00:06';
 
-		const output = selectors.getByFullPeriodAsObject(state, start, end);
+		const output = selectors.getAsObjectByFullPeriod(state, start, end);
 		assert.isNull(output);
 	});
 
 	it('should return null if no start period given', function () {
 		const end = '2010-12-30T20:00:06';
-		const output = selectors.getByFullPeriodAsObject(state, null, end);
+		const output = selectors.getAsObjectByFullPeriod(state, null, end);
 		assert.isNull(output);
 	});
 
 	it('should return null if no end period given', function () {
 		const start = '2010-12-30T20:00:06';
 
-		const output = selectors.getByFullPeriodAsObject(state, start, null);
+		const output = selectors.getAsObjectByFullPeriod(state, start, null);
 		assert.isNull(output);
 	});
 
@@ -134,7 +134,7 @@ describe('getByFullPeriodAsObject', function () {
 		const start = '2010-12-30T20:00:00';
 		const end = '2010-12-30T20:00:06';
 
-		const output = selectors.getByFullPeriodAsObject(
+		const output = selectors.getAsObjectByFullPeriod(
 			{periods: {byKey: null}},
 			start,
 			end

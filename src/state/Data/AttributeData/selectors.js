@@ -158,8 +158,8 @@ const isTileLoading = createRecomputeSelector((filter, level, tile) => {
 	if (_isNumber(level) && tile) {
 		const index = getSpatialIndex_recompute(filter, null);
 		if (index) {
-			const loading = index?.index[level]?.[tile];
-			return loading === true;
+			const tileIndex = index?.index[level]?.[tile];
+			return tileIndex === true;
 		} else {
 			return false;
 		}

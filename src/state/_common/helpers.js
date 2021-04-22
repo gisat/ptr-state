@@ -37,7 +37,11 @@ const getIndex = createCachedSelector(
 	return `${JSON.stringify(filter)}${JSON.stringify(order)}`;
 });
 
-// TODO @vdubr please check the usage if it makes sense
+/**
+ * Remove duplicate indexes from given indexes. Returns new Array.
+ * @param {Array} indexes Array of indexes where can index duplicate.
+ * @returns {Array} unique indexes
+ */
 function getUniqueIndexes(indexes) {
 	if (!_isEmpty(indexes)) {
 		return indexes.reduce((uniqueIndexes, index) => {
@@ -199,7 +203,14 @@ function isCorrespondingIndex(index, filter, order) {
 	);
 }
 
-// TODO @vdubr please help with comments & proper testing
+/**
+ * Check if filter fits given filter.
+ * Not tested now.
+ * Needs farther discusion. It will not be possible test item on complicated geometry filter.
+ * @param {*} filter
+ * @param {*} item
+ * @returns {Boolean}
+ */
 function itemFitFilter(filter, item) {
 	// null filter fit
 	if (filter === null) {

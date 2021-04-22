@@ -1,4 +1,4 @@
-import _, {merge as _merge} from 'lodash';
+import {merge as _merge, isEmpty as _isEmpty} from 'lodash';
 import {setState} from '@jvitela/recompute';
 import {configDefaults} from '@gisatcz/ptr-core';
 import ActionTypes from '../../../constants/ActionTypes';
@@ -20,10 +20,10 @@ const DEFAULT_PAGE_PAGINATION = {
  * Update whole data.components.components object with given components
  * @param components {Object}
  */
-function updateComponentsStateFromView(components) {
+function addComponentsFromView(components) {
 	return dispatch => {
 		if (components) {
-			dispatch(actionUpdateComponents(components));
+			dispatch(actionAddOrReplaceComponents(components));
 		}
 	};
 }
@@ -40,7 +40,9 @@ function updateComponent(componentKey, update) {
 			Select.data.components.getComponentStateByKey(state, componentKey) || {};
 
 		dispatch(
-			actionUpdateComponents({[componentKey]: _merge(componentState, update)})
+			actionAddOrReplaceComponents({
+				[componentKey]: _merge(componentState, update),
+			})
 		);
 	};
 }
@@ -77,6 +79,7 @@ function ensureDataAndRelations(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const PAGE_SIZE = getPageSize(localConfig);
@@ -176,6 +179,7 @@ function loadMissingRelationsAndData(
 ) {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const localConfig = Select.app.getCompleteLocalConfiguration(state);
 		const RELATIONS_PAGE_SIZE = getPageSize(localConfig);
@@ -222,8 +226,8 @@ function loadMissingRelationsAndData(
 						attributeDataFilterExtension,
 						loadRelations,
 						loadData,
-						relationsPagination, //pagination for relations
-						attributePagination //pagination for data is same like for relations here
+						relationsPagination,
+						attributePagination
 					)
 				)
 			);
@@ -267,6 +271,7 @@ function loadMissingRelationsAndData(
 const ensure = componentKey => {
 	return (dispatch, getState) => {
 		const state = getState();
+		// Update recompute state before ask cached selectors.
 		setState(state);
 		const componentState = Select.data.components.getComponentStateByKey(
 			state,
@@ -312,7 +317,7 @@ const ensure = componentKey => {
 			let missingRelationsPages, missingAttributesPages;
 			// Relations index exist
 			// find if all required relations are loaded
-			if (!_.isEmpty(attributeDataIndex)) {
+			if (!_isEmpty(attributeDataIndex)) {
 				missingRelationsPages = getMissingPages(
 					attributeRelationsIndex,
 					RELATIONS_PAGE_SIZE,
@@ -333,7 +338,7 @@ const ensure = componentKey => {
 
 			// Attribute data index exist
 			// find if all required data are loaded
-			if (!_.isEmpty(attributeDataIndex)) {
+			if (!_isEmpty(attributeDataIndex)) {
 				missingAttributesPages = getMissingPages(
 					attributeDataIndex,
 					PAGE_SIZE,
@@ -355,10 +360,7 @@ const ensure = componentKey => {
 			}
 
 			// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
-			if (
-				!_.isEmpty(attributeDataIndex) &&
-				!_.isEmpty(attributeRelationsIndex)
-			) {
+			if (!_isEmpty(attributeDataIndex) && !_isEmpty(attributeRelationsIndex)) {
 				// Some of data or relations are needed
 				if (loadData || loadRelations) {
 					// Load just missing data and relations defined by missingPages
@@ -570,7 +572,7 @@ const processResult = (
 			if (result.attributeData.attributeData) {
 				const changes = null;
 				dispatch(
-					attributeData.receiveIndexedAttributeEndPoint(
+					attributeData.receiveIndexed(
 						result.attributeData,
 						attributeDataFilter,
 						order,
@@ -706,9 +708,9 @@ const actionSetAttributeKeys = (componentKey, attributeKeys) => {
 	};
 };
 
-const actionUpdateComponents = components => {
+const actionAddOrReplaceComponents = components => {
 	return {
-		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
+		type: ActionTypes.DATA.COMPONENTS.ADD_COMPONENTS,
 		components,
 	};
 };
@@ -728,6 +730,7 @@ const actionComponentUseRegister = componentKey => {
 };
 
 export default {
+	addComponentsFromView,
 	componentUseClear,
 	componentUseRegister,
 	ensure,
@@ -738,7 +741,6 @@ export default {
 	loadMissingRelationsAndData,
 	processResult,
 	setAttributeKeys: actionSetAttributeKeys,
-	updateComponentsStateFromView,
 	updateComponent,
 	use,
 };

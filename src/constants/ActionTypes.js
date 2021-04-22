@@ -256,7 +256,7 @@ export default utils.deepKeyMirror({
 					REGISTER: null,
 				},
 			},
-			UPDATE_COMPONENTS: null,
+			ADD_COMPONENTS: null,
 		},
 		SPATIAL_DATA: {
 			ADD: null,

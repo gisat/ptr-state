@@ -2,8 +2,8 @@ import {assert} from 'chai';
 import actions from '../../../../../src/state/Data/Components/actions';
 import getStoreSet from '../../../_common/helpers/store';
 
-describe('state/Data/Components/actions/updateComponentsStateFromView', function () {
-	it('Dispatch updateComponentsStateFromView action', function () {
+describe('state/Data/Components/actions/addComponentsFromView', function () {
+	it('Dispatch addComponentsFromView action', function () {
 		const storeHelpers = getStoreSet();
 		const getState = () => ({});
 		const dispatch = storeHelpers.getDispatch(getState);
@@ -14,26 +14,26 @@ describe('state/Data/Components/actions/updateComponentsStateFromView', function
 			},
 		};
 
-		dispatch(actions.updateComponentsStateFromView(components));
+		dispatch(actions.addComponentsFromView(components));
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
-					type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+					type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 					components,
 				},
 			]);
 		});
 	});
 
-	it('Dispatch nothing updateComponentsStateFromView action', function () {
+	it('Dispatch nothing addComponentsFromView action', function () {
 		const storeHelpers = getStoreSet();
 		const getState = () => ({});
 		const dispatch = storeHelpers.getDispatch(getState);
 
 		const components = undefined;
 
-		dispatch(actions.updateComponentsStateFromView(components));
+		dispatch(actions.addComponentsFromView(components));
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), []);
