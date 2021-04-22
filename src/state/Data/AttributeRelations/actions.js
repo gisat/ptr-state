@@ -62,7 +62,7 @@ function addLoadingIndex(pagination, filter, order) {
 	const data = new Array(pagination.limit).fill({key: true});
 
 	// filter, order, data, start, count, changedOn
-	return addIndexAction(
+	return actionAddIndex(
 		filter,
 		order,
 		data,
@@ -80,7 +80,7 @@ const actionUpdateStore = data => {
 	};
 };
 
-function addIndexAction(filter, order, data, start, count, changedOn) {
+function actionAddIndex(filter, order, data, start, count, changedOn) {
 	return {
 		type: actionTypes.INDEX.ADD,
 		filter,

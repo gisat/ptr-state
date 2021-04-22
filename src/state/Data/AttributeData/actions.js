@@ -65,7 +65,7 @@ const receiveIndexed = (
 	total,
 	changedOn
 ) => {
-	return addDataAndIndexAction(
+	return actionAddDataAndIndex(
 		attributeDataFilter,
 		order,
 		total,
@@ -95,7 +95,7 @@ function addDataAndIndexBasedOnSpatialData(
 	return dispatch => {
 		for (const attributeDataSourceKey of Object.keys(attributeData)) {
 			dispatch(
-				addDataAndIndexBasedOnSpatialDataAction(
+				actionAddDataAndIndexBasedOnSpatialData(
 					attributeDataSourceKey,
 					attributeData[attributeDataSourceKey],
 					attributeDataFilter,
@@ -121,7 +121,7 @@ function createAndAddIndexBasedOnSpatialData(
 	spatialIndexData,
 	changedOn
 ) {
-	return addIndexActionWithSpatialIndex(
+	return actionAddIndexWithSpatialIndex(
 		attributeDataFilter,
 		order,
 		[spatialIndexData],
@@ -153,7 +153,7 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 		[level]: loadingTiles,
 	};
 
-	return addIndexActionWithSpatialIndex(
+	return actionAddIndexWithSpatialIndex(
 		attributeDataFilter,
 		order,
 		[index],
@@ -179,7 +179,7 @@ function addLoadingIndex(pagination, attributeDataFilter, order) {
 	const data = new Array(pagination.limit).fill({key: true});
 
 	// filter, order, data, start, count, changedOn
-	return addIndexAction(
+	return actionAddIndex(
 		attributeDataFilter,
 		order,
 		data,
@@ -281,7 +281,7 @@ function actionRemoveSpatialIndex(filter, order) {
  * @param {Object} data
  * @param {string?} changedOn
  */
-function addDataAndIndexBasedOnSpatialDataAction(
+function actionAddDataAndIndexBasedOnSpatialData(
 	attributeDataSourceKey,
 	data,
 	attributeDataFilter,
@@ -309,7 +309,7 @@ function addDataAndIndexBasedOnSpatialDataAction(
  * @param {Object} data
  * @param {string?} changedOn
  */
-function addDataAndIndexAction(
+function actionAddDataAndIndex(
 	attributeDataFilter,
 	order,
 	total,
@@ -330,7 +330,7 @@ function addDataAndIndexAction(
 	};
 }
 
-function addIndexActionWithSpatialIndex(
+function actionAddIndexWithSpatialIndex(
 	attributeDataFilter,
 	order,
 	index,
@@ -355,7 +355,7 @@ function addIndexActionWithSpatialIndex(
  * @param {*} changedOn
  * @returns
  */
-function addIndexAction(
+function actionAddIndex(
 	attributeDataFilter,
 	order,
 	data,

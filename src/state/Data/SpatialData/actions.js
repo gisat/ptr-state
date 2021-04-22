@@ -52,7 +52,7 @@ function addDataAndIndex(
 		);
 
 		dispatch(
-			addDataAndIndexAction(
+			actionAddDataAndIndex(
 				spatialDataByDataSourceKey,
 				level,
 				filter,
@@ -87,7 +87,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 	const index = {
 		[level]: loadingTiles,
 	};
-	return addIndexAction(filter, order, [index], changedOn);
+	return actionAddIndex(filter, order, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -127,7 +127,7 @@ function getIndexData(spatialDataByDataSourceKey) {
 }
 
 // ============ actions ============
-function removeIndexAction(filter, order) {
+function actionRemoveIndex(filter, order) {
 	return {
 		type: actionTypes.INDEX.REMOVE,
 		filter,
@@ -135,7 +135,7 @@ function removeIndexAction(filter, order) {
 	};
 }
 
-function addDataAndIndexAction(
+function actionAddDataAndIndex(
 	dataByDataSourceKey,
 	level,
 	filter,
@@ -154,7 +154,7 @@ function addDataAndIndexAction(
 	};
 }
 
-function addIndexAction(filter, order, index, changedOn) {
+function actionAddIndex(filter, order, index, changedOn) {
 	return {
 		type: actionTypes.INDEX.ADD,
 		filter,
@@ -169,6 +169,6 @@ function addIndexAction(filter, order, index, changedOn) {
 export default {
 	addLoadingIndex,
 	getIndexData,
-	removeIndex: removeIndexAction,
+	removeIndex: actionRemoveIndex,
 	receiveIndexed,
 };
