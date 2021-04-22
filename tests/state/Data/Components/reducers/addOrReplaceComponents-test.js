@@ -3,7 +3,7 @@ import reducers, {
 	INITIAL_STATE,
 } from '../../../../../src/state/Data/Components/reducers';
 
-describe('updateComponents-test', function () {
+describe('addOrReplaceComponents-test', function () {
 	const state = {
 		...INITIAL_STATE,
 		components: {
@@ -34,7 +34,7 @@ describe('updateComponents-test', function () {
 		};
 
 		const action = {
-			type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+			type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 			components: {
 				componentA: {
 					attributeKeys: ['attributeXY'],
@@ -49,7 +49,7 @@ describe('updateComponents-test', function () {
 
 	it('Should return the same state if components was given', function () {
 		const action = {
-			type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+			type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 			componentKey: null,
 		};
 

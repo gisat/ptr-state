@@ -92,12 +92,12 @@ const setComponentAttributeKeys = (state, componentKey, attributeKeys) => {
 };
 
 /**
- * Update whole data.components.components.byKey object with given components
+ * Add or replace components
  * @param state {Object}
  * @param componentsByKey {Object}
  * @return {Object}
  */
-const updateComponents = (state, componentsByKey) => {
+const addOrReplaceComponents = (state, componentsByKey) => {
 	if (componentsByKey) {
 		return {
 			...state,
@@ -126,8 +126,8 @@ export default (state = INITIAL_STATE, action) => {
 			return componentUseClear(state, action.componentKey);
 		case ActionTypes.DATA.COMPONENTS.COMPONENT.USE.REGISTER:
 			return componentUseRegister(state, action.componentKey);
-		case ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS:
-			return updateComponents(state, action.components);
+		case ActionTypes.DATA.COMPONENTS.ADD_COMPONENTS:
+			return addOrReplaceComponents(state, action.components);
 		default:
 			return state;
 	}

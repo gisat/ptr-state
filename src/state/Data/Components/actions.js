@@ -20,10 +20,10 @@ const DEFAULT_PAGE_PAGINATION = {
  * Update whole data.components.components object with given components
  * @param components {Object}
  */
-function updateComponentsStateFromView(components) {
+function addComponentsFromView(components) {
 	return dispatch => {
 		if (components) {
-			dispatch(actionUpdateComponents(components));
+			dispatch(actionAddOrReplaceComponents(components));
 		}
 	};
 }
@@ -40,7 +40,9 @@ function updateComponent(componentKey, update) {
 			Select.data.components.getComponentStateByKey(state, componentKey) || {};
 
 		dispatch(
-			actionUpdateComponents({[componentKey]: _merge(componentState, update)})
+			actionAddOrReplaceComponents({
+				[componentKey]: _merge(componentState, update),
+			})
 		);
 	};
 }
@@ -706,9 +708,9 @@ const actionSetAttributeKeys = (componentKey, attributeKeys) => {
 	};
 };
 
-const actionUpdateComponents = components => {
+const actionAddOrReplaceComponents = components => {
 	return {
-		type: ActionTypes.DATA.COMPONENTS.UPDATE_COMPONENTS,
+		type: ActionTypes.DATA.COMPONENTS.ADD_COMPONENTS,
 		components,
 	};
 };
@@ -728,6 +730,7 @@ const actionComponentUseRegister = componentKey => {
 };
 
 export default {
+	addComponentsFromView,
 	componentUseClear,
 	componentUseRegister,
 	ensure,
@@ -738,7 +741,6 @@ export default {
 	loadMissingRelationsAndData,
 	processResult,
 	setAttributeKeys: actionSetAttributeKeys,
-	updateComponentsStateFromView,
 	updateComponent,
 	use,
 };

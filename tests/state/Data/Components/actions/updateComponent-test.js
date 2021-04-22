@@ -37,7 +37,7 @@ describe('state/Data/Components/actions/updateComponent', function () {
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
-					type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+					type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 					components: {
 						table: {
 							selected: 22,
@@ -94,7 +94,7 @@ describe('state/Data/Components/actions/updateComponent', function () {
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
-					type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+					type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 					components: {
 						table: {
 							selected: 22,
@@ -143,7 +143,7 @@ describe('state/Data/Components/actions/updateComponent', function () {
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
-					type: 'DATA.COMPONENTS.UPDATE_COMPONENTS',
+					type: 'DATA.COMPONENTS.ADD_COMPONENTS',
 					components: {
 						table: {
 							selected: 22,
