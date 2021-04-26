@@ -59,10 +59,10 @@ function addLoadingIndex(pagination, filter, order) {
 	// Action "common.addIndex" needs array of data objects with key to create new index.
 	// "data" is a Array of the minimal data for construct index in common actoin.
 	// Use key = true as a loading identificator
-	const data = [...Array(pagination.limit)].map(() => ({key: true}));
+	const data = new Array(pagination.limit).fill({key: true});
 
 	// filter, order, data, start, count, changedOn
-	return addIndexAction(
+	return actionAddIndex(
 		filter,
 		order,
 		data,
@@ -80,7 +80,7 @@ const actionUpdateStore = data => {
 	};
 };
 
-function addIndexAction(filter, order, data, start, count, changedOn) {
+function actionAddIndex(filter, order, data, start, count, changedOn) {
 	return {
 		type: actionTypes.INDEX.ADD,
 		filter,

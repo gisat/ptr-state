@@ -106,7 +106,8 @@ export default {
 					action.start
 				);
 
-				// Remove loading indicator if data does not come
+				// Remove loading indicator if data on this position doesn't exist
+				// It happens when we ask for some set of data defined by offset and length, but BE returns results only for part of length.
 				if (action.length) {
 					for (let i = action.start; i < action.start + action.length; i++) {
 						if (updatedIndexIndex[i] === true) {
