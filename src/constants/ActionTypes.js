@@ -1,8 +1,6 @@
 import {utils} from '@gisatcz/ptr-utils';
 
 export default utils.deepKeyMirror({
-	INITIALIZE: 'INITIALIZE',
-
 	APP: {
 		SET_KEY: null,
 		SET_BASE_URL: null,
@@ -92,6 +90,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -100,7 +99,6 @@ export default utils.deepKeyMirror({
 		},
 		INDEX: {
 			ADD: null,
-			ADD_BATCH: null,
 			CLEAR_ALL: null,
 			CLEAR_INDEX: null,
 		},
@@ -110,16 +108,15 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
 				CLEAR: null,
-				REGISTER: null,
-			},
-			INDEXED_BATCH: {
 				REGISTER: null,
 			},
 		},
@@ -132,6 +129,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -149,9 +147,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -168,6 +168,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -185,9 +186,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -208,31 +211,52 @@ export default utils.deepKeyMirror({
 	},
 
 	COMPONENTS: {
-		UPDATE: null,
 		SET: null,
+		UPDATE: null,
+		UPDATE_STORE: null,
 	},
 
 	DATA: {
 		ATTRIBUTE_DATA: {
 			ADD: null,
 			ADD_WITH_INDEX: null,
+			ADD_WITH_SPATIAL_INDEX: null,
 			UPDATE: null,
+			UPDATE_STORE: null,
 			INDEX: {
+				ADD: null,
+				REMOVE: null,
+			},
+			SPATIAL_INDEX: {
 				ADD: null,
 				REMOVE: null,
 			},
 		},
 		ATTRIBUTE_DATA_SOURCES: {
 			ADD: null,
+			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
 			},
 		},
 		ATTRIBUTE_RELATIONS: {
 			ADD: null,
+			UPDATE_STORE: null,
 			INDEX: {
 				ADD: null,
 			},
+		},
+		COMPONENTS: {
+			COMPONENT: {
+				SET: {
+					ATTRIBUTE_KEYS: null,
+				},
+				USE: {
+					CLEAR: null,
+					REGISTER: null,
+				},
+			},
+			ADD_COMPONENTS: null,
 		},
 		SPATIAL_DATA: {
 			ADD: null,
@@ -254,9 +278,49 @@ export default utils.deepKeyMirror({
 				ADD: null,
 			},
 		},
+		UPDATE: null,
 	},
 
 	LAYER_TEMPLATES: {
+		ADD: null,
+		ADD_UNRECEIVED: null,
+		DELETE: null,
+		MARK_DELETED: null,
+		EDITED: {
+			REMOVE: null,
+			REMOVE_ACTIVE: null,
+			REMOVE_PROPERTY: null,
+			UPDATE: null,
+		},
+		ENSURE: {
+			ERROR: null,
+		},
+		INDEX: {
+			ADD: null,
+			CLEAR_INDEX: null,
+			CLEAR_ALL: null,
+		},
+		LOAD: {
+			ERROR: null,
+			REQUEST: null,
+		},
+		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
+		USE: {
+			INDEXED: {
+				CLEAR: null,
+				CLEAR_ALL: null,
+				REGISTER: null,
+			},
+			KEYS: {
+				CLEAR: null,
+				REGISTER: null,
+			},
+		},
+	},
+
+	LAYER_TREES: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
 		DELETE: null,
@@ -278,11 +342,11 @@ export default utils.deepKeyMirror({
 			ERROR: null,
 			REQUEST: null,
 		},
-		SET_ACTIVE_KEY: null,
-		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -294,8 +358,13 @@ export default utils.deepKeyMirror({
 
 	MAPS: {
 		SET: {
+			REMOVE_MAP: null,
 			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,
+			USE: {
+				CLEAR: null,
+				REGISTER: null,
+			},
 			VIEW: {
 				SET: null,
 				UPDATE: null,
@@ -304,6 +373,10 @@ export default utils.deepKeyMirror({
 		MAP: {
 			LAYERS: {
 				SET_STYLE_KEY: null,
+			},
+			USE: {
+				CLEAR: null,
+				REGISTER: null,
 			},
 			VIEWPORT: {
 				SET: null,
@@ -323,6 +396,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -340,9 +414,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -359,6 +435,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -376,9 +453,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -388,8 +467,6 @@ export default utils.deepKeyMirror({
 		},
 	},
 
-	REDIRECT_TO_VIEW: 'REDIRECT_TO_VIEW',
-
 	SCENARIOS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
@@ -397,6 +474,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -414,9 +492,11 @@ export default utils.deepKeyMirror({
 		},
 		SET_ACTIVE_KEY: null,
 		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -433,6 +513,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -449,9 +530,11 @@ export default utils.deepKeyMirror({
 			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -493,13 +576,29 @@ export default utils.deepKeyMirror({
 	STYLES: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
+		DELETE: null,
+		MARK_DELETED: null,
+		EDITED: {
+			REMOVE: null,
+			REMOVE_ACTIVE: null,
+			REMOVE_PROPERTY: null,
+			UPDATE: null,
+		},
 		ENSURE: {
 			ERROR: null,
 		},
 		INDEX: {
 			ADD: null,
+			CLEAR_INDEX: null,
 			CLEAR_ALL: null,
 		},
+		LOAD: {
+			ERROR: null,
+			REQUEST: null,
+		},
+		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
@@ -520,6 +619,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -535,9 +635,13 @@ export default utils.deepKeyMirror({
 			ERROR: null,
 			REQUEST: null,
 		},
+		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {
@@ -591,40 +695,6 @@ export default utils.deepKeyMirror({
 		},
 	},
 
-	LAYER_TREES: {
-		ADD: null,
-		ADD_UNRECEIVED: null,
-		DELETE: null,
-		MARK_DELETED: null,
-		EDITED: {
-			REMOVE: null,
-			REMOVE_PROPERTY: null,
-			UPDATE: null,
-		},
-		ENSURE: {
-			ERROR: null,
-		},
-		INDEX: {
-			ADD: null,
-			CLEAR_INDEX: null,
-			CLEAR_ALL: null,
-		},
-		LOAD: {
-			ERROR: null,
-			REQUEST: null,
-		},
-		USE: {
-			INDEXED: {
-				CLEAR: null,
-				REGISTER: null,
-			},
-			KEYS: {
-				CLEAR: null,
-				REGISTER: null,
-			},
-		},
-	},
-
 	VIEWS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
@@ -632,6 +702,7 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
+			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
 		},
@@ -648,10 +719,11 @@ export default utils.deepKeyMirror({
 			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
-		SET_ACTIVE_KEYS: null,
+		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
+				CLEAR_ALL: null,
 				REGISTER: null,
 			},
 			KEYS: {

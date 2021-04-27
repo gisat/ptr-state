@@ -1,14 +1,15 @@
 import {createSelector as createRecomputeSelector} from '@jvitela/recompute';
-import _ from 'lodash';
+import {map as _map, forIn as _forIn, forEach as _forEach} from 'lodash';
 import stringify from 'fast-stringify';
+import {CacheFifo} from '@gisatcz/ptr-utils';
 
 import attributeRelations from './AttributeRelations/selectors';
 import attributeDataSources from './AttributeDataSources/selectors';
 import attributeData from './AttributeData/selectors';
+import components from './Components/selectors';
 import spatialRelations from './SpatialRelations/selectors';
 import spatialDataSources from './SpatialDataSources/selectors';
 import spatialData from './SpatialData/selectors';
-import {CacheFifo} from '@gisatcz/ptr-utils';
 import {tileAsString} from './helpers';
 import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 
@@ -31,13 +32,13 @@ const getFeatures = createRecomputeSelector(
 		}
 
 		if (data) {
-			return _.map(data, (feature, key) => {
+			return _map(data, (feature, key) => {
 				let properties = {
 					[fidColumnName]: key, // TODO fix dependency on this in ptr-maps
 				};
 
 				if (attributesByDataSourceKey) {
-					_.forIn(
+					_forIn(
 						attributesByDataSourceKey,
 						(features, attributeDataSourceKey) => {
 							const attributeValue = features[key];
@@ -76,6 +77,7 @@ const getFeatures = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
+ * @param attributeDataFilter {Object} Filter object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Object} populated tile (with feature's geometries and attributes)
  */
 const getTile = createRecomputeSelector(
@@ -87,7 +89,8 @@ const getTile = createRecomputeSelector(
 		spatialRelationsFilter,
 		attributeRelationsFilter,
 		attributeDataSourceKeyAttributeKeyPairs,
-		styleKey
+		styleKey,
+		attributeDataFilter
 	) => {
 		// Get all data for given key. It caused performance issues when the data was passed as a parameter
 		const spatialDataForDataSource = spatialData.getByDataSourceKeyObserver(
@@ -98,9 +101,10 @@ const getTile = createRecomputeSelector(
 			const tileString = tileAsString(tile);
 			const cacheParams = {
 				attributeRelationsFilter,
+				attributeDataFilter,
 				spatialRelationsFilter,
 				level,
-				tileAsString: tileString,
+				tileString,
 				spatialDataSourceKey,
 				styleKey,
 			};
@@ -110,8 +114,8 @@ const getTile = createRecomputeSelector(
 				tileString,
 				spatialDataSourceKey
 			);
-			const indexedFeatureKeysByAttributeDataSourceKeys = attributeData.getIndexedFeatureKeysByDataSourceKeys(
-				attributeRelationsFilter,
+			const indexedFeatureKeysByAttributeDataSourceKeys = attributeData.getSpatiallyIndexedFeatureKeysByDataSourceKeys(
+				attributeDataFilter,
 				level,
 				tileString
 			);
@@ -119,7 +123,7 @@ const getTile = createRecomputeSelector(
 				cacheParams,
 				indexedFeatureKeys,
 				indexedFeatureKeysByAttributeDataSourceKeys,
-			}); // TODO is index enough as cache key?
+			});
 			const cache = tilesCache.findByKey(cacheKey);
 			if (cache) {
 				return cache.data;
@@ -135,7 +139,7 @@ const getTile = createRecomputeSelector(
 						// TODO what if some geometries is missing
 						const geometry =
 							spatialDataForDataSource[key]?.geometry ||
-							spatialDataForDataSource[key]?.geometries[level];
+							spatialDataForDataSource[key]?.geometries?.[level];
 
 						if (attributeDataSourceKeyAttributeKeyPairs) {
 							const attributes = attributeData.getAttributesByDataSourceKeysForFeatureKey(
@@ -190,6 +194,7 @@ const getTile = createRecomputeSelector(
  * @param attributeRelationsFilter {Object} getAttributeRelationsFilterFromLayerState
  * @param attributeDataSourceKeyAttributeKeyPairs {Object} key-value pairs, where key is attribute data source key and value is matching attribute key
  * @param styleKey {string} uuid
+ * @param attributeDataFilter {Object} Filter object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @return {Array} a collection of populated tiles (with feature's geometries and attributes)
  */
 const getTiles = createRecomputeSelector(
@@ -201,11 +206,12 @@ const getTiles = createRecomputeSelector(
 		spatialRelationsFilter,
 		attributeRelationsFilter,
 		attributeDataSourceKeyAttributeKeyPairs,
-		styleKey
+		styleKey,
+		attributeDataFilter
 	) => {
 		if (tiles?.length) {
 			let populatedTiles = [];
-			_.forEach(tiles, tile => {
+			_forEach(tiles, tile => {
 				const populatedTile = getTile(
 					dataSourceKey,
 					fidColumnName,
@@ -214,13 +220,13 @@ const getTiles = createRecomputeSelector(
 					spatialRelationsFilter,
 					attributeRelationsFilter,
 					attributeDataSourceKeyAttributeKeyPairs,
-					styleKey
+					styleKey,
+					attributeDataFilter
 				);
 				if (populatedTile) {
 					populatedTiles.push(populatedTile);
 				}
 			});
-
 			return populatedTiles.length ? populatedTiles : null;
 		} else {
 			return null;
@@ -231,11 +237,13 @@ const getTiles = createRecomputeSelector(
 
 export default {
 	getFeatures,
+	getTile,
 	getTiles,
 
 	attributeData,
 	attributeDataSources,
 	attributeRelations,
+	components,
 	spatialData,
 	spatialDataSources,
 	spatialRelations,

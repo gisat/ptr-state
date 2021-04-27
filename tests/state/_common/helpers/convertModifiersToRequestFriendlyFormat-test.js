@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import commonHelpers from '../../../../src/state/_common/helpers';
 
 describe('convertModifiersToRequestFriendlyFormat', function () {
-	it('should merge keys, defined keys have a priority', () => {
+	it('should convert modifiers to request friendly format', () => {
 		const modifiers = {
 			scopeKey: 'A',
 			placeKeys: ['B', 'C'],
@@ -19,6 +19,25 @@ describe('convertModifiersToRequestFriendlyFormat', function () {
 			caseKey: {
 				in: ['I', 'J'],
 			},
+		};
+
+		const output = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			modifiers
+		);
+		assert.deepStrictEqual(output, expectedResult);
+	});
+
+	it('should convert modifiers to request friendly format 2', () => {
+		const modifiers = {
+			periodKeys: ['A', 'B'],
+			caseKey: 'I',
+		};
+
+		const expectedResult = {
+			periodKey: {
+				in: ['A', 'B'],
+			},
+			caseKey: 'I',
 		};
 
 		const output = commonHelpers.convertModifiersToRequestFriendlyFormat(

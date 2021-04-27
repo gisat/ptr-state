@@ -2,9 +2,15 @@ import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import {reduxBatch} from '@manaflair/redux-batch';
+import {
+	setState as setRecomputeState,
+	createSelector as createRecomputeSelector,
+	createObserver as createRecomputeObserver,
+} from '@jvitela/recompute';
 import {connect, Provider} from 'react-redux';
 
 import connects from './components/connects';
+import MountWrapper from './components/MountWrapper';
 
 import commonActionTypes from './constants/ActionTypes';
 import Action from './state/Action';
@@ -95,6 +101,7 @@ export {
 	compose,
 	connect,
 	Provider,
+	MountWrapper,
 	baseStores,
 	createBaseStore,
 	connects,
@@ -111,6 +118,9 @@ export {
 	thunk,
 	logger,
 	reduxBatch,
+	createRecomputeObserver,
+	createRecomputeSelector,
+	setRecomputeState,
 };
 
 // TODO remove?

@@ -22,7 +22,8 @@ function receiveIndexed(
 	order,
 	start,
 	total,
-	changedOn
+	changedOn,
+	limit
 ) {
 	return dispatch => {
 		// add attributeRelations to store
@@ -32,14 +33,68 @@ function receiveIndexed(
 
 		// add to index
 		dispatch(
-			addIndex(filter, order, total, start, attributeRelations, changedOn)
+			addIndex(
+				filter,
+				order,
+				total,
+				start,
+				attributeRelations,
+				changedOn,
+				limit
+			)
 		);
 	};
 }
 
+/**
+ * Create new index with loading indicator based on pagination.
+ * @param {Object} pagination
+ * @param {Object} filter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey and styleKey.
+ * @param {Array?} order
+ */
+function addLoadingIndex(pagination, filter, order) {
+	const changedOn = null;
+
+	// Fake new data object for common action of size same like pagination.limit
+	// Action "common.addIndex" needs array of data objects with key to create new index.
+	// "data" is a Array of the minimal data for construct index in common actoin.
+	// Use key = true as a loading identificator
+	const data = new Array(pagination.limit).fill({key: true});
+
+	// filter, order, data, start, count, changedOn
+	return actionAddIndex(
+		filter,
+		order,
+		data,
+		pagination.offset + 1,
+		null,
+		changedOn
+	);
+}
+
 // ============ actions ============
+const actionUpdateStore = data => {
+	return {
+		type: ActionTypes.DATA.ATTRIBUTE_RELATIONS.UPDATE_STORE,
+		data,
+	};
+};
+
+function actionAddIndex(filter, order, data, start, count, changedOn) {
+	return {
+		type: actionTypes.INDEX.ADD,
+		filter,
+		order,
+		data: data,
+		start,
+		count,
+		changedOn,
+	};
+}
 // ============ export ===========
 
 export default {
 	receiveIndexed,
+	addLoadingIndex,
+	updateStore: actionUpdateStore,
 };

@@ -18,6 +18,7 @@ Object.assign(Paths, {
 
 const lodashExternal = [
 	'lodash/isObject',
+	'lodash/indexOf',
 	'lodash/isEqual',
 	'lodash/find',
 	'lodash/map',
@@ -58,8 +59,16 @@ const lodashExternal = [
 	'lodash/flatMap',
 ];
 
+const onwarn = warning => {
+	// throw on others
+	if (warning.code === 'CIRCULAR_DEPENDENCY') {
+		throw new Error(warning.message);
+	}
+};
+
 export default {
 	input: 'src/index.js',
+	onwarn,
 	external: [
 		'react',
 		'prop-types',

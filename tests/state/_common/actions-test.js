@@ -56,31 +56,6 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('addBatch', function () {
-		actions.addBatch({ADD_BATCH: 'ADD_BATCH'})('data', 'key')(dispatch);
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'ADD_BATCH', data: ['data'], key: 'key'},
-		]);
-	});
-
-	it('addBatchIndex', function () {
-		actions.addBatchIndex({INDEX: {ADD_BATCH: 'ADD_BATCH_INDEX'}})(
-			'filter',
-			'order',
-			'data',
-			'key'
-		)(dispatch);
-		assert.deepStrictEqual(dispatchedActions, [
-			{
-				type: 'ADD_BATCH_INDEX',
-				data: 'data',
-				filter: 'filter',
-				order: 'order',
-				key: 'key',
-			},
-		]);
-	});
-
 	describe('action', function () {
 		const tests = [
 			{
@@ -469,27 +444,41 @@ describe('state/_common/actions', function () {
 							order: 'asc',
 							count: 5,
 							changedOn: '2020-01-01',
-							index: ['k1', 'k2', 'k3', 'k4', 'k5'],
+							index: {1: 'k1', 2: 'k2', 3: 'k3', 4: 'k4', 5: 'k5'},
 						},
 					],
 				},
 			});
 
-			actions
+			const dispatch = action => {
+				if (typeof action === 'function') {
+					const res = action(dispatch, getState);
+					if (res != null) {
+						dispatchedActions.push(res);
+					}
+
+					return res;
+				}
+
+				dispatchedActions.push(action);
+			};
+
+			return actions
 				.ensureIndexed(
 					getSubState,
 					'users',
 					{name: 'fil'},
 					'asc',
-					0,
+					1,
 					5,
-					{},
+					{INDEX: {ADD: 'ADD_INDEX'}},
 					'user'
 				)(dispatch, getState)
 				.then(function () {
 					return runFunctionActions({dispatch, getState});
 				})
 				.then(function () {
+					//do not call any request, everything is loaded
 					assert.deepStrictEqual(dispatchedActions, []);
 				});
 		});
@@ -511,7 +500,7 @@ describe('state/_common/actions', function () {
 							order: 'asc',
 							count: 5,
 							changedOn: '2020-01-01',
-							index: [null, 'k1', 'k2', 'k3'],
+							index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 						},
 					],
 				},
@@ -787,260 +776,6 @@ describe('state/_common/actions', function () {
 					{
 						type: 'ADD_UNRECEIVED',
 						keys: ['k3'],
-					},
-				]);
-			});
-	});
-
-	it('loadAll', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-		});
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
-
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
-
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
-
-		return actions
-			.loadAll(
-				'users',
-				{ADD: 'ADD'},
-				'user'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						filter: undefined,
-						data: [
-							{
-								k1: {},
-								k2: {},
-							},
-						],
-					},
-				]);
-			});
-	});
-
-	it('loadFiltered', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-		});
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {name: 'fil'},
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
-
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
-
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
-
-		return actions
-			.loadFiltered(
-				'users',
-				{ADD: 'ADD'},
-				{name: 'fil'},
-				'user'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						filter: undefined,
-						data: [
-							{
-								k1: {},
-								k2: {},
-							},
-						],
-					},
-				]);
-			});
-	});
-
-	it('useIndexedBatch', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			scopes: {activeKey: 's1'},
-			periods: {activeKey: 'pe1'},
-			places: {activeKey: 'pl1'},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {name: 'fil'},
-					order: 'asc',
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
-
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
-
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
-
-		return actions
-			.useIndexedBatch(
-				'users',
-				{
-					USE: {INDEXED_BATCH: {REGISTER: 'REGISTER'}},
-					INDEX: {ADD_BATCH: 'ADD_BATCH'},
-				},
-				'user'
-			)(
-				{name: 'fil'},
-				{name: 'fil'},
-				'asc',
-				'cid',
-				'k1',
-				{}
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'REGISTER',
-						componentId: 'cid',
-						filterByActive: {name: 'fil'},
-						filter: {name: 'fil'},
-						order: 'asc',
-					},
-					{
-						type: 'ADD_BATCH',
-						filter: {name: 'fil'},
-						order: 'asc',
-						data: {k1: {}, k2: {}},
-						key: 'k1',
 					},
 				]);
 			});
@@ -1628,18 +1363,6 @@ describe('state/_common/actions', function () {
 
 	it('useKeys', function () {
 		const getSubState = state => state.sub;
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
-
-				return res;
-			}
-
-			dispatchedActions.push(action);
-		};
 		const getState = () => ({
 			app: {
 				localConfiguration: {
@@ -1652,6 +1375,18 @@ describe('state/_common/actions', function () {
 				byKey: {k1: {key: 'k1'}, k2: {key: 'k2'}},
 			},
 		});
+		const dispatch = action => {
+			if (typeof action === 'function') {
+				const res = action(dispatch, getState);
+				if (res != null) {
+					dispatchedActions.push(res);
+				}
+
+				return res;
+			}
+
+			dispatchedActions.push(action);
+		};
 
 		return actions
 			.useKeys(
@@ -1661,10 +1396,7 @@ describe('state/_common/actions', function () {
 					USE: {KEYS: {REGISTER: 'REGISTER'}},
 				},
 				'user'
-			)(
-				['k1', 'k2'],
-				'cid'
-			)(dispatch)
+			)(['k1', 'k2'], 'cid')(dispatch, getState)
 			.then(function () {
 				return runFunctionActions({dispatch, getState});
 			})
@@ -1835,20 +1567,6 @@ describe('state/_common/actions', function () {
 		assert.deepStrictEqual(dispatchedActions, [
 			{componentId: 'cid', type: 'CLEAR'},
 		]);
-	});
-
-	it('useIndexedClearAll', function () {
-		actions.useIndexedClearAll({
-			USE: {INDEXED: {CLEAR_ALL: 'CLEAR_ALL'}},
-		})()(dispatch);
-
-		assert.deepStrictEqual(dispatchedActions, [{type: 'CLEAR_ALL'}]);
-	});
-
-	it('setInitial', function () {
-		actions.setInitial({SET_INITIAL: 'SET_INITIAL'})()(dispatch);
-
-		assert.deepStrictEqual(dispatchedActions, [{type: 'SET_INITIAL'}]);
 	});
 
 	it('actionDataSetOutdated', function () {

@@ -1,4 +1,10 @@
-import _ from 'lodash';
+import {
+	isMatch as _isMatch,
+	isNumber as _isNumber,
+	omitBy as _omitBy,
+	pickBy as _pickBy,
+	isEmpty as _isEmpty,
+} from 'lodash';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 
 import ActionTypes from '../../constants/ActionTypes';
@@ -18,6 +24,58 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
+ * Clear use of the map set
+ * @param mapSetKey {string}
+ */
+const mapSetUseClear = mapSetKey => {
+	return (dispatch, getState) => {
+		const registered = Select.maps.isMapSetInUse(getState(), mapSetKey);
+		if (registered) {
+			dispatch(actionMapSetUseClear(mapSetKey));
+		}
+	};
+};
+
+/**
+ * Register use of the map set
+ * @param mapSetKey {string}
+ */
+const mapSetUseRegister = mapSetKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.maps.isMapSetInUse(getState(), mapSetKey);
+		if (!alreadyRegistered) {
+			dispatch(actionMapSetUseRegister(mapSetKey));
+		}
+	};
+};
+
+/**
+ * Clear use of the map
+ * @param mapKey {string}
+ */
+const mapUseClear = mapKey => {
+	return (dispatch, getState) => {
+		const registered = Select.maps.isMapInUse(getState(), mapKey);
+		if (registered) {
+			dispatch(actionMapUseClear(mapKey));
+		}
+	};
+};
+
+/**
+ * Register use of the map
+ * @param mapKey {string}
+ */
+const mapUseRegister = mapKey => {
+	return (dispatch, getState) => {
+		const alreadyRegistered = Select.maps.isMapInUse(getState(), mapKey);
+		if (!alreadyRegistered) {
+			dispatch(actionMapUseRegister(mapKey));
+		}
+	};
+};
+
+/**
  * @param mapKey {string}
  * @param backgroundLayer {Object} background layer definition
  * @param layers {Object} layers definition
@@ -26,28 +84,19 @@ import SelectionsAction from '../Selections/actions';
  */
 function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 	return (dispatch, getState) => {
-		// TODO clear use for given mapKey, if exists
+		dispatch(mapUseRegister(mapKey));
 		const state = getState();
-		const componentId = `map_${mapKey}`;
-		const spatialFilter = {};
-		if (mapWidth && mapHeight) {
-			const view = Select.maps.getViewByMapKey(state, mapKey);
-			const tiles = helpers.getTiles(
-				mapWidth,
-				mapHeight,
-				view.center,
-				view.boxRange
-			);
-			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
-			spatialFilter.tiles = tiles;
-			spatialFilter.level = level;
-		} else {
-			//spatial filter is required
+
+		const spatialFilter = Select.maps.getVisibleTilesByMapKey(
+			state,
+			mapKey,
+			mapWidth,
+			mapHeight
+		);
+		//spatial filter is required for now
+		if (!spatialFilter) {
 			return;
 		}
-
-		const activeKeys = commonSelectors.getAllActiveKeys(state);
-
 		// uncontrolled map - the map is not controlled from store, but layer data is collected based on stored metadata.
 		if (backgroundLayer || layers) {
 			layers = helpers.mergeBackgroundLayerWithLayers(layers, backgroundLayer);
@@ -62,7 +111,7 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 				// apply layerUse asynchronous on each leyer
 				// it cause better FPS and prevent long synchronous tasks
 				setTimeout(() => {
-					dispatch(layerUse(componentId, activeKeys, layer, spatialFilter));
+					dispatch(layerUse(layer, spatialFilter));
 				}, 0)
 			);
 		}
@@ -70,24 +119,12 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 }
 
 /**
- * @param componentId {string}
- * @param activeKeys {Object} active metadata keys (such as activeApplicationKey, activeScopeKey etc.)
  * @param layerState {Object} layer definition
  * @param spatialFilter {{level: number}, {tiles: Array}}
  */
-function layerUse(componentId, activeKeys, layerState, spatialFilter) {
+function layerUse(layerState, spatialFilter) {
 	return (dispatch, getState) => {
 		const state = getState();
-
-		// TODO ensure style here for now
-		if (layerState.styleKey) {
-			dispatch(
-				StylesActions.useKeys(
-					[layerState.styleKey],
-					layerState.key + '_layerUse'
-				)
-			);
-		}
 
 		// modifiers defined by key
 		let metadataDefinedByKey = layerState.metadataModifiers
@@ -121,7 +158,6 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 		const {
 			areaTreeLevelKey,
 			layerTemplateKey,
-			applicationKey,
 			...modifiers
 		} = mergedMetadataKeys;
 
@@ -130,20 +166,26 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 			modifiers
 		);
 		if (layerTemplateKey || areaTreeLevelKey) {
-			let mergedFilter = {};
+			let commonRelationsFilter = {};
 			if (areaTreeLevelKey) {
-				mergedFilter = {...modifiersForRequest, areaTreeLevelKey};
+				commonRelationsFilter = {
+					...(modifiersForRequest && {modifiers: modifiersForRequest}),
+					areaTreeLevelKey,
+				};
 			}
 
 			if (layerTemplateKey) {
-				mergedFilter = {...modifiersForRequest, layerTemplateKey};
+				commonRelationsFilter = {
+					...(modifiersForRequest && {modifiers: modifiersForRequest}),
+					layerTemplateKey,
+				};
 			}
 
 			if (layerTemplateKey) {
 				const order = null;
-				const spatialDataSources = Select.data.spatialDataSources.getByFilteredIndex(
+				const spatialDataSources = Select.data.spatialDataSources.getIndexed(
 					state,
-					mergedFilter,
+					commonRelationsFilter,
 					order
 				);
 				const sdsContainsVector =
@@ -155,16 +197,84 @@ function layerUse(componentId, activeKeys, layerState, spatialFilter) {
 					return;
 				}
 			}
-			// TODO register use?
+
+			const styleKey = layerState.styleKey || null;
+
+			// TODO ensure style here for now
+			if (styleKey) {
+				dispatch(
+					StylesActions.useKeys(
+						[layerState.styleKey],
+						layerState.key + '_layerUse'
+					)
+				);
+			}
+
+			const attributeDataFilterExtension = {
+				...(layerState?.options?.attributeFilter && {
+					attributeFilter: layerState.options.attributeFilter,
+				}),
+				...(layerState?.options?.dataSourceKeys && {
+					dataSourceKeys: layerState.options.dataSourceKeys,
+				}),
+				...(layerState?.options?.featureKeys && {
+					featureKeys: layerState.options.featureKeys,
+				}),
+			};
+
 			dispatch(
-				DataActions.ensure({
-					styleKey: layerState.styleKey || null,
-					data: {
-						spatialFilter,
-					},
-					mergedFilter,
-				})
+				DataActions.ensure(
+					styleKey,
+					commonRelationsFilter,
+					spatialFilter,
+					attributeDataFilterExtension
+				)
 			);
+		}
+	};
+}
+
+/**
+ * Ensure indexes with filter by active for each active map
+ * @param filterByActive {Object}
+ */
+function ensureWithFilterByActive(filterByActive) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const activeKeys = commonSelectors.getAllActiveKeys(state);
+		const mapKeys = Select.maps.getAllMapsInUse(state);
+
+		if (mapKeys && activeKeys) {
+			mapKeys.forEach(mapKey => {
+				const mapViewport = Select.maps.getViewportByMapKey(state, mapKey);
+				if (mapViewport) {
+					const {width, height} = mapViewport;
+					const spatialFilter = Select.maps.getVisibleTilesByMapKey(
+						state,
+						mapKey,
+						width,
+						height
+					);
+
+					if (spatialFilter) {
+						const layers = Select.maps.getAllLayersStateByMapKey(state, mapKey);
+						if (layers) {
+							layers.forEach(layer => {
+								if (
+									layer.filterByActive &&
+									_isMatch(layer.filterByActive, filterByActive)
+								) {
+									// apply layerUse asynchronous on each leyer
+									// it cause better FPS and prevent long synchronous tasks
+									setTimeout(() => {
+										dispatch(layerUse(layer, spatialFilter, activeKeys));
+									}, 0);
+								}
+							});
+						}
+					}
+				}
+			});
 		}
 	};
 }
@@ -207,8 +317,15 @@ function setLayerSelectedFeatureKeys(mapKey, layerKey, selectedFeatureKeys) {
  * @param styleKey {string}
  */
 function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
-	return dispatch => {
-		dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			getState(),
+			mapKey,
+			layerKey
+		);
+		if (layer) {
+			dispatch(actionSetMapLayerStyleKey(mapKey, layerKey, styleKey));
+		}
 	};
 }
 
@@ -217,9 +334,13 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
  */
 function setMapSetActiveMapKey(mapKey) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const state = getState();
+		const set = Select.maps.getMapSetByMapKey(state, mapKey);
 		if (set) {
-			dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			const activeMapKey = Select.maps.getMapSetActiveMapKey(state, set.key);
+			if (activeMapKey !== mapKey) {
+				dispatch(actionSetMapSetActiveMapKey(set.key, mapKey));
+			}
 		}
 	};
 }
@@ -273,34 +394,58 @@ function refreshMapSetUse(setKey) {
 }
 
 /**
+ * @param setKey {string}
+ * @param mapKey {string}
+ */
+function removeMapFromSet(setKey, mapKey) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const mapSetMapKeys = Select.maps.getMapSetMapKeys(state, setKey);
+		if (mapSetMapKeys && mapSetMapKeys.includes(mapKey)) {
+			const activeMapKey = Select.maps.getMapSetActiveMapKey(state, setKey);
+			dispatch(actionRemoveMapFromSet(setKey, mapKey));
+
+			// if map to remove is active at the same time
+			if (activeMapKey === mapKey) {
+				// check map set map keys again & set first map as active
+				const mapSetMapKeys = Select.maps.getMapSetMapKeys(getState(), setKey);
+				if (!_isEmpty(mapSetMapKeys)) {
+					dispatch(actionSetMapSetActiveMapKey(setKey, mapSetMapKeys[0]));
+				}
+			}
+		}
+	};
+}
+
+/**
  * @param mapKey {string}
  * @param update {Object} map view fragment
  */
 function updateMapAndSetView(mapKey, update) {
 	return (dispatch, getState) => {
-		let set = Select.maps.getMapSetByMapKey(getState(), mapKey);
+		const set = Select.maps.getMapSetByMapKey(getState(), mapKey);
 		let forSet, forMap;
-
-		if (set && set.sync) {
+		const map = Select.maps.getMapByKey(getState(), mapKey);
+		if (set && set.sync && map) {
 			// pick key-value pairs that are synced for set
-			forSet = _.pickBy(update, (updateVal, updateKey) => {
+			forSet = _pickBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
 			});
 
-			forMap = _.omitBy(update, (updateVal, updateKey) => {
+			forMap = _omitBy(update, (updateVal, updateKey) => {
 				return set.sync[updateKey];
 			});
-		} else {
+		} else if (map) {
 			forMap = update;
 		}
 
-		if (forSet && !_.isEmpty(forSet)) {
+		if (forSet && !_isEmpty(forSet)) {
 			//check data integrity
 			forSet = mapUtils.view.ensureViewIntegrity(forSet); //TODO test
 			dispatch(actionUpdateSetView(set.key, forSet));
 		}
 
-		if (forMap && !_.isEmpty(forMap)) {
+		if (forMap && !_isEmpty(forMap)) {
 			//check data integrity
 			forMap = mapUtils.view.ensureViewIntegrity(forMap); //TODO test
 			dispatch(actionUpdateMapView(mapKey, forMap));
@@ -315,7 +460,9 @@ function updateMapAndSetView(mapKey, update) {
 function updateSetView(setKey, update) {
 	return (dispatch, getState) => {
 		let activeMapKey = Select.maps.getMapSetActiveMapKey(getState(), setKey);
-		dispatch(updateMapAndSetView(activeMapKey, update));
+		if (activeMapKey) {
+			dispatch(updateMapAndSetView(activeMapKey, update));
+		}
 	};
 }
 
@@ -331,9 +478,35 @@ function updateStateFromView(data) {
 	};
 }
 
+function setMapViewport(mapKey, width, height) {
+	return (dispatch, getState) => {
+		if (mapKey && _isNumber(width) && _isNumber(height)) {
+			const state = getState();
+			const existingMap = Select.maps.getMapByKey(state, mapKey);
+			const currentViewport = Select.maps.getViewportByMapKey(state, mapKey);
+			if (
+				existingMap &&
+				(!currentViewport ||
+					currentViewport?.width !== width ||
+					currentViewport?.height !== height)
+			) {
+				dispatch(actionSetMapViewport(mapKey, width, height));
+			}
+		}
+	};
+}
+
 /* ==================================================
  * ACTIONS
  * ================================================== */
+
+const actionRemoveMapFromSet = (setKey, mapKey) => {
+	return {
+		type: ActionTypes.MAPS.SET.REMOVE_MAP,
+		setKey,
+		mapKey,
+	};
+};
 
 const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
 	return {
@@ -392,14 +565,49 @@ const actionUpdateSetView = (setKey, update) => {
 	};
 };
 
+const actionMapSetUseClear = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.USE.CLEAR,
+		mapSetKey,
+	};
+};
+
+const actionMapSetUseRegister = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.USE.REGISTER,
+		mapSetKey,
+	};
+};
+
+const actionMapUseClear = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.USE.CLEAR,
+		mapKey,
+	};
+};
+
+const actionMapUseRegister = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.USE.REGISTER,
+		mapKey,
+	};
+};
+
 // ============ export ===========
 export default {
+	ensureWithFilterByActive,
+	layerUse,
+	mapSetUseClear,
+	mapSetUseRegister,
+	mapUseClear,
+	mapUseRegister,
 	refreshMapSetUse,
+	removeMapFromSet,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
-	setMapViewport: actionSetMapViewport,
+	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
 	updateStateFromView,

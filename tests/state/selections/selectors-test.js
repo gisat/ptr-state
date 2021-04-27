@@ -90,10 +90,9 @@ describe('state/selections/selectors', function () {
 			);
 		});
 
-		it('should return empty object', () => {
-			assert.deepEqual(
-				Select.selections.getAllAsObjectWithStyles(noSelectionState),
-				{}
+		it('should return null', () => {
+			assert.isNull(
+				Select.selections.getAllAsObjectWithStyles(noSelectionState)
 			);
 		});
 	});

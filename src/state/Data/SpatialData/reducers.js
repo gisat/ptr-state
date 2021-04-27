@@ -1,9 +1,9 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
-import _ from 'lodash';
+import {forIn as _forIn} from 'lodash';
 import commonHelpers from '../../_common/helpers';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	...DEFAULT_INITIAL_STATE,
 	byDataSourceKey: {},
 };
@@ -50,7 +50,7 @@ const addWithIndex = (state, action) => {
 	);
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
-		action.spatialFilter,
+		action.filter,
 		action.order,
 		action.indexData,
 		action.changedOn
@@ -66,7 +66,7 @@ const addWithIndex = (state, action) => {
 const addIndex = (state, action) => {
 	const updatedIndexes = commonHelpers.getUpdatedIndexes(
 		state,
-		action.spatialFilter,
+		action.filter,
 		action.order,
 		action.indexData,
 		action.changedOn
@@ -135,13 +135,13 @@ function getUpdatedDataForDataSourceKey(
 function getUpdatedByDataSourceKey(state, dataByDataSourceKey, level) {
 	let updatedData = {...state.byDataSourceKey};
 
-	_.forIn(dataByDataSourceKey, (data, dataSourceKey) => {
+	_forIn(dataByDataSourceKey, (data, dataSourceKey) => {
 		if (!updatedData.hasOwnProperty(dataSourceKey)) {
 			updatedData[dataSourceKey] = {};
 		}
 
 		const newFeatures = {};
-		_.forIn(data, (geometry, featureKey) => {
+		_forIn(data, (geometry, featureKey) => {
 			const existingFeature = updatedData[dataSourceKey].hasOwnProperty(
 				featureKey
 			);

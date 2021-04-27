@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 const getKey = state => state.app.key;
 const getCompleteConfiguration = state => state.app.configuration;
-const getCompleteLocalConfiguration = state => state.app.localConfiguration;
+const getCompleteLocalConfiguration = state => state.app?.localConfiguration;
 
 const getConfiguration = createSelector(
 	[getCompleteConfiguration, (state, path) => path],

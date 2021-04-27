@@ -1,23 +1,58 @@
+import {isEmpty as _isEmpty} from 'lodash';
 import ActionTypes from '../../constants/ActionTypes';
+import common from '../_common/reducers';
 
-const INITIAL_STATE = {};
+export const INITIAL_STATE = {};
 
-function update(state, action) {
-	return {
-		...state,
-		[action.component]: state[action.component]
-			? {...state[action.component], ...action.update}
-			: action.update,
-	};
+/**
+ * Update component
+ * @param state {Object}
+ * @param componentKey {string}
+ * @param update {Object}
+ * @return {Object} state
+ */
+function update(state, componentKey, update) {
+	if (!_isEmpty(update)) {
+		return {
+			...state,
+			[componentKey]: state[componentKey]
+				? {...state[componentKey], ...update}
+				: update,
+		};
+	} else {
+		return state;
+	}
 }
-function set(state, action) {
-	let path = action.path.split('.');
-	return {
-		...state,
-		[action.component]: setHelper(state[action.component], path, action.value),
-	};
+
+/**
+ * Set value in given path
+ * @param state {Object}
+ * @param component {string}
+ * @param path {string} data.property.something
+ * @param value {*}
+ * @return {Object} state
+ */
+function set(state, component, path, value) {
+	if (component && path) {
+		const pathParams = path.split('.');
+		return {
+			...state,
+			[component]: setHelper(state[component], pathParams, value),
+		};
+	} else {
+		return state;
+	}
 }
 
+// helpers ---------------------------------------------------------------------
+
+/**
+ *
+ * @param state {Object}
+ * @param path {string}
+ * @param value {*}
+ * @return {Object}
+ */
 function setHelper(state, path, value) {
 	let remainingPath = [...path];
 	let currentKey = remainingPath.shift();
@@ -34,9 +69,11 @@ function setHelper(state, path, value) {
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case ActionTypes.COMPONENTS.UPDATE:
-			return update(state, action);
+			return update(state, action.component, action.update);
+		case ActionTypes.COMPONENTS.UPDATE_STORE:
+			return common.updateStore(state, action);
 		case ActionTypes.COMPONENTS.SET:
-			return set(state, action);
+			return set(state, action.component, action.path, action.value);
 		default:
 			return state;
 	}

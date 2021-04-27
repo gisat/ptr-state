@@ -39,10 +39,17 @@ function receiveIndexed(
 }
 
 // ============ actions ============
+const actionUpdateStore = data => {
+	return {
+		type: ActionTypes.DATA.ATTRIBUTE_DATA_SOURCES.UPDATE_STORE,
+		data,
+	};
+};
 
 // ============ export ===========
 
 export default {
 	add,
 	receiveIndexed,
+	updateStore: actionUpdateStore,
 };

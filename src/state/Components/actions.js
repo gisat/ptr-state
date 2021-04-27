@@ -1,21 +1,16 @@
 import ActionTypes from '../../constants/ActionTypes';
-import _ from 'lodash';
+import common from '../_common/actions';
+import Select from '../Select';
+
+const updateStore = common.updateStore(
+	Select.components.getSubstate,
+	ActionTypes.COMPONENTS
+);
 
 // ============ creators ===========
 function update(component, data) {
 	return dispatch => {
 		dispatch(actionUpdate(component, data));
-	};
-}
-
-function updateStateFromView(components) {
-	return dispatch => {
-		if (components) {
-			// TODO update all store at once
-			_.forIn(components, (data, component) => {
-				dispatch(actionUpdate(component, data));
-			});
-		}
 	};
 }
 
@@ -40,6 +35,7 @@ function actionSet(component, path, value) {
 
 export default {
 	update,
-	updateStateFromView,
+	updateStateFromView: updateStore,
+	updateStore,
 	set: actionSet,
 };

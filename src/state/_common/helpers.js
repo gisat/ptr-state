@@ -1,12 +1,21 @@
 import createCachedSelector from 're-reselect';
-import _ from 'lodash';
+import {
+	find as _find,
+	head as _head,
+	isEqual as _isEqual,
+	isEmpty as _isEmpty,
+	isNumber as _isNumber,
+	isObject as _isObject,
+	reduce as _reduce,
+	sortBy as _sortBy,
+	tail as _tail,
+} from 'lodash';
 
 /**
- * TODO tests
- * Returns all indexes that fits filter and order
- * @param {*} indexes
- * @param {*} filter
- * @param {*} order
+ * Return index for given filter and order
+ * @param indexes {Array} list of indexes
+ * @param filter {Object}
+ * @param order {Array}
  */
 const getIndex = createCachedSelector(
 	[
@@ -16,7 +25,7 @@ const getIndex = createCachedSelector(
 	],
 	(indexes, filter, order) => {
 		if (indexes) {
-			const index = _.find(indexes, index =>
+			const index = _find(indexes, index =>
 				isCorrespondingIndex(index, filter, order)
 			);
 			return index ? index : null;
@@ -28,12 +37,16 @@ const getIndex = createCachedSelector(
 	return `${JSON.stringify(filter)}${JSON.stringify(order)}`;
 });
 
-// TODO Test
+/**
+ * Remove duplicate indexes from given indexes. Returns new Array.
+ * @param {Array} indexes Array of indexes where can index duplicate.
+ * @returns {Array} unique indexes
+ */
 function getUniqueIndexes(indexes) {
-	if (!_.isEmpty(indexes)) {
+	if (!_isEmpty(indexes)) {
 		return indexes.reduce((uniqueIndexes, index) => {
 			if (
-				_.find(
+				_find(
 					uniqueIndexes,
 					i => i && isCorrespondingIndex(index, i.filter, i.order)
 				)
@@ -57,8 +70,8 @@ function getUniqueIndexes(indexes) {
  * @return {Array} New instance of indexes
  */
 function removeIndex(indexes = [], filter, order) {
-	if (indexes && !_.isEmpty(indexes)) {
-		const clearedIndexes = _.reduce(
+	if (indexes && !_isEmpty(indexes)) {
+		const clearedIndexes = _reduce(
 			indexes,
 			(acc, index) => {
 				const indexToBeCleared = isCorrespondingIndex(index, filter, order);
@@ -105,7 +118,7 @@ function getUpdatedIndexes(
 
 	if (state[indexesPath]) {
 		state[indexesPath].forEach(index => {
-			if (_.isEqual(index.filter, filter) && _.isEqual(index.order, order)) {
+			if (_isEqual(index.filter, filter) && _isEqual(index.order, order)) {
 				selectedIndex = index;
 			} else {
 				indexes.push(index);
@@ -145,10 +158,59 @@ function getUpdatedIndexes(
 	return indexes;
 }
 
-function isCorrespondingIndex(index, filter, order) {
-	return _.isEqual(index.filter, filter) && _.isEqual(index.order, order);
+/**
+ * Extend object "currentByDataSourceKey" by "update". Return new instance.
+ * @param {Object} currentByDataSourceKey
+ * @param {Object} update
+ * @return {Object}
+ */
+function getUpdatedByDataSourceKey(currentByDataSourceKey, update = {}) {
+	let updated = {...currentByDataSourceKey};
+	for (const [key, values] of Object.entries(update)) {
+		if (updated.hasOwnProperty(key)) {
+			updated = {
+				...updated,
+				[key]: {
+					...updated[key],
+					...values,
+				},
+			};
+		} else {
+			updated = {
+				...updated,
+				[key]: {
+					...values,
+				},
+			};
+		}
+	}
+	return updated;
 }
 
+/**
+ * True, if index.filter object and index.order array are deeply equal to given filter and order
+ * @param index {Object} existing index
+ * @param index.filter {Object}
+ * @param index.order {Array}
+ * @param filter {Object}
+ * @param order {Array}
+ * @return {boolean}
+ */
+function isCorrespondingIndex(index, filter, order) {
+	return (
+		_isEqual(index.filter || null, filter || null) &&
+		_isEqual(index.order || null, order || null)
+	);
+}
+
+/**
+ * Check if filter fits given filter.
+ * Not tested now.
+ * Needs farther discusion. It will not be possible test item on complicated geometry filter.
+ * @param {*} filter
+ * @param {*} item
+ * @returns {Boolean}
+ */
 function itemFitFilter(filter, item) {
 	// null filter fit
 	if (filter === null) {
@@ -172,7 +234,7 @@ function itemFitFilter(filter, item) {
 			// "column2": {
 			// 	"like": "hleda se podobnost, castecny vyskyt"
 			// },
-			if (_.isObject(value) && value['like']) {
+			if (_isObject(value) && value['like']) {
 				//now we dont deal like filter, refrest indexes
 				return true;
 			}
@@ -180,14 +242,14 @@ function itemFitFilter(filter, item) {
 			// "column3": {
 			// 	"in": ["existuje", "v", "poli", "prvku"]
 			// },
-			if (_.isObject(value) && value['in']) {
+			if (_isObject(value) && value['in']) {
 				return value.in.includes(item.data[key]);
 			}
 
 			// "column4": {
 			// 	"notin": ["neexistuje", "v", "poli", "prvku"]
 			// }
-			if (_.isObject(value) && value['notin']) {
+			if (_isObject(value) && value['notin']) {
 				return !value.notin.includes(item.data[key]);
 			}
 		}
@@ -204,59 +266,74 @@ function itemFitFilter(filter, item) {
 	});
 }
 
+/**
+ * Merge stores active keys with filter by active and filter
+ * @param activeKeys {Object} {activeScopeKey: 'bbb', activePlaceKeys: ['ddd', 'eee'], ...}
+ * @param filterByActive {Object} {scope: true, place: true, ...}
+ * @param filter {Object} {scopeKey: 'aaa', placeKey: {in: ['fff']}, ...}
+ * @return {Object} merged object which looks like this {scopeKey: 'aaa', placeKey: {in: ['bbb', 'ccc']}, ...}
+ */
 function mergeFilters(activeKeys, filterByActive, filter) {
 	if (activeKeys && filterByActive) {
-		let fullFilter = {...filter};
+		let activeKeysFilter = {};
 		if (filterByActive.application) {
 			if (activeKeys.activeApplicationKey) {
-				fullFilter.applicationKey = activeKeys.activeApplicationKey;
+				activeKeysFilter.applicationKey = activeKeys.activeApplicationKey;
 			}
 		}
 		if (filterByActive.case) {
 			if (activeKeys.activeCaseKey) {
-				fullFilter.caseKey = activeKeys.activeCaseKey;
+				activeKeysFilter.caseKey = activeKeys.activeCaseKey;
 			} else if (activeKeys.activeCaseKeys) {
-				fullFilter.caseKey = {in: activeKeys.activeCaseKeys};
+				activeKeysFilter.caseKey = {in: activeKeys.activeCaseKeys};
 			}
 		}
 		if (filterByActive.scope) {
 			if (activeKeys.activeScopeKey) {
-				fullFilter.scopeKey = activeKeys.activeScopeKey;
+				activeKeysFilter.scopeKey = activeKeys.activeScopeKey;
 			}
 		}
-		// TODO add scenario, ...
+		if (filterByActive.scenario) {
+			if (activeKeys.activeScenarioKey) {
+				activeKeysFilter.scenarioKey = activeKeys.activeScenarioKey;
+			} else if (activeKeys.activeScenarioKeys) {
+				activeKeysFilter.scenarioKey = {in: activeKeys.activeScenarioKeys};
+			}
+		}
 		if (filterByActive.place) {
 			if (activeKeys.activePlaceKey) {
-				fullFilter.placeKey = activeKeys.activePlaceKey;
+				activeKeysFilter.placeKey = activeKeys.activePlaceKey;
 			} else if (activeKeys.activePlaceKeys) {
-				fullFilter.placeKey = {in: activeKeys.activePlaceKeys};
+				activeKeysFilter.placeKey = {in: activeKeys.activePlaceKeys};
 			}
 		}
 		if (filterByActive.period) {
 			if (activeKeys.activePeriodKey) {
-				fullFilter.periodKey = activeKeys.activePeriodKey;
+				activeKeysFilter.periodKey = activeKeys.activePeriodKey;
 			} else if (activeKeys.activePeriodKeys) {
-				fullFilter.periodKey = {in: activeKeys.activePeriodKeys};
+				activeKeysFilter.periodKey = {in: activeKeys.activePeriodKeys};
 			}
 		}
 		if (filterByActive.attribute) {
 			if (activeKeys.activeAttributeKey) {
-				fullFilter.attributeKey = activeKeys.activeAttributeKey;
+				activeKeysFilter.attributeKey = activeKeys.activeAttributeKey;
 			} else if (activeKeys.activeAttributeKeys) {
-				fullFilter.attributeKey = {in: activeKeys.activeAttributeKeys};
+				activeKeysFilter.attributeKey = {in: activeKeys.activeAttributeKeys};
 			}
 		}
 		if (filterByActive.layerTemplate) {
 			if (activeKeys.activeLayerTemplateKey) {
-				fullFilter.layerTemplateKey = activeKeys.activeLayerTemplateKey;
+				activeKeysFilter.layerTemplateKey = activeKeys.activeLayerTemplateKey;
 			}
 		}
-		if (filterByActive.areaTreeLevelKey) {
+		if (filterByActive.areaTreeLevel) {
 			if (activeKeys.activeAreaTreeLevelKey) {
-				fullFilter.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
+				activeKeysFilter.areaTreeLevelKey = activeKeys.activeAreaTreeLevelKey;
 			}
 		}
-		return _.isEmpty(fullFilter) ? null : fullFilter;
+
+		const finalFilter = {...activeKeysFilter, ...filter};
+		return _isEmpty(finalFilter) ? null : finalFilter;
 	} else {
 		return filter;
 	}
@@ -312,9 +389,116 @@ function convertModifiersToRequestFriendlyFormat(modifiers) {
 			modifiersForRequest.periodKey = modifiers.periodKey;
 		}
 
-		return !_.isEmpty(modifiersForRequest) ? modifiersForRequest : null;
+		if (modifiers.applicationKey) {
+			modifiersForRequest.applicationKey = modifiers.applicationKey;
+		}
+
+		return !_isEmpty(modifiersForRequest) ? modifiersForRequest : null;
 	} else {
 		return null;
+	}
+}
+
+/**
+ * Check if given input is natural number
+ * @param input
+ * @return {boolean}
+ */
+function isNaturalNumber(input) {
+	return _isNumber(input) && input > 0 && input % 1 === 0;
+}
+
+/**
+ * @param interval {Object}
+ * @return {boolean}
+ */
+function isInterval(interval) {
+	return isNaturalNumber(interval?.start) && isNaturalNumber(interval?.length);
+}
+
+/**
+ * Return only intervals which really are intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getValidIntervals(intervals) {
+	return intervals.filter(interval => isInterval(interval));
+}
+
+/**
+ * Return sorted intervals
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function getSortedValidIntervals(intervals) {
+	return _sortBy(getValidIntervals(intervals), ['start', 'length']);
+}
+
+/**
+ * @param earlier {Object} interval
+ * @param later {Object} interval
+ * @return {boolean}
+ */
+function areIntervalsOverlappedOrSubsequent(earlier, later) {
+	if (isInterval(earlier) && isInterval(later)) {
+		return later.start <= earlier.start + earlier.length;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Merge relevant intervals together
+ * @param intervals {Array}
+ * @return {Array}
+ */
+function mergeIntervals(intervals) {
+	const sortedIntervals = getSortedValidIntervals(intervals);
+	if (sortedIntervals.length === 0) {
+		return null;
+	}
+
+	//merge intervals
+	return _tail(sortedIntervals).reduce(
+		(mergedIntervals, interval) => {
+			const last = mergedIntervals.pop();
+			if (areIntervalsOverlappedOrSubsequent(last, interval)) {
+				//merge last & current
+				const end = Math.max(
+					last.start + last.length,
+					interval.start + interval.length
+				);
+				return [
+					...mergedIntervals,
+					{
+						start: last.start,
+						length: end - last.start,
+					},
+				];
+			} else {
+				//add both
+				return [...mergedIntervals, last, interval];
+			}
+		},
+		[_head(sortedIntervals)]
+	);
+}
+
+/**
+ * Add keys to index
+ * @param index {Object}
+ * @param models {Object} Collection of models
+ * @param start {Number}
+ * @return {Object} index
+ */
+function registerModelsToIndex(index, models, start) {
+	if (models?.length && index && start > -1) {
+		models.forEach((model, i) => {
+			index[start + i] = model.key;
+		});
+		return index;
+	} else {
+		return index;
 	}
 }
 
@@ -324,8 +508,18 @@ export default {
 	getIndex,
 	getUniqueIndexes,
 	getUpdatedIndexes,
+	getUpdatedByDataSourceKey,
 	mergeFilters,
 	mergeMetadataKeys,
 	isCorrespondingIndex,
 	itemFitFilter,
+	registerModelsToIndex,
+
+	// intervals
+	areIntervalsOverlappedOrSubsequent,
+	isInterval,
+	isNaturalNumber,
+	getValidIntervals,
+	getSortedValidIntervals,
+	mergeIntervals,
 };

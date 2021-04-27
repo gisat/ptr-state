@@ -4,7 +4,14 @@ import {
 	createSelector as createRecomputeSelector,
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
-import _ from 'lodash';
+import {
+	compact as _compact,
+	flatten as _flatten,
+	isEmpty as _isEmpty,
+	includes as _includes,
+	find as _find,
+	forEach as _forEach,
+} from 'lodash';
 
 import {map as mapUtils} from '@gisatcz/ptr-utils';
 import {mapConstants} from '@gisatcz/ptr-core';
@@ -17,14 +24,39 @@ import selectorHelpers from './selectorHelpers';
 import DataSelectors from '../Data/selectors';
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
+import helpers from './selectorHelpers';
 
 /* === SELECTORS ======================================================================= */
 
 const getSubstate = state => state.maps;
 
+const getAllMapSetsInUse = state => state.maps.inUse.sets;
+const getAllMapsInUse = state => state.maps.inUse.maps;
 const getActiveMapKey = state => state.maps.activeMapKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
+
+const isMapSetInUse = createCachedSelector(
+	[getAllMapSetsInUse, (state, mapSetKey) => mapSetKey],
+	(mapSetsInUse, mapSetKey) => {
+		if (mapSetsInUse.length && mapSetKey) {
+			return !!_includes(mapSetsInUse, mapSetKey);
+		} else {
+			return false;
+		}
+	}
+)((state, mapSetKey) => (mapSetKey ? mapSetKey : ''));
+
+const isMapInUse = createCachedSelector(
+	[getAllMapsInUse, (state, mapKey) => mapKey],
+	(mapsInUse, mapKey) => {
+		if (mapsInUse.length && mapKey) {
+			return !!_includes(mapsInUse, mapKey);
+		} else {
+			return false;
+		}
+	}
+)((state, mapKey) => (mapKey ? mapKey : ''));
 
 /**
  * @param state {Object}
@@ -41,8 +73,19 @@ const getMapByKey = createSelector(
  * @param state {Object}
  */
 const getMapSets = createSelector([getMapSetsAsObject], sets => {
-	if (sets && !_.isEmpty(sets)) {
+	if (sets && !_isEmpty(sets)) {
 		return Object.values(sets);
+	} else {
+		return null;
+	}
+});
+
+/**
+ * @param state {Object}
+ */
+const getAllMapSetsMaps = createSelector([getMapSets], mapSets => {
+	if (mapSets) {
+		return _flatten(mapSets.map(mapSet => mapSet.maps));
 	} else {
 		return null;
 	}
@@ -66,9 +109,9 @@ const getMapSetByKey = createSelector(
 const getMapSetByMapKey = createSelector(
 	[getMapSets, (state, mapKey) => mapKey],
 	(sets, mapKey) => {
-		if (sets && !_.isEmpty(sets) && mapKey) {
+		if (sets && !_isEmpty(sets) && mapKey) {
 			return (
-				_.find(sets, set => set.maps && _.includes(set.maps, mapKey)) || null
+				_find(sets, set => set.maps && _includes(set.maps, mapKey)) || null
 			);
 		} else {
 			return null;
@@ -86,7 +129,7 @@ const getMapSetActiveMapKey = createSelector(
 	[getActiveMapKey, getMapSetByKey],
 	(mapKey, set) => {
 		if (set) {
-			let mapKeyInSet = _.includes(set.maps, mapKey);
+			let mapKeyInSet = _includes(set.maps, mapKey);
 			return set.activeMapKey || (mapKeyInSet && mapKey) || null;
 		} else {
 			return null;
@@ -169,7 +212,7 @@ const getMapSetMapKeys = createSelector([getMapSetByKey], set => {
 const getMapSetMaps = createSelector(
 	[getMapsAsObject, getMapSetMapKeys],
 	(maps, mapKeys) => {
-		if (maps && mapKeys?.length) {
+		if (!_isEmpty(maps) && mapKeys?.length) {
 			return mapKeys.map(key => maps[key]);
 		} else {
 			return null;
@@ -409,7 +452,7 @@ const getLayerStateByLayerKeyAndMapKey = createSelector(
 	[getLayersStateByMapKey, (state, mapKey, layerKey) => layerKey],
 	(layers, layerKey) => {
 		if (layers) {
-			const layer = _.find(layers, layer => layer.key === layerKey);
+			const layer = _find(layers, layer => layer.key === layerKey);
 			return layer || null;
 		} else {
 			return null;
@@ -460,8 +503,9 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 				activeMetadataKeys
 			);
 
+			const relationsFilter = {};
 			// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-			let relationsFilter = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			relationsFilter.modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
 				mergedMetadataKeys
 			);
 
@@ -480,18 +524,91 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 );
 
 /**
+ * @param {string} mapKey
+ * @param {number} mapWidth
+ * @param {number} mapHeight
+ * @return {{tiles: Array, level: number}}
+ */
+const getVisibleTilesByMapKey = createCachedSelector(
+	[
+		getViewByMapKey,
+		(state, mapKey, mapWidth) => mapWidth,
+		(state, mapKey, mapWidth, mapHeight) => mapHeight,
+	],
+	(view, mapWidth, mapHeight) => {
+		if (view?.center && view?.boxRange && mapWidth && mapHeight) {
+			const tiles = helpers.getTiles(
+				mapWidth,
+				mapHeight,
+				view.center,
+				view.boxRange
+			);
+			const level = helpers.getZoomLevel(mapWidth, mapHeight, view.boxRange);
+
+			return {
+				tiles,
+				level,
+			};
+		} else {
+			return null;
+		}
+	}
+)((state, mapKey, mapWidth, mapHeight) => `${mapKey}_${mapWidth}_${mapHeight}`);
+
+/**
+ * @param layerState {Object}
+ */
+const getAttributeDataFilterFromLayerState = createRecomputeSelector(
+	layerState => {
+		if (layerState) {
+			const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
+				layerState
+			);
+			if (!_isEmpty(commonFilter)) {
+				let attributeFilter = {...commonFilter};
+				const attributeDataFilterExtension = {
+					...(layerState?.options?.attributeFilter && {
+						attributeFilter: layerState.options.attributeFilter,
+					}),
+					...(layerState?.options?.dataSourceKeys && {
+						dataSourceKeys: layerState.options.dataSourceKeys,
+					}),
+					...(layerState?.options?.featureKeys && {
+						featureKeys: layerState.options.featureKeys,
+					}),
+					...(layerState?.styleKey && {styleKey: layerState.styleKey}),
+				};
+
+				return {...attributeFilter, ...attributeDataFilterExtension};
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	},
+	recomputeSelectorOptions
+);
+
+/**
  * @param layerState {Object}
  */
 const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
 	layerState => {
-		const spatialFilter = getSpatialRelationsFilterFromLayerState(layerState);
-		if (spatialFilter) {
-			const attributeFilter = {...spatialFilter};
-			if (layerState.styleKey) {
-				// add styleKey
-				attributeFilter.styleKey = layerState.styleKey;
+		if (layerState) {
+			const commonFilter = common.getCommmonDataRelationsFilterFromComponentState_recompute(
+				layerState
+			);
+			if (!_isEmpty(commonFilter)) {
+				let attributeFilter = {...commonFilter};
+				if (layerState.styleKey) {
+					// add styleKey
+					attributeFilter.styleKey = layerState.styleKey;
+				}
+				return attributeFilter;
+			} else {
+				return null;
 			}
-			return attributeFilter;
 		} else {
 			return null;
 		}
@@ -507,6 +624,7 @@ const getAttributeRelationsFilterFromLayerState = createRecomputeSelector(
  * @param mapKey {string} map unique identifier
  * @param spatialRelationsFilter {Object} see getSpatialRelationsFilterFromLayerState
  * @param attributeRelationsFilter {Object} see getAttributeRelationsFilterFromLayerState
+ * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  */
 const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 	(
@@ -516,7 +634,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		attributeDataSourceKeyAttributeKeyPairs,
 		mapKey,
 		spatialRelationsFilter,
-		attributeRelationsFilter
+		attributeRelationsFilter,
+		attributeDataFilter
 	) => {
 		let {
 			attribution,
@@ -526,26 +645,14 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 			geometryColumnName,
 			...dataSourceOptions
 		} = spatialDataSource?.data;
-		let {
-			key,
-			name,
-			opacity,
-			styleKey,
-			renderAsType,
-			options: layerStateOptions,
-		} = layerState;
+		let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
 
 		layerKey = layerKey || key;
-
-		// TODO temporary for development. Next, could be data source type rewritten in layer state (e.g. vector -> tiled-vector?)
-		if (renderAsType) {
-			type = renderAsType;
-		}
 
 		let options = {...dataSourceOptions, ...layerStateOptions};
 
 		if (type === 'wmts') {
-			options.url = dataSourceOptions.url || dataSourceOptions.urls[0];
+			options.url = dataSourceOptions.url || dataSourceOptions.urls?.[0];
 		} else if (type === 'wms') {
 			const {url, params, configuration, ...rest} = dataSourceOptions;
 			const singleTile =
@@ -553,16 +660,22 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					? configuration.singleTile
 					: false;
 
+			const styles = rest.styles;
+
 			options = {
 				params: {
 					...params,
+					...(styles && {styles}),
 					layers: rest.layers,
-					styles: rest.styles,
 				},
 				singleTile,
 				url,
 			};
-		} else if (type === 'vector' || type === 'tiled-vector') {
+		} else if (
+			type === 'vector' ||
+			type === 'tiledVector' ||
+			type === 'tiled-vector'
+		) {
 			let features,
 				tiles = null;
 
@@ -572,7 +685,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					fidColumnName,
 					attributeDataSourceKeyAttributeKeyPairs
 				);
-			} else if (type === 'tiled-vector') {
+			} else if (type === 'tiledVector' || type === 'tiled-vector') {
 				const view = getViewByMapKeyObserver(mapKey);
 				const viewport = getViewportByMapKeyObserver(mapKey);
 				const tileList = selectorHelpers.getTiles(
@@ -594,7 +707,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					spatialRelationsFilter,
 					attributeRelationsFilter,
 					attributeDataSourceKeyAttributeKeyPairs,
-					styleKey
+					styleKey,
+					attributeDataFilter
 				);
 			}
 
@@ -625,7 +739,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		return {
 			key: layerKey + '_' + spatialDataSource.key,
 			layerKey,
-			opacity: opacity || 1,
+			opacity: opacity || opacity === 0 ? opacity : 1,
 			name,
 			type,
 			options,
@@ -649,24 +763,28 @@ const getMapBackgroundLayer = createRecomputeSelector((mapKey, layerState) => {
 			return layerState;
 		} else {
 			const layerKey = 'pantherBackgroundLayer';
-			const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(
+			const spatialDataSources = DataSelectors.spatialDataSources.getIndexed_recompute(
 				layerState
 			);
 			if (spatialDataSources) {
-				return spatialDataSources.map(dataSource => {
-					const dataSourceType = dataSource?.data?.type;
+				const layers = _compact(
+					spatialDataSources.map(dataSource => {
+						const dataSourceType = dataSource?.data?.type;
 
-					// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
-					if (dataSourceType === 'wmts' || dataSourceType === 'wms') {
-						return getFinalLayerByDataSourceAndLayerState(
-							dataSource,
-							layerState,
-							layerKey
-						);
-					} else {
-						return null;
-					}
-				});
+						// TODO currently only wms or wmts is supported; add filterByActive & metadata modifiers to support vectors
+						if (dataSourceType === 'wmts' || dataSourceType === 'wms') {
+							return getFinalLayerByDataSourceAndLayerState(
+								dataSource,
+								layerState,
+								layerKey
+							);
+						} else {
+							return null;
+						}
+					})
+				);
+
+				return layers.length ? layers : null;
 			} else {
 				return null;
 			}
@@ -689,7 +807,7 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 	if (layersState) {
 		let finalLayers = [];
 
-		_.forEach(layersState, layerState => {
+		_forEach(layersState, layerState => {
 			// layer is already defined by the end format suitable for presentational map component
 			if (layerState.type) {
 				if (layerState.type === 'vector' && layerState.options?.selected) {
@@ -714,14 +832,17 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 				const attributeRelationsFilter = getAttributeRelationsFilterFromLayerState(
 					layerState
 				);
-				const spatialDataSources = DataSelectors.spatialDataSources.getIndexed(
+				const attributeDataFilter = getAttributeDataFilterFromLayerState(
+					layerState
+				);
+				const spatialDataSources = DataSelectors.spatialDataSources.getIndexed_recompute(
 					spatialRelationsFilter
 				);
 				const attributeDataSourceKeyAttributeKeyPairs = DataSelectors.attributeRelations.getFilteredAttributeDataSourceKeyAttributeKeyPairs(
 					attributeRelationsFilter
 				);
 				if (spatialDataSources) {
-					_.forEach(spatialDataSources, dataSource => {
+					_forEach(spatialDataSources, dataSource => {
 						finalLayers.push(
 							getFinalLayerByDataSourceAndLayerState(
 								dataSource,
@@ -730,7 +851,8 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 								attributeDataSourceKeyAttributeKeyPairs,
 								mapKey,
 								spatialRelationsFilter,
-								attributeRelationsFilter
+								attributeRelationsFilter,
+								attributeDataFilter
 							)
 						);
 					});
@@ -745,9 +867,22 @@ const getMapLayers = createRecomputeSelector((mapKey, layersState) => {
 }, recomputeSelectorOptions);
 
 export default {
+	isMapInUse,
+	isMapSetInUse,
+
+	getSubstate,
+
 	getAllLayersStateByMapKey,
+	getAllMapSetsMaps,
+	getAllMapsInUse,
+	getAllMapSetsInUse,
+
+	getAttributeDataFilterFromLayerState,
+	getAttributeRelationsFilterFromLayerState,
+
 	getBackgroundLayerStateByMapKey,
 	getFilterByActiveByMapKey,
+	getFinalLayerByDataSourceAndLayerState,
 	getLayerStateByLayerKeyAndMapKey,
 	getLayersStateByMapKey,
 	getMetadataModifiersByMapKey,
@@ -775,6 +910,9 @@ export default {
 	getMapSets,
 	getMapSetView,
 	getMapSetViewLimits,
+
+	getVisibleTilesByMapKey,
+	getSpatialRelationsFilterFromLayerState,
 
 	getViewByMapKey,
 	getViewportByMapKey,

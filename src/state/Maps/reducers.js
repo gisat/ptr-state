@@ -1,11 +1,43 @@
 import ActionTypes from '../../constants/ActionTypes';
-import _ from 'lodash';
+import {stateManagement} from '@gisatcz/ptr-utils';
+import {indexOf as _indexOf, isEmpty as _isEmpty} from 'lodash';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
 	activeSetKey: null,
 	activeMapKey: null,
+	inUse: {
+		maps: [],
+		sets: [],
+	},
 	maps: {},
 	sets: {},
+};
+
+const removeMapFromSet = (state, setKey, mapKey) => {
+	if (setKey && mapKey) {
+		const index = _indexOf(state.sets[setKey]?.maps, mapKey);
+		if (index > -1) {
+			let updatedMaps = stateManagement.removeItemByIndex(
+				state.sets[setKey].maps,
+				index
+			);
+
+			return {
+				...state,
+				sets: {
+					...state.sets,
+					[setKey]: {
+						...state.sets[setKey],
+						maps: updatedMaps,
+					},
+				},
+			};
+		} else {
+			return state;
+		}
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -58,22 +90,26 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
  * @return {Object} state
  */
 const setMapViewport = (state, mapKey, width, height) => {
-	return {
-		...state,
-		maps: {
-			...state.maps,
-			[mapKey]: {
-				...state.maps[mapKey],
-				data: {
-					...state.maps[mapKey].data,
-					viewport: {
-						width,
-						height,
+	if (mapKey && width && height) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						viewport: {
+							width,
+							height,
+						},
 					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -137,21 +173,25 @@ const update = (state, data) => {
  * @return {Object} state
  */
 const updateMapView = (state, mapKey, updates) => {
-	return {
-		...state,
-		maps: {
-			...state.maps,
-			[mapKey]: {
-				...state.maps[mapKey],
-				data: {
-					...state.maps[mapKey].data,
-					view: state.maps[mapKey].data.view
-						? {...state.maps[mapKey].data.view, ...updates}
-						: updates,
+	if (updates && !_isEmpty(updates)) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						view: state.maps[mapKey].data.view
+							? {...state.maps[mapKey].data.view, ...updates}
+							: updates,
+					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -162,7 +202,7 @@ const updateMapView = (state, mapKey, updates) => {
  * @return {Object} state
  */
 const updateSetView = (state, setKey, updates) => {
-	if (updates && !_.isEmpty(updates)) {
+	if (updates && !_isEmpty(updates)) {
 		return {
 			...state,
 			sets: {
@@ -183,6 +223,106 @@ const updateSetView = (state, setKey, updates) => {
 	}
 };
 
+/**
+ * Remove map usage
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} state
+ */
+const mapUseClear = (state, mapKey) => {
+	if (mapKey) {
+		const index = _indexOf(state.inUse.maps, mapKey);
+		if (index > -1) {
+			const updatedInUse = stateManagement.removeItemByIndex(
+				state.inUse.maps,
+				index
+			);
+
+			return {
+				...state,
+				inUse: {
+					...state.inUse,
+					maps: updatedInUse,
+				},
+			};
+		} else {
+			return state;
+		}
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Remove map set usage
+ * @param state {Object}
+ * @param mapSetKey {string}
+ * @return {Object} state
+ */
+const mapSetUseClear = (state, mapSetKey) => {
+	if (mapSetKey) {
+		const index = _indexOf(state.inUse.sets, mapSetKey);
+		if (index > -1) {
+			const updatedInUse = stateManagement.removeItemByIndex(
+				state.inUse.sets,
+				index
+			);
+
+			return {
+				...state,
+				inUse: {
+					...state.inUse,
+					sets: updatedInUse,
+				},
+			};
+		} else {
+			return state;
+		}
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Register map usage
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} state
+ */
+const mapUseRegister = (state, mapKey) => {
+	if (mapKey) {
+		return {
+			...state,
+			inUse: {
+				...state.inUse,
+				maps: [...state.inUse.maps, mapKey],
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Register map set usage
+ * @param state {Object}
+ * @param mapSetKey {string}
+ * @return {Object} state
+ */
+const mapSetUseRegister = (state, mapSetKey) => {
+	if (mapSetKey) {
+		return {
+			...state,
+			inUse: {
+				...state.inUse,
+				sets: [...state.inUse.sets, mapSetKey],
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
 export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY:
@@ -192,10 +332,16 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.layerKey,
 				action.styleKey
 			);
+		case ActionTypes.MAPS.MAP.USE.CLEAR:
+			return mapUseClear(state, action.mapKey);
+		case ActionTypes.MAPS.MAP.USE.REGISTER:
+			return mapUseRegister(state, action.mapKey);
 		case ActionTypes.MAPS.MAP.VIEW.UPDATE:
 			return updateMapView(state, action.mapKey, action.update);
 		case ActionTypes.MAPS.MAP.VIEWPORT.SET:
 			return setMapViewport(state, action.mapKey, action.width, action.height);
+		case ActionTypes.MAPS.SET.REMOVE_MAP:
+			return removeMapFromSet(state, action.setKey, action.mapKey);
 		case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
 			return setSetActiveMapKey(state, action.setKey, action.mapKey);
 		case ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER:
@@ -204,6 +350,10 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.USE.CLEAR:
+			return mapSetUseClear(state, action.mapSetKey);
+		case ActionTypes.MAPS.SET.USE.REGISTER:
+			return mapSetUseRegister(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.VIEW.UPDATE:
 			return updateSetView(state, action.setKey, action.update);
 		case ActionTypes.MAPS.UPDATE:

@@ -3,7 +3,7 @@ import {
 	createObserver as createRecomputeObserver,
 	createSelector as createRecomputeSelector,
 } from '@jvitela/recompute';
-import _ from 'lodash';
+import {forEach as _forEach, filter as _filter} from 'lodash';
 import {recomputeSelectorOptions} from '../../_common/recomputeHelpers';
 
 const getSubstate = state => state.data.attributeRelations;
@@ -26,7 +26,18 @@ const getByKeyObserver = createRecomputeObserver((state, key) => {
  * @return {Array} A collection of relations
  */
 const getByKeys = createRecomputeSelector(keys => {
-	return keys.map(key => getByKeyObserver(key));
+	if (keys?.length) {
+		let relations = [];
+		keys.forEach(key => {
+			const relation = getByKeyObserver(key);
+			if (relation) {
+				relations.push(relation);
+			}
+		});
+		return relations.length ? relations : null;
+	} else {
+		return null;
+	}
 }, recomputeSelectorOptions);
 
 /**
@@ -38,7 +49,7 @@ const getIndexed = createRecomputeSelector(filter => {
 	const index = getIndex_recompute(filter, null);
 	if (index?.index) {
 		// filter only uuids (not true or false values of index)
-		const keys = _.filter(
+		const keys = _filter(
 			Object.values(index.index),
 			key => typeof key === 'string'
 		);
@@ -62,7 +73,7 @@ const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelect
 		const relations = getIndexed(filter);
 		if (relations) {
 			const pairs = {};
-			_.forEach(relations, relation => {
+			_forEach(relations, relation => {
 				pairs[relation.data.attributeDataSourceKey] =
 					relation.data.attributeKey;
 			});
@@ -75,6 +86,9 @@ const getFilteredAttributeDataSourceKeyAttributeKeyPairs = createRecomputeSelect
 );
 
 export default {
+	getByKeyObserver,
+	getByKeys,
 	getFilteredAttributeDataSourceKeyAttributeKeyPairs,
+	getIndexed,
 	getIndex,
 };

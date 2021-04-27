@@ -29,6 +29,10 @@ const updateEdited = common.updateEdited(
 	Select.attributes.getSubstate,
 	ActionTypes.ATTRIBUTES
 );
+const updateStore = common.updateStore(
+	Select.attributes.getSubstate,
+	ActionTypes.ATTRIBUTES
+);
 const useIndexed = common.useIndexed(
 	Select.attributes.getSubstate,
 	'attributes',
@@ -43,11 +47,6 @@ const useKeys = common.useKeys(
 const useKeysClear = common.useKeysClear(ActionTypes.ATTRIBUTES);
 const updateStateFromView = common.updateSubstateFromView(
 	ActionTypes.ATTRIBUTES
-);
-const useIndexedBatch = common.useIndexedBatch(
-	'attributes',
-	ActionTypes.ATTRIBUTES,
-	'data'
 );
 
 const setActiveKeyAndEnsureDependencies = key => {
@@ -64,14 +63,6 @@ const setActiveKeysAndEnsureDependencies = keys => {
 	};
 };
 
-function loadAttributeData(filter, componentId) {
-	return (dispatch, getState) => {
-		return dispatch(
-			useIndexedBatch(null, filter, null, componentId, 'attributeDataSourceKey')
-		);
-	};
-}
-
 // ============ export ===========
 
 export default {
@@ -86,11 +77,9 @@ export default {
 	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
+	updateStore,
 	useIndexed,
 	useIndexedClear,
 	useKeys,
 	useKeysClear,
-	useIndexedBatch,
-
-	loadAttributeData,
 };

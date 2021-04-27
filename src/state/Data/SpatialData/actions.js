@@ -1,6 +1,5 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import _ from 'lodash';
-import common from '../../_common/actions';
+import {isEmpty as _isEmpty, forIn as _forIn, reduce as _reduce} from 'lodash';
 import {tileAsString} from '../helpers';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
@@ -16,12 +15,8 @@ const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
  */
 const receiveIndexed = (spatialData, filter, order, changedOn) => {
 	return dispatch => {
-		// NEW WAY
-		if (spatialData) {
+		if (spatialData && !_isEmpty(spatialData)) {
 			return dispatch(addDataAndIndex(spatialData, filter, order, changedOn));
-		} else {
-			// add to index
-			return dispatch(createAndAddIndex(filter, order, spatialData, changedOn));
 		}
 	};
 };
@@ -30,13 +25,13 @@ const receiveIndexed = (spatialData, filter, order, changedOn) => {
  * Add data and index at the same time
  * Add data, even if data are empty, for replacing loading indicator.
  * @param spatialDataAndIndexByDataSourceKey {Object} [dataSourceKey]: {data: Object, spatialIndex: Object}
- * @param spatialFilter {Object}
+ * @param filter {Object}
  * @param order {Array}
  * @param changedOn {string}
  */
 function addDataAndIndex(
 	spatialDataAndIndexByDataSourceKey,
-	spatialFilter,
+	filter,
 	order,
 	changedOn
 ) {
@@ -49,7 +44,7 @@ function addDataAndIndex(
 		const level = Object.keys(indexByLevelByTileByDataSourceKey)[0];
 
 		let spatialDataByDataSourceKey = {};
-		_.forIn(
+		_forIn(
 			spatialDataAndIndexByDataSourceKey,
 			(value, spatialDataSourceKey) => {
 				spatialDataByDataSourceKey[spatialDataSourceKey] = value.data;
@@ -57,60 +52,15 @@ function addDataAndIndex(
 		);
 
 		dispatch(
-			addDataAndIndexAction(
+			actionAddDataAndIndex(
 				spatialDataByDataSourceKey,
 				level,
-				spatialFilter,
+				filter,
 				order,
 				[indexByLevelByTileByDataSourceKey],
 				changedOn
 			)
 		);
-
-		// for(const dataSourceKey of Object.keys(spatialDataByDataSourceKey)) {
-		// 	//spatialData should be only from one level
-		// 	const levels = Object.keys(spatialDataByDataSourceKey[dataSourceKey].spatialIndex);
-		// 	for (const level of levels) {
-		// 		// It dispatch addDataWithIndex for each datasource and level in response with same indexByLevelByTileByDataSourceKey.
-		// 		// Multiple datasources in one response is edge case at the moment.
-		// 		dispatch(addDataAndIndexAction(dataSourceKey, spatialDataByDataSourceKey[dataSourceKey].data, level, spatialFilter, order, [indexByLevelByTileByDataSourceKey], changedOn));
-		// 	}
-		// }
-	};
-}
-
-/**
- * Create and add spatial index based on spatialDataSourceKey, level and tiles.
- * @param {Object} filter Filler object contains modifiers and layerTemplateKey or areaTreeLevelKey.
- * @param {Array?} order
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.
- * @param {string?} changedOn
- */
-function createAndAddIndex(filter, order, spatialData, changedOn) {
-	const indexByLevelByTileByDataSourceKey = getIndexData(spatialData);
-	return addIndexAction(
-		filter,
-		order,
-		[indexByLevelByTileByDataSourceKey],
-		changedOn
-	);
-}
-
-/**
- * Dispatch addDataAction for each given spatialDataKey and its level.
- * @param {Object} spatialData Object received from BE contains under spatialDataKey object of data attributes [id]: {data, spatialIndex}.
- */
-function addData(spatialData) {
-	return (dispatch, getState) => {
-		for (const key of Object.keys(spatialData)) {
-			if (!_.isEmpty(spatialData[key].data)) {
-				//spatialData should be only from one level
-				const levels = Object.keys(spatialData[key].spatialIndex);
-				for (const level of levels) {
-					dispatch(addDataAction(key, spatialData[key].data, level));
-				}
-			}
-		}
 	};
 }
 
@@ -125,7 +75,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 	const changedOn = null;
 
 	//create index with tiles value "true" that indicates loading state
-	const loadingTiles = _.reduce(
+	const loadingTiles = _reduce(
 		tiles,
 		(acc, tile) => {
 			const tileId = tileAsString(tile);
@@ -137,7 +87,7 @@ function addLoadingIndex(filter, order, level, tiles) {
 	const index = {
 		[level]: loadingTiles,
 	};
-	return addIndexAction(filter, order, [index], changedOn);
+	return actionAddIndex(filter, order, [index], changedOn);
 }
 
 // ============ helpers ============
@@ -158,14 +108,14 @@ function getIndexData(spatialDataByDataSourceKey) {
 			}
 			for (const [tile, tileData] of Object.entries(tiles)) {
 				//Add to existing index
-				if (indexByLevelByTileByDataSourceKey?.[level]?.[tile]) {
-					indexByLevelByTileByDataSourceKey[level][tile] = {
-						...indexByLevelByTileByDataSourceKey[level][tile],
+				if (indexByLevelByTileByDataSourceKey?.[level]?.[tileAsString(tile)]) {
+					indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] = {
+						...indexByLevelByTileByDataSourceKey[level][tileAsString(tile)],
 						[dsKey]: tileData,
 					};
 				} else {
 					//Create new tile and insert dsKey index data
-					indexByLevelByTileByDataSourceKey[level][tile] = {
+					indexByLevelByTileByDataSourceKey[level][tileAsString(tile)] = {
 						[dsKey]: tileData,
 					};
 				}
@@ -177,7 +127,7 @@ function getIndexData(spatialDataByDataSourceKey) {
 }
 
 // ============ actions ============
-function removeIndexAction(filter, order) {
+function actionRemoveIndex(filter, order) {
 	return {
 		type: actionTypes.INDEX.REMOVE,
 		filter,
@@ -185,19 +135,10 @@ function removeIndexAction(filter, order) {
 	};
 }
 
-function addDataAction(key, data, level) {
-	return {
-		type: actionTypes.ADD,
-		key,
-		data,
-		level,
-	};
-}
-
-function addDataAndIndexAction(
+function actionAddDataAndIndex(
 	dataByDataSourceKey,
 	level,
-	spatialFilter,
+	filter,
 	order,
 	indexData,
 	changedOn
@@ -206,17 +147,17 @@ function addDataAndIndexAction(
 		type: actionTypes.ADD_WITH_INDEX,
 		dataByDataSourceKey,
 		level,
-		spatialFilter,
+		filter,
 		order,
 		indexData,
 		changedOn,
 	};
 }
 
-function addIndexAction(filter, order, index, changedOn) {
+function actionAddIndex(filter, order, index, changedOn) {
 	return {
 		type: actionTypes.INDEX.ADD,
-		spatialFilter: filter,
+		filter,
 		order,
 		indexData: index,
 		changedOn,
@@ -227,6 +168,7 @@ function addIndexAction(filter, order, index, changedOn) {
 
 export default {
 	addLoadingIndex,
-	removeIndex: removeIndexAction,
+	getIndexData,
+	removeIndex: actionRemoveIndex,
 	receiveIndexed,
 };
