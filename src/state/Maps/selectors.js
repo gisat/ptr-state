@@ -36,6 +36,18 @@ const getActiveMapKey = state => state.maps.activeMapKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
 
+// TODO @vlach1989 test
+const getActiveMap = createSelector(
+	[getMapsAsObject, getActiveMapKey],
+	(maps, activeMapKey) => {
+		if (maps && activeMapKey) {
+			return maps[activeMapKey];
+		} else {
+			return null;
+		}
+	}
+);
+
 const isMapSetInUse = createCachedSelector(
 	[getAllMapSetsInUse, (state, mapSetKey) => mapSetKey],
 	(mapSetsInUse, mapSetKey) => {
@@ -887,6 +899,9 @@ export default {
 	isMapSetInUse,
 
 	getSubstate,
+
+	getActiveMapKey,
+	getActiveMap,
 
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,

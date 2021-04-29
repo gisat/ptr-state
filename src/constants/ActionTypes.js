@@ -361,6 +361,7 @@ export default utils.deepKeyMirror({
 			REMOVE_MAP: null,
 			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,
+			SET_LAYERS: null,
 			USE: {
 				CLEAR: null,
 				REGISTER: null,
@@ -372,6 +373,10 @@ export default utils.deepKeyMirror({
 		},
 		MAP: {
 			LAYERS: {
+				ADD: null,
+				REMOVE_LAYER: null,
+				SET_RENDER_AS: null,
+				SET_STYLE: null,
 				SET_STYLE_KEY: null,
 			},
 			USE: {
@@ -386,6 +391,7 @@ export default utils.deepKeyMirror({
 				UPDATE: null,
 			},
 		},
+		SET_ACTIVE_MAP_KEY: null,
 		UPDATE: null,
 	},
 

@@ -1,6 +1,10 @@
 import ActionTypes from '../../constants/ActionTypes';
 import {stateManagement} from '@gisatcz/ptr-utils';
-import {indexOf as _indexOf, isEmpty as _isEmpty} from 'lodash';
+import {
+	findIndex as _findIndex,
+	indexOf as _indexOf,
+	isEmpty as _isEmpty,
+} from 'lodash';
 
 export const INITIAL_STATE = {
 	activeSetKey: null,
@@ -13,6 +17,29 @@ export const INITIAL_STATE = {
 	sets: {},
 };
 
+/**
+ * TODO @vlach1989 test
+ * Set active map key
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} updated state
+ */
+const setActiveMapKey = (state, mapKey) => {
+	if (mapKey) {
+		return {...state, activeMapKey: mapKey};
+	} else {
+		return null;
+	}
+};
+
+/**
+ * TODO @vlach1989 test
+ * Remove map from map set
+ * @param state {Object}
+ * @param setKey {string}
+ * @param mapKey {string}
+ * @return {Object} updated state
+ */
 const removeMapFromSet = (state, setKey, mapKey) => {
 	if (setKey && mapKey) {
 		const index = _indexOf(state.sets[setKey]?.maps, mapKey);
@@ -41,6 +68,74 @@ const removeMapFromSet = (state, setKey, mapKey) => {
 };
 
 /**
+ * TODO @vlach1989 test
+ * Remove layer from map
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @return {Object} Updated state
+ */
+const removeMapLayer = (state, mapKey, layerKey) => {
+	if (layerKey && mapKey) {
+		const index = _findIndex(state.maps[mapKey]?.data.layers, {key: layerKey});
+		if (index > -1) {
+			let updatedLayers = stateManagement.removeItemByIndex(
+				state.maps[mapKey]?.data.layers,
+				index
+			);
+
+			return {
+				...state,
+				maps: {
+					...state.maps,
+					[mapKey]: {
+						...state.maps[mapKey],
+						data: {
+							...state.maps[mapKey].data,
+							layers: updatedLayers,
+						},
+					},
+				},
+			};
+		} else {
+			return state;
+		}
+	} else {
+		return state;
+	}
+};
+
+/**
+ * TODO @vlach1989 test
+ * Add layer states to map
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerStates {Array} A collection, where each object represents state of the layer
+ * @return {Object} updated state
+ */
+const addMapLayers = (state, mapKey, layerStates) => {
+	if (mapKey && layerStates) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						layers: state.maps[mapKey].data.layers
+							? [...state.maps[mapKey].data.layers, ...layerStates]
+							: layerStates,
+					},
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
  * Set styleKey to the specific layer of the specific map
  * @param state {Object}
  * @param mapKey {string}
@@ -57,6 +152,96 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 				return {
 					...item,
 					styleKey,
+				};
+			} else {
+				return item;
+			}
+		});
+
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						layers: updatedLayers,
+					},
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * TODO @vlach1989 test
+ * Set renderAs option to the specific layer of the specific map
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param renderAs {Array}
+ * @return {Object} state
+ */
+const setMapLayerRenderAs = (state, mapKey, layerKey, renderAs) => {
+	const layers = state.maps[mapKey]?.data?.layers;
+
+	if (layers) {
+		const updatedLayers = layers.map(item => {
+			if (item.key === layerKey) {
+				return {
+					...item,
+					options: {
+						...item.options,
+						renderAs,
+					},
+				};
+			} else {
+				return item;
+			}
+		});
+
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						layers: updatedLayers,
+					},
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * TODO @vlach1989 test
+ * Set style definition to the specific layer of the specific map
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param style {Object}
+ * @return {Object} state
+ */
+const setMapLayerStyle = (state, mapKey, layerKey, style) => {
+	const layers = state.maps[mapKey]?.data?.layers;
+
+	if (layers) {
+		const updatedLayers = layers.map(item => {
+			if (item.key === layerKey) {
+				return {
+					...item,
+					options: {
+						...item.options,
+						style,
+					},
 				};
 			} else {
 				return item;
@@ -149,6 +334,29 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 				data: {
 					...state.sets[setKey].data,
 					backgroundLayer,
+				},
+			},
+		},
+	};
+};
+
+/**
+ * Set map set layers state
+ * @param state {Object}
+ * @param setKey {string}
+ * @param layers {Object} layers state
+ * @return {Object} state
+ */
+const setSetLayers = (state, setKey, layers) => {
+	return {
+		...state,
+		sets: {
+			...state.sets,
+			[setKey]: {
+				...state.sets[setKey],
+				data: {
+					...state.sets[setKey].data,
+					layers,
 				},
 			},
 		},
@@ -325,12 +533,30 @@ const mapSetUseRegister = (state, mapSetKey) => {
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
+		case ActionTypes.MAPS.MAP.LAYERS.ADD:
+			return addMapLayers(state, action.mapKey, action.layerStates);
+		case ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER:
+			return removeMapLayer(state, action.mapKey, action.layerKey);
+		case ActionTypes.MAPS.MAP.LAYERS.SET_RENDER_AS:
+			return setMapLayerRenderAs(
+				state,
+				action.mapKey,
+				action.layerKey,
+				action.renderAs
+			);
 		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY:
 			return setMapLayerStyleKey(
 				state,
 				action.mapKey,
 				action.layerKey,
 				action.styleKey
+			);
+		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE:
+			return setMapLayerStyle(
+				state,
+				action.mapKey,
+				action.layerKey,
+				action.style
 			);
 		case ActionTypes.MAPS.MAP.USE.CLEAR:
 			return mapUseClear(state, action.mapKey);
@@ -350,12 +576,16 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.SET_LAYERS:
+			return setSetLayers(state, action.setKey, action.layers);
 		case ActionTypes.MAPS.SET.USE.CLEAR:
 			return mapSetUseClear(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.USE.REGISTER:
 			return mapSetUseRegister(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.VIEW.UPDATE:
 			return updateSetView(state, action.setKey, action.update);
+		case ActionTypes.MAPS.SET_ACTIVE_MAP_KEY:
+			return setActiveMapKey(state, action.mapKey);
 		case ActionTypes.MAPS.UPDATE:
 			return update(state, action.data);
 		default:

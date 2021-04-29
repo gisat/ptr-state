@@ -9,6 +9,7 @@ import {map as mapUtils} from '@gisatcz/ptr-utils';
 
 import ActionTypes from '../../constants/ActionTypes';
 import Select from '../../state/Select';
+import commonActions from '../_common/actions';
 import commonHelpers from '../_common/helpers';
 import commonSelectors from '../_common/selectors';
 
@@ -22,6 +23,56 @@ import SelectionsAction from '../Selections/actions';
 /* ==================================================
  * CREATORS
  * ================================================== */
+
+/**
+ * TODO @vlach1989 tests
+ * Add layers at the end of map layers list
+ * @param mapKey {string}
+ * @param layerStates {Array} A collection, where each object represents state of the layer
+ */
+const addMapLayers = (mapKey, layerStates) => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const map = Select.maps.getMapByKey(state, mapKey);
+		if (map) {
+			dispatch(actionAddMapLayers(mapKey, layerStates));
+			const viewport = Select.maps.getViewportByMapKey(state, mapKey);
+			if (viewport) {
+				dispatch(use(mapKey, null, null, viewport.width, viewport.height));
+			}
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
+			);
+		}
+	};
+};
+
+/**
+ * TODO @vlach1989 tests
+ * Remove layer from map
+ * @param mapKey {string}
+ * @param layerKey {string}
+ */
+const removeMapLayer = (mapKey, layerKey) => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const layerState = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			state,
+			mapKey,
+			layerKey
+		);
+		if (layerState) {
+			dispatch(actionRemoveMapLayer(mapKey, layerKey));
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(
+					`No layer with key ${layerKey} found for mapKey ${mapKey}`
+				)
+			);
+		}
+	};
+};
 
 /**
  * Clear use of the map set
@@ -330,6 +381,46 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
 }
 
 /**
+ * TODO test @vlach1989
+ * Set map layer style definition
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param style {Object}
+ */
+function setMapLayerStyle(mapKey, layerKey, style) {
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			getState(),
+			mapKey,
+			layerKey
+		);
+		if (layer) {
+			dispatch(actionSetMapLayerStyle(mapKey, layerKey, style));
+		}
+	};
+}
+
+/**
+ * TODO test @vlach1989
+ * Set map layer renderAs option
+ * @param mapKey {string}
+ * @param layerKey {string}
+ * @param renderAs {Array}
+ */
+function setMapLayerRenderAs(mapKey, layerKey, renderAs) {
+	return (dispatch, getState) => {
+		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
+			getState(),
+			mapKey,
+			layerKey
+		);
+		if (layer) {
+			dispatch(actionSetMapLayerRenderAs(mapKey, layerKey, renderAs));
+		}
+	};
+}
+
+/**
  * @param mapKey {string}
  */
 function setMapSetActiveMapKey(mapKey) {
@@ -356,6 +447,31 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 		if (maps) {
 			maps.forEach(map => {
 				// TODO is viewport always defined?
+				dispatch(
+					use(
+						map.key,
+						null,
+						null,
+						map?.data?.viewport?.width,
+						map?.data?.viewport?.height
+					)
+				);
+			});
+		}
+	};
+}
+
+/**
+ * TODO @vlach1989 test
+ * @param setKey {string}
+ * @param layers {Array} layers definitions
+ */
+function setMapSetLayers(setKey, layers) {
+	return (dispatch, getState) => {
+		dispatch(actionSetMapSetLayers(setKey, layers));
+		const maps = Select.maps.getMapSetMaps(getState(), setKey);
+		if (maps) {
+			maps.forEach(map => {
 				dispatch(
 					use(
 						map.key,
@@ -500,11 +616,43 @@ function setMapViewport(mapKey, width, height) {
  * ACTIONS
  * ================================================== */
 
+const actionAddMapLayers = (mapKey, layerStates) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.ADD,
+		mapKey,
+		layerStates,
+	};
+};
+
+const actionRemoveMapLayer = (mapKey, layerKey) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER,
+		mapKey,
+		layerKey,
+	};
+};
+
 const actionRemoveMapFromSet = (setKey, mapKey) => {
 	return {
 		type: ActionTypes.MAPS.SET.REMOVE_MAP,
 		setKey,
 		mapKey,
+	};
+};
+
+const actionSetActiveMapKey = mapKey => {
+	return {
+		type: ActionTypes.MAPS.SET_ACTIVE_MAP_KEY,
+		mapKey,
+	};
+};
+
+const actionSetMapLayerRenderAs = (mapKey, layerKey, renderAs) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.SET_RENDER_AS,
+		mapKey,
+		layerKey,
+		renderAs,
 	};
 };
 
@@ -514,6 +662,15 @@ const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
 		mapKey,
 		layerKey,
 		styleKey,
+	};
+};
+
+const actionSetMapLayerStyle = (mapKey, layerKey, style) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.SET_STYLE,
+		mapKey,
+		layerKey,
+		style,
 	};
 };
 
@@ -530,6 +687,14 @@ const actionSetMapSetBackgroundLayer = (setKey, backgroundLayer) => {
 		type: ActionTypes.MAPS.SET.SET_BACKGROUND_LAYER,
 		setKey,
 		backgroundLayer,
+	};
+};
+
+const actionSetMapSetLayers = (setKey, layers) => {
+	return {
+		type: ActionTypes.MAPS.SET.SET_LAYERS,
+		setKey,
+		layers,
 	};
 };
 
@@ -595,6 +760,7 @@ const actionMapUseRegister = mapKey => {
 
 // ============ export ===========
 export default {
+	addMapLayers,
 	ensureWithFilterByActive,
 	layerUse,
 	mapSetUseClear,
@@ -603,10 +769,15 @@ export default {
 	mapUseRegister,
 	refreshMapSetUse,
 	removeMapFromSet,
+	removeMapLayer,
+	setActiveMapKey: actionSetActiveMapKey,
 	setLayerSelectedFeatureKeys,
 	setMapLayerStyleKey,
+	setMapLayerRenderAs,
+	setMapLayerStyle,
 	setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
+	setMapSetLayers,
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
