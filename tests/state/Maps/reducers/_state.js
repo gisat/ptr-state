@@ -17,6 +17,10 @@ export const MapReducersState = {
 						key: 'layer1',
 						styleKey: 'style1',
 					},
+					{
+						key: 'layer2',
+						styleKey: 'style1',
+					},
 				],
 				viewport: {
 					width: 100,
@@ -32,6 +36,16 @@ export const MapReducersState = {
 				},
 			},
 		},
+		map4: {
+			key: 'map4',
+			data: {
+				layers: [
+					{
+						key: 'layer3',
+					},
+				],
+			},
+		},
 	},
 	sets: {
 		set1: {
@@ -45,6 +59,12 @@ export const MapReducersState = {
 				view: {
 					boxRange: 1000,
 				},
+				layers: [
+					{
+						key: 'layer1',
+						styleKey: 'style1',
+					},
+				],
 			},
 		},
 	},

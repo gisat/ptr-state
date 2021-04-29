@@ -18,7 +18,6 @@ export const INITIAL_STATE = {
 };
 
 /**
- * TODO @vlach1989 test
  * Set active map key
  * @param state {Object}
  * @param mapKey {string}
@@ -28,12 +27,11 @@ const setActiveMapKey = (state, mapKey) => {
 	if (mapKey) {
 		return {...state, activeMapKey: mapKey};
 	} else {
-		return null;
+		return state;
 	}
 };
 
 /**
- * TODO @vlach1989 test
  * Remove map from map set
  * @param state {Object}
  * @param setKey {string}
@@ -68,7 +66,6 @@ const removeMapFromSet = (state, setKey, mapKey) => {
 };
 
 /**
- * TODO @vlach1989 test
  * Remove layer from map
  * @param state {Object}
  * @param mapKey {string}
@@ -106,7 +103,6 @@ const removeMapLayer = (state, mapKey, layerKey) => {
 };
 
 /**
- * TODO @vlach1989 test
  * Add layer states to map
  * @param state {Object}
  * @param mapKey {string}
@@ -114,7 +110,7 @@ const removeMapLayer = (state, mapKey, layerKey) => {
  * @return {Object} updated state
  */
 const addMapLayers = (state, mapKey, layerStates) => {
-	if (mapKey && layerStates) {
+	if (mapKey && layerStates && state.maps?.[mapKey]) {
 		return {
 			...state,
 			maps: {
@@ -136,7 +132,6 @@ const addMapLayers = (state, mapKey, layerStates) => {
 };
 
 /**
- * TODO @vlach1989 test
  * Add layer to the specific position
  * @param state {Object}
  * @param mapKey {string}
@@ -145,16 +140,21 @@ const addMapLayers = (state, mapKey, layerStates) => {
  * @return {Object} updated state
  */
 const addMapLayerToIndex = (state, mapKey, layerState, index) => {
-	if (mapKey && layerState) {
+	if (mapKey && layerState && state.maps?.[mapKey]) {
 		let updatedLayers;
-		if (index > -1) {
-			updatedLayers = stateManagement.addItemToIndex(
-				state.maps[mapKey]?.data.layers,
-				index,
-				layerState
-			);
+		const currentLayers = state.maps[mapKey].data?.layers;
+		if (currentLayers) {
+			if (index > -1 && index < currentLayers.length) {
+				updatedLayers = stateManagement.addItemToIndex(
+					currentLayers,
+					index,
+					layerState
+				);
+			} else {
+				updatedLayers = [...currentLayers, layerState];
+			}
 		} else {
-			updatedLayers = [...state.maps[mapKey].data.layers, layerState];
+			updatedLayers = [layerState];
 		}
 
 		return {
@@ -217,7 +217,6 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 };
 
 /**
- * TODO @vlach1989 test
  * Set map layer option
  * @param state {Object}
  * @param mapKey {string}
@@ -344,19 +343,23 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
  * @return {Object} state
  */
 const setSetLayers = (state, setKey, layers) => {
-	return {
-		...state,
-		sets: {
-			...state.sets,
-			[setKey]: {
-				...state.sets[setKey],
-				data: {
-					...state.sets[setKey].data,
-					layers,
+	if (setKey && layers && state.sets[setKey]) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[setKey]: {
+					...state.sets[setKey],
+					data: {
+						...state.sets[setKey].data,
+						layers,
+					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
