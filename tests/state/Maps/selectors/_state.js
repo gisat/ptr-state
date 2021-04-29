@@ -6,6 +6,7 @@ export const MapsSelectorsState = {
 		activeKey: 'place1',
 	},
 	maps: {
+		activeMapKey: 'map1',
 		maps: {
 			map1: {
 				key: 'map1',
