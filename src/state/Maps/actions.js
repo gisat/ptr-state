@@ -50,6 +50,31 @@ const addMapLayers = (mapKey, layerStates) => {
 
 /**
  * TODO @vlach1989 tests
+ * Add map layer to the specific position in the list
+ * @param mapKey {string}
+ * @param layerState {Object}
+ * @param index {number} position
+ */
+const addMapLayerToIndex = (mapKey, layerState, index) => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const map = Select.maps.getMapByKey(state, mapKey);
+		if (map) {
+			dispatch(actionAddMapLayerToIndex(mapKey, layerState, index));
+			const viewport = Select.maps.getViewportByMapKey(state, mapKey);
+			if (viewport) {
+				dispatch(use(mapKey, null, null, viewport.width, viewport.height));
+			}
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
+			);
+		}
+	};
+};
+
+/**
+ * TODO @vlach1989 tests
  * Remove layer from map
  * @param mapKey {string}
  * @param layerKey {string}
@@ -607,6 +632,15 @@ const actionAddMapLayers = (mapKey, layerStates) => {
 	};
 };
 
+const actionAddMapLayerToIndex = (mapKey, layerState, index) => {
+	return {
+		type: ActionTypes.MAPS.MAP.LAYERS.ADD_TO_INDEX,
+		mapKey,
+		layerState,
+		index,
+	};
+};
+
 const actionRemoveMapLayer = (mapKey, layerKey) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER,
@@ -736,6 +770,7 @@ const actionMapUseRegister = mapKey => {
 // ============ export ===========
 export default {
 	addMapLayers,
+	addMapLayerToIndex,
 	ensureWithFilterByActive,
 	layerUse,
 	mapSetUseClear,

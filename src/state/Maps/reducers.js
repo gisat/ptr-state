@@ -136,6 +136,46 @@ const addMapLayers = (state, mapKey, layerStates) => {
 };
 
 /**
+ * TODO @vlach1989 test
+ * Add layer to the specific position
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerState {Object}
+ * @param index {number}
+ * @return {Object} updated state
+ */
+const addMapLayerToIndex = (state, mapKey, layerState, index) => {
+	if (mapKey && layerState) {
+		let updatedLayers;
+		if (index > -1) {
+			updatedLayers = stateManagement.addItemToIndex(
+				state.maps[mapKey]?.data.layers,
+				index,
+				layerState
+			);
+		} else {
+			updatedLayers = [...state.maps[mapKey].data.layers, layerState];
+		}
+
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: {
+						...state.maps[mapKey].data,
+						layers: updatedLayers,
+					},
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
  * Set styleKey to the specific layer of the specific map
  * @param state {Object}
  * @param mapKey {string}
@@ -491,6 +531,13 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case ActionTypes.MAPS.MAP.LAYERS.ADD:
 			return addMapLayers(state, action.mapKey, action.layerStates);
+		case ActionTypes.MAPS.MAP.LAYERS.ADD_TO_INDEX:
+			return addMapLayerToIndex(
+				state,
+				action.mapKey,
+				action.layerState,
+				action.index
+			);
 		case ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER:
 			return removeMapLayer(state, action.mapKey, action.layerKey);
 		case ActionTypes.MAPS.MAP.LAYERS.SET_OPTION:
