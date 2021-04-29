@@ -375,6 +375,7 @@ export default utils.deepKeyMirror({
 			LAYERS: {
 				ADD: null,
 				REMOVE_LAYER: null,
+				SET_OPTION: null,
 				SET_RENDER_AS: null,
 				SET_STYLE: null,
 				SET_STYLE_KEY: null,

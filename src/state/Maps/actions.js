@@ -382,12 +382,13 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
 
 /**
  * TODO test @vlach1989
- * Set map layer style definition
+ * Set map layer option
  * @param mapKey {string}
  * @param layerKey {string}
- * @param style {Object}
+ * @param optionKey {string}
+ * @param optionValue {*}
  */
-function setMapLayerStyle(mapKey, layerKey, style) {
+function setMapLayerOption(mapKey, layerKey, optionKey, optionValue) {
 	return (dispatch, getState) => {
 		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
 			getState(),
@@ -395,27 +396,9 @@ function setMapLayerStyle(mapKey, layerKey, style) {
 			layerKey
 		);
 		if (layer) {
-			dispatch(actionSetMapLayerStyle(mapKey, layerKey, style));
-		}
-	};
-}
-
-/**
- * TODO test @vlach1989
- * Set map layer renderAs option
- * @param mapKey {string}
- * @param layerKey {string}
- * @param renderAs {Array}
- */
-function setMapLayerRenderAs(mapKey, layerKey, renderAs) {
-	return (dispatch, getState) => {
-		const layer = Select.maps.getLayerStateByLayerKeyAndMapKey(
-			getState(),
-			mapKey,
-			layerKey
-		);
-		if (layer) {
-			dispatch(actionSetMapLayerRenderAs(mapKey, layerKey, renderAs));
+			dispatch(
+				actionSetMapLayerOption(mapKey, layerKey, optionKey, optionValue)
+			);
 		}
 	};
 }
@@ -647,12 +630,13 @@ const actionSetActiveMapKey = mapKey => {
 	};
 };
 
-const actionSetMapLayerRenderAs = (mapKey, layerKey, renderAs) => {
+const actionSetMapLayerOption = (mapKey, layerKey, optionKey, optionValue) => {
 	return {
-		type: ActionTypes.MAPS.MAP.LAYERS.SET_RENDER_AS,
+		type: ActionTypes.MAPS.MAP.LAYERS.SET_OPTION,
 		mapKey,
 		layerKey,
-		renderAs,
+		optionKey,
+		optionValue,
 	};
 };
 
@@ -662,15 +646,6 @@ const actionSetMapLayerStyleKey = (mapKey, layerKey, styleKey) => {
 		mapKey,
 		layerKey,
 		styleKey,
-	};
-};
-
-const actionSetMapLayerStyle = (mapKey, layerKey, style) => {
-	return {
-		type: ActionTypes.MAPS.MAP.LAYERS.SET_STYLE,
-		mapKey,
-		layerKey,
-		style,
 	};
 };
 
@@ -772,9 +747,8 @@ export default {
 	removeMapLayer,
 	setActiveMapKey: actionSetActiveMapKey,
 	setLayerSelectedFeatureKeys,
+	setMapLayerOption,
 	setMapLayerStyleKey,
-	setMapLayerRenderAs,
-	setMapLayerStyle,
 	setMapSetActiveMapKey,
 	setMapSetBackgroundLayer,
 	setMapSetLayers,

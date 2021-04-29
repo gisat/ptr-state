@@ -178,14 +178,15 @@ const setMapLayerStyleKey = (state, mapKey, layerKey, styleKey) => {
 
 /**
  * TODO @vlach1989 test
- * Set renderAs option to the specific layer of the specific map
+ * Set map layer option
  * @param state {Object}
  * @param mapKey {string}
  * @param layerKey {string}
- * @param renderAs {Array}
+ * @param optionKey {string}
+ * @param optionValue {*}
  * @return {Object} state
  */
-const setMapLayerRenderAs = (state, mapKey, layerKey, renderAs) => {
+const setMapLayerOption = (state, mapKey, layerKey, optionKey, optionValue) => {
 	const layers = state.maps[mapKey]?.data?.layers;
 
 	if (layers) {
@@ -195,52 +196,7 @@ const setMapLayerRenderAs = (state, mapKey, layerKey, renderAs) => {
 					...item,
 					options: {
 						...item.options,
-						renderAs,
-					},
-				};
-			} else {
-				return item;
-			}
-		});
-
-		return {
-			...state,
-			maps: {
-				...state.maps,
-				[mapKey]: {
-					...state.maps[mapKey],
-					data: {
-						...state.maps[mapKey].data,
-						layers: updatedLayers,
-					},
-				},
-			},
-		};
-	} else {
-		return state;
-	}
-};
-
-/**
- * TODO @vlach1989 test
- * Set style definition to the specific layer of the specific map
- * @param state {Object}
- * @param mapKey {string}
- * @param layerKey {string}
- * @param style {Object}
- * @return {Object} state
- */
-const setMapLayerStyle = (state, mapKey, layerKey, style) => {
-	const layers = state.maps[mapKey]?.data?.layers;
-
-	if (layers) {
-		const updatedLayers = layers.map(item => {
-			if (item.key === layerKey) {
-				return {
-					...item,
-					options: {
-						...item.options,
-						style,
+						[optionKey]: optionValue,
 					},
 				};
 			} else {
@@ -537,12 +493,13 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 			return addMapLayers(state, action.mapKey, action.layerStates);
 		case ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER:
 			return removeMapLayer(state, action.mapKey, action.layerKey);
-		case ActionTypes.MAPS.MAP.LAYERS.SET_RENDER_AS:
-			return setMapLayerRenderAs(
+		case ActionTypes.MAPS.MAP.LAYERS.SET_OPTION:
+			return setMapLayerOption(
 				state,
 				action.mapKey,
 				action.layerKey,
-				action.renderAs
+				action.optionKey,
+				action.optionValue
 			);
 		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE_KEY:
 			return setMapLayerStyleKey(
@@ -550,13 +507,6 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.mapKey,
 				action.layerKey,
 				action.styleKey
-			);
-		case ActionTypes.MAPS.MAP.LAYERS.SET_STYLE:
-			return setMapLayerStyle(
-				state,
-				action.mapKey,
-				action.layerKey,
-				action.style
 			);
 		case ActionTypes.MAPS.MAP.USE.CLEAR:
 			return mapUseClear(state, action.mapKey);
