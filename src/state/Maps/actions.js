@@ -74,7 +74,6 @@ const addMapLayerToIndex = (mapKey, layerState, index) => {
 };
 
 /**
- * TODO @vlach1989 tests
  * Remove layer from map
  * @param mapKey {string}
  * @param layerKey {string}
@@ -406,7 +405,6 @@ function setMapLayerStyleKey(mapKey, layerKey, styleKey) {
 }
 
 /**
- * TODO test @vlach1989
  * Set map layer option
  * @param mapKey {string}
  * @param layerKey {string}
@@ -423,6 +421,12 @@ function setMapLayerOption(mapKey, layerKey, optionKey, optionValue) {
 		if (layer) {
 			dispatch(
 				actionSetMapLayerOption(mapKey, layerKey, optionKey, optionValue)
+			);
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(
+					`No layer found for mapKey ${mapKey} and layerKey ${layerKey}`
+				)
 			);
 		}
 	};
@@ -476,20 +480,27 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
  */
 function setMapSetLayers(setKey, layers) {
 	return (dispatch, getState) => {
-		dispatch(actionSetMapSetLayers(setKey, layers));
-		const maps = Select.maps.getMapSetMaps(getState(), setKey);
-		if (maps) {
-			maps.forEach(map => {
-				dispatch(
-					use(
-						map.key,
-						null,
-						null,
-						map?.data?.viewport?.width,
-						map?.data?.viewport?.height
-					)
-				);
-			});
+		const set = Select.maps.getMapSetByKey(getState(), setKey);
+		if (set) {
+			dispatch(actionSetMapSetLayers(setKey, layers));
+			const maps = Select.maps.getMapSetMaps(getState(), setKey);
+			if (maps) {
+				maps.forEach(map => {
+					dispatch(
+						use(
+							map.key,
+							null,
+							null,
+							map?.data?.viewport?.width,
+							map?.data?.viewport?.height
+						)
+					);
+				});
+			}
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(`No set exists for setKey ${setKey}`)
+			);
 		}
 	};
 }
