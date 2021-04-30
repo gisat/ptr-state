@@ -72,7 +72,20 @@ const baseStores = {
 	windows: windowsReducers,
 };
 
-const createBaseStore = (specificStores, rootStores, middleware) => {
+/**
+ * Helper function for creating redux store.
+ * @param {Object} specificStores Object with speficic store/stores. Stores will by available in state under "specific" key.
+ * @param {Array} rootStores Array of redux stores
+ * @param {Array} middleware Array of redux middlewares.
+ * @param {Object?} preloadedState Optional object used for store initialization as a default state.
+ * @returns {Object} redux store instance
+ */
+const createBaseStore = (
+	specificStores,
+	rootStores = [],
+	middleware = [],
+	preloadedState
+) => {
 	const enhancedThunk = thunk.withExtraArgument(activeMetadataActions);
 
 	let appliedMiddleware = applyMiddleware(enhancedThunk, ...middleware);
@@ -82,16 +95,18 @@ const createBaseStore = (specificStores, rootStores, middleware) => {
 	let stores = specificStores
 		? {...baseStores, ...rootStores, specific: combineReducers(specificStores)}
 		: {...baseStores, ...rootStores};
-	return createStore(
-		combineReducers(stores),
-		compose(
-			reduxBatch,
-			appliedMiddleware,
-			reduxBatch,
-			applyMiddleware(enhancedThunk),
-			reduxBatch
-		)
-	);
+	if (preloadedState) {
+		return createStore(
+			combineReducers(stores),
+			preloadedState,
+			compose(reduxBatch, appliedMiddleware, reduxBatch)
+		);
+	} else {
+		return createStore(
+			combineReducers(stores),
+			compose(reduxBatch, appliedMiddleware, reduxBatch)
+		);
+	}
 };
 
 export {
