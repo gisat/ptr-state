@@ -151,6 +151,20 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 					data: options.body,
 				});
 			}
+
+			// Resolve requestswe do not carry on
+			return Promise.resolve({
+				ok: true,
+				json: function () {
+					return Promise.resolve({});
+				},
+				headers: {
+					get: function (name) {
+						return {'Content-type': 'application/json'}[name];
+					},
+				},
+				data: options.body,
+			});
 		});
 
 		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
@@ -166,7 +180,6 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 		setTimeout(() => {
 			storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 				const dispatchedActions = storeHelpers.getDispatchedActions();
-
 				if (_isEqual(dispatchedActions, expectedActions1)) {
 					done();
 				} else {
