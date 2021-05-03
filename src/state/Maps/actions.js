@@ -476,6 +476,42 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 }
 
 /**
+ * Set background layer for map.
+ * @param mapKey {string}
+ * @param backgroundLayer {Object} background layer definition
+ */
+function setMapBackgroundLayer(mapKey, backgroundLayer) {
+	return (dispatch, getState) => {
+		const map = Select.maps.getMapByKey(getState(), mapKey);
+		if (map) {
+			dispatch(actionSetMapBackgroundLayer(mapKey, backgroundLayer));
+
+			// Call use action only on state controlled layers
+			if (!backgroundLayer.type) {
+				const backgroundLayerState = Select.maps.getMapBackgroundLayerStateByMapKey(
+					getState(),
+					mapKey
+				);
+
+				const spatialFilter = Select.maps.getVisibleTilesByMapKey(
+					getState(),
+					mapKey,
+					map?.data?.viewport?.width,
+					map?.data?.viewport?.height
+				);
+				//spatial filter is required for now
+				if (!spatialFilter || !backgroundLayerState) {
+					return;
+				}
+				dispatch(layerUse(backgroundLayerState, spatialFilter));
+			} else {
+				return;
+			}
+		}
+	};
+}
+
+/**
  * TODO @vlach1989 test
  * @param setKey {string}
  * @param layers {Array} layers definitions
@@ -712,6 +748,14 @@ const actionSetMapSetBackgroundLayer = (setKey, backgroundLayer) => {
 	};
 };
 
+const actionSetMapBackgroundLayer = (mapKey, backgroundLayer) => {
+	return {
+		type: ActionTypes.MAPS.MAP.SET_BACKGROUND_LAYER,
+		mapKey,
+		backgroundLayer,
+	};
+};
+
 const actionSetMapSetLayers = (setKey, layers) => {
 	return {
 		type: ActionTypes.MAPS.SET.SET_LAYERS,
@@ -798,6 +842,7 @@ export default {
 	setMapLayerOption,
 	setMapLayerStyleKey,
 	setMapSetActiveMapKey,
+	setMapBackgroundLayer,
 	setMapSetBackgroundLayer,
 	setMapSetLayers,
 	setMapViewport,

@@ -381,6 +381,7 @@ export default utils.deepKeyMirror({
 				SET_STYLE: null,
 				SET_STYLE_KEY: null,
 			},
+			SET_BACKGROUND_LAYER: null,
 			USE: {
 				CLEAR: null,
 				REGISTER: null,
