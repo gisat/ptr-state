@@ -182,13 +182,15 @@ function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
 		}
 
 		if (layers) {
-			layers.forEach(layer =>
+			layers.forEach(layer => {
 				// apply layerUse asynchronous on each leyer
 				// it cause better FPS and prevent long synchronous tasks
-				setTimeout(() => {
-					dispatch(layerUse(layer, spatialFilter));
-				}, 0)
-			);
+				if (!layer.type) {
+					setTimeout(() => {
+						dispatch(layerUse(layer, spatialFilter));
+					}, 0);
+				}
+			});
 		}
 	};
 }
