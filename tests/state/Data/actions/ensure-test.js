@@ -1452,7 +1452,6 @@ describe('state/Data/actions/ensure', function () {
 		};
 
 		setFetch(function (url, options) {
-			debugger;
 			assert.strictEqual(
 				'http://localhost/backend/rest/data/filtered',
 				slash(url)
@@ -1614,7 +1613,6 @@ describe('state/Data/actions/ensure', function () {
 		// commonRelationsFilter,
 		// spatialFilter,
 		const attributeDataFilterExtension = {};
-		debugger;
 		dispatch(
 			actions.ensure(
 				styleKey,
@@ -1625,7 +1623,6 @@ describe('state/Data/actions/ensure', function () {
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			debugger;
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.SPATIAL_DATA.INDEX.ADD',

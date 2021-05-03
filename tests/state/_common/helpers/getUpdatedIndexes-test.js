@@ -290,7 +290,6 @@ describe('getUpdatedIndexes', function () {
 			changedOn,
 			'indexes'
 		);
-		debugger;
 		assert.deepStrictEqual(updatedIndexes, [
 			{
 				filter,

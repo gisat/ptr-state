@@ -229,7 +229,6 @@ describe('state/Maps/actions/setMapBackgroundLayer', function () {
 		};
 
 		setFetch(function (url, options) {
-			debugger;
 			if (
 				_isEqual(options, {
 					body: JSON.stringify({
@@ -327,168 +326,159 @@ describe('state/Maps/actions/setMapBackgroundLayer', function () {
 
 		setTimeout(() => {
 			storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-				debugger;
-				if (
-					_isEqual(storeHelpers.getDispatchedActions(), [
-						{
-							type: 'MAPS.MAP.SET_BACKGROUND_LAYER',
-							mapKey: 'map1',
-							backgroundLayer: {
-								layerTemplateKey: 'layerTemplateKey1',
-							},
+				assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
+					{
+						type: 'MAPS.MAP.SET_BACKGROUND_LAYER',
+						mapKey: 'map1',
+						backgroundLayer: {
+							layerTemplateKey: 'layerTemplateKey1',
 						},
-						{
-							type: 'DATA.SPATIAL_DATA.INDEX.ADD',
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-							},
-							order: null,
-							indexData: [
-								{
-									7: {
-										'9.84375,49.21875': true,
-									},
+					},
+					{
+						type: 'DATA.SPATIAL_DATA.INDEX.ADD',
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+						},
+						order: null,
+						indexData: [
+							{
+								7: {
+									'9.84375,49.21875': true,
 								},
-							],
-							changedOn: null,
-						},
-						{
-							type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-								styleKey: null,
 							},
-							order: null,
-							indexData: [
-								{
-									7: {
-										'9.84375,49.21875': true,
-									},
+						],
+						changedOn: null,
+					},
+					{
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+							styleKey: null,
+						},
+						order: null,
+						indexData: [
+							{
+								7: {
+									'9.84375,49.21875': true,
 								},
-							],
-							changedOn: null,
-						},
-						{
-							type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-								styleKey: null,
 							},
-							order: null,
-							indexData: [{}],
-							changedOn: null,
+						],
+						changedOn: null,
+					},
+					{
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.ADD',
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+							styleKey: null,
 						},
-						{
-							data: [
-								{
-									key: 'aea42314-7480-4c52-9416-bc65df2f2af5',
-									data: {
-										scopeKey: null,
-										periodKey: null,
-										placeKey: null,
-										spatialDataSourceKey:
-											'd7616c35-3115-4fb4-8180-351e5139668a',
-										layerTemplateKey: '6fa5a08d-4247-49bf-9a7d-a65c19929aef',
-										scenarioKey: null,
-										caseKey: null,
-										applicationKey: null,
-									},
+						order: null,
+						indexData: [{}],
+						changedOn: null,
+					},
+					{
+						data: [
+							{
+								key: 'aea42314-7480-4c52-9416-bc65df2f2af5',
+								data: {
+									scopeKey: null,
+									periodKey: null,
+									placeKey: null,
+									spatialDataSourceKey: 'd7616c35-3115-4fb4-8180-351e5139668a',
+									layerTemplateKey: '6fa5a08d-4247-49bf-9a7d-a65c19929aef',
+									scenarioKey: null,
+									caseKey: null,
+									applicationKey: null,
 								},
-							],
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
 							},
-							type: 'DATA.SPATIAL_RELATIONS.ADD',
+						],
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
 						},
-						{
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-							},
-							order: null,
-							count: 1,
-							start: 1,
-							data: [
-								{
-									key: 'aea42314-7480-4c52-9416-bc65df2f2af5',
-									data: {
-										scopeKey: null,
-										periodKey: null,
-										placeKey: null,
-										spatialDataSourceKey:
-											'd7616c35-3115-4fb4-8180-351e5139668a',
-										layerTemplateKey: '6fa5a08d-4247-49bf-9a7d-a65c19929aef',
-										scenarioKey: null,
-										caseKey: null,
-										applicationKey: null,
-									},
+						type: 'DATA.SPATIAL_RELATIONS.ADD',
+					},
+					{
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+						},
+						order: null,
+						count: 1,
+						start: 1,
+						data: [
+							{
+								key: 'aea42314-7480-4c52-9416-bc65df2f2af5',
+								data: {
+									scopeKey: null,
+									periodKey: null,
+									placeKey: null,
+									spatialDataSourceKey: 'd7616c35-3115-4fb4-8180-351e5139668a',
+									layerTemplateKey: '6fa5a08d-4247-49bf-9a7d-a65c19929aef',
+									scenarioKey: null,
+									caseKey: null,
+									applicationKey: null,
 								},
-							],
-							changedOn: null,
-							type: 'DATA.SPATIAL_RELATIONS.INDEX.ADD',
-						},
-						{
-							data: [
-								{
-									key: 'd7616c35-3115-4fb4-8180-351e5139668a',
-									data: {
-										nameInternal: null,
-										attribution: null,
-										type: 'wmts',
-										urls: [
-											'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-										],
-									},
+							},
+						],
+						changedOn: null,
+						type: 'DATA.SPATIAL_RELATIONS.INDEX.ADD',
+					},
+					{
+						data: [
+							{
+								key: 'd7616c35-3115-4fb4-8180-351e5139668a',
+								data: {
+									nameInternal: null,
+									attribution: null,
+									type: 'wmts',
+									urls: [
+										'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+									],
 								},
-							],
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
 							},
-							type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
+						],
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
 						},
-						{
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-							},
-							order: null,
-							count: 1,
-							start: 1,
-							data: [
-								{
-									key: 'd7616c35-3115-4fb4-8180-351e5139668a',
-									data: {
-										nameInternal: null,
-										attribution: null,
-										type: 'wmts',
-										urls: [
-											'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-										],
-									},
+						type: 'DATA.SPATIAL_DATA_SOURCES.ADD',
+					},
+					{
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+						},
+						order: null,
+						count: 1,
+						start: 1,
+						data: [
+							{
+								key: 'd7616c35-3115-4fb4-8180-351e5139668a',
+								data: {
+									nameInternal: null,
+									attribution: null,
+									type: 'wmts',
+									urls: [
+										'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+									],
 								},
-							],
-							changedOn: null,
-							type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
-						},
-						{
-							type: 'DATA.SPATIAL_DATA.INDEX.REMOVE',
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
 							},
-							order: null,
+						],
+						changedOn: null,
+						type: 'DATA.SPATIAL_DATA_SOURCES.INDEX.ADD',
+					},
+					{
+						type: 'DATA.SPATIAL_DATA.INDEX.REMOVE',
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
 						},
-						{
-							type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.REMOVE',
-							filter: {
-								layerTemplateKey: 'layerTemplateKey1',
-								styleKey: null,
-							},
-							order: null,
+						order: null,
+					},
+					{
+						type: 'DATA.ATTRIBUTE_DATA.SPATIAL_INDEX.REMOVE',
+						filter: {
+							layerTemplateKey: 'layerTemplateKey1',
+							styleKey: null,
 						},
-					])
-				) {
-					done();
-				} else {
-					done(new Error());
-				}
+						order: null,
+					},
+				]);
 			});
 		}, 50);
 	});
