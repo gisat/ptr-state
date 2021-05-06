@@ -672,7 +672,14 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 			geometryColumnName,
 			...dataSourceOptions
 		} = spatialDataSource?.data;
-		let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
+		let {
+			key,
+			name,
+			opacity,
+			styleKey,
+			crs,
+			options: layerStateOptions,
+		} = layerState;
 
 		layerKey = layerKey || key;
 
@@ -681,7 +688,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		if (type === 'wmts') {
 			options.url = dataSourceOptions.url || dataSourceOptions.urls?.[0];
 		} else if (type === 'wms') {
-			const {url, params, configuration, ...rest} = dataSourceOptions;
+			let {url, params, configuration, ...rest} = dataSourceOptions;
 			const singleTile =
 				configuration && configuration.hasOwnProperty('singleTile')
 					? configuration.singleTile
@@ -689,11 +696,14 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 
 			const styles = rest.styles;
 
+			url = 'https://ptr.gisat.cz/' + url;
+
 			options = {
 				params: {
 					...params,
 					...(styles && {styles}),
-					layers: rest.layers,
+					...(crs && {crs}),
+					layers: rest.layers.slice(2, -2),
 				},
 				singleTile,
 				url,
