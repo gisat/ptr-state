@@ -21,6 +21,7 @@ import commonHelpers from '../_common/helpers';
 import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 import selectorHelpers from './selectorHelpers';
 
+import AppSelectors from '../App/selectors';
 import DataSelectors from '../Data/selectors';
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
@@ -696,7 +697,10 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 
 			const styles = rest.styles;
 
-			url = 'https://ptr.gisat.cz/' + url;
+			if (url && url.charAt(0) !== 'h') {
+				const localConfig = AppSelectors.getCompleteLocalConfigurationObserver();
+				url = `${localConfig.apiBackendProtocol}://${localConfig.apiBackendHost}/${url}`;
+			}
 
 			options = {
 				params: {
