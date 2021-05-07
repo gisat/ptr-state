@@ -125,9 +125,7 @@ const addMapLayers = (state, mapKey, layerStates) => {
 					data: state.maps[mapKey].data
 						? {
 								...state.maps[mapKey].data,
-								layers: state.maps[mapKey].data.layers
-									? [...state.maps[mapKey].data.layers, ...layerStates]
-									: layerStates,
+								layers: updatedLayers,
 						  }
 						: {layers: updatedLayers},
 				},
