@@ -1,6 +1,6 @@
 export const expectedActions1 = [
 	{
-		type: 'MAPS.SET.SET_LAYERS',
+		type: 'MAPS.SET.LAYERS.SET',
 		setKey: 'set1',
 		layers: [
 			{

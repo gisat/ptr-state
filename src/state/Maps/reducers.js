@@ -605,7 +605,7 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
-		case ActionTypes.MAPS.SET.SET_LAYERS:
+		case ActionTypes.MAPS.SET.LAYERS.SET:
 			return setSetLayers(state, action.setKey, action.layers);
 		case ActionTypes.MAPS.SET.USE.CLEAR:
 			return mapSetUseClear(state, action.mapSetKey);

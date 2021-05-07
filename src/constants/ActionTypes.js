@@ -358,10 +358,12 @@ export default utils.deepKeyMirror({
 
 	MAPS: {
 		SET: {
+			LAYERS: {
+				SET: null,
+			},
 			REMOVE_MAP: null,
 			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,
-			SET_LAYERS: null,
 			USE: {
 				CLEAR: null,
 				REGISTER: null,

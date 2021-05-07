@@ -758,7 +758,7 @@ const actionSetMapBackgroundLayer = (mapKey, backgroundLayer) => {
 
 const actionSetMapSetLayers = (setKey, layers) => {
 	return {
-		type: ActionTypes.MAPS.SET.SET_LAYERS,
+		type: ActionTypes.MAPS.SET.LAYERS.SET,
 		setKey,
 		layers,
 	};

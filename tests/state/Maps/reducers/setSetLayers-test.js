@@ -21,7 +21,7 @@ describe('setSetLayers-test', function () {
 		};
 
 		const action = {
-			type: 'MAPS.SET.SET_LAYERS',
+			type: 'MAPS.SET.LAYERS.SET',
 			setKey: 'set2',
 			layers,
 		};
@@ -32,7 +32,7 @@ describe('setSetLayers-test', function () {
 
 	it('Should return the same state if no set found for given key', function () {
 		const action = {
-			type: 'MAPS.SET.SET_LAYERS',
+			type: 'MAPS.SET.LAYERS.SET',
 			setKey: 'set4',
 			layers: [{key: 'layer1'}, {key: 'layer2'}],
 		};
@@ -43,7 +43,7 @@ describe('setSetLayers-test', function () {
 
 	it('Should return the same state if no setKey given', function () {
 		const action = {
-			type: 'MAPS.SET.SET_LAYERS',
+			type: 'MAPS.SET.LAYERS.SET',
 			layers: [{key: 'layer1'}, {key: 'layer2'}],
 		};
 
@@ -53,7 +53,7 @@ describe('setSetLayers-test', function () {
 
 	it('Should return the same state if no layers given', function () {
 		const action = {
-			type: 'MAPS.SET.SET_LAYERS',
+			type: 'MAPS.SET.LAYERS.SET',
 			setKey: 'set2',
 		};
 

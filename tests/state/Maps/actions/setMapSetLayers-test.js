@@ -213,7 +213,7 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 
 		const expectedActions = [
 			{
-				type: 'MAPS.SET.SET_LAYERS',
+				type: 'MAPS.SET.LAYERS.SET',
 				setKey: 'set1',
 				layers: [
 					{
