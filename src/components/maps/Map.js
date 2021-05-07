@@ -44,15 +44,7 @@ const mapDispatchToPropsFactory = () => {
 							mapHeight
 						)
 					);
-					dispatch(
-						Action.maps.use(
-							ownProps.stateMapKey,
-							null,
-							null,
-							mapWidth,
-							mapHeight
-						)
-					);
+					dispatch(Action.maps.use(ownProps.stateMapKey, null, null));
 				},
 
 				onResize: (mapWidth, mapHeight) => {
@@ -63,15 +55,7 @@ const mapDispatchToPropsFactory = () => {
 							mapHeight
 						)
 					);
-					dispatch(
-						Action.maps.use(
-							ownProps.stateMapKey,
-							null,
-							null,
-							mapWidth,
-							mapHeight
-						)
-					);
+					dispatch(Action.maps.use(ownProps.stateMapKey, null, null));
 				},
 
 				onUnmount: () => {
@@ -94,15 +78,7 @@ const mapDispatchToPropsFactory = () => {
 							mapHeight
 						)
 					);
-					dispatch(
-						Action.maps.use(
-							ownProps.stateMapKey,
-							undefined,
-							undefined,
-							mapWidth,
-							mapHeight
-						)
-					);
+					dispatch(Action.maps.use(ownProps.stateMapKey, undefined, undefined));
 				},
 
 				resetHeading: () => {},

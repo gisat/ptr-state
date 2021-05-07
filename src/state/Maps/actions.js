@@ -35,10 +35,7 @@ const addMapLayers = (mapKey, layerStates) => {
 		const map = Select.maps.getMapByKey(state, mapKey);
 		if (map) {
 			dispatch(actionAddMapLayers(mapKey, layerStates));
-			const viewport = Select.maps.getViewportByMapKey(state, mapKey);
-			if (viewport) {
-				dispatch(use(mapKey, null, null, viewport.width, viewport.height));
-			}
+			dispatch(use(mapKey, null, null));
 		} else {
 			dispatch(
 				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
@@ -59,10 +56,7 @@ const addMapLayerToIndex = (mapKey, layerState, index) => {
 		const map = Select.maps.getMapByKey(state, mapKey);
 		if (map) {
 			dispatch(actionAddMapLayerToIndex(mapKey, layerState, index));
-			const viewport = Select.maps.getViewportByMapKey(state, mapKey);
-			if (viewport) {
-				dispatch(use(mapKey, null, null, viewport.width, viewport.height));
-			}
+			dispatch(use(mapKey, null, null));
 		} else {
 			dispatch(
 				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
@@ -152,13 +146,16 @@ const mapUseRegister = mapKey => {
  * @param mapKey {string}
  * @param backgroundLayer {Object} background layer definition
  * @param layers {Object} layers definition
- * @param mapWidth {number} width of map component in px
- * @param mapHeight {number} height of map component in px
  */
-function use(mapKey, backgroundLayer, layers, mapWidth, mapHeight) {
+function use(mapKey, backgroundLayer, layers) {
 	return (dispatch, getState) => {
 		dispatch(mapUseRegister(mapKey));
 		const state = getState();
+		const mapViewport = Select.maps.getViewportByMapKey(state, mapKey);
+		if (!mapViewport) {
+			return;
+		}
+		const {width: mapWidth, height: mapHeight} = mapViewport;
 
 		const spatialFilter = Select.maps.getVisibleTilesByMapKey(
 			state,
@@ -459,15 +456,7 @@ function setMapSetBackgroundLayer(setKey, backgroundLayer) {
 		if (maps) {
 			maps.forEach(map => {
 				// TODO is viewport always defined?
-				dispatch(
-					use(
-						map.key,
-						null,
-						null,
-						map?.data?.viewport?.width,
-						map?.data?.viewport?.height
-					)
-				);
+				dispatch(use(map.key, null, null));
 			});
 		}
 	};
@@ -521,15 +510,7 @@ function setMapSetLayers(setKey, layers) {
 			const maps = Select.maps.getMapSetMaps(getState(), setKey);
 			if (maps) {
 				maps.forEach(map => {
-					dispatch(
-						use(
-							map.key,
-							null,
-							null,
-							map?.data?.viewport?.width,
-							map?.data?.viewport?.height
-						)
-					);
+					dispatch(use(map.key, null, null));
 				});
 			}
 		} else {
@@ -549,15 +530,7 @@ function refreshMapSetUse(setKey) {
 		if (maps) {
 			maps.forEach(map => {
 				// TODO is viewport always defined?
-				dispatch(
-					use(
-						map.key,
-						null,
-						null,
-						map?.data?.viewport?.width,
-						map?.data?.viewport?.height
-					)
-				);
+				dispatch(use(map.key, null, null));
 			});
 		}
 	};
