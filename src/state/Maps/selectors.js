@@ -697,6 +697,8 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 
 			const styles = rest.styles;
 
+			// if path is relative, add protocol & host from config
+			// TODO special config constants for mapserver?
 			if (url && url.charAt(0) !== 'h') {
 				const localConfig = AppSelectors.getCompleteLocalConfigurationObserver();
 				url = `${localConfig.apiBackendProtocol}://${localConfig.apiBackendHost}/${url}`;
@@ -707,7 +709,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					...params,
 					...(styles && {styles}),
 					...(crs && {crs}),
-					layers: rest.layers.slice(2, -2),
+					layers: rest.layers,
 				},
 				singleTile,
 				url,
