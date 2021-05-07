@@ -30,6 +30,32 @@ describe('addMapLayers-test', function () {
 		assert.deepStrictEqual(output, expectedState);
 	});
 
+	it('Should add map layers, even if no data object exists', function () {
+		const layerStates = [{key: 'layerA'}, {key: 'layerB'}];
+		const expectedState = {
+			...state,
+			maps: {
+				...state.maps,
+				map11: {
+					...state.maps.map11,
+					data: {
+						layers: layerStates,
+					},
+				},
+			},
+		};
+
+		const action = {
+			type: 'MAPS.MAP.LAYERS.ADD',
+			mapKey: 'map11',
+			layerStates,
+		};
+
+		const output = reducers(state, action);
+
+		assert.deepStrictEqual(output, expectedState);
+	});
+
 	it('Should add map layers', function () {
 		const layerStates = [{key: 'layerA'}, {key: 'layerB'}];
 		const expectedState = {

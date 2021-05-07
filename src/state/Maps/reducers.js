@@ -111,18 +111,25 @@ const removeMapLayer = (state, mapKey, layerKey) => {
  */
 const addMapLayers = (state, mapKey, layerStates) => {
 	if (mapKey && layerStates && state.maps?.[mapKey]) {
+		const oldLayers = state.maps[mapKey].data?.layers;
+		let updatedLayers = oldLayers
+			? [...oldLayers, ...layerStates]
+			: layerStates;
+
 		return {
 			...state,
 			maps: {
 				...state.maps,
 				[mapKey]: {
 					...state.maps[mapKey],
-					data: {
-						...state.maps[mapKey].data,
-						layers: state.maps[mapKey].data.layers
-							? [...state.maps[mapKey].data.layers, ...layerStates]
-							: layerStates,
-					},
+					data: state.maps[mapKey].data
+						? {
+								...state.maps[mapKey].data,
+								layers: state.maps[mapKey].data.layers
+									? [...state.maps[mapKey].data.layers, ...layerStates]
+									: layerStates,
+						  }
+						: {layers: updatedLayers},
 				},
 			},
 		};
@@ -163,10 +170,12 @@ const addMapLayerToIndex = (state, mapKey, layerState, index) => {
 				...state.maps,
 				[mapKey]: {
 					...state.maps[mapKey],
-					data: {
-						...state.maps[mapKey].data,
-						layers: updatedLayers,
-					},
+					data: state.maps[mapKey].data
+						? {
+								...state.maps[mapKey].data,
+								layers: updatedLayers,
+						  }
+						: {layers: updatedLayers},
 				},
 			},
 		};
@@ -270,20 +279,27 @@ const setMapLayerOption = (state, mapKey, layerKey, optionKey, optionValue) => {
  * @return {Object} state
  */
 const setMapViewport = (state, mapKey, width, height) => {
-	if (mapKey && width && height) {
+	if (mapKey && state.maps?.[mapKey] && width && height) {
 		return {
 			...state,
 			maps: {
 				...state.maps,
 				[mapKey]: {
 					...state.maps[mapKey],
-					data: {
-						...state.maps[mapKey].data,
-						viewport: {
-							width,
-							height,
-						},
-					},
+					data: state.maps[mapKey].data
+						? {
+								...state.maps[mapKey].data,
+								viewport: {
+									width,
+									height,
+								},
+						  }
+						: {
+								viewport: {
+									width,
+									height,
+								},
+						  },
 				},
 			},
 		};
@@ -300,16 +316,20 @@ const setMapViewport = (state, mapKey, width, height) => {
  * @return {Object} state
  */
 const setSetActiveMapKey = (state, setKey, mapKey) => {
-	return {
-		...state,
-		sets: {
-			...state.sets,
-			[setKey]: {
-				...state.sets[setKey],
-				activeMapKey: mapKey,
+	if (setKey && state.sets?.[setKey]) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[setKey]: {
+					...state.sets[setKey],
+					activeMapKey: mapKey,
+				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -320,19 +340,23 @@ const setSetActiveMapKey = (state, setKey, mapKey) => {
  * @return {Object} state
  */
 const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
-	return {
-		...state,
-		sets: {
-			...state.sets,
-			[setKey]: {
-				...state.sets[setKey],
-				data: {
-					...state.sets[setKey].data,
-					backgroundLayer,
+	if (setKey && state.sets?.[setKey] && backgroundLayer) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[setKey]: {
+					...state.sets[setKey],
+					data: {
+						...state.sets[setKey].data,
+						backgroundLayer,
+					},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -343,19 +367,25 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
  * @return {Object} state
  */
 const setMapBackgroundLayer = (state, mapKey, backgroundLayer) => {
-	return {
-		...state,
-		maps: {
-			...state.maps,
-			[mapKey]: {
-				...state.maps[mapKey],
-				data: {
-					...state.maps[mapKey].data,
-					backgroundLayer,
+	if (mapKey && state.maps?.[mapKey] && backgroundLayer) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[mapKey]: {
+					...state.maps[mapKey],
+					data: state.maps[mapKey].data
+						? {
+								...state.maps[mapKey].data,
+								backgroundLayer,
+						  }
+						: {backgroundLayer},
 				},
 			},
-		},
-	};
+		};
+	} else {
+		return state;
+	}
 };
 
 /**
@@ -366,17 +396,19 @@ const setMapBackgroundLayer = (state, mapKey, backgroundLayer) => {
  * @return {Object} state
  */
 const setSetLayers = (state, setKey, layers) => {
-	if (setKey && layers && state.sets[setKey]) {
+	if (setKey && layers && state.sets?.[setKey]) {
 		return {
 			...state,
 			sets: {
 				...state.sets,
 				[setKey]: {
 					...state.sets[setKey],
-					data: {
-						...state.sets[setKey].data,
-						layers,
-					},
+					data: state.sets[setKey].data
+						? {
+								...state.sets[setKey].data,
+								layers,
+						  }
+						: {layers},
 				},
 			},
 		};

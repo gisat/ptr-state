@@ -103,6 +103,32 @@ describe('addMapLayerToIndex-test', function () {
 		assert.deepStrictEqual(output, expectedState);
 	});
 
+	it('Should add map layer to the first position if no data exist', function () {
+		const expectedState = {
+			...state,
+			maps: {
+				...state.maps,
+				map11: {
+					...state.maps.map11,
+					data: {
+						layers: [{key: 'layerA'}],
+					},
+				},
+			},
+		};
+
+		const action = {
+			type: 'MAPS.MAP.LAYERS.ADD_TO_INDEX',
+			mapKey: 'map11',
+			layerState: {key: 'layerA'},
+			index: 2,
+		};
+
+		const output = reducers(state, action);
+
+		assert.deepStrictEqual(output, expectedState);
+	});
+
 	it('Should return the same state if no mapKey given', function () {
 		const action = {
 			type: 'MAPS.MAP.LAYERS.ADD_TO_INDEX',

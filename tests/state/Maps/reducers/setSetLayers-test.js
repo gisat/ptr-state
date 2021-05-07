@@ -30,6 +30,32 @@ describe('setSetLayers-test', function () {
 		assert.deepStrictEqual(output, expectedState);
 	});
 
+	it('Should set map set layers, even if no data property exist', function () {
+		const layers = [{key: 'layer1'}, {key: 'layer2'}];
+
+		const expectedState = {
+			...state,
+			sets: {
+				...state.sets,
+				set11: {
+					...state.sets.set11,
+					data: {
+						layers,
+					},
+				},
+			},
+		};
+
+		const action = {
+			type: 'MAPS.SET.LAYERS.SET',
+			setKey: 'set11',
+			layers,
+		};
+
+		const output = reducers(state, action);
+		assert.deepStrictEqual(output, expectedState);
+	});
+
 	it('Should return the same state if no set found for given key', function () {
 		const action = {
 			type: 'MAPS.SET.LAYERS.SET',

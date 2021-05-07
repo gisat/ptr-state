@@ -46,6 +46,9 @@ export const MapReducersState = {
 				],
 			},
 		},
+		map11: {
+			key: 'map11',
+		},
 	},
 	sets: {
 		set1: {
@@ -66,6 +69,9 @@ export const MapReducersState = {
 					},
 				],
 			},
+		},
+		set11: {
+			data: {},
 		},
 	},
 };
