@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import slash from 'slash';
-import {isEqual as _isEqual, cloneDeep as _cloneDeep} from 'lodash';
+import {isEqual as _isEqual} from 'lodash';
 import {createStore, combineReducers} from 'redux';
 import {setState} from '@jvitela/recompute';
 import actions from '../../../../src/state/Maps/actions';
@@ -16,10 +16,10 @@ import SpatialRelationsReducer from '../../../../src/state/Data/SpatialRelations
 import SpatialDataSourcesReducer from '../../../../src/state/Data/SpatialDataSources/reducers';
 import StylesReducer from '../../../../src/state/Styles/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
-import {expectedActions1} from './helpers/setMapSetLayers/expectedActions';
-import {dataEndpointResponse1} from './helpers/setMapSetLayers/dataEndpointResponses';
+import {expectedActions1} from './helpers/addMapLayerToIndex/expectedActions';
+import {dataEndpointResponse1} from './helpers/addMapLayerToIndex/dataEndpointResponses';
 
-describe('state/Maps/actions/setMapSetLayers', function () {
+describe('state/Maps/actions/addMapLayerToIndex', function () {
 	this.timeout(1000);
 	afterEach(function () {
 		resetFetch();
@@ -84,7 +84,7 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 		},
 	};
 
-	it('Dispatch setMapSetLayers', function (done) {
+	it('Dispatch addMapLayerToIndex', function (done) {
 		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			app: AppReducers,
@@ -169,12 +169,14 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 
 		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 		dispatch(
-			actions.setMapSetLayers('set1', [
+			actions.addMapLayerToIndex(
+				'map1',
 				{
 					key: 'layer1',
 					layerTemplateKey: 'layerTemplateKey1',
 				},
-			])
+				0
+			)
 		);
 
 		setTimeout(() => {
@@ -195,7 +197,7 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 		}, 50);
 	});
 
-	it('Dispatch setMapSetLayers, but do not call use', function (done) {
+	it('Dispatch addMapLayerToIndex, but do not call use', function (done) {
 		const storeHelpers = getStoreSet();
 		const reducers = combineReducers({
 			app: AppReducers,
@@ -213,16 +215,15 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 
 		const expectedActions = [
 			{
-				type: 'MAPS.SET.SET_LAYERS',
-				setKey: 'set1',
-				layers: [
-					{
-						type: 'wmts',
-						options: {
-							url: 'http://wmts.eu',
-						},
+				type: 'MAPS.MAP.LAYERS.ADD_TO_INDEX',
+				mapKey: 'map1',
+				layerState: {
+					type: 'wmts',
+					options: {
+						url: 'http://wmts.eu',
 					},
-				],
+				},
+				index: 0,
 			},
 		];
 
@@ -234,14 +235,16 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 		};
 		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 		dispatch(
-			actions.setMapSetLayers('set1', [
+			actions.addMapLayerToIndex(
+				'map1',
 				{
 					type: 'wmts',
 					options: {
 						url: 'http://wmts.eu',
 					},
 				},
-			])
+				0
+			)
 		);
 
 		setTimeout(() => {
@@ -277,20 +280,16 @@ describe('state/Maps/actions/setMapSetLayers', function () {
 		};
 		const dispatch = storeHelpers.getDispatch(getState, store.dispatch);
 		dispatch(
-			actions.setMapSetLayers('setXY', [
-				{
-					type: 'wms',
-					options: {
-						url: 'http://cuzk.cz',
-					},
-				},
+			actions.addMapLayerToIndex(
+				'mapXY',
 				{
 					type: 'wmts',
 					options: {
 						url: 'http://wmts.eu',
 					},
 				},
-			])
+				0
+			)
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
