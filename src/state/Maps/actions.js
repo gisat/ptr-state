@@ -510,7 +510,6 @@ function setMapBackgroundLayer(mapKey, backgroundLayer) {
 }
 
 /**
- * TODO @vlach1989 test
  * @param setKey {string}
  * @param layers {Array} layers definitions
  */
