@@ -7,6 +7,12 @@ import {setState} from '@jvitela/recompute';
 const state = {
 	...DataSelectorsState,
 	...MapsSelectorsState_2,
+	app: {
+		localConfiguration: {
+			apiBackendProtocol: 'http',
+			apiBackendHost: 'localhost:3000',
+		},
+	},
 	styles: {byKey: {style1: {key: 'style1', data: {definition: {}}}}},
 	selections: {
 		byKey: {
@@ -124,6 +130,53 @@ describe('getFinalLayerByDataSourceAndLayerState', function () {
 				params: {
 					layers: 'layer1',
 					a: 1,
+				},
+			},
+		};
+
+		const output = Select.maps.getFinalLayerByDataSourceAndLayerState(
+			spatialDataSource,
+			layerState,
+			layerKey
+		);
+		assert.deepStrictEqual(output, expectedOutput);
+		setState(null);
+	});
+
+	it('should select wms layer and complete the url and optional CRS', () => {
+		setState(state);
+		const spatialDataSource = {
+			key: 'dataSource2',
+			data: {
+				type: 'wms',
+				url: 'wms.png',
+				params: {
+					a: 1,
+				},
+				layers: 'layer1',
+				styles: 'styleName1',
+			},
+		};
+		const layerKey = 'wmsLayer';
+		const layerState = {
+			name: 'WMS',
+			crs: 'EPSG:4326',
+		};
+
+		const expectedOutput = {
+			key: `${layerKey}_${spatialDataSource.key}`,
+			layerKey,
+			opacity: 1,
+			name: 'WMS',
+			type: 'wms',
+			options: {
+				url: 'http://localhost:3000/wms.png',
+				singleTile: false,
+				params: {
+					layers: 'layer1',
+					a: 1,
+					crs: 'EPSG:4326',
+					styles: 'styleName1',
 				},
 			},
 		};
