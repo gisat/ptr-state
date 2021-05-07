@@ -25,7 +25,6 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
- * TODO @vlach1989 tests
  * Add layers at the end of map layers list
  * @param mapKey {string}
  * @param layerStates {Array} A collection, where each object represents state of the layer
@@ -49,7 +48,6 @@ const addMapLayers = (mapKey, layerStates) => {
 };
 
 /**
- * TODO @vlach1989 tests
  * Add map layer to the specific position in the list
  * @param mapKey {string}
  * @param layerState {Object}
