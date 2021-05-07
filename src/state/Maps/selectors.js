@@ -41,7 +41,7 @@ const getActiveMap = createSelector(
 	[getMapsAsObject, getActiveMapKey],
 	(maps, activeMapKey) => {
 		if (maps && activeMapKey) {
-			return maps[activeMapKey];
+			return maps[activeMapKey] || null;
 		} else {
 			return null;
 		}
