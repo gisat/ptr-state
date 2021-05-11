@@ -5,29 +5,29 @@ import {pick as _pick} from 'lodash';
 
 const actionTypes = {
 	USE: {
-		INDEXED: {
-			CLEAR_ALL: 'USE.INDEXED.CLEAR_ALL',
+		KEYS: {
+			CLEAR: 'USE.KEYS.CLEAR',
 		},
 	},
 };
 
 const tests = [
 	{
-		name: 'It dispatch "USE.INDEXED.CLEAR_ALL".',
+		name: 'It dispatch "USE.KEYS.CLEAR".',
 		action: (actions, actionTypes) => {
 			let action;
 			if (actionTypes) {
-				action = actions.useIndexedClearAll(actionTypes);
+				action = actions.useKeysClear(actionTypes);
 			} else {
-				action = actions.useIndexedClearAll;
+				action = actions.useKeysClear;
 			}
-			return action();
+			return action('map-window');
 		},
-		dispatchedActions: [{type: 'USE.INDEXED.CLEAR_ALL'}],
+		dispatchedActions: [{type: 'USE.KEYS.CLEAR', componentId: 'map-window'}],
 	},
 ];
 
-describe('useIndexedClearAll', () => {
+describe('useKeysClear', () => {
 	const storeHelpers = getStoreSet();
 
 	const getState = () => ({});
@@ -41,10 +41,12 @@ describe('useIndexedClearAll', () => {
 	tests.forEach(test => {
 		it(test.name, () => {
 			dispatch(test.action(commonActions, actionTypes));
-			assert.deepStrictEqual(
-				storeHelpers.getDispatchedActions(),
-				test.dispatchedActions
-			);
+			return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+				assert.deepStrictEqual(
+					storeHelpers.getDispatchedActions(),
+					test.dispatchedActions
+				);
+			});
 		});
 	});
 });

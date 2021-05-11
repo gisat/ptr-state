@@ -6,28 +6,28 @@ import {pick as _pick} from 'lodash';
 const actionTypes = {
 	USE: {
 		INDEXED: {
-			CLEAR_ALL: 'USE.INDEXED.CLEAR_ALL',
+			CLEAR: 'USE.INDEXED.CLEAR',
 		},
 	},
 };
 
 const tests = [
 	{
-		name: 'It dispatch "USE.INDEXED.CLEAR_ALL".',
+		name: 'It dispatch "USE.INDEXED.CLEAR".',
 		action: (actions, actionTypes) => {
 			let action;
 			if (actionTypes) {
-				action = actions.useIndexedClearAll(actionTypes);
+				action = actions.useIndexedClear(actionTypes);
 			} else {
-				action = actions.useIndexedClearAll;
+				action = actions.useIndexedClear;
 			}
-			return action();
+			return action('map-window');
 		},
-		dispatchedActions: [{type: 'USE.INDEXED.CLEAR_ALL'}],
+		dispatchedActions: [{type: 'USE.INDEXED.CLEAR', componentId: 'map-window'}],
 	},
 ];
 
-describe('useIndexedClearAll', () => {
+describe('useIndexedClear', () => {
 	const storeHelpers = getStoreSet();
 
 	const getState = () => ({});

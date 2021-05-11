@@ -1415,116 +1415,116 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('useIndexed', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			attributes: {activeKey: 'k1'},
-			scopes: {activeKey: 'k1'},
-			periods: {activeKey: 'k1'},
-			places: {activeKey: 'k1'},
-			sub: {},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
+	// it('useIndexed', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		attributes: {activeKey: 'k1'},
+	// 		scopes: {activeKey: 'k1'},
+	// 		periods: {activeKey: 'k1'},
+	// 		places: {activeKey: 'k1'},
+	// 		sub: {},
+	// 	});
+	// 	const dispatch = action => {
+	// 		if (typeof action === 'function') {
+	// 			const res = action(dispatch, getState);
+	// 			if (res != null) {
+	// 				dispatchedActions.push(res);
+	// 			}
 
-				return res;
-			}
+	// 			return res;
+	// 		}
 
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {name: 'fil'},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
+	// 		dispatchedActions.push(action);
+	// 	};
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual(
+	// 			'http://localhost/rest/user/filtered/users',
+	// 			slash(url)
+	// 		);
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				filter: {name: 'fil'},
+	// 				offset: 0,
+	// 				order: 'asc',
+	// 				limit: 100,
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'POST',
+	// 		});
 
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
+	// 		const body = {
+	// 			data: {users: {k1: {}, k2: {}}},
+	// 			total: 2,
+	// 			changes: {
+	// 				users: '2020-01-01',
+	// 			},
+	// 		};
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(body);
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: JSON.stringify(body),
+	// 		});
+	// 	});
 
-		return actions
-			.useIndexed(
-				getSubState,
-				'users',
-				{USE: {INDEXED: {REGISTER: 'REGISTER'}}, INDEX: {ADD: 'ADD'}},
-				'user'
-			)(
-				{name: 'afil'},
-				{name: 'fil'},
-				'asc',
-				1,
-				5,
-				'cid'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						componentId: 'cid',
-						filterByActive: {name: 'afil'},
-						filter: {name: 'fil'},
-						order: 'asc',
-						start: 1,
-						length: 5,
-						type: 'REGISTER',
-					},
-					{
-						filter: {name: 'fil'},
-						order: 'asc',
-						count: 2,
-						start: 1,
-						data: {k1: {}, k2: {}},
-						changedOn: '2020-01-01',
-						type: 'ADD',
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.useIndexed(
+	// 			getSubState,
+	// 			'users',
+	// 			{USE: {INDEXED: {REGISTER: 'REGISTER'}}, INDEX: {ADD: 'ADD'}},
+	// 			'user'
+	// 		)(
+	// 			{name: 'afil'},
+	// 			{name: 'fil'},
+	// 			'asc',
+	// 			1,
+	// 			5,
+	// 			'cid'
+	// 		)(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					componentId: 'cid',
+	// 					filterByActive: {name: 'afil'},
+	// 					filter: {name: 'fil'},
+	// 					order: 'asc',
+	// 					start: 1,
+	// 					length: 5,
+	// 					type: 'REGISTER',
+	// 				},
+	// 				{
+	// 					filter: {name: 'fil'},
+	// 					order: 'asc',
+	// 					count: 2,
+	// 					start: 1,
+	// 					data: {k1: {}, k2: {}},
+	// 					changedOn: '2020-01-01',
+	// 					type: 'ADD',
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	it('clearIndex', function () {
 		actions.clearIndex({INDEX: {CLEAR_INDEX: 'CLEAR_INDEX'}})('fil', 'asc')(
@@ -1559,15 +1559,15 @@ describe('state/_common/actions', function () {
 		);
 	});
 
-	it('useIndexedClear', function () {
-		actions.useIndexedClear({
-			USE: {INDEXED: {CLEAR: 'CLEAR'}},
-		})('cid')(dispatch);
+	// it('useIndexedClear', function () {
+	// 	actions.useIndexedClear({
+	// 		USE: {INDEXED: {CLEAR: 'CLEAR'}},
+	// 	})('cid')(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{componentId: 'cid', type: 'CLEAR'},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{componentId: 'cid', type: 'CLEAR'},
+	// 	]);
+	// });
 
 	it('actionDataSetOutdated', function () {
 		assert.deepStrictEqual(actions.actionDataSetOutdated(), {
@@ -1575,11 +1575,11 @@ describe('state/_common/actions', function () {
 		});
 	});
 
-	it('actionSetActiveKey', function () {
-		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
+	// it('actionSetActiveKey', function () {
+	// 	actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{key: 'k1', type: 'SET_ACTIVE_KEY'},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{key: 'k1', type: 'SET_ACTIVE_KEY'},
+	// 	]);
+	// });
 });
