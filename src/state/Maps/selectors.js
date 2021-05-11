@@ -710,7 +710,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					...params,
 					...(styles && {styles}),
 					...(crs && {crs}),
-					layers: rest.layers.slice(2, -2),
+					layers: rest.layers,
 				},
 				singleTile,
 				url,
