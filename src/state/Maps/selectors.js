@@ -699,6 +699,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 
 			// if path is relative, add protocol & host from config
 			// TODO special config constants for mapserver?
+			// TODO replace with more robust check of valid URL
 			if (url && url.charAt(0) !== 'h') {
 				const localConfig = AppSelectors.getCompleteLocalConfigurationObserver();
 				url = `${localConfig.apiBackendProtocol}://${localConfig.apiBackendHost}/${url}`;
@@ -709,7 +710,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 					...params,
 					...(styles && {styles}),
 					...(crs && {crs}),
-					layers: rest.layers,
+					layers: rest.layers.slice(2, -2),
 				},
 				singleTile,
 				url,
