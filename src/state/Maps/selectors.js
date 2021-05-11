@@ -21,6 +21,7 @@ import commonHelpers from '../_common/helpers';
 import {recomputeSelectorOptions} from '../_common/recomputeHelpers';
 import selectorHelpers from './selectorHelpers';
 
+import AppSelectors from '../App/selectors';
 import DataSelectors from '../Data/selectors';
 import SelectionsSelectors from '../Selections/selectors';
 import StylesSelectors from '../Styles/selectors';
@@ -35,6 +36,17 @@ const getAllMapsInUse = state => state.maps.inUse.maps;
 const getActiveMapKey = state => state.maps.activeMapKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
+
+const getActiveMap = createSelector(
+	[getMapsAsObject, getActiveMapKey],
+	(maps, activeMapKey) => {
+		if (maps && activeMapKey) {
+			return maps[activeMapKey] || null;
+		} else {
+			return null;
+		}
+	}
+);
 
 const isMapSetInUse = createCachedSelector(
 	[getAllMapSetsInUse, (state, mapSetKey) => mapSetKey],
@@ -261,6 +273,22 @@ const getMapBackgroundLayerStateByMapKey = createSelector(
 const getMapLayersStateByMapKey = createSelector([getMapByKey], map => {
 	return map?.data?.layers || null;
 });
+
+/**
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param layerKey {string}
+ */
+const getMapLayerStateByMapKeyAndLayerKey = createSelector(
+	[getMapLayersStateByMapKey, (state, mapKey, layerKey) => layerKey],
+	(layers, layerKey) => {
+		if (layers && layerKey) {
+			return layers.find(layer => layer.key === layerKey) || null;
+		} else {
+			return null;
+		}
+	}
+);
 
 /**
  * @param state {Object}
@@ -645,7 +673,14 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 			geometryColumnName,
 			...dataSourceOptions
 		} = spatialDataSource?.data;
-		let {key, name, opacity, styleKey, options: layerStateOptions} = layerState;
+		let {
+			key,
+			name,
+			opacity,
+			styleKey,
+			crs,
+			options: layerStateOptions,
+		} = layerState;
 
 		layerKey = layerKey || key;
 
@@ -654,7 +689,7 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 		if (type === 'wmts') {
 			options.url = dataSourceOptions.url || dataSourceOptions.urls?.[0];
 		} else if (type === 'wms') {
-			const {url, params, configuration, ...rest} = dataSourceOptions;
+			let {url, params, configuration, ...rest} = dataSourceOptions;
 			const singleTile =
 				configuration && configuration.hasOwnProperty('singleTile')
 					? configuration.singleTile
@@ -662,10 +697,19 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 
 			const styles = rest.styles;
 
+			// if path is relative, add protocol & host from config
+			// TODO special config constants for mapserver?
+			// TODO replace with more robust check of valid URL
+			if (url && url.charAt(0) !== 'h') {
+				const localConfig = AppSelectors.getCompleteLocalConfigurationObserver();
+				url = `${localConfig.apiBackendProtocol}://${localConfig.apiBackendHost}/${url}`;
+			}
+
 			options = {
 				params: {
 					...params,
 					...(styles && {styles}),
+					...(crs && {crs}),
 					layers: rest.layers,
 				},
 				singleTile,
@@ -872,6 +916,9 @@ export default {
 
 	getSubstate,
 
+	getActiveMapKey,
+	getActiveMap,
+
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,
 	getAllMapsInUse,
@@ -891,6 +938,7 @@ export default {
 	getMapBackgroundLayer,
 	getMapByKey,
 	getMapFilterByActiveByMapKey,
+	getMapLayerStateByMapKeyAndLayerKey,
 	getMapLayersStateByMapKey,
 	getMapLayers,
 	getMapLayersStateWithModifiersByMapKey,

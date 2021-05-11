@@ -2,41 +2,36 @@ import {assert} from 'chai';
 import reducers, {INITIAL_STATE} from '../../../../src/state/Maps/reducers';
 import {MapReducersState as state} from './_state';
 
-describe('setSetBackgroundLayer-test', function () {
-	it('Should set map set background layer', function () {
-		const backgroundLayer = {
-			layerTemplateKey: 'abc',
-		};
+describe('setSetLayers-test', function () {
+	it('Should set map set layers', function () {
+		const layers = [{key: 'layer1'}, {key: 'layer2'}];
 
 		const expectedState = {
 			...state,
 			sets: {
 				...state.sets,
-				set1: {
-					...state.sets.set1,
+				set2: {
+					...state.sets.set2,
 					data: {
-						...state.sets.set1.data,
-						backgroundLayer,
+						...state.sets.set2.data,
+						layers,
 					},
 				},
 			},
 		};
 
 		const action = {
-			type: 'MAPS.SET.SET_BACKGROUND_LAYER',
-			setKey: 'set1',
-			backgroundLayer,
+			type: 'MAPS.SET.LAYERS.SET',
+			setKey: 'set2',
+			layers,
 		};
 
 		const output = reducers(state, action);
-
 		assert.deepStrictEqual(output, expectedState);
 	});
 
-	it('Should set map set background layer, even if no data prop exist', function () {
-		const backgroundLayer = {
-			layerTemplateKey: 'abc',
-		};
+	it('Should set map set layers, even if no data property exist', function () {
+		const layers = [{key: 'layer1'}, {key: 'layer2'}];
 
 		const expectedState = {
 			...state,
@@ -45,32 +40,27 @@ describe('setSetBackgroundLayer-test', function () {
 				set11: {
 					...state.sets.set11,
 					data: {
-						backgroundLayer,
+						layers,
 					},
 				},
 			},
 		};
 
 		const action = {
-			type: 'MAPS.SET.SET_BACKGROUND_LAYER',
+			type: 'MAPS.SET.LAYERS.SET',
 			setKey: 'set11',
-			backgroundLayer,
+			layers,
 		};
 
 		const output = reducers(state, action);
-
 		assert.deepStrictEqual(output, expectedState);
 	});
 
 	it('Should return the same state if no set found for given key', function () {
-		const backgroundLayer = {
-			layerTemplateKey: 'abc',
-		};
-
 		const action = {
-			type: 'MAPS.SET.SET_BACKGROUND_LAYER',
-			setKey: 'setXY',
-			backgroundLayer,
+			type: 'MAPS.SET.LAYERS.SET',
+			setKey: 'set4',
+			layers: [{key: 'layer1'}, {key: 'layer2'}],
 		};
 
 		const output = reducers(state, action);
@@ -78,23 +68,19 @@ describe('setSetBackgroundLayer-test', function () {
 	});
 
 	it('Should return the same state if no setKey given', function () {
-		const backgroundLayer = {
-			layerTemplateKey: 'abc',
-		};
-
 		const action = {
-			type: 'MAPS.SET.SET_BACKGROUND_LAYER',
-			backgroundLayer,
+			type: 'MAPS.SET.LAYERS.SET',
+			layers: [{key: 'layer1'}, {key: 'layer2'}],
 		};
 
 		const output = reducers(state, action);
 		assert.equal(output, state);
 	});
 
-	it('Should return the same state if no background layer given', function () {
+	it('Should return the same state if no layers given', function () {
 		const action = {
-			type: 'MAPS.SET.SET_BACKGROUND_LAYER',
-			setKey: 'set1',
+			type: 'MAPS.SET.LAYERS.SET',
+			setKey: 'set2',
 		};
 
 		const output = reducers(state, action);
