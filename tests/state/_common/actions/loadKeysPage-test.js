@@ -46,7 +46,7 @@ const actionTypes = utils.deepKeyMirror({
 
 const tests = [
 	{
-		name: 'It register index and add deta from response.',
+		name: 'It compose and sent request for data defined by keys.',
 		action: (actions, actionTypes, options) => {
 			return (dispatch, getState) => {
 				let action;
