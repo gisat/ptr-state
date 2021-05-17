@@ -62,7 +62,6 @@ describe('useIndexedRegister', () => {
 	tests.forEach(test => {
 		it(test.name, () => {
 			dispatch(test.action(commonActions, actionTypes));
-			debugger;
 			assert.deepStrictEqual(
 				storeHelpers.getDispatchedActions(),
 				test.dispatchedActions
