@@ -51,12 +51,17 @@ const tests = [
 			return (dispatch, getState) => {
 				const keys = ['k1', 'k2'];
 				const componentId = 'placeSelect';
-				const action = actions.useKeys(
-					options.getSubstate,
-					options.dataType,
-					actionTypes,
-					options.categoryPath
-				);
+				let action;
+				if (actionTypes && options) {
+					action = actions.useKeys(
+						options.getSubstate,
+						options.dataType,
+						actionTypes,
+						options.categoryPath
+					);
+				} else {
+					action = actions.useKeys;
+				}
 				return dispatch(action(keys, componentId));
 			};
 		},
@@ -135,12 +140,17 @@ const tests = [
 			return (dispatch, getState) => {
 				const keys = ['k1', 'k2'];
 				const componentId = 'placeSelect';
-				const action = actions.useKeys(
-					options.getSubstate,
-					options.dataType,
-					actionTypes,
-					options.categoryPath
-				);
+				let action;
+				if (actionTypes && options) {
+					action = actions.useKeys(
+						options.getSubstate,
+						options.dataType,
+						actionTypes,
+						options.categoryPath
+					);
+				} else {
+					action = actions.useKeys;
+				}
 				return dispatch(action(keys, componentId));
 			};
 		},
