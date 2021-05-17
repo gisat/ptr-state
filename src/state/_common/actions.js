@@ -1192,7 +1192,7 @@ export default {
 	useIndexed,
 	clearIndex: creator(actionClearIndex),
 
-	useIndexedRegister: actionUseIndexedRegister,
+	useIndexedRegister: creator(actionUseIndexedRegister),
 	useIndexedClear: creator(actionUseIndexedClear),
 	useIndexedClearAll: creator(actionUseIndexedClearAll),
 	actionDataSetOutdated,

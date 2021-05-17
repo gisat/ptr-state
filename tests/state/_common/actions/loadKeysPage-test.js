@@ -50,21 +50,12 @@ const tests = [
 		action: (actions, actionTypes, options) => {
 			return (dispatch, getState) => {
 				let action;
-				// for common testing
-				if (actionTypes && options) {
-					action = actions.useIndexed(
-						options.getSubstate,
-						options.dataType,
-						actionTypes,
-						options.categoryPath
-					);
-				} else {
-					action = actions.useIndexed;
-				}
+				const dataType = options.dataType;
+				const keys = ['k1', 'k2'];
+				const categoryPath = options.categoryPath;
 
-				return dispatch(
-					action({name: 'afil'}, {name: 'fil'}, 'asc', 1, 5, 'cid')
-				);
+				action = actions.loadKeysPage;
+				return dispatch(action(dataType, actionTypes, keys, categoryPath));
 			};
 		},
 		getState: dataType => () => ({
@@ -75,11 +66,6 @@ const tests = [
 					apiBackendPath: '',
 				},
 			},
-			attributes: {activeKey: 'k1'},
-			[dataType]: {activeKey: 'k1'},
-			periods: {activeKey: 'k1'},
-			places: {activeKey: 'k1'},
-			cases: {},
 		}),
 		getOptions: params => {
 			return {
@@ -95,10 +81,7 @@ const tests = [
 			);
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
-					filter: {name: 'fil'},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
+					filter: {key: {in: ['k1', 'k2']}},
 				}),
 				credentials: 'include',
 				headers: {
@@ -109,11 +92,7 @@ const tests = [
 			});
 
 			const body = {
-				data: {[dataType]: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					[dataType]: '2020-01-01',
-				},
+				data: {[dataType]: [{key: 'k1'}]},
 			};
 
 			return Promise.resolve({
@@ -130,24 +109,8 @@ const tests = [
 			});
 		},
 		dispatchedActions: [
-			{
-				componentId: 'cid',
-				filterByActive: {name: 'afil'},
-				filter: {name: 'fil'},
-				order: 'asc',
-				start: 1,
-				length: 5,
-				type: 'USE.INDEXED.REGISTER',
-			},
-			{
-				filter: {name: 'fil'},
-				order: 'asc',
-				count: 2,
-				start: 1,
-				data: {k1: {}, k2: {}},
-				changedOn: '2020-01-01',
-				type: 'INDEX.ADD',
-			},
+			{type: 'ADD', filter: undefined, data: [{key: 'k1'}]},
+			{keys: ['k2'], type: 'ADD_UNRECEIVED'},
 		],
 	},
 ];
@@ -166,6 +129,7 @@ describe('useIndexed', () => {
 		it(test.name, () => {
 			const dataType = 'testStore';
 			const getState = test.getState(dataType) || defaultGetState;
+			debugger;
 			const dispatch = storeHelpers.getDispatch(getState);
 			const categoryPath = 'metadata';
 			const options = {
