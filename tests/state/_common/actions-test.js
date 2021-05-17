@@ -1361,59 +1361,59 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('useKeys', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {k1: {key: 'k1'}, k2: {key: 'k2'}},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
+	// it('useKeys', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {k1: {key: 'k1'}, k2: {key: 'k2'}},
+	// 		},
+	// 	});
+	// 	const dispatch = action => {
+	// 		if (typeof action === 'function') {
+	// 			const res = action(dispatch, getState);
+	// 			if (res != null) {
+	// 				dispatchedActions.push(res);
+	// 			}
 
-				return res;
-			}
+	// 			return res;
+	// 		}
 
-			dispatchedActions.push(action);
-		};
+	// 		dispatchedActions.push(action);
+	// 	};
 
-		return actions
-			.useKeys(
-				getSubState,
-				'users',
-				{
-					USE: {KEYS: {REGISTER: 'REGISTER'}},
-				},
-				'user'
-			)(['k1', 'k2'], 'cid')(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{componentId: 'cid', keys: ['k1', 'k2'], type: 'REGISTER'},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.useKeys(
+	// 			getSubState,
+	// 			'users',
+	// 			{
+	// 				USE: {KEYS: {REGISTER: 'REGISTER'}},
+	// 			},
+	// 			'user'
+	// 		)(['k1', 'k2'], 'cid')(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{componentId: 'cid', keys: ['k1', 'k2'], type: 'REGISTER'},
+	// 			]);
+	// 		});
+	// });
 
-	it('useKeysClear', function () {
-		actions.useKeysClear({USE: {KEYS: {CLEAR: 'CLEAR'}}})('cid')(dispatch);
+	// it('useKeysClear', function () {
+	// 	actions.useKeysClear({USE: {KEYS: {CLEAR: 'CLEAR'}}})('cid')(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{componentId: 'cid', type: 'CLEAR'},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{componentId: 'cid', type: 'CLEAR'},
+	// 	]);
+	// });
 
 	// it('useIndexed', function () {
 	// 	const getSubState = state => state.sub;

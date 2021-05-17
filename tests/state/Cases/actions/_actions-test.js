@@ -4,7 +4,12 @@ import commonActionsTests from '../../_common/actions/actions';
 import actions from '../../../../src/state/Cases/actions';
 import {resetFetch, setFetch} from '../../../../src/state/_common/request';
 
-const commonActions = ['useIndexed', 'useIndexedClear', 'useKeysClear'];
+const commonActions = [
+	'useIndexed',
+	'useIndexedClear',
+	'useKeysClear',
+	'useKeys',
+];
 const store = 'CASES';
 const dataType = 'cases';
 const categoryPath = 'metadata';
