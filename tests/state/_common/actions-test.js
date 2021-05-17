@@ -353,78 +353,78 @@ describe('state/_common/actions', function () {
 			});
 	});
 
-	it('ensureKeys', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {
-					k2: {key: 'k2'},
-				},
-			},
-		});
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {key: {in: ['k1']}},
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
+	// it('ensureKeys', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {
+	// 				k2: {key: 'k2'},
+	// 			},
+	// 		},
+	// 	});
+	// setFetch(function (url, options) {
+	// 	assert.strictEqual(
+	// 		'http://localhost/rest/user/filtered/users',
+	// 		slash(url)
+	// 	);
+	// 	assert.deepStrictEqual(options, {
+	// 		body: JSON.stringify({
+	// 			filter: {key: {in: ['k1']}},
+	// 		}),
+	// 		credentials: 'include',
+	// 		headers: {
+	// 			Accept: 'application/json',
+	// 			'Content-Type': 'application/json',
+	// 		},
+	// 		method: 'POST',
+	// 	});
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve({data: {users: [{key: 'k1'}]}});
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: options.body,
-			});
-		});
+	// 	return Promise.resolve({
+	// 		ok: true,
+	// 		json: function () {
+	// 			return Promise.resolve({data: {users: [{key: 'k1'}]}});
+	// 		},
+	// 		headers: {
+	// 			get: function (name) {
+	// 				return {'Content-type': 'application/json'}[name];
+	// 			},
+	// 		},
+	// 		data: options.body,
+	// 	});
+	// });
 
-		return actions
-			.ensureKeys(
-				getSubState,
-				'users',
-				{ADD: 'ADD'},
-				['k1', 'k2'],
-				'user'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						filter: undefined,
-						data: [
-							{
-								key: 'k1',
-							},
-						],
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.ensureKeys(
+	// 			getSubState,
+	// 			'users',
+	// 			{ADD: 'ADD'},
+	// 			['k1', 'k2'],
+	// 			'user'
+	// 		)(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					type: 'ADD',
+	// 					filter: undefined,
+	// 					data: [
+	// 						{
+	// 							key: 'k1',
+	// 						},
+	// 					],
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	describe('ensureIndexed', function () {
 		it('already loaded', function () {
@@ -698,88 +698,88 @@ describe('state/_common/actions', function () {
 		});
 	});
 
-	it('ensureKeys', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {
-					k1: {},
-				},
-			},
-		});
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {
-						key: {in: ['k2', 'k3']},
-					},
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
+	// it('ensureKeys', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {
+	// 				k1: {},
+	// 			},
+	// 		},
+	// 	});
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual(
+	// 			'http://localhost/rest/user/filtered/users',
+	// 			slash(url)
+	// 		);
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				filter: {
+	// 					key: {in: ['k2', 'k3']},
+	// 				},
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'POST',
+	// 		});
 
-			const body = {
-				data: {users: [{key: 'k2'}]},
-			};
+	// 		const body = {
+	// 			data: {users: [{key: 'k2'}]},
+	// 		};
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(body);
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: JSON.stringify(body),
+	// 		});
+	// 	});
 
-		return actions
-			.ensureKeys(
-				getSubState,
-				'users',
-				{ADD_UNRECEIVED: 'ADD_UNRECEIVED', ADD: 'ADD'},
-				['k1', 'k2', 'k3'],
-				'user'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						filter: undefined,
-						data: [
-							{
-								key: 'k2',
-							},
-						],
-					},
-					{
-						type: 'ADD_UNRECEIVED',
-						keys: ['k3'],
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.ensureKeys(
+	// 			getSubState,
+	// 			'users',
+	// 			{ADD_UNRECEIVED: 'ADD_UNRECEIVED', ADD: 'ADD'},
+	// 			['k1', 'k2', 'k3'],
+	// 			'user'
+	// 		)(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					type: 'ADD',
+	// 					filter: undefined,
+	// 					data: [
+	// 						{
+	// 							key: 'k2',
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					type: 'ADD_UNRECEIVED',
+	// 					keys: ['k3'],
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	it('loadIndexedPage', function () {
 		const getState = () => ({
