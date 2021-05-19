@@ -102,103 +102,103 @@ describe('state/_common/actions', function () {
 		]);
 	});
 
-	it('apiUpdate', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {k1: {data: {name: 'old'}}},
-				editedByKey: {k1: {data: {name: 'old'}}},
-				indexes: [{filter: {name: 'new'}}, {filter: {name: 'old'}}],
-			},
-		});
-		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/rest/user', slash(url));
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					data: {users: [{key: 'k1', data: {name: 'new'}}]},
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'PUT',
-			});
+	// it('apiUpdate', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {k1: {data: {name: 'old'}}},
+	// 			editedByKey: {k1: {data: {name: 'old'}}},
+	// 			indexes: [{filter: {name: 'new'}}, {filter: {name: 'old'}}],
+	// 		},
+	// 	});
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual('http://localhost/rest/user', slash(url));
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				data: {users: [{key: 'k1', data: {name: 'new'}}]},
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'PUT',
+	// 		});
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(JSON.parse(options.body));
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: options.body,
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(JSON.parse(options.body));
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: options.body,
+	// 		});
+	// 	});
 
-		return actions
-			.apiUpdate(
-				getSubState,
-				'users',
-				{
-					ADD: 'ADD',
-					UPDATE: 'UPDATE',
-					INDEX: {CLEAR_INDEX: 'CLEAR_INDEX'},
-				},
-				'user',
-				[
-					{
-						key: 'k1',
-						data: {
-							name: 'new',
-						},
-					},
-				]
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						filter: undefined,
-						data: [
-							{
-								key: 'k1',
-								data: {
-									name: 'new',
-								},
-							},
-						],
-					},
-					{
-						type: 'CLEAR_INDEX',
-						filter: {
-							name: 'new',
-						},
-						order: undefined,
-					},
-					{
-						type: 'CLEAR_INDEX',
-						filter: {
-							name: 'old',
-						},
-						order: undefined,
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.apiUpdate(
+	// 			getSubState,
+	// 			'users',
+	// 			{
+	// 				ADD: 'ADD',
+	// 				UPDATE: 'UPDATE',
+	// 				INDEX: {CLEAR_INDEX: 'CLEAR_INDEX'},
+	// 			},
+	// 			'user',
+	// 			[
+	// 				{
+	// 					key: 'k1',
+	// 					data: {
+	// 						name: 'new',
+	// 					},
+	// 				},
+	// 			]
+	// 		)(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					type: 'ADD',
+	// 					filter: undefined,
+	// 					data: [
+	// 						{
+	// 							key: 'k1',
+	// 							data: {
+	// 								name: 'new',
+	// 							},
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					type: 'CLEAR_INDEX',
+	// 					filter: {
+	// 						name: 'new',
+	// 					},
+	// 					order: undefined,
+	// 				},
+	// 				{
+	// 					type: 'CLEAR_INDEX',
+	// 					filter: {
+	// 						name: 'old',
+	// 					},
+	// 					order: undefined,
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	it('create', function () {
 		const getSubState = state => state.sub;
@@ -1217,114 +1217,114 @@ describe('state/_common/actions', function () {
 			});
 	});
 
-	it('saveEdited', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {k1: {key: 'k1'}},
-				editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
+	// it('saveEdited', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {k1: {key: 'k1'}},
+	// 			editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
+	// 		},
+	// 	});
+	// 	const dispatch = action => {
+	// 		if (typeof action === 'function') {
+	// 			const res = action(dispatch, getState);
+	// 			if (res != null) {
+	// 				dispatchedActions.push(res);
+	// 			}
 
-				return res;
-			}
+	// 			return res;
+	// 		}
 
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual('http://localhost/rest/user', slash(url));
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					data: {users: [{key: 'k1', data: {prop: 'val'}}]},
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'PUT',
-			});
+	// 		dispatchedActions.push(action);
+	// 	};
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual('http://localhost/rest/user', slash(url));
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				data: {users: [{key: 'k1', data: {prop: 'val'}}]},
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'PUT',
+	// 		});
 
-			const body = {
-				data: {users: [{key: 'k1', data: {prop: 'val'}}]},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
+	// 		const body = {
+	// 			data: {users: [{key: 'k1', data: {prop: 'val'}}]},
+	// 			total: 2,
+	// 			changes: {
+	// 				users: '2020-01-01',
+	// 			},
+	// 		};
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(body);
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: JSON.stringify(body),
+	// 		});
+	// 	});
 
-		return actions
-			.saveEdited(
-				getSubState,
-				'users',
-				{ADD: 'ADD', EDITED: {REMOVE_PROPERTY: 'REMOVE_PROPERTY'}},
-				'user'
-			)('k1')(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD',
-						data: [{key: 'k1', data: {prop: 'val'}}],
-						filter: undefined,
-					},
-					{type: 'REMOVE_PROPERTY', key: 'k1', property: 'prop'},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.saveEdited(
+	// 			getSubState,
+	// 			'users',
+	// 			{ADD: 'ADD', EDITED: {REMOVE_PROPERTY: 'REMOVE_PROPERTY'}},
+	// 			'user'
+	// 		)('k1')(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					type: 'ADD',
+	// 					data: [{key: 'k1', data: {prop: 'val'}}],
+	// 					filter: undefined,
+	// 				},
+	// 				{type: 'REMOVE_PROPERTY', key: 'k1', property: 'prop'},
+	// 			]);
+	// 		});
+	// });
 
-	describe('updateSubstateFromView', function () {
-		it('activeKey', function () {
-			actions.updateSubstateFromView({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})({
-				activeKey: 'ak',
-			})(dispatch);
+	// describe('updateSubstateFromView', function () {
+	// 	it('activeKey', function () {
+	// 		actions.updateSubstateFromView({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})({
+	// 			activeKey: 'ak',
+	// 		})(dispatch);
 
-			assert.deepStrictEqual(dispatchedActions, [
-				{key: 'ak', type: 'SET_ACTIVE_KEY'},
-			]);
-		});
+	// 		assert.deepStrictEqual(dispatchedActions, [
+	// 			{key: 'ak', type: 'SET_ACTIVE_KEY'},
+	// 		]);
+	// 	});
 
-		it('activeKeys', function () {
-			actions.updateSubstateFromView({
-				SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS',
-			})({
-				activeKeys: ['k1', 'k2'],
-			})(dispatch);
+	// 	it('activeKeys', function () {
+	// 		actions.updateSubstateFromView({
+	// 			SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS',
+	// 		})({
+	// 			activeKeys: ['k1', 'k2'],
+	// 		})(dispatch);
 
-			assert.deepStrictEqual(dispatchedActions, [
-				{keys: ['k1', 'k2'], type: 'SET_ACTIVE_KEYS'},
-			]);
-		});
-	});
+	// 		assert.deepStrictEqual(dispatchedActions, [
+	// 			{keys: ['k1', 'k2'], type: 'SET_ACTIVE_KEYS'},
+	// 		]);
+	// 	});
+	// });
 
 	// it('updateEdited', function () {
 	// 	const getSubState = state => state.sub;
