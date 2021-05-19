@@ -1326,40 +1326,40 @@ describe('state/_common/actions', function () {
 		});
 	});
 
-	it('updateEdited', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				byKey: {k1: {key: 'k1'}},
-				editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
-			},
-		});
-		actions.updateEdited(getSubState, {
-			EDITED: {UPDATE: 'UPDATE'},
-		})('users', 'k1', {
-			key: 'k1',
-			data: {prop: 'val'},
-		})(dispatch, getState);
+	// it('updateEdited', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			byKey: {k1: {key: 'k1'}},
+	// 			editedByKey: {k1: {key: 'k1', data: {prop: 'val'}}},
+	// 		},
+	// 	});
+	// 	actions.updateEdited(getSubState, {
+	// 		EDITED: {UPDATE: 'UPDATE'},
+	// 	})('users', 'k1', {
+	// 		key: 'k1',
+	// 		data: {prop: 'val'},
+	// 	})(dispatch, getState);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{
-				type: 'UPDATE',
-				data: [
-					{
-						key: 'users',
-						data: {k1: {key: 'k1', data: {prop: 'val'}}},
-					},
-				],
-			},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{
+	// 			type: 'UPDATE',
+	// 			data: [
+	// 				{
+	// 					key: 'users',
+	// 					data: {k1: {key: 'k1', data: {prop: 'val'}}},
+	// 				},
+	// 			],
+	// 		},
+	// 	]);
+	// });
 
 	// it('useKeys', function () {
 	// 	const getSubState = state => state.sub;
