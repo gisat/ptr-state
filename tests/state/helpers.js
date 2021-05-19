@@ -18,7 +18,7 @@ const defaultGetState = () => ({});
  *                                  - actions is set of actions in scope of store or commonActions
  *                                  - actionTypes is Object with types. Variable should be defined only for common actions.
  *                                  - options is Object with getSubstate, dataType, categoryPath
- * @param {Array} tests.dispatchedActions Array of dispatched actions which is compared with truly dispatched actions by test [action].
+ * @param {Array|function} tests.dispatchedActions Array or function which returns array of dispatched actions which is compared with truly dispatched actions by test [action].
  * @param {function} tests.getState Function that returns function that returns predifined state for test.
  * @param {function} tests.setFetch Optional setter for fetch requests called with [dataType, categoryPath] parameters. SetFetch should return function that gets
  *                                     [url, options] for each request. That function can prepare mock response returned as a Promise.
@@ -45,11 +45,16 @@ const testBatchRunner = (
 
 	tests.forEach(test => {
 		it(test.name, () => {
+			const store =
+				typeof test.getStore === 'function' ? test.getStore() : null;
+
 			const getState =
 				typeof test.getState === 'function'
-					? test.getState(dataType)
+					? test.getState(dataType, store)
 					: defaultGetState;
-			const dispatch = storeHelpers.getDispatch(getState);
+			const dispatch = store
+				? storeHelpers.getDispatch(getState, store.dispatch)
+				: storeHelpers.getDispatch(getState);
 			const options = {
 				getSubstate: state => state[dataType],
 				dataType,
@@ -63,11 +68,15 @@ const testBatchRunner = (
 			dispatch(test.action(actions, actionTypes, options));
 
 			return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+				const expectedDispatchedActions =
+					typeof test.dispatchedActions === 'function'
+						? test.dispatchedActions()
+						: test.dispatchedActions;
 				assert.deepStrictEqual(
 					storeHelpers.getDispatchedActions(),
 					typeof dispatchedActionsModificator === 'function'
-						? dispatchedActionsModificator(test.dispatchedActions)
-						: test.dispatchedActions
+						? dispatchedActionsModificator(expectedDispatchedActions)
+						: expectedDispatchedActions
 				);
 			});
 		});
