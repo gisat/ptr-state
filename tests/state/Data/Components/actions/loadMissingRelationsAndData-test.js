@@ -791,7 +791,6 @@ describe('state/Data/Components/actions/loadMissingRelationsAndData', function (
 		);
 
 		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-			debugger;
 			assert.deepStrictEqual(storeHelpers.getDispatchedActions(), [
 				{
 					type: 'DATA.ATTRIBUTE_RELATIONS.INDEX.ADD',

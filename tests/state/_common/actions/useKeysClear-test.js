@@ -1,15 +1,6 @@
-import {assert} from 'chai';
 import commonActions from '../../../../src/state/_common/actions';
-import getStoreSet from '../helpers/store';
-import {pick as _pick} from 'lodash';
-
-const actionTypes = {
-	USE: {
-		KEYS: {
-			CLEAR: 'USE.KEYS.CLEAR',
-		},
-	},
-};
+import testBatchRunner from '../../helpers';
+import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
 	{
@@ -27,28 +18,11 @@ const tests = [
 	},
 ];
 
-describe('useKeysClear', () => {
-	const storeHelpers = getStoreSet();
-
-	const getState = () => ({});
-
-	const dispatch = storeHelpers.getDispatch(getState);
-
-	afterEach(function () {
-		storeHelpers.clearDispatchedActions();
-	});
-
-	tests.forEach(test => {
-		it(test.name, () => {
-			dispatch(test.action(commonActions, actionTypes));
-			return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
-				assert.deepStrictEqual(
-					storeHelpers.getDispatchedActions(),
-					test.dispatchedActions
-				);
-			});
-		});
-	});
-});
+const dataType = 'testStore';
+const categoryPath = 'metadata';
+describe(
+	'useKeysClear',
+	testBatchRunner(dataType, categoryPath, tests, commonActions, actionTypes)
+);
 
 export default tests;

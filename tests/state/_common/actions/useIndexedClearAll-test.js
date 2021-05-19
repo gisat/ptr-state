@@ -1,15 +1,7 @@
 import {assert} from 'chai';
 import commonActions from '../../../../src/state/_common/actions';
-import getStoreSet from '../helpers/store';
-import {pick as _pick} from 'lodash';
-
-const actionTypes = {
-	USE: {
-		INDEXED: {
-			CLEAR_ALL: 'USE.INDEXED.CLEAR_ALL',
-		},
-	},
-};
+import testBatchRunner from '../../helpers';
+import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
 	{
@@ -27,26 +19,11 @@ const tests = [
 	},
 ];
 
-describe('useIndexedClearAll', () => {
-	const storeHelpers = getStoreSet();
-
-	const getState = () => ({});
-
-	const dispatch = storeHelpers.getDispatch(getState);
-
-	afterEach(function () {
-		storeHelpers.clearDispatchedActions();
-	});
-
-	tests.forEach(test => {
-		it(test.name, () => {
-			dispatch(test.action(commonActions, actionTypes));
-			assert.deepStrictEqual(
-				storeHelpers.getDispatchedActions(),
-				test.dispatchedActions
-			);
-		});
-	});
-});
+const dataType = 'testStore';
+const categoryPath = 'metadata';
+describe(
+	'useIndexedClearAll',
+	testBatchRunner(dataType, categoryPath, tests, commonActions, actionTypes)
+);
 
 export default tests;

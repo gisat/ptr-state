@@ -1,3 +1,4 @@
+import {utils} from '@gisatcz/ptr-utils';
 export const sampleSubstoreName = 'sub';
 
 // Selectors -------------------------------------------------------------------
@@ -36,49 +37,112 @@ export const expectedLayerTreesSelectors = [...baseMetadataSelectors];
 export const expectedStylesSelectors = [...baseMetadataSelectors];
 export const expectedViewsSelectors = [...baseMetadataSelectors];
 
-// Action types ----------------------------------------------------------------
-const baseMetadataActionTypes = [
-	'ADD',
-	'ADD_UNRECEIVED',
-	'DELETE',
-	'MARK_DELETED',
-	'EDITED.REMOVE',
-	'EDITED.REMOVE_PROPERTY',
-	'EDITED.UPDATE',
-	'ENSURE.ERROR',
-	'INDEX.ADD',
-	'INDEX.CLEAR_INDEX',
-	'INDEX.CLEAR_ALL',
-	'LOAD.ERROR',
-	'LOAD.REQUEST',
-	'UPDATE_STORE',
-	'USE.INDEXED.CLEAR',
-	'USE.INDEXED.CLEAR_ALL',
-	'USE.INDEXED.REGISTER',
-	'USE.KEYS.CLEAR',
-	'USE.KEYS.REGISTER',
-];
+export function getDeepValues(obj) {
+	const values = [];
+	for (const [key, value] of Object.entries(obj)) {
+		if (typeof obj[key] === 'object') {
+			const subvalues = getDeepValues(obj[key]);
+			values.push(...subvalues);
+		} else {
+			values.push(value);
+		}
+	}
+	return values;
+}
 
-export const expectedSpecificMetadataActionTypes = [
-	...baseMetadataActionTypes,
-	'EDITED.REMOVE_ACTIVE',
-	'SET_ACTIVE_KEY',
-	'SET_ACTIVE_KEYS',
-];
+// Action types ----------------------------------------------------------------
+export const baseMetadataActionTypesObj = utils.deepKeyMirror({
+	ADD: null,
+	ADD_UNRECEIVED: null,
+	DELETE: null,
+	MARK_DELETED: null,
+	EDITED: {
+		REMOVE: null,
+		REMOVE_PROPERTY: null,
+		UPDATE: null,
+	},
+	ENSURE: {
+		ERROR: null,
+	},
+	INDEX: {
+		ADD: null,
+		CLEAR_INDEX: null,
+		CLEAR_ALL: null,
+	},
+	LOAD: {
+		ERROR: null,
+		REQUEST: null,
+	},
+	UPDATE_STORE: null,
+	USE: {
+		INDEXED: {
+			CLEAR: null,
+			CLEAR_ALL: null,
+			REGISTER: null,
+		},
+		KEYS: {
+			CLEAR: null,
+			REGISTER: null,
+		},
+	},
+});
+
+export const commonActionTypesObj = utils.deepKeyMirror({
+	SET_ACTIVE_KEY: null,
+	SET_ACTIVE_KEYS: null,
+	...baseMetadataActionTypesObj,
+});
+
+export const baseMetadataActionTypes = getDeepValues(
+	baseMetadataActionTypesObj
+);
+
+export const expectedSpecificMetadataActionTypesObj = utils.deepKeyMirror({
+	SET_ACTIVE_KEY: null,
+	SET_ACTIVE_KEYS: null,
+	...baseMetadataActionTypesObj,
+	EDITED: {
+		...baseMetadataActionTypesObj.EDITED,
+		REMOVE_ACTIVE: null,
+	},
+});
+
+export const expectedSpecificMetadataActionTypes = getDeepValues(
+	expectedSpecificMetadataActionTypesObj
+);
 
 export const expectedLayerTreesActionTypes = [...baseMetadataActionTypes];
-export const expectedScopesActionTypes = [
-	...baseMetadataActionTypes,
-	'EDITED.REMOVE_ACTIVE',
-	'SET_ACTIVE_KEY',
-];
-export const expectedViewsActionTypes = [
-	...baseMetadataActionTypes,
-	'EDITED.REMOVE_ACTIVE',
-	'SET_ACTIVE_KEY',
-];
+export const expectedScopesActionTypesObj = utils.deepKeyMirror({
+	...baseMetadataActionTypesObj,
+	EDITED: {
+		...baseMetadataActionTypesObj.EDITED,
+		REMOVE_ACTIVE: null,
+	},
+});
+export const expectedScopesActionTypes = getDeepValues(
+	expectedScopesActionTypesObj
+);
 
-export const expectedCommonMetadataActionTypes = [
-	'COMMON.DATA.SET_OUTDATED',
-	'COMMON.DATA.CLEANUP_ON_LOGOUT',
-];
+export const expectedViewsActionTypesObj = utils.deepKeyMirror({
+	...baseMetadataActionTypesObj,
+	EDITED: {
+		...baseMetadataActionTypesObj.EDITED,
+		REMOVE_ACTIVE: null,
+	},
+});
+export const expectedViewsActionTypes = getDeepValues(
+	expectedViewsActionTypesObj
+);
+
+export const expectedCommonMetadataActionTypesObj = utils.deepKeyMirror({
+	COMMON: {
+		DATA: {
+			SET_OUTDATED: null,
+			CLEANUP_ON_LOGOUT: null,
+		},
+	},
+});
+
+export const expectedCommonMetadataActionTypes = getDeepValues(
+	expectedCommonMetadataActionTypesObj
+);

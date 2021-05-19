@@ -948,23 +948,23 @@ describe('state/_common/actions', function () {
 	// 		});
 	// });
 
-	it('setActiveKey', function () {
-		actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
+	// it('setActiveKey', function () {
+	// 	actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'SET_ACTIVE_KEY', key: 'k1'},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{type: 'SET_ACTIVE_KEY', key: 'k1'},
+	// 	]);
+	// });
 
-	it('setActiveKeys', function () {
-		actions.setActiveKeys({SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS'})(['k1', 'k2'])(
-			dispatch
-		);
+	// it('setActiveKeys', function () {
+	// 	actions.setActiveKeys({SET_ACTIVE_KEYS: 'SET_ACTIVE_KEYS'})(['k1', 'k2'])(
+	// 		dispatch
+	// 	);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'SET_ACTIVE_KEYS', keys: ['k1', 'k2']},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{type: 'SET_ACTIVE_KEYS', keys: ['k1', 'k2']},
+	// 	]);
+	// });
 
 	describe('receiveUpdated', function () {
 		it('no updates', function () {
