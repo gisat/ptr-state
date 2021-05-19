@@ -5,7 +5,7 @@ const tests = [
 	{
 		name: 'It dispatch actionDataSetOutdated.',
 		action: (actions, actionTypes) => {
-			actions.actionDataSetOutdated;
+			const action = actions.actionDataSetOutdated;
 			return action();
 		},
 		dispatchedActions: [{type: 'COMMON.DATA.SET_OUTDATED'}],
