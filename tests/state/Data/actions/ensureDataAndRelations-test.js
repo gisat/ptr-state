@@ -8,7 +8,7 @@ import {resetFetch, setFetch} from '../../../../src/state/_common/request';
 import AttributeDataReducer from '../../../../src/state/Data/AttributeData/reducers';
 import SpatialDataReducer from '../../../../src/state/Data/SpatialData/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 import {
 	responseWithRelationsSpatialAndAttributeData_1,
 	responseWithRelationsSpatialAndAttributeData_2,

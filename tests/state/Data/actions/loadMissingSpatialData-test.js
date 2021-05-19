@@ -11,7 +11,7 @@ import SpatialDataReducer from '../../../../src/state/Data/SpatialData/reducers'
 import SpatialRelationsReducer from '../../../../src/state/Data/SpatialRelations/reducers';
 import SpatialDataSourcesReducer from '../../../../src/state/Data/SpatialDataSources/reducers';
 import AppReducers from '../../../../src/state/App/reducers';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 import {
 	responseWithSpatialData_1,
 	responseWithSpatialData_2,

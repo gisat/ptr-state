@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import slash from 'slash';
 import actions from '../../../../../src/state/Data/Components/actions';
 import {resetFetch, setFetch} from '../../../../../src/state/_common/request';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 
 describe('state/Data/Components/actions/processResult', function () {
 	afterEach(function () {

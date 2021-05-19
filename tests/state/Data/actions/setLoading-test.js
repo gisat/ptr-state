@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import actions from '../../../../src/state/Data/actions';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 
 describe('state/Data/actions/setLoading', function () {
 	it('Set loading for spatial and attribute data', function () {

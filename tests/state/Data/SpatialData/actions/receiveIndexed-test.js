@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 import actions from '../../../../../src/state/Data/SpatialData/actions';
 
 describe('state/Data/SpatialData/actions/receiveIndexed', function () {

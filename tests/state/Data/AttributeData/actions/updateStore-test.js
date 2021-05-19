@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import actions from '../../../../../src/state/Data/AttributeData/actions';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 
 describe('state/Data/AttributeData/actions/updateStore', function () {
 	it('Dispatch updateStore action', function () {

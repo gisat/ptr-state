@@ -34,13 +34,6 @@ const tests = [
 				},
 			},
 		}),
-		getOptions: params => {
-			return {
-				getSubstate: params.getSubstate,
-				dataType: params.dataType,
-				categoryPath: params.categoryPath,
-			};
-		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,
@@ -113,13 +106,6 @@ const tests = [
 				},
 			},
 		}),
-		getOptions: params => {
-			return {
-				getSubstate: params.getSubstate,
-				dataType: params.dataType,
-				categoryPath: params.categoryPath,
-			};
-		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,
@@ -176,6 +162,9 @@ const tests = [
 
 const dataType = 'testStore';
 const categoryPath = 'metadata';
-describe('ensureKeys', testBatchRunner(dataType, categoryPath, tests, commonActions, actionTypes));
+describe(
+	'ensureKeys',
+	testBatchRunner(dataType, categoryPath, tests, commonActions, actionTypes)
+);
 
 export default tests;
