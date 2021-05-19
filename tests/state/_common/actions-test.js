@@ -1526,15 +1526,15 @@ describe('state/_common/actions', function () {
 	// 		});
 	// });
 
-	it('clearIndex', function () {
-		actions.clearIndex({INDEX: {CLEAR_INDEX: 'CLEAR_INDEX'}})('fil', 'asc')(
-			dispatch
-		);
+	// it('clearIndex', function () {
+	// 	actions.clearIndex({INDEX: {CLEAR_INDEX: 'CLEAR_INDEX'}})('fil', 'asc')(
+	// 		dispatch
+	// 	);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{filter: 'fil', order: 'asc', type: 'CLEAR_INDEX'},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{filter: 'fil', order: 'asc', type: 'CLEAR_INDEX'},
+	// 	]);
+	// });
 
 	// it('useIndexedRegister', function () {
 	// 	assert.deepStrictEqual(
@@ -1569,11 +1569,11 @@ describe('state/_common/actions', function () {
 	// 	]);
 	// });
 
-	it('actionDataSetOutdated', function () {
-		assert.deepStrictEqual(actions.actionDataSetOutdated(), {
-			type: 'COMMON.DATA.SET_OUTDATED',
-		});
-	});
+	// it('actionDataSetOutdated', function () {
+	// 	assert.deepStrictEqual(actions.actionDataSetOutdated(), {
+	// 		type: 'COMMON.DATA.SET_OUTDATED',
+	// 	});
+	// });
 
 	// it('actionSetActiveKey', function () {
 	// 	actions.setActiveKey({SET_ACTIVE_KEY: 'SET_ACTIVE_KEY'})('k1')(dispatch);
