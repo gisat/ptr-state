@@ -173,8 +173,10 @@ const updateStore = (getSubstate, actionTypes) => {
 
 const removePropertyFromEdited = actionTypes => {
 	return (modelKey, key) => {
-		return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
-	};
+		return dispatch => {
+			return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
+		};
+	}
 };
 
 const deleteItem = (
