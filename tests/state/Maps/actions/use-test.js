@@ -345,7 +345,7 @@ describe('state/Maps/actions/use', function () {
 			}
 		});
 
-		dispatch(actions.use('map1', null, null, 10, 10));
+		dispatch(actions.use('map1', null, null));
 		setTimeout(() => {
 			storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 				if (_isEqual(storeHelpers.getDispatchedActions(), dispatchedActions)) {

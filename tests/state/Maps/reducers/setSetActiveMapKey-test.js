@@ -25,4 +25,25 @@ describe('setSetActiveMapKey-test', function () {
 
 		assert.deepStrictEqual(output, expectedState);
 	});
+
+	it('Should return the same state if no set found for given key', function () {
+		const action = {
+			type: 'MAPS.SET.SET_ACTIVE_MAP_KEY',
+			setKey: 'setXY',
+			mapKey: 'map2',
+		};
+
+		const output = reducers(state, action);
+		assert.equal(output, state);
+	});
+
+	it('Should return the same state if no setKey given', function () {
+		const action = {
+			type: 'MAPS.SET.SET_ACTIVE_MAP_KEY',
+			mapKey: 'map2',
+		};
+
+		const output = reducers(state, action);
+		assert.equal(output, state);
+	});
 });
