@@ -1,3 +1,5 @@
+import {omit as _omit} from 'lodash';
+
 export const MapsSelectorsState = {
 	scopes: {},
 	scenarios: {},
@@ -244,6 +246,33 @@ export const MapsSelectorsState_2 = {
 						},
 					],
 				},
+			},
+		},
+	},
+};
+
+//same like export MapsSelectorsState_2, but map doesn`t have a viewport
+export const MapsSelectorsState_3 = {
+	...MapsSelectorsState_2,
+	maps: {
+		...MapsSelectorsState_2.maps,
+		maps: {
+			...MapsSelectorsState_2.maps.maps,
+			map1: {
+				...MapsSelectorsState_2.maps.maps.map1,
+				data: _omit(MapsSelectorsState_2.maps.maps.map1.data, 'viewport'),
+			},
+			map2: {
+				...MapsSelectorsState_2.maps.maps.map2,
+				data: _omit(MapsSelectorsState_2.maps.maps.map2.data, 'viewport'),
+			},
+			map3: {
+				...MapsSelectorsState_2.maps.maps.map3,
+				data: _omit(MapsSelectorsState_2.maps.maps.map3.data, 'viewport'),
+			},
+			map4: {
+				...MapsSelectorsState_2.maps.maps.map4,
+				data: _omit(MapsSelectorsState_2.maps.maps.map4.data, 'viewport'),
 			},
 		},
 	},
