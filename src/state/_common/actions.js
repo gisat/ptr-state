@@ -176,7 +176,7 @@ const removePropertyFromEdited = actionTypes => {
 		return dispatch => {
 			return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
 		};
-	}
+	};
 };
 
 const deleteItem = (

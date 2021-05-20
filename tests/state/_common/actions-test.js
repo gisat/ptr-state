@@ -781,97 +781,97 @@ describe('state/_common/actions', function () {
 	// 		});
 	// });
 
-	it('loadIndexedPage', function () {
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
+	// it('loadIndexedPage', function () {
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 	});
+	// 	const dispatch = action => {
+	// 		if (typeof action === 'function') {
+	// 			const res = action(dispatch, getState);
+	// 			if (res != null) {
+	// 				dispatchedActions.push(res);
+	// 			}
 
-				return res;
-			}
+	// 			return res;
+	// 		}
 
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {name: 'fil'},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
+	// 		dispatchedActions.push(action);
+	// 	};
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual(
+	// 			'http://localhost/rest/user/filtered/users',
+	// 			slash(url)
+	// 		);
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				filter: {name: 'fil'},
+	// 				offset: 0,
+	// 				order: 'asc',
+	// 				limit: 100,
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'POST',
+	// 		});
 
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
+	// 		const body = {
+	// 			data: {users: {k1: {}, k2: {}}},
+	// 			total: 2,
+	// 			changes: {
+	// 				users: '2020-01-01',
+	// 			},
+	// 		};
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(body);
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: JSON.stringify(body),
+	// 		});
+	// 	});
 
-		return actions
-			.loadIndexedPage(
-				'users',
-				{name: 'fil'},
-				'asc',
-				1,
-				'2020-01-01',
-				{INDEX: {ADD: 'ADD_INDEX'}},
-				'user'
-			)(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{
-						type: 'ADD_INDEX',
-						filter: {name: 'fil'},
-						order: 'asc',
-						count: 2,
-						start: 1,
-						data: {k1: {}, k2: {}},
-						changedOn: '2020-01-01',
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.loadIndexedPage(
+	// 			'users',
+	// 			{name: 'fil'},
+	// 			'asc',
+	// 			1,
+	// 			'2020-01-01',
+	// 			{INDEX: {ADD: 'ADD_INDEX'}},
+	// 			'user'
+	// 		)(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{
+	// 					type: 'ADD_INDEX',
+	// 					filter: {name: 'fil'},
+	// 					order: 'asc',
+	// 					count: 2,
+	// 					start: 1,
+	// 					data: {k1: {}, k2: {}},
+	// 					changedOn: '2020-01-01',
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	// it('loadKeysPage', function () {
 	// 	const getState = () => ({
@@ -966,256 +966,256 @@ describe('state/_common/actions', function () {
 	// 	]);
 	// });
 
-	describe('receiveUpdated', function () {
-		it('no updates', function () {
-			const getSubState = state => state.sub;
-			const getState = () => ({
-				sub: {},
-			});
-			const result = {data: {users: []}};
+	// describe('receiveUpdated', function () {
+	// 	it('no updates', function () {
+	// 		const getSubState = state => state.sub;
+	// 		const getState = () => ({
+	// 			sub: {},
+	// 		});
+	// 		const result = {data: {users: []}};
 
-			actions.receiveUpdated(
-				getSubState,
-				{},
-				result,
-				'users',
-				'user'
-			)(dispatch, getState);
+	// 		actions.receiveUpdated(
+	// 			getSubState,
+	// 			{},
+	// 			result,
+	// 			'users',
+	// 			'user'
+	// 		)(dispatch, getState);
 
-			assert.deepStrictEqual(dispatchedActions, []);
-		});
+	// 		assert.deepStrictEqual(dispatchedActions, []);
+	// 	});
 
-		it('some updates', function () {
-			const getSubState = state => state.sub;
-			const getState = () => ({
-				sub: {
-					editedByKey: {
-						k1: {
-							key: 'k1',
-							data: {
-								propScalarSame: 'propScalarSame',
-								propScalarChanged: 'propScalarChanged',
-								propObjSame: {same: 'same'},
-								propObjChanged: {changed: 'changed'},
-								propArrSame: ['same'],
-								propArrChanged: ['changed'],
-							},
-						},
-					},
-				},
-			});
-			const result = {
-				data: {
-					users: [
-						{
-							key: 'k1',
-							data: {
-								propScalarSame: 'propScalarSame',
-								propScalarChanged: 'propScalarChanged2',
-								propObjSame: {same: 'same'},
-								propObjChanged: {changed: 'changed2'},
-								propArrSame: ['same'],
-								propArrChanged: ['changed2'],
-							},
-						},
-					],
-				},
-			};
+	// 	it('some updates', function () {
+	// 		const getSubState = state => state.sub;
+	// 		const getState = () => ({
+	// 			sub: {
+	// 				editedByKey: {
+	// 					k1: {
+	// 						key: 'k1',
+	// 						data: {
+	// 							propScalarSame: 'propScalarSame',
+	// 							propScalarChanged: 'propScalarChanged',
+	// 							propObjSame: {same: 'same'},
+	// 							propObjChanged: {changed: 'changed'},
+	// 							propArrSame: ['same'],
+	// 							propArrChanged: ['changed'],
+	// 						},
+	// 					},
+	// 				},
+	// 			},
+	// 		});
+	// 		const result = {
+	// 			data: {
+	// 				users: [
+	// 					{
+	// 						key: 'k1',
+	// 						data: {
+	// 							propScalarSame: 'propScalarSame',
+	// 							propScalarChanged: 'propScalarChanged2',
+	// 							propObjSame: {same: 'same'},
+	// 							propObjChanged: {changed: 'changed2'},
+	// 							propArrSame: ['same'],
+	// 							propArrChanged: ['changed2'],
+	// 						},
+	// 					},
+	// 				],
+	// 			},
+	// 		};
 
-			actions.receiveUpdated(
-				getSubState,
-				{ADD: 'ADD', EDITED: {REMOVE_PROPERTY: 'REMOVE_PROPERTY'}},
-				result,
-				'users',
-				'user'
-			)(dispatch, getState);
+	// 		actions.receiveUpdated(
+	// 			getSubState,
+	// 			{ADD: 'ADD', EDITED: {REMOVE_PROPERTY: 'REMOVE_PROPERTY'}},
+	// 			result,
+	// 			'users',
+	// 			'user'
+	// 		)(dispatch, getState);
 
-			assert.deepStrictEqual(dispatchedActions, [
-				{
-					type: 'ADD',
-					filter: undefined,
-					data: [
-						{
-							key: 'k1',
-							data: {
-								propScalarSame: 'propScalarSame',
-								propScalarChanged: 'propScalarChanged2',
-								propObjSame: {same: 'same'},
-								propObjChanged: {changed: 'changed2'},
-								propArrSame: ['same'],
-								propArrChanged: ['changed2'],
-							},
-						},
-					],
-				},
-				{
-					key: 'k1',
-					property: 'propScalarSame',
-					type: 'REMOVE_PROPERTY',
-				},
-				{key: 'k1', property: 'propObjSame', type: 'REMOVE_PROPERTY'},
-				{key: 'k1', property: 'propArrSame', type: 'REMOVE_PROPERTY'},
-			]);
-		});
-	});
+	// 		assert.deepStrictEqual(dispatchedActions, [
+	// 			{
+	// 				type: 'ADD',
+	// 				filter: undefined,
+	// 				data: [
+	// 					{
+	// 						key: 'k1',
+	// 						data: {
+	// 							propScalarSame: 'propScalarSame',
+	// 							propScalarChanged: 'propScalarChanged2',
+	// 							propObjSame: {same: 'same'},
+	// 							propObjChanged: {changed: 'changed2'},
+	// 							propArrSame: ['same'],
+	// 							propArrChanged: ['changed2'],
+	// 						},
+	// 					},
+	// 				],
+	// 			},
+	// 			{
+	// 				key: 'k1',
+	// 				property: 'propScalarSame',
+	// 				type: 'REMOVE_PROPERTY',
+	// 			},
+	// 			{key: 'k1', property: 'propObjSame', type: 'REMOVE_PROPERTY'},
+	// 			{key: 'k1', property: 'propArrSame', type: 'REMOVE_PROPERTY'},
+	// 		]);
+	// 	});
+	// });
 
-	it('receiveIndexed', function () {
-		actions.receiveIndexed(
-			{ADD: 'ADD', INDEX: {ADD: 'ADD_INDEX'}},
-			{
-				data: {users: [{key: 'k1'}]},
-				total: 1,
-				changes: {
-					users: '2020-01-01',
-				},
-			},
-			'users',
-			'fil',
-			'asc',
-			1
-		)(dispatch);
+	// it('receiveIndexed', function () {
+	// 	actions.receiveIndexed(
+	// 		{ADD: 'ADD', INDEX: {ADD: 'ADD_INDEX'}},
+	// 		{
+	// 			data: {users: [{key: 'k1'}]},
+	// 			total: 1,
+	// 			changes: {
+	// 				users: '2020-01-01',
+	// 			},
+	// 		},
+	// 		'users',
+	// 		'fil',
+	// 		'asc',
+	// 		1
+	// 	)(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{
-				type: 'ADD',
-				data: [{key: 'k1'}],
-				filter: 'fil',
-			},
-			{
-				type: 'ADD_INDEX',
-				count: 1,
-				changedOn: '2020-01-01',
-				filter: 'fil',
-				order: 'asc',
-				start: 1,
-				data: [{key: 'k1'}],
-			},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{
+	// 			type: 'ADD',
+	// 			data: [{key: 'k1'}],
+	// 			filter: 'fil',
+	// 		},
+	// 		{
+	// 			type: 'ADD_INDEX',
+	// 			count: 1,
+	// 			changedOn: '2020-01-01',
+	// 			filter: 'fil',
+	// 			order: 'asc',
+	// 			start: 1,
+	// 			data: [{key: 'k1'}],
+	// 		},
+	// 	]);
+	// });
 
-	it('receiveKeys', function () {
-		actions.receiveKeys(
-			{ADD: 'ADD', ADD_UNRECEIVED: 'ADD_UNRECEIVED'},
-			{data: {users: [{key: 'k1'}]}},
-			'users',
-			['k1', 'k2']
-		)(dispatch);
+	// it('receiveKeys', function () {
+	// 	actions.receiveKeys(
+	// 		{ADD: 'ADD', ADD_UNRECEIVED: 'ADD_UNRECEIVED'},
+	// 		{data: {users: [{key: 'k1'}]}},
+	// 		'users',
+	// 		['k1', 'k2']
+	// 	)(dispatch);
 
-		assert.deepStrictEqual(dispatchedActions, [
-			{type: 'ADD', data: [{key: 'k1'}], filter: undefined},
-			{type: 'ADD_UNRECEIVED', keys: ['k2']},
-		]);
-	});
+	// 	assert.deepStrictEqual(dispatchedActions, [
+	// 		{type: 'ADD', data: [{key: 'k1'}], filter: undefined},
+	// 		{type: 'ADD_UNRECEIVED', keys: ['k2']},
+	// 	]);
+	// });
 
-	it('refreshUses', function () {
-		const getSubState = state => state.sub;
-		const getState = () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
-				},
-			},
-			sub: {
-				inUse: {
-					keys: ['k1', 'k2'],
-					indexes: [
-						[
-							{
-								filter: {name: 'fil'},
-								order: 'asc',
-								start: 1,
-								length: 3,
-							},
-						],
-					],
-				},
-				byKey: {
-					k1: {key: 'k1'},
-					k2: {key: 'k2'},
-				},
-			},
-		});
-		const dispatch = action => {
-			if (typeof action === 'function') {
-				const res = action(dispatch, getState);
-				if (res != null) {
-					dispatchedActions.push(res);
-				}
+	// it('refreshUses', function () {
+	// 	const getSubState = state => state.sub;
+	// 	const getState = () => ({
+	// 		app: {
+	// 			localConfiguration: {
+	// 				apiBackendProtocol: 'http',
+	// 				apiBackendHost: 'localhost',
+	// 				apiBackendPath: '',
+	// 			},
+	// 		},
+	// 		sub: {
+	// 			inUse: {
+	// 				keys: ['k1', 'k2'],
+	// 				indexes: [
+	// 					[
+	// 						{
+	// 							filter: {name: 'fil'},
+	// 							order: 'asc',
+	// 							start: 1,
+	// 							length: 3,
+	// 						},
+	// 					],
+	// 				],
+	// 			},
+	// 			byKey: {
+	// 				k1: {key: 'k1'},
+	// 				k2: {key: 'k2'},
+	// 			},
+	// 		},
+	// 	});
+	// 	const dispatch = action => {
+	// 		if (typeof action === 'function') {
+	// 			const res = action(dispatch, getState);
+	// 			if (res != null) {
+	// 				dispatchedActions.push(res);
+	// 			}
 
-				return res;
-			}
+	// 			return res;
+	// 		}
 
-			dispatchedActions.push(action);
-		};
-		setFetch(function (url, options) {
-			assert.strictEqual(
-				'http://localhost/rest/user/filtered/users',
-				slash(url)
-			);
-			assert.deepStrictEqual(options, {
-				body: JSON.stringify({
-					filter: {name: 'fil'},
-					offset: 0,
-					order: 'asc',
-					limit: 100,
-				}),
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
-			});
+	// 		dispatchedActions.push(action);
+	// 	};
+	// 	setFetch(function (url, options) {
+	// 		assert.strictEqual(
+	// 			'http://localhost/rest/user/filtered/users',
+	// 			slash(url)
+	// 		);
+	// 		assert.deepStrictEqual(options, {
+	// 			body: JSON.stringify({
+	// 				filter: {name: 'fil'},
+	// 				offset: 0,
+	// 				order: 'asc',
+	// 				limit: 100,
+	// 			}),
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 			method: 'POST',
+	// 		});
 
-			const body = {
-				data: {users: {k1: {}, k2: {}}},
-				total: 2,
-				changes: {
-					users: '2020-01-01',
-				},
-			};
+	// 		const body = {
+	// 			data: {users: {k1: {}, k2: {}}},
+	// 			total: 2,
+	// 			changes: {
+	// 				users: '2020-01-01',
+	// 			},
+	// 		};
 
-			return Promise.resolve({
-				ok: true,
-				json: function () {
-					return Promise.resolve(body);
-				},
-				headers: {
-					get: function (name) {
-						return {'Content-type': 'application/json'}[name];
-					},
-				},
-				data: JSON.stringify(body),
-			});
-		});
+	// 		return Promise.resolve({
+	// 			ok: true,
+	// 			json: function () {
+	// 				return Promise.resolve(body);
+	// 			},
+	// 			headers: {
+	// 				get: function (name) {
+	// 					return {'Content-type': 'application/json'}[name];
+	// 				},
+	// 			},
+	// 			data: JSON.stringify(body),
+	// 		});
+	// 	});
 
-		return actions
-			.refreshUses(
-				getSubState,
-				'users',
-				{INDEX: {CLEAR_ALL: 'CLEAR_ALL', ADD: 'ADD'}},
-				'user'
-			)()(dispatch, getState)
-			.then(function () {
-				return runFunctionActions({dispatch, getState});
-			})
-			.then(function () {
-				assert.deepStrictEqual(dispatchedActions, [
-					{type: 'CLEAR_ALL'},
-					{
-						filter: {name: 'fil'},
-						order: 'asc',
-						count: 2,
-						start: 1,
-						data: {k1: {}, k2: {}},
-						changedOn: '2020-01-01',
-						type: 'ADD',
-					},
-				]);
-			});
-	});
+	// 	return actions
+	// 		.refreshUses(
+	// 			getSubState,
+	// 			'users',
+	// 			{INDEX: {CLEAR_ALL: 'CLEAR_ALL', ADD: 'ADD'}},
+	// 			'user'
+	// 		)()(dispatch, getState)
+	// 		.then(function () {
+	// 			return runFunctionActions({dispatch, getState});
+	// 		})
+	// 		.then(function () {
+	// 			assert.deepStrictEqual(dispatchedActions, [
+	// 				{type: 'CLEAR_ALL'},
+	// 				{
+	// 					filter: {name: 'fil'},
+	// 					order: 'asc',
+	// 					count: 2,
+	// 					start: 1,
+	// 					data: {k1: {}, k2: {}},
+	// 					changedOn: '2020-01-01',
+	// 					type: 'ADD',
+	// 				},
+	// 			]);
+	// 		});
+	// });
 
 	// it('saveEdited', function () {
 	// 	const getSubState = state => state.sub;
