@@ -19,6 +19,7 @@ const defaultGetState = () => ({});
  *                                  - actionTypes is Object with types. Variable should be defined only for common actions.
  *                                  - options is Object with getSubstate, dataType, categoryPath
  * @param {Array|function} tests.dispatchedActions Array or function which returns array of dispatched actions which is compared with truly dispatched actions by test [action].
+ * @param {Array|function} tests.dispatchedActionsModificator Optional function gets dispatchedActions as a parameter. Function needs to return array of actions. Could serve to modificetion of actions before comparing.
  * @param {function} tests.getState Function that returns function that returns predifined state for test.
  * @param {function} tests.setFetch Optional setter for fetch requests called with [dataType, categoryPath] parameters. SetFetch should return function that gets
  *                                     [url, options] for each request. That function can prepare mock response returned as a Promise.
@@ -70,10 +71,15 @@ const testBatchRunner = (
 			return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
 				const expectedDispatchedActions =
 					typeof test.dispatchedActions === 'function'
-						? test.dispatchedActions()
+						? test.dispatchedActions(options)
 						: test.dispatchedActions;
+
 				assert.deepStrictEqual(
-					storeHelpers.getDispatchedActions(),
+					typeof test.dispatchedActionsModificator === 'function'
+						? test.dispatchedActionsModificator(
+								storeHelpers.getDispatchedActions()
+						  )
+						: storeHelpers.getDispatchedActions(),
 					typeof dispatchedActionsModificator === 'function'
 						? dispatchedActionsModificator(expectedDispatchedActions)
 						: expectedDispatchedActions
