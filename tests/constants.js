@@ -37,7 +37,7 @@ export const expectedLayerTreesSelectors = [...baseMetadataSelectors];
 export const expectedStylesSelectors = [...baseMetadataSelectors];
 export const expectedViewsSelectors = [...baseMetadataSelectors];
 
-export function getDeepValues(obj) {
+const getDeepValues = obj => {
 	const values = [];
 	for (const [key, value] of Object.entries(obj)) {
 		if (typeof obj[key] === 'object') {
@@ -48,7 +48,7 @@ export function getDeepValues(obj) {
 		}
 	}
 	return values;
-}
+};
 
 // Action types ----------------------------------------------------------------
 export const baseMetadataActionTypesObj = utils.deepKeyMirror({
