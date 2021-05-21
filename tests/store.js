@@ -1,5 +1,5 @@
 /**
- * Create clear set of helper functions for testing dispatche actions on store.
+ * Create clear set of helper functions for testing dispatched actions on store.
  * @returns
  */
 export default function getStoreSet() {
