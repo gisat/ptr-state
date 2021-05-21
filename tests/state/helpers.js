@@ -10,7 +10,7 @@ const defaultGetState = () => ({});
 
 /**
  * Run set of actions tests in scope of parameters like store, dataType, categoryPath.
- * @param {String} dataType String identificator of store. It is also used in request url like `/rest/${categoryPath}/filtered/${dataType}`.
+ * @param {String} dataType String identifier of store. It is also used in request url like `/rest/${categoryPath}/filtered/${dataType}`.
  * @param {String} categoryPath String name of category used in request url like `/rest/${categoryPath}/filtered/${dataType}`
  * @param {Array} tests Array of test suites.
  * @param {String} tests.name Name of test
