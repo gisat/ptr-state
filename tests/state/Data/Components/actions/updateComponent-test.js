@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import actions from '../../../../../src/state/Data/Components/actions';
 import getStoreSet from '../../../_common/helpers/store';
+import {cloneDeep as _cloneDeep} from 'lodash';
 
 describe('state/Data/Components/actions/updateComponent', function () {
 	it('Dispatch updateComponent action', function () {
@@ -152,6 +153,44 @@ describe('state/Data/Components/actions/updateComponent', function () {
 					},
 				},
 			]);
+		});
+	});
+
+	it('Dispatch updateComponent action will not mutate original component state.', function () {
+		const storeHelpers = getStoreSet();
+
+		const components = {
+			components: {
+				byKey: {
+					table: {
+						selected: 11,
+					},
+					map: {
+						hidden: true,
+					},
+				},
+			},
+		};
+
+		const originalComponents = _cloneDeep(components);
+
+		const getState = () => ({
+			data: {
+				components,
+			},
+		});
+		const dispatch = storeHelpers.getDispatch(getState);
+
+		const componentKey = 'table';
+		const update = {
+			selected: 22,
+			order: 'desc',
+		};
+
+		dispatch(actions.updateComponent(componentKey, update));
+
+		return storeHelpers.runFunctionActions({dispatch, getState}).then(() => {
+			assert.deepStrictEqual(originalComponents, components);
 		});
 	});
 });
