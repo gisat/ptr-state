@@ -712,6 +712,8 @@ function loadKeysPage(
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = getAPIPath(categoryPath, dataType);
+		const PAGE_SIZE =
+			localConfig.requestPageSize || configDefaults.requestPageSize;
 
 		let payload = {
 			filter: {
@@ -719,6 +721,7 @@ function loadKeysPage(
 					in: keys,
 				},
 			},
+			limit: PAGE_SIZE,
 		};
 		return request(localConfig, apiPath, 'POST', null, payload)
 			.then(result => {
