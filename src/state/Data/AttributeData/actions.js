@@ -63,7 +63,8 @@ const receiveIndexed = (
 	order,
 	start,
 	total,
-	changedOn
+	changedOn,
+	limit
 ) => {
 	return actionAddDataAndIndex(
 		attributeDataFilter,
@@ -72,7 +73,8 @@ const receiveIndexed = (
 		start,
 		attributeData.index,
 		attributeData.attributeData,
-		changedOn
+		changedOn,
+		limit
 	);
 };
 
@@ -303,7 +305,7 @@ function actionAddDataAndIndexBasedOnSpatialData(
 /**
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
- * @param {Number} total
+ * @param {Number} total For how many features data relates.
  * @param {Number} start
  * @param {Array} index
  * @param {Object} data
@@ -316,7 +318,8 @@ function actionAddDataAndIndex(
 	start,
 	index,
 	data,
-	changedOn
+	changedOn,
+	limit
 ) {
 	return {
 		type: actionTypes.ADD_WITH_INDEX,
@@ -327,6 +330,7 @@ function actionAddDataAndIndex(
 		index,
 		data,
 		changedOn,
+		...(limit && {limit: limit}),
 	};
 }
 
@@ -361,7 +365,8 @@ function actionAddIndex(
 	data,
 	start,
 	count,
-	changedOn
+	changedOn,
+	limit
 ) {
 	return {
 		type: actionTypes.INDEX.ADD,
@@ -371,6 +376,7 @@ function actionAddIndex(
 		start,
 		count,
 		changedOn,
+		...(limit && {limit: limit}),
 	};
 }
 

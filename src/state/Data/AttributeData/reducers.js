@@ -112,7 +112,8 @@ const addWithIndex = (
 	order,
 	start,
 	total,
-	changedOn
+	changedOn,
+	limit
 ) => {
 	// TODO test commonHelpers.getUpdatedByDataSourceKey properly
 	const byDataSourceKey = commonHelpers.getUpdatedByDataSourceKey(
@@ -132,6 +133,7 @@ const addWithIndex = (
 		start,
 		count: total,
 		changedOn,
+		...(limit && {limit: limit}),
 	};
 
 	const stateWithUpdatedIndexes = common.addIndex(state, addIndexAction);
@@ -207,7 +209,8 @@ export default (state = INITIAL_STATE, action) => {
 				action.order,
 				action.start,
 				action.total,
-				action.changedOn
+				action.changedOn,
+				action.limit
 			);
 		case ActionTypes.DATA.ATTRIBUTE_DATA.UPDATE:
 			return update(state, action.key, action.data);

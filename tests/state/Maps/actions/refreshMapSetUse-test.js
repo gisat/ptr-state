@@ -158,6 +158,7 @@ describe('state/Maps/actions/refreshMapSetUse', function () {
 								in: ['style1'],
 							},
 						},
+						limit: 1,
 					}),
 					credentials: 'include',
 					headers: {
@@ -221,6 +222,7 @@ describe('state/Maps/actions/refreshMapSetUse', function () {
 								in: ['style3'],
 							},
 						},
+						limit: 1,
 					}),
 					credentials: 'include',
 					headers: {

@@ -24,14 +24,6 @@ const add = action => {
 	};
 };
 
-const addIndex = action => {
-	return (filter, order, count, start, data, changedOn) => {
-		return dispatch => {
-			dispatch(action(filter, order, count, start, data, changedOn));
-		};
-	};
-};
-
 const apiDelete = (dataType, categoryPath, data) => {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());

@@ -377,6 +377,7 @@ describe('state/_common/actions', function () {
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					filter: {key: {in: ['k1']}},
+					limit: 100,
 				}),
 				credentials: 'include',
 				headers: {
@@ -724,6 +725,7 @@ describe('state/_common/actions', function () {
 					filter: {
 						key: {in: ['k2', 'k3']},
 					},
+					limit: 100,
 				}),
 				credentials: 'include',
 				headers: {
@@ -903,6 +905,7 @@ describe('state/_common/actions', function () {
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					filter: {key: {in: ['k1', 'k2']}},
+					limit: 100,
 				}),
 				credentials: 'include',
 				headers: {

@@ -387,6 +387,7 @@ describe('state/Data/Components/actions/use', function () {
 							},
 						},
 					},
+					limit: 2,
 					order: null,
 					total: 7,
 					start: 1,
@@ -582,6 +583,7 @@ describe('state/Data/Components/actions/use', function () {
 					total: 7,
 					start: 3,
 					index: [18502, 18503],
+					limit: 2,
 					data: {
 						'55f48ed1-ee67-47bd-a044-8985662ec29f': {
 							18502: '27',
@@ -600,6 +602,7 @@ describe('state/Data/Components/actions/use', function () {
 							},
 						},
 					},
+					limit: 2,
 					order: null,
 					total: 7,
 					start: 5,
@@ -622,6 +625,7 @@ describe('state/Data/Components/actions/use', function () {
 							},
 						},
 					},
+					limit: 1,
 					order: null,
 					total: 7,
 					start: 7,

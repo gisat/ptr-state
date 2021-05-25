@@ -102,6 +102,7 @@ describe('state/Maps/actions/layerUse', function () {
 								in: ['styleKey1'],
 							},
 						},
+						limit: 1,
 					}),
 					credentials: 'include',
 					headers: {

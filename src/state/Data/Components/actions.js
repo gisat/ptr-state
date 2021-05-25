@@ -270,7 +270,7 @@ function loadMissingRelationsAndData(
  */
 const ensure = componentKey => {
 	return (dispatch, getState) => {
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			const state = getState();
 			// Update recompute state before ask cached selectors.
 			setState(state);
@@ -280,7 +280,11 @@ const ensure = componentKey => {
 			);
 
 			if (componentState) {
-				const {attributeOrder: order = null, start = 1, length} = componentState;
+				const {
+					attributeOrder: order = null,
+					start = 1,
+					length,
+				} = componentState;
 
 				const attributeDataFilterExtension = Select.data.components.getAttributeDataFilterExtensionByComponentKey(
 					componentKey
@@ -361,7 +365,10 @@ const ensure = componentKey => {
 				}
 
 				// Attribute and relation index is loaded. We know exactly which attribute or relations pages we need.
-				if (!_isEmpty(attributeDataIndex) && !_isEmpty(attributeRelationsIndex)) {
+				if (
+					!_isEmpty(attributeDataIndex) &&
+					!_isEmpty(attributeRelationsIndex)
+				) {
 					// Some of data or relations are needed
 					if (loadData || loadRelations) {
 						// Load just missing data and relations defined by missingPages
@@ -403,7 +410,7 @@ const ensure = componentKey => {
 					).then(resolve);
 				}
 			}
-		})
+		});
 	};
 };
 
@@ -433,12 +440,11 @@ const ensureWithFilterByActive = filterByActive => {
 const use = componentKey => {
 	return dispatch => {
 		dispatch(componentUseRegister(componentKey));
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			dispatch(ensure(componentKey)).then(() => {
-				resolve()
+				resolve();
 			});
-
-		})
+		});
 	};
 };
 
@@ -558,7 +564,8 @@ const processResult = (
 	relationsOrder,
 	attributeDataFilter,
 	order,
-	relationsLimit
+	relationsLimit,
+	attributeDataLimit
 ) => {
 	return dispatch => {
 		if (result.attributeData || result.attributeRelationsDataSources) {
@@ -586,7 +593,8 @@ const processResult = (
 						order,
 						result.attributeData.offset + 1,
 						result.attributeData.total,
-						changes
+						changes,
+						attributeDataLimit
 					)
 				);
 			}
@@ -675,6 +683,7 @@ function loadIndexedPage(
 				} else {
 					if (result.attributeData || result.attributeRelationsDataSources) {
 						const relationsLimit = usedRelationsPagination.limit;
+						const attributeDataLimit = usedAttributeDataPagination.limit;
 						dispatch(
 							processResult(
 								result,
@@ -683,7 +692,8 @@ function loadIndexedPage(
 								relationsOrder,
 								attributeDataFilter,
 								order,
-								relationsLimit
+								relationsLimit,
+								attributeDataLimit
 							)
 						);
 						return result;

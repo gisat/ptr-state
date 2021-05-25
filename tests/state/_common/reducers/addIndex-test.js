@@ -25,7 +25,7 @@ const tests = [
 				scopeKey: 'scope101',
 			},
 			start: 3,
-			length: 2,
+			limit: 2,
 			count: 4,
 		},
 		test: (action, reducers) => {
@@ -72,7 +72,7 @@ const tests = [
 			},
 			order: null,
 			start: 3,
-			length: 2,
+			limit: 2,
 			count: 4,
 		},
 		test: (action, reducers) => {
@@ -115,7 +115,7 @@ const tests = [
 			},
 			order: null,
 			start: 4,
-			length: 3,
+			limit: 3,
 			count: 6,
 		},
 		test: (action, reducers) => {
@@ -158,7 +158,7 @@ const tests = [
 			},
 			order: null,
 			start: 4,
-			length: 2,
+			limit: 2,
 			count: 6,
 		},
 		test: (action, reducers) => {
@@ -201,7 +201,7 @@ const tests = [
 			},
 			order: null,
 			start: 4,
-			length: 3,
+			limit: 3,
 			count: 6,
 		},
 		test: (action, reducers) => {

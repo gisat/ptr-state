@@ -78,7 +78,7 @@ export default {
 	 * @param action.filter {Object}
 	 * @param action.order {Array}
 	 * @param action.start {number}
-	 * @param action.length {number}
+	 * @param action.limit {number}
 	 * @param action.count {number}
 	 * @param action.changedOn {string}
 	 * @return {Object} updated state
@@ -108,8 +108,8 @@ export default {
 
 				// Remove loading indicator if data on this position doesn't exist
 				// It happens when we ask for some set of data defined by offset and length, but BE returns results only for part of length.
-				if (action.length) {
-					for (let i = action.start; i < action.start + action.length; i++) {
+				if (action.limit) {
+					for (let i = action.start; i < action.start + action.limit; i++) {
 						if (updatedIndexIndex[i] === true) {
 							delete updatedIndexIndex[i];
 						}
