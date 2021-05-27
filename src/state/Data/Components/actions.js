@@ -113,18 +113,15 @@ function ensureDataAndRelations(
 				Select.data.attributeRelations.getIndex(getState(), relationsFilter) ||
 				[];
 
-			const missingAttributesPages = getMissingPages(
-				attributeDataIndex,
-				PAGE_SIZE,
-				start,
-				length
-			);
-			const missingRelationsPages = getMissingPages(
-				attributeRelationsIndex,
-				RELATIONS_PAGE_SIZE,
-				1,
-				null
-			);
+			// if loadData === false, then do not get missing relations pages
+			const missingAttributesPages = loadData
+				? getMissingPages(attributeDataIndex, PAGE_SIZE, start, length)
+				: [];
+
+			// if loadRelations === false, then do not get missing relations pages
+			const missingRelationsPages = loadRelations
+				? getMissingPages(attributeRelationsIndex, RELATIONS_PAGE_SIZE, 1, null)
+				: [];
 
 			if (
 				missingRelationsPages.length === 0 &&
@@ -322,7 +319,7 @@ const ensure = componentKey => {
 				let missingRelationsPages, missingAttributesPages;
 				// Relations index exist
 				// find if all required relations are loaded
-				if (!_isEmpty(attributeDataIndex)) {
+				if (!_isEmpty(attributeRelationsIndex)) {
 					missingRelationsPages = getMissingPages(
 						attributeRelationsIndex,
 						RELATIONS_PAGE_SIZE,
@@ -392,6 +389,7 @@ const ensure = componentKey => {
 					}
 					// Attribute or relations or both index is not loaded.
 				} else {
+					// We could have a relations but no data
 					// Load relations and data
 					return dispatch(
 						ensureDataAndRelations(

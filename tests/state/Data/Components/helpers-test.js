@@ -717,5 +717,13 @@ describe('state/Data/Components/helpers', function () {
 			};
 			assert.deepStrictEqual(getMissingPages(mockData, 1000, 1, 1000), [0]);
 		});
+
+		it('Get none missingPages if count in index is 0.', function () {
+			const mockData = {
+				count: 0,
+				index: {},
+			};
+			assert.deepStrictEqual(getMissingPages(mockData, 1000, 1, 1000), []);
+		});
 	});
 });

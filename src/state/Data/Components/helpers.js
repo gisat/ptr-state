@@ -157,7 +157,7 @@ export function getLoadedPages(
  * @param {Number} [optLength] Optional length of requested data.
  */
 export function getMissingPages(optDataIndex, pageSize, optStart, optLength) {
-	const count = optDataIndex?.count || null;
+	const count = _isNumber(optDataIndex?.count) ? optDataIndex?.count : null;
 	const restPages = getRestPages(count, pageSize, optStart, optLength);
 
 	const loadedPages = getLoadedPages(
