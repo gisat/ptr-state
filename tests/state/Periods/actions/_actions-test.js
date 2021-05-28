@@ -1,4 +1,4 @@
-import commonActionsTests from '../../_common/actions/actions';
+import commonActionsTests from '../../_common/actions/';
 import actions from '../../../../src/state/Periods/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,
