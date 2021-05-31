@@ -48,14 +48,18 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		}
 	};
 };
 
 const setActiveKeysAndEnsureDependencies = keys => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKeys(keys));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		}
 	};
 };
 

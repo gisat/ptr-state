@@ -27,6 +27,7 @@ const defaultGetState = () => ({});
  * @param {Object} actionTypes Object of types. Used only for testing common actions, other stores related actions should pass null.
  * @param {function} dispatchedActionsModificator Function that is called before comparing dispatched actions by action and tests.dispatchedActions. Gets tests.dispatchedActions as a parameter and can modify them.
  *                                                Used in store related actions to add STORE prefix to the action types.
+ * @param {string} storeName Name of the store used in actionTypes like [CASES, PLACES, ...]
  * @returns {function}
  */
 const testBatchRunner = (
@@ -35,7 +36,8 @@ const testBatchRunner = (
 	tests,
 	actions,
 	actionTypes,
-	dispatchedActionsModificator
+	dispatchedActionsModificator,
+	storeName
 ) => () => {
 	const storeHelpers = getStoreSet();
 
@@ -77,7 +79,8 @@ const testBatchRunner = (
 				assert.deepStrictEqual(
 					typeof test.dispatchedActionsModificator === 'function'
 						? test.dispatchedActionsModificator(
-								storeHelpers.getDispatchedActions()
+								storeHelpers.getDispatchedActions(),
+								storeName
 						  )
 						: storeHelpers.getDispatchedActions(),
 					typeof dispatchedActionsModificator === 'function'
@@ -97,7 +100,11 @@ const testBatchRunner = (
 export const getDispatchedActionsModificator = store => dispatchedActions => {
 	return dispatchedActions.map(action => ({
 		...action,
-		type: `${store}.${action.type}`,
+		// Do not modify action.type, whe action starts with "ERROR" or "COMMON"
+		type:
+			action.type === 'ERROR' || action.type.split('.')[0] === 'COMMON'
+				? action.type
+				: `${store}.${action.type}`,
 	}));
 };
 

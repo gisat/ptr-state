@@ -47,14 +47,18 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
+		}
 	};
 };
 
 const setActiveKeysAndEnsureDependencies = keys => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKeys(keys));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('period'));
+		}
 	};
 };
 

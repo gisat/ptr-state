@@ -32,6 +32,7 @@ import setActiveKeys from './setActiveKeys-test';
 import updateEdited from './updateEdited-test';
 import updateStore from './updateStore-test';
 import updateSubstateFromView from './updateSubstateFromView-test';
+import updateStateFromView from './updateStateFromView-test'; //common function is updateSubstateFromView, but in store is like updateStateFromView
 import useIndexed from './useIndexed-test';
 import useIndexedClear from './useIndexedClear-test';
 import useIndexedClearAll from './useIndexedClearAll-test';
@@ -69,6 +70,7 @@ const commonActionsTests = {
 	updateEdited,
 	updateStore,
 	updateSubstateFromView,
+	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
 	useIndexedClearAll,
@@ -76,7 +78,6 @@ const commonActionsTests = {
 	useKeys,
 	useKeysClear,
 };
-
 
 // If you uncomment test, then child tests could not be started from IDE
 // describe('Run all common actions', () => {
@@ -88,5 +89,201 @@ const commonActionsTests = {
 // 		testBatchRunner(dataType, categoryPath, tests, commonActions, actionTypes)
 // 	});
 // });
+
+//
+// temporary list of common action for some of stores
+//
+const cases = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
+	// 'add',
+	// 'create',
+	// 'delete',
+	// 'refreshUses',
+	// 'saveEdited',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'updateEdited',
+	// 'updateStateFromView',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+];
+const layertemplates = [
+	// 'add',
+	'clearIndex', //specific??
+	// 'create',
+	// 'delete',
+	// 'saveEdited',
+
+	// 'setActiveKey',
+
+	// 'updateEdited',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+
+	// to add
+	'refreshUses',
+
+	'setActiveKeys',
+
+	'updateStateFromView',
+];
+
+const periods = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
+	// 'add',
+	// 'create',
+	// 'delete',
+	// 'refreshUses',
+	// 'saveEdited',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'updateEdited',
+	// 'updateStateFromView',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+];
+
+const places = [
+	// 'add',
+	// 'create',
+	// 'delete',
+	// 'refreshUses',
+	// 'saveEdited',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'updateEdited',
+	// 'updateStateFromView',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+];
+
+const scenarios = [
+	// 'add',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'updateStateFromView',
+
+	// to add
+	'create',
+	'delete',
+
+	'useKeys',
+	'useKeysClear',
+	'refreshUses',
+	'useIndexed',
+	'useIndexedClear',
+
+	'saveEdited',
+	'updateEdited',
+];
+
+const scopes = [
+	// 'add',
+	// 'create',
+	// 'delete',
+
+	// 'refreshUses',
+
+	// 'saveEdited',
+	// 'setActiveKey',
+
+	// 'updateEdited',
+	// 'updateStateFromView',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+
+	// to add
+	'setActiveKeys',
+];
+
+const styles = [
+	// 'add',
+	// 'useIndexed',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'updateStateFromView',
+
+	// to add
+	'create',
+	'delete',
+
+	'refreshUses',
+	'useIndexedClear',
+
+	'saveEdited',
+	'updateEdited',
+];
+const tags = [
+	// 'create',
+	// 'delete',
+	// 'saveEdited',
+	// 'updateEdited',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'refreshUses',
+	// 'useIndexed',
+	// 'useIndexedClear',
+
+	// to add
+	'add',
+	'updateStateFromView',
+];
+
+const views = [
+	// 'add',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'create',
+	// 'delete',
+	// 'saveEdited',
+	// 'updateEdited',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'refreshUses',
+	// 'useIndexed',
+	// 'useIndexedClear',
+
+	// to add
+	'updateStateFromView',
+];
+
+export const EDIT_ACTIONS = [
+	'add',
+	'create',
+	'delete',
+	'saveEdited',
+	'updateEdited',
+];
+
+export const USE_ACTIONS = [
+	'useKeys',
+	'useKeysClear',
+	'refreshUses',
+	'useIndexed',
+	'useIndexedClear',
+];
+
+export const SETTING_ACTIVE_ACTIONS = ['setActiveKey', 'setActiveKeys'];
+
+export const RESTORE_STATE_ACTIONS = [
+	// 'updateSubstateFromView' //updateStateFromView
+	'updateStateFromView', //updateStateFromView
+];
 
 export default commonActionsTests;

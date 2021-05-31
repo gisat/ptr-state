@@ -72,9 +72,12 @@ const tests = [
 				data: options.body,
 			});
 		},
-		dispatchedActionsModificator: dispatchedActions => {
+		dispatchedActionsModificator: (dispatchedActions, storeName) => {
 			return dispatchedActions.map(action => {
-				if (action.type === 'MARK_DELETED') {
+				if (
+					action.type === 'MARK_DELETED' ||
+					action.type === `${storeName}.MARK_DELETED`
+				) {
 					// remove date from 'MARK_DLETED' action
 					// date is add inside action and can not be controlled
 					delete action.date;

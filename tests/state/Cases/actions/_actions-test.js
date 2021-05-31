@@ -1,4 +1,9 @@
-import commonActionsTests from '../../_common/actions/';
+import commonActionsTests, {
+	USE_ACTIONS,
+	EDIT_ACTIONS,
+	SETTING_ACTIVE_ACTIONS,
+	RESTORE_STATE_ACTIONS,
+} from '../../_common/actions/';
 import actions from '../../../../src/state/Cases/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,
@@ -6,11 +11,12 @@ import testBatchRunner, {
 } from '../../helpers';
 
 const actionNames = [
-	'useIndexed',
-	'useIndexedClear',
-	'useKeysClear',
-	'useKeys',
+	...USE_ACTIONS,
+	...EDIT_ACTIONS,
+	...SETTING_ACTIVE_ACTIONS,
+	...RESTORE_STATE_ACTIONS,
 ];
+
 const store = 'CASES';
 const dataType = 'cases';
 const categoryPath = 'metadata';
@@ -23,6 +29,7 @@ describe(
 		tests,
 		actions,
 		null,
-		getDispatchedActionsModificator(store)
+		getDispatchedActionsModificator(store),
+		store
 	)
 );

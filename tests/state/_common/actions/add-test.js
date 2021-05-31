@@ -12,7 +12,7 @@ const tests = [
 			if (actionTypes && options) {
 				action = actions.add(actionTypes);
 			} else {
-				action = actions.useIndexed;
+				action = actions.add;
 			}
 
 			return action('data', 'filter');
@@ -27,7 +27,7 @@ const tests = [
 			if (actionTypes && options) {
 				action = actions.add(actionTypes);
 			} else {
-				action = actions.useIndexed;
+				action = actions.add;
 			}
 
 			return action([{data: 'key1'}], 'filter');
