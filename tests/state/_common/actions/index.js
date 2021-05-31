@@ -117,14 +117,11 @@ const layertemplates = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-
 	// 'add',
 	// 'create',
 	// 'delete',
 	// 'saveEdited',
-
 	// 'setActiveKey',
-
 	// 'updateEdited',
 	// 'useIndexed',
 	// 'useIndexedClear',
@@ -179,6 +176,7 @@ const places = [
 ];
 
 const scenarios = [
+	//FIXME
 	// 'add',
 	// 'setActiveKey',
 	// 'setActiveKeys',
@@ -199,44 +197,46 @@ const scenarios = [
 ];
 
 const scopes = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'add',
 	// 'create',
 	// 'delete',
-
 	// 'refreshUses',
-
 	// 'saveEdited',
 	// 'setActiveKey',
-
 	// 'updateEdited',
 	// 'updateStateFromView',
 	// 'useIndexed',
 	// 'useIndexedClear',
 	// 'useKeys',
 	// 'useKeysClear',
-
-	// to add
-	'setActiveKeys',
+	// 'setActiveKeys',
 ];
 
 const styles = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'add',
 	// 'useIndexed',
 	// 'useKeys',
 	// 'useKeysClear',
 	// 'updateStateFromView',
-
+	// 'create',
+	// 'delete',
+	// 'refreshUses',
+	// 'useIndexedClear',
+	// 'saveEdited',
+	// 'updateEdited',
 	// to add
-	'create',
-	'delete',
-
-	'refreshUses',
-	'useIndexedClear',
-
-	'saveEdited',
-	'updateEdited',
 ];
 const tags = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'create',
 	// 'delete',
 	// 'saveEdited',
@@ -246,13 +246,15 @@ const tags = [
 	// 'refreshUses',
 	// 'useIndexed',
 	// 'useIndexedClear',
-
-	// to add
-	'add',
-	'updateStateFromView',
+	// 'add',
+	// 'updateStateFromView',
 ];
 
 const views = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'add',
 	// 'setActiveKey',
 	// 'setActiveKeys',
@@ -265,9 +267,7 @@ const views = [
 	// 'refreshUses',
 	// 'useIndexed',
 	// 'useIndexedClear',
-
-	// to add
-	'updateStateFromView',
+	// 'updateStateFromView',
 ];
 
 export const EDIT_ACTIONS = [

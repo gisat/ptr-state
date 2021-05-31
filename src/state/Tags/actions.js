@@ -4,7 +4,7 @@ import Select from '../Select';
 import common from '../_common/actions';
 
 // ============ creators ===========
-
+const add = common.add(ActionTypes.TAGS);
 const create = common.create(Select.tags.getSubstate, 'tags', ActionTypes.TAGS);
 const deleteItem = common.delete(
 	Select.tags.getSubstate,
@@ -37,12 +37,14 @@ const refreshUses = common.refreshUses(
 	`tags`,
 	ActionTypes.TAGS
 );
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.TAGS);
 
 // ============ actions ===========
 
 // ============ export ===========
 
 export default {
+	add,
 	create,
 	delete: deleteItem,
 	saveEdited,
@@ -52,4 +54,5 @@ export default {
 	refreshUses,
 	useIndexed,
 	useIndexedClear,
+	updateStateFromView,
 };

@@ -53,6 +53,8 @@ const refreshUses = common.refreshUses(
 	'views'
 );
 
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.VIEWS);
+
 // ============ actions ===========
 const apply = (key, actions) => {
 	return (dispatch, getState) => {
@@ -141,4 +143,5 @@ export default {
 	refreshUses,
 	useIndexed,
 	useIndexedClear,
+	updateStateFromView,
 };

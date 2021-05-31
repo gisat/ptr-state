@@ -6,6 +6,25 @@ import Select from '../Select';
 // ============ creators ===========
 
 const add = common.add(ActionTypes.STYLES);
+const create = common.create(
+	Select.styles.getSubstate,
+	'styles',
+	ActionTypes.STYLES
+);
+const deleteItem = common.delete(
+	Select.styles.getSubstate,
+	'styles',
+	ActionTypes.STYLES
+);
+const saveEdited = common.saveEdited(
+	Select.styles.getSubstate,
+	'styles',
+	ActionTypes.STYLES
+);
+const updateEdited = common.updateEdited(
+	Select.styles.getSubstate,
+	ActionTypes.STYLES
+);
 const useIndexed = common.useIndexed(
 	Select.styles.getSubstate,
 	'styles',
@@ -18,6 +37,13 @@ const useKeys = common.useKeys(
 );
 const useKeysClear = common.useKeysClear(ActionTypes.STYLES);
 const updateStateFromView = common.updateSubstateFromView(ActionTypes.STYLES);
+
+const useIndexedClear = common.useIndexedClear(ActionTypes.STYLES);
+const refreshUses = common.refreshUses(
+	Select.styles.getSubstate,
+	`styles`,
+	ActionTypes.STYLES
+);
 
 // ============ export ===========
 
@@ -33,9 +59,18 @@ const updateStateFromViewWithData = view => {
 
 export default {
 	add,
+	create,
+	delete: deleteItem,
+
+	refreshUses,
+
 	useIndexed,
+	useIndexedClear,
 	useKeys,
 	useKeysClear,
 	updateStateFromView,
 	updateStateFromViewWithData,
+
+	saveEdited,
+	updateEdited,
 };
