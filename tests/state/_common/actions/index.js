@@ -113,8 +113,12 @@ const cases = [
 	// 'useKeysClear',
 ];
 const layertemplates = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
+
 	// 'add',
-	'clearIndex', //specific??
 	// 'create',
 	// 'delete',
 	// 'saveEdited',
@@ -126,13 +130,12 @@ const layertemplates = [
 	// 'useIndexedClear',
 	// 'useKeys',
 	// 'useKeysClear',
+	// 'refreshUses',
+	// 'setActiveKeys',
+	// 'updateStateFromView',
 
-	// to add
-	'refreshUses',
-
-	'setActiveKeys',
-
-	'updateStateFromView',
+	// TODO
+	'clearIndex', //FIXME specific??
 ];
 
 const periods = [
@@ -156,6 +159,10 @@ const periods = [
 ];
 
 const places = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'add',
 	// 'create',
 	// 'delete',
@@ -277,6 +284,7 @@ export const USE_ACTIONS = [
 	'refreshUses',
 	'useIndexed',
 	'useIndexedClear',
+	//clearIndex
 ];
 
 export const SETTING_ACTIVE_ACTIONS = ['setActiveKey', 'setActiveKeys'];

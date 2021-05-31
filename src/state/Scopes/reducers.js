@@ -31,6 +31,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.markDeleted(state, action);
 		case ActionTypes.SCOPES.SET_ACTIVE_KEY:
 			return common.setActive(state, action);
+		case ActionTypes.SCOPES.SET_ACTIVE_KEYS:
+			return common.setActiveMultiple(state, action);
 		case ActionTypes.SCOPES.UPDATE_STORE:
 			return common.updateStore(state, action);
 		case ActionTypes.SCOPES.USE.INDEXED.REGISTER:
