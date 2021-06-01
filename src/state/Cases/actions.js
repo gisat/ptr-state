@@ -39,6 +39,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.CASES
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.CASES);
+const clearIndex = common.clearIndex(ActionTypes.CASES);
 const refreshUses = common.refreshUses(
 	Select.cases.getSubstate,
 	`cases`,
@@ -82,6 +83,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

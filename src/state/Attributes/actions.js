@@ -40,6 +40,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.ATTRIBUTES
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.ATTRIBUTES);
+const clearIndex = common.clearIndex(ActionTypes.ATTRIBUTES);
 const useKeys = common.useKeys(
 	Select.attributes.getSubstate,
 	'attributes',
@@ -86,6 +87,7 @@ export default {
 	updateStore,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

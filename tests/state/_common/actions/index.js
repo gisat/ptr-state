@@ -98,7 +98,7 @@ const attributes = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'updateStore', - FIXME specific?
+	'updateStore', //- FIXME specific?
 	// 'add',
 	// 'create',
 	// 'delete',
@@ -157,9 +157,7 @@ const layertemplates = [
 	// 'refreshUses',
 	// 'setActiveKeys',
 	// 'updateStateFromView',
-
-	// TODO
-	'clearIndex', //FIXME specific??
+	// 'clearIndex',
 ];
 
 const periods = [
@@ -314,7 +312,7 @@ export const USE_ACTIONS = [
 	'refreshUses',
 	'useIndexed',
 	'useIndexedClear',
-	//clearIndex
+	'clearIndex',
 ];
 
 export const SETTING_ACTIVE_ACTIONS = ['setActiveKey', 'setActiveKeys'];

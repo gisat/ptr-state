@@ -41,6 +41,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.SCENARIOS
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.SCENARIOS);
+const clearIndex = common.clearIndex(ActionTypes.SCENARIOS);
 const refreshUses = common.refreshUses(
 	Select.scenarios.getSubstate,
 	`scenarios`,
@@ -84,6 +85,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

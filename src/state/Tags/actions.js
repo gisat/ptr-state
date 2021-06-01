@@ -32,6 +32,7 @@ const useIndexed = common.useIndexed(
 	'tags',
 	ActionTypes.TAGS
 );
+const clearIndex = common.clearIndex(ActionTypes.TAGS);
 const refreshUses = common.refreshUses(
 	Select.tags.getSubstate,
 	`tags`,
@@ -54,5 +55,6 @@ export default {
 	refreshUses,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	updateStateFromView,
 };

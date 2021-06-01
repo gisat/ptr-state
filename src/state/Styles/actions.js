@@ -39,6 +39,7 @@ const useKeysClear = common.useKeysClear(ActionTypes.STYLES);
 const updateStateFromView = common.updateSubstateFromView(ActionTypes.STYLES);
 
 const useIndexedClear = common.useIndexedClear(ActionTypes.STYLES);
+const clearIndex = common.clearIndex(ActionTypes.STYLES);
 const refreshUses = common.refreshUses(
 	Select.styles.getSubstate,
 	`styles`,
@@ -66,6 +67,7 @@ export default {
 
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 	updateStateFromView,

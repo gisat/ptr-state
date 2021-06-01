@@ -39,6 +39,7 @@ const useIndexed = common.useIndexed(
 	'scopes',
 	ActionTypes.SCOPES
 );
+const clearIndex = common.clearIndex(ActionTypes.SCOPES);
 const refreshUses = common.refreshUses(
 	Select.scopes.getSubstate,
 	`scopes`,
@@ -98,6 +99,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

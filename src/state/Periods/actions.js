@@ -39,6 +39,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.PERIODS
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.PERIODS);
+const clearIndex = common.clearIndex(ActionTypes.PERIODS);
 const refreshUses = common.refreshUses(
 	Select.periods.getSubstate,
 	`periods`,
@@ -81,6 +82,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

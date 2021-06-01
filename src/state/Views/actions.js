@@ -46,6 +46,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.VIEWS,
 	'views'
 );
+const clearIndex = common.clearIndex(ActionTypes.VIEWS);
 const refreshUses = common.refreshUses(
 	Select.views.getSubstate,
 	`views`,
@@ -143,5 +144,6 @@ export default {
 	refreshUses,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	updateStateFromView,
 };

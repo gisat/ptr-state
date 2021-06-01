@@ -34,6 +34,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.PLACES
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.PLACES);
+const clearIndex = common.clearIndex(ActionTypes.PLACES);
 const useKeys = common.useKeys(
 	Select.places.getSubstate,
 	'places',
@@ -79,6 +80,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };
