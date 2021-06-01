@@ -94,11 +94,22 @@ const commonActionsTests = {
 // temporary list of common action for some of stores
 //
 
-// stores without revision
-// App
-// Areas
-// Components
-// Data
+const areasAreaTreeLevels = [
+	// 'refreshUses',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'setActiveKey',
+];
+
+const areasAreaTrees = [
+	// 'refreshUses',
+	// 'useIndexed',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'setActiveKey',
+];
 
 const layerTrees = [
 	// ...EDIT_ACTIONS,
@@ -111,7 +122,13 @@ const attributes = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	'updateStore', //- FIXME specific?
+	// 'updateStore',
+];
+
+const components = [
+	// 'updateStore',
+	// 'set',
+	// 'update',
 ];
 
 const attributeSets = [
@@ -143,6 +160,12 @@ const places = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
+];
+
+const selection = [
+	// 'add',
+	// 'setActiveKey',
+	// 'updateStateFromView'
 ];
 
 const scenarios = [

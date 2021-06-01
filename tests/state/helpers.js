@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import getStoreSet from '../store';
 import {resetFetch, setFetch} from '../../src/state/_common/request';
+import {set as _set} from 'lodash';
 
 /**
  * Returns empty state
@@ -28,6 +29,7 @@ const defaultGetState = () => ({});
  * @param {function} dispatchedActionsModificator Function that is called before comparing dispatched actions by action and tests.dispatchedActions. Gets tests.dispatchedActions as a parameter and can modify them.
  *                                                Used in store related actions to add STORE prefix to the action types.
  * @param {string} storeName Name of the store used in actionTypes like [CASES, PLACES, ...]
+ * @param {string} storePath Optional definition of where store is. Store path is by default same like dataType. Use this variable if store is nested. Path defined as a string. Particular substores are separated by [.] `[substore].[substore].[substore]`
  * @returns {function}
  */
 const testBatchRunner = (
@@ -37,7 +39,8 @@ const testBatchRunner = (
 	actions,
 	actionTypes,
 	dispatchedActionsModificator,
-	storeName
+	storeName,
+	storePath
 ) => () => {
 	const storeHelpers = getStoreSet();
 
@@ -50,10 +53,10 @@ const testBatchRunner = (
 		it(test.name, () => {
 			const store =
 				typeof test.getStore === 'function' ? test.getStore() : null;
-
+			storePath = storePath || dataType;
 			const getState =
 				typeof test.getState === 'function'
-					? test.getState(dataType, store)
+					? test.getState(dataType, store, storePath)
 					: defaultGetState;
 			const dispatch = store
 				? storeHelpers.getDispatch(getState, store.dispatch)
@@ -118,6 +121,17 @@ export const getTestsByActionName = (actionNames, actionsTests) => {
 	return actionNames.reduce((acc, actionName) => {
 		return [...acc, ...actionsTests[actionName]];
 	}, []);
+};
+
+/**
+ * Save substore on given path to the store object
+ * @param {Object} store Store object which will be extendet
+ * @param {String} path Path defined as a string. Particular substores are separated by [.] `[substore].[substore].[substore]`
+ * @param {Object} subStore Object of store
+ * @returns {Object}
+ */
+export const extendStoreOnPath = (store, path, subStore) => {
+	return _set(store, path, subStore);
 };
 
 export default testBatchRunner;

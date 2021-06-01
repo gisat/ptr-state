@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import slash from 'slash';
 import commonActions from '../../../../src/state/_common/actions';
-import testBatchRunner from '../../helpers';
+import testBatchRunner, {extendStoreOnPath} from '../../helpers';
 import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
@@ -25,20 +25,23 @@ const tests = [
 				return dispatch(action(keys, componentId));
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			[dataType]: {
+			};
+			const storeState = {
 				byKey: {
 					k2: {key: 'k2'},
 				},
-			},
-		}),
+			};
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,
@@ -107,21 +110,26 @@ const tests = [
 				return dispatch(action(keys, componentId));
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			[dataType]: {
+			};
+
+			const storeState = {
 				byKey: {
 					k1: {key: 'k1'},
 					k2: {key: 'k2'},
 				},
-			},
-		}),
+			};
+
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {},
 		dispatchedActions: [
 			{

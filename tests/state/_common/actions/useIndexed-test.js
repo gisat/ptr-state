@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import slash from 'slash';
 import commonActions from '../../../../src/state/_common/actions';
-import testBatchRunner from '../../helpers';
+import testBatchRunner, {extendStoreOnPath} from '../../helpers';
 import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
@@ -27,20 +27,23 @@ const tests = [
 				);
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			attributes: {activeKey: 'k1'},
-			[dataType]: {activeKey: 'k1'},
-			periods: {activeKey: 'k1'},
-			places: {activeKey: 'k1'},
-			cases: {},
-		}),
+				attributes: {activeKey: 'k1'},
+				periods: {activeKey: 'k1'},
+				places: {activeKey: 'k1'},
+				cases: {},
+			};
+			const storeState = {activeKey: 'k1'};
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,

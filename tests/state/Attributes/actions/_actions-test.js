@@ -15,6 +15,7 @@ const actionNames = [
 	...EDIT_ACTIONS,
 	...SETTING_ACTIVE_ACTIONS,
 	...RESTORE_STATE_ACTIONS,
+	'updateStore',
 ];
 
 const store = 'ATTRIBUTES';
