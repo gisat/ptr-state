@@ -1,28 +1,22 @@
 import commonActionsTests, {
 	USE_ACTIONS,
 	EDIT_ACTIONS,
-	SETTING_ACTIVE_ACTIONS,
 	RESTORE_STATE_ACTIONS,
 } from '../../_common/actions/';
-import actions from '../../../../src/state/Attributes/actions';
+import actions from '../../../../src/state/LayerTrees/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,
 	getTestsByActionName,
 } from '../../helpers';
 
-const actionNames = [
-	...USE_ACTIONS,
-	...EDIT_ACTIONS,
-	...SETTING_ACTIVE_ACTIONS,
-	...RESTORE_STATE_ACTIONS,
-];
+const actionNames = [...EDIT_ACTIONS, ...USE_ACTIONS, ...RESTORE_STATE_ACTIONS];
 
-const store = 'ATTRIBUTES';
-const dataType = 'attributes';
-const categoryPath = 'metadata';
+const store = 'LAYER_TREES';
+const dataType = 'layerTrees';
+const categoryPath = 'applications';
 const tests = getTestsByActionName(actionNames, commonActionsTests);
 describe(
-	'common ATTRIBUTES actions',
+	'common LAYER_TREES actions',
 	testBatchRunner(
 		dataType,
 		categoryPath,
@@ -34,4 +28,4 @@ describe(
 	)
 );
 
-// TODO updateStore
+// TODO ensureData

@@ -4,7 +4,7 @@ import Select from '../Select';
 import common from '../_common/actions';
 
 // ============ creators ===========
-
+const add = common.add(ActionTypes.LAYER_TREES);
 const create = common.create(
 	Select.layerTrees.getSubstate,
 	'layerTrees',
@@ -35,6 +35,7 @@ const useKeys = common.useKeys(
 );
 const useKeysClear = common.useKeysClear(ActionTypes.LAYER_TREES);
 const useIndexedClear = common.useIndexedClear(ActionTypes.LAYER_TREES);
+const clearIndex = common.clearIndex(ActionTypes.LAYER_TREES);
 const useIndexed = common.useIndexed(
 	Select.layerTrees.getSubstate,
 	'layerTrees',
@@ -61,6 +62,7 @@ function ensureData(filter, componentId) {
 // ============ export ===========
 
 export default {
+	add,
 	create,
 	delete: deleteItem,
 
@@ -69,11 +71,12 @@ export default {
 	refreshUses,
 
 	saveEdited,
-
 	updateEdited,
+
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

@@ -93,31 +93,29 @@ const commonActionsTests = {
 //
 // temporary list of common action for some of stores
 //
+
+// stores without revision
+// App
+// Areas
+// Components
+// Data
+
+const layerTrees = [
+	// ...EDIT_ACTIONS,
+	// ...USE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
+];
+
 const attributes = [
 	// ...USE_ACTIONS,
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
 	'updateStore', //- FIXME specific?
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'updateEdited',
-	// 'updateStateFromView',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
 ];
 
 const attributeSets = [
 	// ...SETTING_ACTIVE_ACTIONS,
-	// 'setActiveKey',
-	// 'setActiveKeys',]
 ];
 
 const cases = [
@@ -125,39 +123,12 @@ const cases = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'updateEdited',
-	// 'updateStateFromView',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
 ];
 const layertemplates = [
 	// ...USE_ACTIONS,
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'updateEdited',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'refreshUses',
-	// 'setActiveKeys',
-	// 'updateStateFromView',
-	// 'clearIndex',
 ];
 
 const periods = [
@@ -165,19 +136,6 @@ const periods = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'updateEdited',
-	// 'updateStateFromView',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
 ];
 
 const places = [
@@ -185,19 +143,6 @@ const places = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'updateEdited',
-	// 'updateStateFromView',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
 ];
 
 const scenarios = [
@@ -205,19 +150,6 @@ const scenarios = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'updateStateFromView',
-	// 'create',
-	// 'delete',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'refreshUses',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'saveEdited',
-	// 'updateEdited',
 ];
 
 const scopes = [
@@ -225,53 +157,17 @@ const scopes = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'saveEdited',
-	// 'setActiveKey',
-	// 'updateEdited',
-	// 'updateStateFromView',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'setActiveKeys',
 ];
 
 const styles = [
 	// ...USE_ACTIONS,
 	// ...EDIT_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'useIndexed',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'updateStateFromView',
-	// 'create',
-	// 'delete',
-	// 'refreshUses',
-	// 'useIndexedClear',
-	// 'saveEdited',
-	// 'updateEdited',
-	// to add
 ];
 const tags = [
 	// ...USE_ACTIONS,
 	// ...EDIT_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'create',
-	// 'delete',
-	// 'saveEdited',
-	// 'updateEdited',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'refreshUses',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'add',
-	// 'updateStateFromView',
 ];
 
 const views = [
@@ -279,19 +175,6 @@ const views = [
 	// ...EDIT_ACTIONS,
 	// ...SETTING_ACTIVE_ACTIONS,
 	// ...RESTORE_STATE_ACTIONS,
-	// 'add',
-	// 'setActiveKey',
-	// 'setActiveKeys',
-	// 'create',
-	// 'delete',
-	// 'saveEdited',
-	// 'updateEdited',
-	// 'useKeys',
-	// 'useKeysClear',
-	// 'refreshUses',
-	// 'useIndexed',
-	// 'useIndexedClear',
-	// 'updateStateFromView',
 ];
 
 const users = [
@@ -318,7 +201,6 @@ export const USE_ACTIONS = [
 export const SETTING_ACTIVE_ACTIONS = ['setActiveKey', 'setActiveKeys'];
 
 export const RESTORE_STATE_ACTIONS = [
-	// 'updateSubstateFromView' //updateStateFromView
 	'updateStateFromView', //updateStateFromView
 ];
 
