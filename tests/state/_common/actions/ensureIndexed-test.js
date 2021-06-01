@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import slash from 'slash';
 import commonActions from '../../../../src/state/_common/actions';
-import testBatchRunner from '../../helpers';
+import testBatchRunner, {extendStoreOnPath} from '../../helpers';
 import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
@@ -13,29 +13,35 @@ const tests = [
 				const order = 'asc';
 				const start = 1;
 				const length = 5;
-				const action = actions.ensureIndexed(
-					options.getSubstate,
-					options.dataType,
-					filter,
-					order,
-					start,
-					length,
-					actionTypes,
-					options.categoryPath
-				);
 
-				return dispatch(action);
+				// for common testing
+				if (actionTypes && options) {
+					return actions.ensureIndexed(
+						options.getSubstate,
+						options.dataType,
+						filter,
+						order,
+						start,
+						length,
+						actionTypes,
+						options.categoryPath
+					);
+				} else {
+					return actions.ensureIndexed(filter, order, start, length);
+				}
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			[dataType]: {
+			};
+			const storeState = {
 				indexes: [
 					{
 						filter: {name: 'fil'},
@@ -45,8 +51,9 @@ const tests = [
 						index: {1: 'k1', 2: 'k2', 3: 'k3', 4: 'k4', 5: 'k5'},
 					},
 				],
-			},
-		}),
+			};
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			// assert.strictEqual(
 			// 	`http://localhost/rest/${categoryPath}/filtered/${dataType}`,
@@ -63,29 +70,35 @@ const tests = [
 				const order = 'asc';
 				const start = 1;
 				const length = 5;
-				const action = actions.ensureIndexed(
-					options.getSubstate,
-					options.dataType,
-					filter,
-					order,
-					start,
-					length,
-					actionTypes,
-					options.categoryPath
-				);
-
-				return dispatch(action);
+				// for common testing
+				if (actionTypes && options) {
+					return actions.ensureIndexed(
+						options.getSubstate,
+						options.dataType,
+						filter,
+						order,
+						start,
+						length,
+						actionTypes,
+						options.categoryPath
+					);
+				} else {
+					return actions.ensureIndexed(filter, order, start, length);
+				}
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			[dataType]: {
+			};
+
+			const storeState = {
 				indexes: [
 					{
 						filter: {name: 'fil'},
@@ -95,8 +108,9 @@ const tests = [
 						index: {1: null, 2: 'k1', 3: 'k2', 4: 'k3'},
 					},
 				],
-			},
-		}),
+			};
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,
@@ -166,30 +180,38 @@ const tests = [
 				const order = 'asc';
 				const start = 1;
 				const length = 5;
-				const action = actions.ensureIndexed(
-					options.getSubstate,
-					options.dataType,
-					filter,
-					order,
-					start,
-					length,
-					actionTypes,
-					options.categoryPath
-				);
-
-				return dispatch(action);
+				// for common testing
+				if (actionTypes && options) {
+					return actions.ensureIndexed(
+						options.getSubstate,
+						options.dataType,
+						filter,
+						order,
+						start,
+						length,
+						actionTypes,
+						options.categoryPath
+					);
+				} else {
+					return actions.ensureIndexed(filter, order, start, length);
+				}
 			};
 		},
-		getState: dataType => () => ({
-			app: {
-				localConfiguration: {
-					apiBackendProtocol: 'http',
-					apiBackendHost: 'localhost',
-					apiBackendPath: '',
+		getState: (dataType, store, storePath) => () => {
+			const baseState = {
+				app: {
+					localConfiguration: {
+						apiBackendProtocol: 'http',
+						apiBackendHost: 'localhost',
+						apiBackendPath: '',
+					},
 				},
-			},
-			[dataType]: {},
-		}),
+			};
+
+			const storeState = {};
+
+			return extendStoreOnPath(baseState, storePath, storeState);
+		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
 				`http://localhost/rest/${categoryPath}/filtered/${dataType}`,

@@ -62,7 +62,7 @@ const testBatchRunner = (
 				? storeHelpers.getDispatch(getState, store.dispatch)
 				: storeHelpers.getDispatch(getState);
 			const options = {
-				getSubstate: state => state[dataType],
+				getSubstate: state => state[storePath],
 				dataType,
 				categoryPath,
 			};

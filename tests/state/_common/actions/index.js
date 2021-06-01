@@ -94,7 +94,16 @@ const commonActionsTests = {
 // temporary list of common action for some of stores
 //
 
-const areasAreaTreeLevels = [
+const AreaRelations = [
+	//OK
+	// 'add',
+	// 'useIndexedRegister',
+	// 'useIndexedClearAll',
+	// 'ensureIndexed',
+];
+
+const AreasAreaTreeLevels = [
+	//OK
 	// 'refreshUses',
 	// 'useIndexed',
 	// 'useIndexedClear',
@@ -103,7 +112,8 @@ const areasAreaTreeLevels = [
 	// 'setActiveKey',
 ];
 
-const areasAreaTrees = [
+const AreasAreaTrees = [
+	//OK
 	// 'refreshUses',
 	// 'useIndexed',
 	// 'useKeys',
