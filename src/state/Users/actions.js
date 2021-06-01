@@ -358,5 +358,4 @@ export default {
 	useIndexedGroups,
 	useIndexedUsersClear: actionClearUsersUseIndexed,
 	useIndexedGroupsClear: actionClearGroupsUseIndexed,
-	// update: update
 };
