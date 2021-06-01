@@ -93,6 +93,33 @@ const commonActionsTests = {
 //
 // temporary list of common action for some of stores
 //
+const attributes = [
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
+	// 'updateStore', - FIXME specific?
+	// 'add',
+	// 'create',
+	// 'delete',
+	// 'refreshUses',
+	// 'saveEdited',
+	// 'setActiveKey',
+	// 'setActiveKeys',
+	// 'updateEdited',
+	// 'updateStateFromView',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'useKeys',
+	// 'useKeysClear',
+];
+
+const attributeSets = [
+	// ...SETTING_ACTIVE_ACTIONS,
+	// 'setActiveKey',
+	// 'setActiveKeys',]
+];
+
 const cases = [
 	// ...USE_ACTIONS,
 	// ...EDIT_ACTIONS,
@@ -176,24 +203,23 @@ const places = [
 ];
 
 const scenarios = [
-	//FIXME
+	// ...USE_ACTIONS,
+	// ...EDIT_ACTIONS,
+	// ...SETTING_ACTIVE_ACTIONS,
+	// ...RESTORE_STATE_ACTIONS,
 	// 'add',
 	// 'setActiveKey',
 	// 'setActiveKeys',
 	// 'updateStateFromView',
-
-	// to add
-	'create',
-	'delete',
-
-	'useKeys',
-	'useKeysClear',
-	'refreshUses',
-	'useIndexed',
-	'useIndexedClear',
-
-	'saveEdited',
-	'updateEdited',
+	// 'create',
+	// 'delete',
+	// 'useKeys',
+	// 'useKeysClear',
+	// 'refreshUses',
+	// 'useIndexed',
+	// 'useIndexedClear',
+	// 'saveEdited',
+	// 'updateEdited',
 ];
 
 const scopes = [
@@ -268,6 +294,10 @@ const views = [
 	// 'useIndexed',
 	// 'useIndexedClear',
 	// 'updateStateFromView',
+];
+
+const users = [
+	// ...EDIT_ACTIONS
 ];
 
 export const EDIT_ACTIONS = [

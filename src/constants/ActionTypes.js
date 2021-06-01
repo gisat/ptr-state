@@ -666,6 +666,14 @@ export default utils.deepKeyMirror({
 	USERS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
+		DELETE: null,
+		MARK_DELETED: null,
+		EDITED: {
+			REMOVE: null,
+			REMOVE_PROPERTY: null,
+			UPDATE: null,
+			REMOVE_ACTIVE: null,
+		},
 		GROUPS: {
 			ADD: null,
 			ADD_UNRECEIVED: null,
@@ -694,6 +702,7 @@ export default utils.deepKeyMirror({
 		INDEX: {
 			ADD: null,
 			CLEAR_ALL: null,
+			CLEAR_INDEX: null,
 		},
 		USE: {
 			INDEXED: {

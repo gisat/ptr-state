@@ -6,7 +6,7 @@ import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
 	{
-		name: 'Missing keys',
+		name: 'Create index',
 		action: (actions, actionTypes, options) => {
 			return (dispatch, getState) => {
 				let action;

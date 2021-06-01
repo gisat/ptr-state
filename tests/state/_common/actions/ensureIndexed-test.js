@@ -56,7 +56,7 @@ const tests = [
 		dispatchedActions: [],
 	},
 	{
-		name: 'Missing keys',
+		name: 'Add index',
 		action: (actions, actionTypes, options) => {
 			return (dispatch, getState) => {
 				const filter = {name: 'fil'};

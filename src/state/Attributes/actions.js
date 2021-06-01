@@ -3,6 +3,7 @@ import common from '../_common/actions';
 import Select from '../Select';
 
 // ============ creators ===========
+const add = common.add(ActionTypes.ATTRIBUTES);
 const create = common.create(
 	Select.attributes.getSubstate,
 	'attributes',
@@ -52,20 +53,25 @@ const updateStateFromView = common.updateSubstateFromView(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+		}
 	};
 };
 
 const setActiveKeysAndEnsureDependencies = keys => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKeys(keys));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('attribute'));
+		}
 	};
 };
 
 // ============ export ===========
 
 export default {
+	add,
 	create,
 	delete: deleteItem,
 	updateStateFromView,
