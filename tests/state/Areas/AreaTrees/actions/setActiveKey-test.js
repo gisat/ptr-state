@@ -1,4 +1,4 @@
-import componentsActions from '../../../../../src/state/Areas/AreaTrees/actions';
+import actions from '../../../../../src/state/Areas/AreaTrees/actions';
 import testBatchRunner from '../../../helpers';
 import {commonActionTypesObj as actionTypes} from '../../../../constants';
 
@@ -16,7 +16,7 @@ const dataType = 'areaTree';
 const categoryPath = 'metadata';
 describe(
 	'state/Areas/AreaTrees/actions',
-	testBatchRunner(dataType, categoryPath, tests, componentsActions, actionTypes)
+	testBatchRunner(dataType, categoryPath, tests, actions, actionTypes)
 );
 
 export default tests;

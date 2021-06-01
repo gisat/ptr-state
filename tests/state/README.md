@@ -3,7 +3,13 @@
 //
 
 const App = [
-// TODO
+// OK
+// 'add',
+// 'setKey',
+// 'updateLocalConfiguration',
+// 'setBaseUrl',
+// 'setLocalConfiguration',
+// 'loadConfiguration',
 ]
 const AreaRelations = [
 // OK
@@ -124,11 +130,10 @@ const selection = [
 // 'setActiveKey',
 // 'updateStateFromView'
 
-    // FIXME - add tests
-    // 'clearFeatureKeysFilter',
-    // 'setActiveSelectionFeatureKeysFilterKeys',
-    // 'updateStateFromViewWithData',
-
+// FIXME - add tests
+// 'clearFeatureKeysFilter',
+// 'setActiveSelectionFeatureKeysFilterKeys',
+// 'updateStateFromViewWithData',
 ];
 
 const styles = [
@@ -149,18 +154,17 @@ const tags = [
 const users = [
 // ...EDIT_ACTIONS
 
-    // FIXME - add tests
-    // 'apiLoadCurrentUser',
-    // 'apiLoginUser',
-    // 'apiLogoutUser',
-    // 'refreshUses',
-    // 'useKeys',
-    // 'useKeysClear',
-    // 'useIndexedUsers',
-    // 'useIndexedGroups',
-    // 'useIndexedUsersClear',
-    // 'useIndexedGroupsClear',
-
+// FIXME - add tests
+// 'apiLoadCurrentUser',
+// 'apiLoginUser',
+// 'apiLogoutUser',
+// 'refreshUses',
+// 'useKeys',
+// 'useKeysClear',
+// 'useIndexedUsers',
+// 'useIndexedGroups',
+// 'useIndexedUsersClear',
+// 'useIndexedGroupsClear',
 ];
 
 const views = [
@@ -168,17 +172,16 @@ const views = [
 // ...EDIT_ACTIONS,
 // ...SETTING_ACTIVE_ACTIONS,
 // ...RESTORE_STATE_ACTIONS,
+
 // FIXME - add tests
 // apply,
 // applyAndSetActive,
 ];
 
 const windows = [
+// FIXME - add tests
 // 'addOrOpen',
 // 'remove',
 // 'topWindow',
 // 'updateSettings',
 ]
-//
-// END of tests list
-//
