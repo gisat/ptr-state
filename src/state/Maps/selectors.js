@@ -732,28 +732,30 @@ const getFinalLayerByDataSourceAndLayerState = createRecomputeSelector(
 			} else if (type === 'tiledVector' || type === 'tiled-vector') {
 				const view = getViewByMapKeyObserver(mapKey);
 				const viewport = getViewportByMapKeyObserver(mapKey);
-				const tileList = selectorHelpers.getTiles(
-					viewport.width,
-					viewport.height,
-					view.center,
-					view.boxRange
-				);
-				const level = selectorHelpers.getZoomLevel(
-					viewport.width,
-					viewport.height,
-					view.boxRange
-				);
-				tiles = DataSelectors.getTiles(
-					spatialDataSource.key,
-					fidColumnName,
-					level,
-					tileList,
-					spatialRelationsFilter,
-					attributeRelationsFilter,
-					attributeDataSourceKeyAttributeKeyPairs,
-					styleKey,
-					attributeDataFilter
-				);
+				if (viewport) {
+					const tileList = selectorHelpers.getTiles(
+						viewport.width,
+						viewport.height,
+						view.center,
+						view.boxRange
+					);
+					const level = selectorHelpers.getZoomLevel(
+						viewport.width,
+						viewport.height,
+						view.boxRange
+					);
+					tiles = DataSelectors.getTiles(
+						spatialDataSource.key,
+						fidColumnName,
+						level,
+						tileList,
+						spatialRelationsFilter,
+						attributeRelationsFilter,
+						attributeDataSourceKeyAttributeKeyPairs,
+						styleKey,
+						attributeDataFilter
+					);
+				}
 			}
 
 			let selected = null;

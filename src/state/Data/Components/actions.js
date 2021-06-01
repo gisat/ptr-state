@@ -41,7 +41,7 @@ function updateComponent(componentKey, update) {
 
 		dispatch(
 			actionAddOrReplaceComponents({
-				[componentKey]: _merge(componentState, update),
+				[componentKey]: _merge({}, componentState, update),
 			})
 		);
 	};
