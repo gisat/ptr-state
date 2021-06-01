@@ -25,7 +25,9 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('areaTreeLevel'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('areaTreeLevel'));
+		}
 	};
 };
 

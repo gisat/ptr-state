@@ -8,7 +8,9 @@ const tests = [
 		action: (actions, actionTypes) => {
 			return actions.setActiveKey('k1');
 		},
-		dispatchedActions: [{type: 'AREAS.AREA_TREES.SET_ACTIVE_KEY', key: 'k1'}],
+		dispatchedActions: [
+			{type: 'AREAS.AREA_TREE_LEVELS.SET_ACTIVE_KEY', key: 'k1'},
+		],
 	},
 ];
 
