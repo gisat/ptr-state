@@ -1,8 +1,5 @@
 import commonActionsTests, {
-	USE_ACTIONS,
-	EDIT_ACTIONS,
-	SETTING_ACTIVE_ACTIONS,
-	RESTORE_STATE_ACTIONS,
+	SETTING_ACTIVE_KEYS_ACTIONS,
 } from '../../_common/actions/';
 import actions from '../../../../src/state/AttributeSets/actions';
 import testBatchRunner, {
@@ -10,7 +7,7 @@ import testBatchRunner, {
 	getTestsByActionName,
 } from '../../helpers';
 
-const actionNames = [...SETTING_ACTIVE_ACTIONS];
+const actionNames = [...SETTING_ACTIVE_KEYS_ACTIONS];
 
 const store = 'ATTRIBUTE_SETS';
 const dataType = 'attributeSets';

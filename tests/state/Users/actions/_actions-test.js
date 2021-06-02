@@ -1,9 +1,4 @@
-import commonActionsTests, {
-	USE_ACTIONS,
-	EDIT_ACTIONS,
-	SETTING_ACTIVE_ACTIONS,
-	RESTORE_STATE_ACTIONS,
-} from '../../_common/actions/';
+import commonActionsTests, {EDIT_ACTIONS} from '../../_common/actions/';
 import actions from '../../../../src/state/Users/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,

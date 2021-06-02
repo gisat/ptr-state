@@ -1,4 +1,6 @@
-import commonActionsTests from '../../../_common/actions/';
+import commonActionsTests, {
+	SETTING_ACTIVE_KEY_ACTIONS,
+} from '../../../_common/actions/';
 import actions from '../../../../../src/state/Areas/AreaTrees/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,
@@ -6,12 +8,12 @@ import testBatchRunner, {
 } from '../../../helpers';
 
 const actionNames = [
+	SETTING_ACTIVE_KEY_ACTIONS,
 	'refreshUses',
 	'useIndexed',
 	'useIndexedClear',
 	'useKeys',
 	'useKeysClear',
-	'setActiveKey',
 ];
 
 const store = 'AREAS.AREA_TREES';

@@ -21,43 +21,43 @@ const AreaRelations = [
 
 const AreasAreaTreeLevels = [
 // OK
+// SETTING_ACTIVE_KEY_ACTIONS
 // 'refreshUses',
 // 'useIndexed',
 // 'useIndexedClear',
 // 'useKeys',
 // 'useKeysClear',
-// 'setActiveKey',
 ];
 
 const AreasAreaTrees = [
 // OK
+// SETTING_ACTIVE_KEY_ACTIONS
 // 'refreshUses',
 // 'useIndexed',
 // 'useKeys',
 // 'useKeysClear',
-// 'setActiveKey',
 ];
 
 const attributes = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 // 'updateStore',
 ];
 
 const attributeSets = [
 // OK
-// ...SETTING_ACTIVE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
 ];
 
 const cases = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const components = [
@@ -76,14 +76,14 @@ const layertemplates = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const layerTrees = [
 // ...EDIT_ACTIONS,
 // ...USE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKey,
 // FIXME - add tests
 // 'ensureData'
 ];
@@ -97,37 +97,37 @@ const periods = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const places = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const scenarios = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEYS_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const scopes = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEY_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKey,
 ];
 
 const selection = [
+// SETTING_ACTIVE_KEY_ACTIONS
 // 'add',
-// 'setActiveKey',
 // 'updateStateFromView'
 
 // FIXME - add tests
@@ -139,7 +139,7 @@ const selection = [
 const styles = [
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKey,
 // FIXME - add tests
 // 'updateStateFromViewWithData',
 ];
@@ -148,7 +148,7 @@ const tags = [
 // OK
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKey,
 ];
 
 const users = [
@@ -170,8 +170,8 @@ const users = [
 const views = [
 // ...USE_ACTIONS,
 // ...EDIT_ACTIONS,
-// ...SETTING_ACTIVE_ACTIONS,
-// ...RESTORE_STATE_ACTIONS,
+// ...SETTING_ACTIVE_KEY_ACTIONS,
+// ...RESTORE_STATE_ACTIONS.withSetActiveKey,
 
 // FIXME - add tests
 // apply,

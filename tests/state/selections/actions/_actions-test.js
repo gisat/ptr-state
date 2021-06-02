@@ -1,11 +1,17 @@
-import commonActionsTests from '../../_common/actions/';
+import commonActionsTests, {
+	SETTING_ACTIVE_KEY_ACTIONS,
+} from '../../_common/actions/';
 import actions from '../../../../src/state/Selections/actions';
 import testBatchRunner, {
 	getDispatchedActionsModificator,
 	getTestsByActionName,
 } from '../../helpers';
 
-const actionNames = ['add', 'setActiveKey', 'updateStateFromView'];
+const actionNames = [
+	...SETTING_ACTIVE_KEY_ACTIONS,
+	'add',
+	'updateStateFromView_setActiveKey',
+];
 
 const store = 'SELECTIONS';
 const dataType = 'selections';

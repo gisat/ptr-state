@@ -1,7 +1,7 @@
 import commonActionsTests, {
 	USE_ACTIONS,
 	EDIT_ACTIONS,
-	SETTING_ACTIVE_ACTIONS,
+	SETTING_ACTIVE_KEYS_ACTIONS,
 	RESTORE_STATE_ACTIONS,
 } from '../../_common/actions/';
 import actions from '../../../../src/state/Periods/actions';
@@ -13,8 +13,8 @@ import testBatchRunner, {
 const actionNames = [
 	...USE_ACTIONS,
 	...EDIT_ACTIONS,
-	...SETTING_ACTIVE_ACTIONS,
-	...RESTORE_STATE_ACTIONS,
+	...SETTING_ACTIVE_KEYS_ACTIONS,
+	...RESTORE_STATE_ACTIONS.withSetActiveKeys,
 ];
 
 const store = 'PERIODS';

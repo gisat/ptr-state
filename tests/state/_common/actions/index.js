@@ -31,8 +31,8 @@ import setActiveKey from './setActiveKey-test';
 import setActiveKeys from './setActiveKeys-test';
 import updateEdited from './updateEdited-test';
 import updateStore from './updateStore-test';
-import updateSubstateFromView from './updateSubstateFromView-test';
-import updateStateFromView from './updateStateFromView-test'; //common function is updateSubstateFromView, but in store is like updateStateFromView
+import updateStateFromView_setActiveKey from './updateStateFromView/setActiveKey-test'; //common function is updateSubstateFromView, but in store is like updateStateFromView
+import updateStateFromView_setActiveKeys from './updateStateFromView/setActiveKeys-test'; //common function is updateSubstateFromView, but in store is like updateStateFromView
 import useIndexed from './useIndexed-test';
 import useIndexedClear from './useIndexedClear-test';
 import useIndexedClearAll from './useIndexedClearAll-test';
@@ -69,8 +69,8 @@ const commonActionsTests = {
 	setActiveKeys,
 	updateEdited,
 	updateStore,
-	updateSubstateFromView,
-	updateStateFromView,
+	updateStateFromView_setActiveKey,
+	updateStateFromView_setActiveKeys,
 	useIndexed,
 	useIndexedClear,
 	useIndexedClearAll,
@@ -107,10 +107,11 @@ export const USE_ACTIONS = [
 	'clearIndex',
 ];
 
-export const SETTING_ACTIVE_ACTIONS = ['setActiveKey', 'setActiveKeys'];
+export const SETTING_ACTIVE_KEY_ACTIONS = ['setActiveKey'];
+export const SETTING_ACTIVE_KEYS_ACTIONS = ['setActiveKey', 'setActiveKeys'];
 
-export const RESTORE_STATE_ACTIONS = [
-	'updateStateFromView', //updateStateFromView
-];
-
+export const RESTORE_STATE_ACTIONS = {
+	withSetActiveKey: ['updateStateFromView_setActiveKey'],
+	withSetActiveKeys: ['updateStateFromView_setActiveKeys'],
+};
 export default commonActionsTests;

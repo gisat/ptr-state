@@ -9,7 +9,11 @@ import testBatchRunner, {
 	getTestsByActionName,
 } from '../../helpers';
 
-const actionNames = [...EDIT_ACTIONS, ...USE_ACTIONS, ...RESTORE_STATE_ACTIONS];
+const actionNames = [
+	...EDIT_ACTIONS,
+	...USE_ACTIONS,
+	...RESTORE_STATE_ACTIONS.withSetActiveKey,
+];
 
 const store = 'LAYER_TREES';
 const dataType = 'layerTrees';
