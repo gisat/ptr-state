@@ -11,6 +11,7 @@ const actionNames = [
 	'useIndexedClear',
 	'useKeys',
 	'useKeysClear',
+	'setActiveKey',
 ];
 
 const store = 'AREAS.AREA_TREES';

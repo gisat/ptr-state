@@ -5,7 +5,13 @@ import testBatchRunner, {
 	getTestsByActionName,
 } from '../../../helpers';
 
-const actionNames = ['refreshUses', 'useIndexed', 'useIndexedClear', 'useKeys'];
+const actionNames = [
+	'refreshUses',
+	'useIndexed',
+	'useIndexedClear',
+	'useKeys',
+	'setActiveKey',
+];
 
 const store = 'AREAS.AREA_TREE_LEVELS';
 const dataType = 'areaTreeLevels';
