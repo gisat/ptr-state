@@ -173,7 +173,11 @@ const updateStore = (getSubstate, actionTypes) => {
 
 const removePropertyFromEdited = actionTypes => {
 	return (modelKey, key) => {
-		return dispatch(actionRemovePropertyFromEdited(actionTypes, modelKey, key));
+		return dispatch => {
+			return dispatch(
+				actionRemovePropertyFromEdited(actionTypes, modelKey, key)
+			);
+		};
 	};
 };
 
@@ -1161,13 +1165,16 @@ const getCreatePayload = (datatype, key = utils.uuid(), applicationKey) => {
 // ============ export ===========
 
 export default {
-	add: creator(actionAdd),
 	action,
-	addIndex: creator(actionAddIndex),
+	actionDataSetOutdated,
 	actionGeneralError,
+	actionSetActiveKey,
+	add: creator(actionAdd),
+	addIndex: creator(actionAddIndex),
 	apiUpdate,
-	creator,
+	clearIndex: creator(actionClearIndex),
 	create,
+	creator,
 	delete: deleteItem,
 	ensure: ensureKeys,
 	ensureIndexed,
@@ -1175,26 +1182,22 @@ export default {
 	ensureKeys,
 	loadIndexedPage,
 	loadKeysPage,
-	setActiveKey: creator(actionSetActiveKey),
-	setActiveKeys: creator(actionSetActiveKeys),
-	receiveUpdated,
 	receiveIndexed,
 	receiveKeys,
+	receiveUpdated,
 	refreshUses,
 	removePropertyFromEdited,
 	request: requestWrapper,
 	saveEdited,
-	updateSubstateFromView,
+	setActiveKey: creator(actionSetActiveKey),
+	setActiveKeys: creator(actionSetActiveKeys),
 	updateEdited,
 	updateStore,
-	useKeys,
-	useKeysClear: creator(actionUseKeysClear),
+	updateSubstateFromView,
 	useIndexed,
-	clearIndex: creator(actionClearIndex),
-
-	useIndexedRegister: actionUseIndexedRegister,
 	useIndexedClear: creator(actionUseIndexedClear),
 	useIndexedClearAll: creator(actionUseIndexedClearAll),
-	actionDataSetOutdated,
-	actionSetActiveKey,
+	useIndexedRegister: creator(actionUseIndexedRegister),
+	useKeys,
+	useKeysClear: creator(actionUseKeysClear),
 };

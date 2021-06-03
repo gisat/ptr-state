@@ -25,6 +25,10 @@ const updateEdited = common.updateEdited(
 	Select.layerTemplates.getSubstate,
 	ActionTypes.LAYER_TEMPLATES
 );
+const updateStateFromView = common.updateSubstateFromView(
+	ActionTypes.LAYER_TEMPLATES
+);
+const setActiveKeys = common.setActiveKeys(ActionTypes.LAYER_TEMPLATES);
 const useKeys = common.useKeys(
 	Select.layerTemplates.getSubstate,
 	'layerTemplates',
@@ -36,13 +40,29 @@ const useIndexed = common.useIndexed(
 	'layerTemplates',
 	ActionTypes.LAYER_TEMPLATES
 );
+const refreshUses = common.refreshUses(
+	Select.layerTemplates.getSubstate,
+	`layerTemplates`,
+	ActionTypes.LAYER_TEMPLATES
+);
 const useIndexedClear = common.useIndexedClear(ActionTypes.LAYER_TEMPLATES);
 const clearIndex = common.clearIndex(ActionTypes.LAYER_TEMPLATES);
 
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('layerTemplate'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('layerTemplate'));
+		}
+	};
+};
+
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('layerTemplate'));
+		}
 	};
 };
 
@@ -54,10 +74,12 @@ export default {
 	create,
 	delete: deleteItem,
 	saveEdited,
-
+	refreshUses,
 	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
+	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
 	useKeys,

@@ -22,7 +22,7 @@ const saveEdited = common.saveEdited(
 	ActionTypes.SCOPES
 );
 const setActiveKey = common.setActiveKey(ActionTypes.SCOPES);
-
+const setActiveKeys = common.setActiveKeys(ActionTypes.SCOPES);
 const updateEdited = common.updateEdited(
 	Select.scopes.getSubstate,
 	ActionTypes.SCOPES
@@ -39,6 +39,7 @@ const useIndexed = common.useIndexed(
 	'scopes',
 	ActionTypes.SCOPES
 );
+const clearIndex = common.clearIndex(ActionTypes.SCOPES);
 const refreshUses = common.refreshUses(
 	Select.scopes.getSubstate,
 	`scopes`,
@@ -48,7 +49,18 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('scope'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('scope'));
+		}
+	};
+};
+
+const setActiveKeysAndEnsureDependencies = keys => {
+	return (dispatch, getState, options) => {
+		dispatch(setActiveKeys(keys));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('scope'));
+		}
 	};
 };
 
@@ -61,6 +73,8 @@ function updateStateFromView(data) {
 
 			if (data && data.activeKey) {
 				dispatch(setActiveKeyAndEnsureDependencies(data.activeKey));
+			} else if (data && data.activeKeys) {
+				dispatch(setActiveKeysAndEnsureDependencies(data.activeKeys));
 			}
 		}
 	};
@@ -79,11 +93,13 @@ export default {
 
 	saveEdited,
 	setActiveKey: setActiveKeyAndEnsureDependencies,
+	setActiveKeys: setActiveKeysAndEnsureDependencies,
 
 	updateEdited,
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

@@ -46,12 +46,15 @@ const useIndexed = common.useIndexed(
 	ActionTypes.VIEWS,
 	'views'
 );
+const clearIndex = common.clearIndex(ActionTypes.VIEWS);
 const refreshUses = common.refreshUses(
 	Select.views.getSubstate,
 	`views`,
 	ActionTypes.VIEWS,
 	'views'
 );
+
+const updateStateFromView = common.updateSubstateFromView(ActionTypes.VIEWS);
 
 // ============ actions ===========
 const apply = (key, actions) => {
@@ -141,4 +144,6 @@ export default {
 	refreshUses,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
+	updateStateFromView,
 };

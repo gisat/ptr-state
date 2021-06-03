@@ -39,6 +39,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.CASES
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.CASES);
+const clearIndex = common.clearIndex(ActionTypes.CASES);
 const refreshUses = common.refreshUses(
 	Select.cases.getSubstate,
 	`cases`,
@@ -48,14 +49,18 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		}
 	};
 };
 
 const setActiveKeysAndEnsureDependencies = keys => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKeys(keys));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('case'));
+		}
 	};
 };
 
@@ -78,6 +83,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

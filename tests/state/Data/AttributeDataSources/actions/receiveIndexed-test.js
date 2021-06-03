@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import actions from '../../../../../src/state/Data/AttributeDataSources/actions';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 describe('state/Data/AttributeDataSources/actions/receiveIndexed', function () {
 	it('receiveIndexed', function () {
 		const storeHelpers = getStoreSet();

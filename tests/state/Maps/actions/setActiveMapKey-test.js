@@ -3,7 +3,7 @@ import {cloneDeep as _cloneDeep} from 'lodash';
 import {createStore, combineReducers} from 'redux';
 import {setState} from '@jvitela/recompute';
 import actions from '../../../../src/state/Maps/actions';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 import MapsReducers from '../../../../src/state/Maps/reducers';
 import {MapsSelectorsState as state} from '../selectors/_state';
 

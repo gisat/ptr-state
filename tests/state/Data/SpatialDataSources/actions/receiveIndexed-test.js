@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import actions from '../../../../../src/state/Data/SpatialDataSources/actions';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 describe('state/Data/SpatialDataSources/actions/receiveIndexed', function () {
 	it('receiveIndexed', function () {
 		const storeHelpers = getStoreSet();

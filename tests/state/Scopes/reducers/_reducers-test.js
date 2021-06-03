@@ -16,6 +16,7 @@ import removeEdited from '../../_common/reducers/removeEdited-test';
 import removeEditedActive from '../../_common/reducers/removeEditedActive-test';
 import removeEditedProperty from '../../_common/reducers/removeEditedProperty-test';
 import setActive from '../../_common/reducers/setActive-test';
+import setActiveMultiple from '../../_common/reducers/setActiveMultiple-test';
 import updateEdited from '../../_common/reducers/updateEdited-test';
 import updateStore from '../../_common/reducers/updateStore-test';
 import useIndexedClear from '../../_common/reducers/useIndexedClear-test';
@@ -141,6 +142,16 @@ describe('setActive', () => {
 		const action = {
 			...test.action,
 			type: ActionTypes.SCOPES.SET_ACTIVE_KEY,
+		};
+		it(test.name, () => test.test(action, reducers));
+	});
+});
+
+describe('setActiveMultiple', () => {
+	setActiveMultiple.forEach(test => {
+		const action = {
+			...test.action,
+			type: ActionTypes.SCOPES.SET_ACTIVE_KEYS,
 		};
 		it(test.name, () => test.test(action, reducers));
 	});

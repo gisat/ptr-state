@@ -3,23 +3,9 @@ import Select from '../Select';
 import common from '../_common/actions';
 
 // ============ creators ===========
-const useIndexedRegister = (
-	componentId,
-	filterByActive,
-	filter,
-	order,
-	start,
-	length
-) =>
-	common.useIndexedRegister(
-		ActionTypes.AREA_RELATIONS,
-		componentId,
-		filterByActive,
-		filter,
-		order,
-		start,
-		length
-	);
+const useIndexedRegister = common.useIndexedRegister(
+	ActionTypes.AREA_RELATIONS
+);
 const ensureIndexed = (filter, order, start, length) =>
 	common.ensureIndexed(
 		Select.areaRelations.getSubstate,
