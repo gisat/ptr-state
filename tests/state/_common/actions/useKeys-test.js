@@ -51,6 +51,7 @@ const tests = [
 			assert.deepStrictEqual(options, {
 				body: JSON.stringify({
 					filter: {key: {in: ['k1']}},
+					limit: 100,
 				}),
 				credentials: 'include',
 				headers: {
