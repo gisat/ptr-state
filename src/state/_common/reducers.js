@@ -10,6 +10,7 @@ import {
 	map as _map,
 	omit as _omit,
 	union as _union,
+	isNumber as _isNumber,
 } from 'lodash';
 import commonHelpers from './helpers';
 
@@ -118,7 +119,11 @@ export default {
 
 				updatedIndexes[indexOfIndex] = {
 					...updatedIndex,
-					count: action.count || updatedIndex.count || null,
+					count: _isNumber(action.count)
+						? action.count
+						: _isNumber(updatedIndex.count)
+						? updatedIndex.count
+						: null,
 					changedOn: action.changedOn || updatedIndex.changedOn || null,
 					index: updatedIndexIndex,
 				};
@@ -129,7 +134,7 @@ export default {
 				updatedIndexes.push({
 					filter: action.filter || null,
 					order: action.order || null,
-					count: action.count || null,
+					count: _isNumber(action.count) ? action.count : null,
 					changedOn: action.changedOn || null,
 					index: commonHelpers.registerModelsToIndex(
 						{},

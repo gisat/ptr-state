@@ -211,6 +211,84 @@ const tests = [
 			assert.deepStrictEqual(returnedState, state);
 		},
 	},
+	{
+		name: 'Create new index with count 0',
+		action: {
+			data: [],
+			filter: {
+				scopeKey: 'scope88',
+			},
+			order: null,
+			start: 4,
+			limit: 2,
+			count: 0,
+		},
+		test: (action, reducers) => {
+			const indexes = [
+				...state.indexes,
+				{
+					filter: {
+						scopeKey: 'scope88',
+					},
+					order: null,
+					count: 0,
+					index: {},
+					changedOn: null,
+				},
+			];
+
+			const expectedState = {
+				...state,
+				indexes: indexes,
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.addIndex(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
+	{
+		name: 'Modify index with count 0',
+		action: {
+			data: [],
+			filter: {
+				scopeKey: 'scope4',
+			},
+			order: null,
+			start: 4,
+			limit: 2,
+			count: 0,
+		},
+		test: (action, reducers) => {
+			const filter = {
+				scopeKey: 'scope4',
+			};
+			const order = null;
+			const indexes = [...state.indexes];
+			const indexOfIndex = _findIndex(state.indexes, index => {
+				return _isEqual(index.filter, filter) && _isEqual(index.order, order);
+			});
+
+			indexes[indexOfIndex] = {
+				filter: {
+					scopeKey: 'scope4',
+				},
+				order: null,
+				count: 0,
+				index: {},
+				changedOn: null,
+			};
+
+			const expectedState = {
+				...state,
+				indexes: indexes,
+			};
+			const returnedState = reducers
+				? reducers(state, action)
+				: commonReducers.addIndex(state, action);
+			assert.deepStrictEqual(returnedState, expectedState);
+		},
+	},
 ];
 
 describe('addIndex', () => {
