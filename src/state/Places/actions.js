@@ -34,6 +34,7 @@ const useIndexed = common.useIndexed(
 	ActionTypes.PLACES
 );
 const useIndexedClear = common.useIndexedClear(ActionTypes.PLACES);
+const clearIndex = common.clearIndex(ActionTypes.PLACES);
 const useKeys = common.useKeys(
 	Select.places.getSubstate,
 	'places',
@@ -48,14 +49,18 @@ const refreshUses = common.refreshUses(
 const setActiveKeyAndEnsureDependencies = key => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKey(key));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+		}
 	};
 };
 
 const setActiveKeysAndEnsureDependencies = keys => {
 	return (dispatch, getState, options) => {
 		dispatch(setActiveKeys(keys));
-		dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+		if (options) {
+			dispatch(options.ensureDependenciesOfActiveMetadataType('place'));
+		}
 	};
 };
 
@@ -75,6 +80,7 @@ export default {
 	updateStateFromView,
 	useIndexed,
 	useIndexedClear,
+	clearIndex,
 	useKeys,
 	useKeysClear,
 };

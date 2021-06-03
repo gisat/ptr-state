@@ -5,7 +5,7 @@ import {
 	responseWithRelationsSpatialAndAttributeData,
 } from './mockData/mockData';
 
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 
 describe('state/Data/actions/processResult', function () {
 	it('Process response without relations', function () {

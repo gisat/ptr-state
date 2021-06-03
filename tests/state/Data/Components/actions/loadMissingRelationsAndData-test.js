@@ -3,7 +3,7 @@ import _ from 'lodash';
 import slash from 'slash';
 import actions from '../../../../../src/state/Data/Components/actions';
 import {resetFetch, setFetch} from '../../../../../src/state/_common/request';
-import getStoreSet from '../../../_common/helpers/store';
+import getStoreSet from '../../../../store';
 
 import {
 	oneAndLastResponseOfSecondPageOfRelations,

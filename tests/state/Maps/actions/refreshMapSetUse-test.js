@@ -4,7 +4,7 @@ import {isEqual as _isEqual, cloneDeep as _cloneDeep} from 'lodash';
 import {createStore, combineReducers} from 'redux';
 import {setState} from '@jvitela/recompute';
 import actions from '../../../../src/state/Maps/actions';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 import {MapsSelectorsState} from '../selectors/_state';
 
 import {resetFetch, setFetch} from '../../../../src/state/_common/request';

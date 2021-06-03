@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import {createStore, combineReducers} from 'redux';
 import {setState} from '@jvitela/recompute';
 import actions from '../../../../src/state/Maps/actions';
-import getStoreSet from '../../_common/helpers/store';
+import getStoreSet from '../../../store';
 import MapsReducers from '../../../../src/state/Maps/reducers';
 
 describe('state/Maps/actions/mapSetUseClear', function () {

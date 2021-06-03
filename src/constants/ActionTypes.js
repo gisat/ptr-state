@@ -90,9 +90,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -129,9 +129,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -168,9 +168,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -288,9 +288,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -343,6 +343,8 @@ export default utils.deepKeyMirror({
 			REQUEST: null,
 		},
 		UPDATE_STORE: null,
+		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
 		USE: {
 			INDEXED: {
 				CLEAR: null,
@@ -407,9 +409,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -446,9 +448,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -485,9 +487,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -524,9 +526,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -541,6 +543,7 @@ export default utils.deepKeyMirror({
 			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
 		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {
@@ -574,6 +577,7 @@ export default utils.deepKeyMirror({
 		ADD: null,
 		ADD_UNRECEIVED: null,
 		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
 		SET: {
 			FEATURE_KEYS_FILTER: {
 				KEYS: null,
@@ -591,9 +595,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -630,9 +634,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -665,6 +669,14 @@ export default utils.deepKeyMirror({
 	USERS: {
 		ADD: null,
 		ADD_UNRECEIVED: null,
+		DELETE: null,
+		MARK_DELETED: null,
+		EDITED: {
+			REMOVE: null,
+			REMOVE_PROPERTY: null,
+			UPDATE: null,
+			REMOVE_ACTIVE: null,
+		},
 		GROUPS: {
 			ADD: null,
 			ADD_UNRECEIVED: null,
@@ -693,6 +705,7 @@ export default utils.deepKeyMirror({
 		INDEX: {
 			ADD: null,
 			CLEAR_ALL: null,
+			CLEAR_INDEX: null,
 		},
 		USE: {
 			INDEXED: {
@@ -713,9 +726,9 @@ export default utils.deepKeyMirror({
 		MARK_DELETED: null,
 		EDITED: {
 			REMOVE: null,
-			REMOVE_ACTIVE: null,
 			REMOVE_PROPERTY: null,
 			UPDATE: null,
+			REMOVE_ACTIVE: null,
 		},
 		ENSURE: {
 			ERROR: null,
@@ -730,6 +743,7 @@ export default utils.deepKeyMirror({
 			REQUEST: null,
 		},
 		SET_ACTIVE_KEY: null,
+		SET_ACTIVE_KEYS: null,
 		UPDATE_STORE: null,
 		USE: {
 			INDEXED: {

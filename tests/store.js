@@ -1,10 +1,22 @@
+/**
+ * Create clear set of helper functions for testing dispatched actions on store.
+ * @returns
+ */
 export default function getStoreSet() {
+	// Tray for dispatched actions
 	let dispatchedActions = [];
 
+	// Clear dispatchedActions
 	const clearDispatchedActions = function () {
 		dispatchedActions = [];
 	};
 
+	/**
+	 *
+	 * @param {function} getState Function that returns state. It is passed while dispatch to the action.
+	 * @param {function?} optDispatch Optional parameter. If is defined, all actions which don't return Promise are passed into it.
+	 * @returns
+	 */
 	const getDispatch = (getState, optDispatch) => {
 		return action => {
 			const dispatch = getDispatch(getState, optDispatch);
@@ -33,6 +45,14 @@ export default function getStoreSet() {
 		};
 	};
 
+	/**
+	 * Recursively run all actions in dispatchedAction that are not pure object. Result from non pure actions is aggain stored in dispatchedAction.
+	 * It mock behaviour od redux store.
+	 * @param {Object} options
+	 * @param {Object} options.dispatch
+	 * @param {Object} options.getState
+	 * @returns {Promise}
+	 */
 	const runFunctionActions = function ({dispatch, getState}) {
 		return new Promise((resolve, reject) => {
 			const promises = [];
@@ -63,6 +83,10 @@ export default function getStoreSet() {
 		});
 	};
 
+	/**
+	 * Returns copy of dispatched actions
+	 * @returns {Array}
+	 */
 	const getDispatchedActions = () => {
 		return [...dispatchedActions];
 	};

@@ -17,6 +17,28 @@ const TTL = 5;
 // ============ creators ===========
 
 const add = common.add(ActionTypes.USERS);
+const create = common.create(
+	Select.users.getSubstate,
+	'users',
+	ActionTypes.USERS,
+	'user'
+);
+const deleteItem = common.delete(
+	Select.users.getSubstate,
+	'users',
+	ActionTypes.USERS,
+	'user'
+);
+const saveEdited = common.saveEdited(
+	Select.users.getSubstate,
+	'users',
+	ActionTypes.USERS,
+	'user'
+);
+const updateEdited = common.updateEdited(
+	Select.users.getSubstate,
+	ActionTypes.USERS
+);
 const setActiveKey = common.setActiveKey(ActionTypes.USERS);
 const refreshUses = () => dispatch => {
 	dispatch(
@@ -321,6 +343,10 @@ function actionLogout() {
 
 export default {
 	add,
+	create,
+	delete: deleteItem,
+	saveEdited,
+	updateEdited,
 	// apiLoad: apiLoad,
 	apiLoadCurrentUser: apiLoadCurrentUser,
 	apiLoginUser: apiLoginUser,
@@ -332,5 +358,4 @@ export default {
 	useIndexedGroups,
 	useIndexedUsersClear: actionClearUsersUseIndexed,
 	useIndexedGroupsClear: actionClearGroupsUseIndexed,
-	// update: update
 };
