@@ -361,35 +361,35 @@ function mergeMetadataKeys(definedKeys, activeKeys) {
 function convertModifiersToRequestFriendlyFormat(modifiers) {
 	if (modifiers) {
 		let modifiersForRequest = {};
-		if (modifiers.scopeKey) {
+		if (modifiers.scopeKey || modifiers.scopeKey === null) {
 			modifiersForRequest.scopeKey = modifiers.scopeKey;
 		}
 
 		if (modifiers.placeKeys) {
 			modifiersForRequest.placeKey = {in: modifiers.placeKeys};
-		} else if (modifiers.placeKey) {
+		} else if (modifiers.placeKey || modifiers.placeKey === null) {
 			modifiersForRequest.placeKey = modifiers.placeKey;
 		}
 
 		if (modifiers.caseKeys) {
 			modifiersForRequest.caseKey = {in: modifiers.caseKeys};
-		} else if (modifiers.caseKey) {
+		} else if (modifiers.caseKey || modifiers.caseKey === null) {
 			modifiersForRequest.caseKey = modifiers.caseKey;
 		}
 
 		if (modifiers.scenarioKeys) {
 			modifiersForRequest.scenarioKey = {in: modifiers.scenarioKeys};
-		} else if (modifiers.scenarioKey) {
+		} else if (modifiers.scenarioKey || modifiers.scenarioKey === null) {
 			modifiersForRequest.scenarioKey = modifiers.scenarioKey;
 		}
 
 		if (modifiers.periodKeys) {
 			modifiersForRequest.periodKey = {in: modifiers.periodKeys};
-		} else if (modifiers.periodKey) {
+		} else if (modifiers.periodKey || modifiers.periodKey === null) {
 			modifiersForRequest.periodKey = modifiers.periodKey;
 		}
 
-		if (modifiers.applicationKey) {
+		if (modifiers.applicationKey || modifiers.applicationKey === null) {
 			modifiersForRequest.applicationKey = modifiers.applicationKey;
 		}
 
