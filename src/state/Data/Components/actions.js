@@ -553,6 +553,7 @@ const getPayload = (
  * @param {Object} attributeDataFilter Object contains values extended by commonFilter.
  * @param {Array?} order Order object for attributes
  * @param {Number} relationsLimit Numeric limitation for loading relations
+ * @param {Number} attributeDataLimit Numeric limitation for loading attributeData
  * @returns
  */
 const processResult = (

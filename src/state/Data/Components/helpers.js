@@ -54,7 +54,8 @@ export function getRestPages(count, PAGE_SIZE, optStart = 1, optLength) {
  * @param {Number} pageSize Size of pagesize
  * @param {Number} [optLength] Optional length of requested data. If set, then last page will not overfloat requested data.
  * @param {Number} [optCount] Optional size of data on BE. Usually known after request on BE.
- * @return {Object} {offset:Number, limit: Number}
+ * @return {Object} {offset:Number, limit: Number}  offset is begin index of data we ask.
+ * 													limit is how many records we ask for.
  */
 export function getPagination(
 	pageIndex,
@@ -85,7 +86,7 @@ export function getPagination(
 
 /**
  * Get empty pagination
- * @return {Object} {offset:Number, limit: Number
+ * @return {Object} {offset:Number, limit: Number}
  */
 export function getNullishPagination() {
 	return getPagination(0, 1, 0, 0);

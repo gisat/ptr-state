@@ -1039,6 +1039,18 @@ function actionAddUnreceivedKeys(actionTypes, keys) {
 	return action(actionTypes, 'ADD_UNRECEIVED', {keys});
 }
 
+/**
+ *
+ * @param {Object} actionTypes
+ * @param {Object} filter
+ * @param {Array?} order
+ * @param {Number?} count
+ * @param {Number} start
+ * @param {Array} data
+ * @param {string?} changedOn
+ * @param {Number?} limit limitation for loading data
+ * @returns
+ */
 function actionAddIndex(
 	actionTypes,
 	filter,

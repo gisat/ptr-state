@@ -102,6 +102,7 @@ const addWithSpatialIndex = (
  * @param start {Array}
  * @param total {Array}
  * @param changedOn {string}
+ * @param limit {Number} Limitation for loading data
  * @return {Object}
  */
 const addWithIndex = (

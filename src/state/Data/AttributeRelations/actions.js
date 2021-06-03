@@ -15,6 +15,7 @@ const addIndex = common.addIndex(actionTypes);
  * @param {Number} start
  * @param {Number} total
  * @param {string?} changedOn
+ * @param {Number?} limit Limitation for loading relations
  */
 function receiveIndexed(
 	attributeRelations,

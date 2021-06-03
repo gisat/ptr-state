@@ -79,7 +79,7 @@ export default {
 	 * @param action.filter {Object}
 	 * @param action.order {Array}
 	 * @param action.start {number}
-	 * @param action.limit {number}
+	 * @param action.limit {number?} limitation for loading data
 	 * @param action.count {number}
 	 * @param action.changedOn {string}
 	 * @return {Object} updated state

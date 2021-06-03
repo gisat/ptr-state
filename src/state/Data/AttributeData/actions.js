@@ -56,6 +56,7 @@ const receiveIndexedWithSpatialIndex = (
  * @param {Array?} start
  * @param {Array?} total
  * @param {string?} changedOn
+ * @param {Number?} limit Limitation for loading attributeData
  */
 const receiveIndexed = (
 	attributeData,
@@ -166,7 +167,7 @@ function addLoadingSpatialIndex(attributeDataFilter, order, level, tiles) {
 /**
  * Create new index based on pagination with loading indicator.
  * @param {Object} pagination
- * @param {Number} pagination.limit
+ * @param {Number} pagination.limit Limitation for loading attributeData
  * @param {Number} pagination.offset
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
  * @param {Array?} order
@@ -310,6 +311,7 @@ function actionAddDataAndIndexBasedOnSpatialData(
  * @param {Array} index
  * @param {Object} data
  * @param {string?} changedOn
+ * @param {Number?} limit Limitation for loading attributeData
  */
 function actionAddDataAndIndex(
 	attributeDataFilter,
@@ -352,11 +354,12 @@ function actionAddIndexWithSpatialIndex(
 /**
  *
  * @param {Object} attributeDataFilter Filler object contains modifiers, layerTemplateKey or areaTreeLevelKey, styleKey, and optional values for attributeFilter, dataSourceKeys and featureKeys.
- * @param {*} order
- * @param {*} data
- * @param {*} start
- * @param {*} count
- * @param {*} changedOn
+ * @param {Array?} order
+ * @param {Array} data
+ * @param {Array?} start
+ * @param {Number?} count
+ * @param {string?} changedOn
+ * @param {Number?} limit Limitation for loading attributeData
  * @returns
  */
 function actionAddIndex(
