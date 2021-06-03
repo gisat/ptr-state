@@ -5,7 +5,7 @@ import {commonActionTypesObj as actionTypes} from '../../../constants';
 
 const tests = [
 	{
-		name: 'It fail on unexistinf action in actionTypes.',
+		name: 'It fail on unexisting action in actionTypes.',
 		action: (actions, actionTypes, options) => {
 			const type = 'ACTION.TEST';
 			const payload = {};

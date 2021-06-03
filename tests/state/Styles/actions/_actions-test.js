@@ -1,7 +1,7 @@
 import commonActionsTests, {
 	USE_ACTIONS,
 	EDIT_ACTIONS,
-	SETTING_ACTIVE_ACTIONS,
+	SETTING_ACTIVE_KEY_ACTIONS,
 	RESTORE_STATE_ACTIONS,
 } from '../../_common/actions/';
 import actions from '../../../../src/state/Styles/actions';
@@ -10,7 +10,11 @@ import testBatchRunner, {
 	getTestsByActionName,
 } from '../../helpers';
 
-const actionNames = [...USE_ACTIONS, ...EDIT_ACTIONS, ...RESTORE_STATE_ACTIONS];
+const actionNames = [
+	...USE_ACTIONS,
+	...EDIT_ACTIONS,
+	...RESTORE_STATE_ACTIONS.withSetActiveKey,
+];
 
 const store = 'STYLES';
 const dataType = 'styles';
