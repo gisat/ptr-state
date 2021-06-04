@@ -24,14 +24,6 @@ const add = action => {
 	};
 };
 
-const addIndex = action => {
-	return (filter, order, count, start, data, changedOn) => {
-		return dispatch => {
-			dispatch(action(filter, order, count, start, data, changedOn));
-		};
-	};
-};
-
 const apiDelete = (dataType, categoryPath, data) => {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
@@ -716,6 +708,8 @@ function loadKeysPage(
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		const apiPath = getAPIPath(categoryPath, dataType);
+		const PAGE_SIZE =
+			localConfig.requestPageSize || configDefaults.requestPageSize;
 
 		let payload = {
 			filter: {
@@ -723,6 +717,7 @@ function loadKeysPage(
 					in: keys,
 				},
 			},
+			limit: PAGE_SIZE,
 		};
 		return request(localConfig, apiPath, 'POST', null, payload)
 			.then(result => {
@@ -1044,6 +1039,18 @@ function actionAddUnreceivedKeys(actionTypes, keys) {
 	return action(actionTypes, 'ADD_UNRECEIVED', {keys});
 }
 
+/**
+ *
+ * @param {Object} actionTypes
+ * @param {Object} filter
+ * @param {Array?} order
+ * @param {Number?} count
+ * @param {Number} start
+ * @param {Array} data
+ * @param {string?} changedOn
+ * @param {Number?} limit limitation for loading data
+ * @returns
+ */
 function actionAddIndex(
 	actionTypes,
 	filter,

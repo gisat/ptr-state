@@ -141,6 +141,7 @@ describe('state/Maps/actions/use', function () {
 								in: ['style1'],
 							},
 						},
+						limit: 1,
 					}),
 					credentials: 'include',
 					headers: {

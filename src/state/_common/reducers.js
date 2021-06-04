@@ -10,6 +10,7 @@ import {
 	map as _map,
 	omit as _omit,
 	union as _union,
+	isNumber as _isNumber,
 } from 'lodash';
 import commonHelpers from './helpers';
 
@@ -78,7 +79,7 @@ export default {
 	 * @param action.filter {Object}
 	 * @param action.order {Array}
 	 * @param action.start {number}
-	 * @param action.length {number}
+	 * @param action.limit {number?} limitation for loading data
 	 * @param action.count {number}
 	 * @param action.changedOn {string}
 	 * @return {Object} updated state
@@ -108,8 +109,8 @@ export default {
 
 				// Remove loading indicator if data on this position doesn't exist
 				// It happens when we ask for some set of data defined by offset and length, but BE returns results only for part of length.
-				if (action.length) {
-					for (let i = action.start; i < action.start + action.length; i++) {
+				if (action.limit) {
+					for (let i = action.start; i < action.start + action.limit; i++) {
 						if (updatedIndexIndex[i] === true) {
 							delete updatedIndexIndex[i];
 						}
@@ -118,7 +119,11 @@ export default {
 
 				updatedIndexes[indexOfIndex] = {
 					...updatedIndex,
-					count: action.count || updatedIndex.count || null,
+					count: _isNumber(action.count)
+						? action.count
+						: _isNumber(updatedIndex.count)
+						? updatedIndex.count
+						: null,
 					changedOn: action.changedOn || updatedIndex.changedOn || null,
 					index: updatedIndexIndex,
 				};
@@ -129,7 +134,7 @@ export default {
 				updatedIndexes.push({
 					filter: action.filter || null,
 					order: action.order || null,
-					count: action.count || null,
+					count: _isNumber(action.count) ? action.count : null,
 					changedOn: action.changedOn || null,
 					index: commonHelpers.registerModelsToIndex(
 						{},

@@ -158,6 +158,7 @@ describe('state/Maps/actions/ensureWithFilterByActive', function () {
 								in: ['style1'],
 							},
 						},
+						limit: 1,
 					}),
 					credentials: 'include',
 					headers: {

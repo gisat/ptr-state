@@ -46,6 +46,23 @@ describe('convertModifiersToRequestFriendlyFormat', function () {
 		assert.deepStrictEqual(output, expectedResult);
 	});
 
+	it('should convert modifier to request friendly format, even if its value is null', () => {
+		const modifiers = {
+			periodKey: null,
+			caseKey: undefined,
+			scenarioKeys: null,
+		};
+
+		const expectedResult = {
+			periodKey: null,
+		};
+
+		const output = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			modifiers
+		);
+		assert.deepStrictEqual(output, expectedResult);
+	});
+
 	it('should return null if input is null', () => {
 		const output = commonHelpers.convertModifiersToRequestFriendlyFormat(null);
 		assert.isNull(output);
