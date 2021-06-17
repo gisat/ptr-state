@@ -393,6 +393,23 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	}
 };
 
+const setMapSetSync = (state, mapSetKey, sync) => {
+	if (mapSetKey && state.sets?.[mapSetKey]) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[mapSetKey]: {
+					...state.sets[mapSetKey],
+					sync,
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
 /**
  * Set map background layer state
  * @param state {Object}
@@ -675,6 +692,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.SET_SYNC:
+			return setMapSetSync(state, action.mapSetKey, action.sync);
 		case ActionTypes.MAPS.SET.LAYERS.SET:
 			return setSetLayers(state, action.setKey, action.layers);
 		case ActionTypes.MAPS.SET.USE.CLEAR:

@@ -576,6 +576,20 @@ function setMapSetLayers(setKey, layers) {
 }
 
 /**
+ * Set sync for map set. It tells which view params are synchronized for all maps in the set.
+ * @param setKey {string}
+ * @param sync {Object} layers definitions
+ */
+function setMapSetSync(setKey, sync) {
+	return (dispatch, getState) => {
+		const set = Select.maps.getMapSetByKey(getState(), setKey);
+		if (set) {
+			dispatch(actionSetMapSetSync(setKey, sync));
+		}
+	};
+}
+
+/**
  * @param setKey {string}
  */
 function refreshMapSetUse(setKey) {
@@ -802,6 +816,14 @@ const actionSetMapSetLayers = (setKey, layers) => {
 	};
 };
 
+const actionSetMapSetSync = (mapSetKey, sync) => {
+	return {
+		type: ActionTypes.MAPS.SET.SET_SYNC,
+		mapSetKey,
+		sync,
+	};
+};
+
 const actionSetMapViewport = (mapKey, width, height) => {
 	return {
 		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
@@ -885,6 +907,7 @@ export default {
 	setMapBackgroundLayer,
 	setMapSetBackgroundLayer,
 	setMapSetLayers,
+	setMapSetSync,
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
