@@ -7,7 +7,7 @@ import {
 	createSelector as createRecomputeSelector,
 	createObserver as createRecomputeObserver,
 } from '@jvitela/recompute';
-import {connect, Provider} from 'react-redux';
+import {connect, Provider, ReactReduxContext} from 'react-redux';
 
 import connects from './components/connects';
 import MountWrapper from './components/MountWrapper';
@@ -116,6 +116,7 @@ export {
 	compose,
 	connect,
 	Provider,
+	ReactReduxContext,
 	MountWrapper,
 	baseStores,
 	createBaseStore,

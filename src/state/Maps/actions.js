@@ -1,8 +1,10 @@
 import {
+	each as _each,
 	isMatch as _isMatch,
 	isNumber as _isNumber,
 	omitBy as _omitBy,
 	pickBy as _pickBy,
+	includes as _includes,
 	isEmpty as _isEmpty,
 } from 'lodash';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
@@ -61,6 +63,33 @@ const addMapLayerToIndex = (mapKey, layerState, index) => {
 			dispatch(
 				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
 			);
+		}
+	};
+};
+
+const removeMap = mapKey => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const existingMap = Select.maps.getMapByKey(state, mapKey);
+
+		if (existingMap) {
+			const inUse = Select.maps.isMapInUse(state, mapKey);
+			const mapSets = Select.maps.getMapSets(state);
+
+			if (inUse) {
+				dispatch(actionMapUseClear(mapKey));
+			}
+
+			if (mapSets) {
+				_each(mapSets, mapSet => {
+					const mapSetMapKey = _includes(mapSet?.maps, mapKey);
+					if (mapSetMapKey) {
+						dispatch(removeMapFromSet(mapSet.key, mapKey));
+					}
+				});
+			}
+
+			dispatch(actionRemoveMap(mapKey));
 		}
 	};
 };
@@ -660,6 +689,13 @@ const actionAddMapLayerToIndex = (mapKey, layerState, index) => {
 	};
 };
 
+const actionRemoveMap = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.REMOVE,
+		mapKey,
+	};
+};
+
 const actionRemoveMapLayer = (mapKey, layerKey) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER,
@@ -805,6 +841,7 @@ export default {
 	mapUseClear,
 	mapUseRegister,
 	refreshMapSetUse,
+	removeMap,
 	removeMapFromSet,
 	removeMapLayer,
 	setActiveMapKey: actionSetActiveMapKey,

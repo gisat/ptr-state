@@ -66,6 +66,24 @@ const removeMapFromSet = (state, setKey, mapKey) => {
 };
 
 /**
+ * Remove map from state
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} Updated state
+ */
+const removeMap = (state, mapKey) => {
+	if (mapKey && state.maps[mapKey]) {
+		const {[mapKey]: map, ...restMaps} = state.maps;
+		return {
+			...state,
+			maps: restMaps,
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
  * Remove layer from map
  * @param state {Object}
  * @param mapKey {string}
@@ -611,6 +629,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.layerKey,
 				action.styleKey
 			);
+		case ActionTypes.MAPS.MAP.REMOVE:
+			return removeMap(state, action.mapKey);
 		case ActionTypes.MAPS.MAP.USE.CLEAR:
 			return mapUseClear(state, action.mapKey);
 		case ActionTypes.MAPS.MAP.USE.REGISTER:
