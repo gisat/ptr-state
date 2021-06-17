@@ -363,6 +363,7 @@ export default utils.deepKeyMirror({
 			LAYERS: {
 				SET: null,
 			},
+			REMOVE: null,
 			REMOVE_MAP: null,
 			SET_ACTIVE_MAP_KEY: null,
 			SET_BACKGROUND_LAYER: null,

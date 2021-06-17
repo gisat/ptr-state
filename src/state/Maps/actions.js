@@ -67,6 +67,10 @@ const addMapLayerToIndex = (mapKey, layerState, index) => {
 	};
 };
 
+/**
+ * Remove map from store
+ * @param mapKey {string}
+ */
 const removeMap = mapKey => {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -90,6 +94,27 @@ const removeMap = mapKey => {
 			}
 
 			dispatch(actionRemoveMap(mapKey));
+		}
+	};
+};
+
+/**
+ * Remove map set from store
+ * @param setKey {string}
+ */
+const removeMapSet = setKey => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const existingSet = Select.maps.getMapSetByKey(state, setKey);
+
+		if (existingSet) {
+			const inUse = Select.maps.isMapSetInUse(state, setKey);
+
+			if (inUse) {
+				dispatch(actionMapSetUseClear(setKey));
+			}
+
+			dispatch(actionRemoveMapSet(setKey));
 		}
 	};
 };
@@ -696,6 +721,13 @@ const actionRemoveMap = mapKey => {
 	};
 };
 
+const actionRemoveMapSet = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.REMOVE,
+		mapSetKey,
+	};
+};
+
 const actionRemoveMapLayer = (mapKey, layerKey) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.REMOVE_LAYER,
@@ -844,6 +876,7 @@ export default {
 	removeMap,
 	removeMapFromSet,
 	removeMapLayer,
+	removeMapSet,
 	setActiveMapKey: actionSetActiveMapKey,
 	setLayerSelectedFeatureKeys,
 	setMapLayerOption,
