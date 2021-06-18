@@ -46,6 +46,34 @@ const addMap = mapState => {
 };
 
 /**
+ * Add map to map set
+ * @param mapKey {string}
+ * @param mapSetKey {string}
+ */
+const addMapToSet = (mapKey, mapSetKey) => {
+	return (dispatch, getState) => {
+		if (mapKey && mapSetKey) {
+			const state = getState();
+			const mapSet = Select.maps.getMapSetByKey(state, mapSetKey);
+			if (mapSet) {
+				dispatch(actionAddMapToSet(mapKey, mapSetKey));
+				dispatch(use(mapKey, null, null));
+			} else {
+				dispatch(
+					commonActions.actionGeneralError(
+						`No mapSet found for given key ${mapSetKey}`
+					)
+				);
+			}
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(`No mapKey or mapSetKey given`)
+			);
+		}
+	};
+};
+
+/**
  * Add map set to store
  * @param mapSetState {Object}
  */
@@ -768,6 +796,14 @@ const actionAddMapSet = mapSet => {
 	};
 };
 
+const actionAddMapToSet = (mapKey, mapSetKey) => {
+	return {
+		type: ActionTypes.MAPS.SET.ADD_MAP,
+		mapKey,
+		mapSetKey,
+	};
+};
+
 const actionAddMapLayers = (mapKey, layerStates) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.ADD,
@@ -947,6 +983,7 @@ export default {
 	addMapLayers,
 	addMapLayerToIndex,
 	addMapSet,
+	addMapToSet,
 	ensureWithFilterByActive,
 	layerUse,
 	mapSetUseClear,
