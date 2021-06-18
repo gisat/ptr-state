@@ -46,6 +46,30 @@ const addMap = mapState => {
 };
 
 /**
+ * Add map set to store
+ * @param mapSetState {Object}
+ */
+const addMapSet = mapSetState => {
+	return (dispatch, getState) => {
+		if (!mapSetState) {
+			dispatch(commonActions.actionGeneralError(`No map state given`));
+		} else if (!mapSetState.key) {
+			dispatch(
+				commonActions.actionGeneralError(
+					`Undefined mapKey for map ${mapSetState}`
+				)
+			);
+		} else {
+			dispatch(actionAddMapSet(mapSetState));
+			if (mapSetState.maps?.length) {
+				dispatch(actionMapSetUseRegister(mapSetState.key));
+				mapSetState.maps.forEach(mapKey => dispatch(use(mapKey, null, null)));
+			}
+		}
+	};
+};
+
+/**
  * Add layers at the end of map layers list
  * @param mapKey {string}
  * @param layerStates {Array} A collection, where each object represents state of the layer
@@ -737,6 +761,13 @@ const actionAddMap = map => {
 	};
 };
 
+const actionAddMapSet = mapSet => {
+	return {
+		type: ActionTypes.MAPS.SET.ADD,
+		mapSet,
+	};
+};
+
 const actionAddMapLayers = (mapKey, layerStates) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.ADD,
@@ -915,6 +946,7 @@ export default {
 	addMap,
 	addMapLayers,
 	addMapLayerToIndex,
+	addMapSet,
 	ensureWithFilterByActive,
 	layerUse,
 	mapSetUseClear,

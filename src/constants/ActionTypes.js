@@ -360,6 +360,7 @@ export default utils.deepKeyMirror({
 
 	MAPS: {
 		SET: {
+			ADD: null,
 			LAYERS: {
 				SET: null,
 			},
