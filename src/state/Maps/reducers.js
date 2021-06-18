@@ -32,6 +32,26 @@ const setActiveMapKey = (state, mapKey) => {
 };
 
 /**
+ * Add map to store
+ * @param state {Object}
+ * @param map {Object} map state
+ * @return {Object} Updated state
+ */
+const addMap = (state, map) => {
+	if (map?.key) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[map.key]: map,
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
  * Remove map from map set
  * @param state {Object}
  * @param setKey {string}
@@ -638,6 +658,8 @@ const mapSetUseRegister = (state, mapSetKey) => {
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
+		case ActionTypes.MAPS.MAP.ADD:
+			return addMap(state, action.map);
 		case ActionTypes.MAPS.MAP.LAYERS.ADD:
 			return addMapLayers(state, action.mapKey, action.layerStates);
 		case ActionTypes.MAPS.MAP.LAYERS.ADD_TO_INDEX:

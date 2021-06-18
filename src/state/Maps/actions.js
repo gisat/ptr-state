@@ -27,6 +27,25 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
+ * Add map to store
+ * @param mapState {Object}
+ */
+const addMap = mapState => {
+	return (dispatch, getState) => {
+		if (!mapState) {
+			dispatch(commonActions.actionGeneralError(`No map state given`));
+		} else if (!mapState.key) {
+			dispatch(
+				commonActions.actionGeneralError(`Undefined mapKey for map ${mapState}`)
+			);
+		} else {
+			dispatch(actionAddMap(mapState));
+			dispatch(use(mapState.key, null, null));
+		}
+	};
+};
+
+/**
  * Add layers at the end of map layers list
  * @param mapKey {string}
  * @param layerStates {Array} A collection, where each object represents state of the layer
@@ -711,6 +730,13 @@ function setMapViewport(mapKey, width, height) {
  * ACTIONS
  * ================================================== */
 
+const actionAddMap = map => {
+	return {
+		type: ActionTypes.MAPS.MAP.ADD,
+		map,
+	};
+};
+
 const actionAddMapLayers = (mapKey, layerStates) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.ADD,
@@ -886,6 +912,7 @@ const actionMapUseRegister = mapKey => {
 
 // ============ export ===========
 export default {
+	addMap,
 	addMapLayers,
 	addMapLayerToIndex,
 	ensureWithFilterByActive,

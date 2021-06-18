@@ -378,6 +378,7 @@ export default utils.deepKeyMirror({
 			},
 		},
 		MAP: {
+			ADD: null,
 			LAYERS: {
 				ADD: null,
 				ADD_TO_INDEX: null,
