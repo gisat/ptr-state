@@ -27,7 +27,7 @@ import SelectionsAction from '../Selections/actions';
  * ================================================== */
 
 /**
- * Add map to store
+ * Add map to store and dispatch use
  * @param mapState {Object}
  */
 const addMap = mapState => {
@@ -46,7 +46,7 @@ const addMap = mapState => {
 };
 
 /**
- * Add map to map set
+ * If map set exists, add map to map set and dispatch use
  * @param mapKey {string}
  * @param mapSetKey {string}
  */
@@ -74,7 +74,7 @@ const addMapToSet = (mapKey, mapSetKey) => {
 };
 
 /**
- * Add map set to store
+ * Add map set to store and dispatch use for all maps from the map set
  * @param mapSetState {Object}
  */
 const addMapSet = mapSetState => {
