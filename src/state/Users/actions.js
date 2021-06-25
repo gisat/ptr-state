@@ -92,6 +92,36 @@ function authCookie(authToken) {
  */
 
 /**
+ * @param {string} provider (e.g. `facebook` or `google`)
+ */
+function loginViaSso(provider) {
+	return function (dispatch, getState) {
+		const backendUrl = Select.app.getBackendUrl(
+			getState(),
+			`/rest/login/sso/${provider}`
+		);
+		const loginWindow = window.open(backendUrl);
+		window.addEventListener('message', function (e) {
+			const message = e.data;
+			if (
+				e.source !== loginWindow ||
+				message == null ||
+				typeof message !== 'object' ||
+				message.type !== 'sso_response'
+			) {
+				return;
+			}
+
+			loginWindow.close();
+
+			const result = message.data;
+			const user = _.omit(result, 'authToken');
+			dispatch(onLogin({user: user, authToken: result.authToken}));
+		});
+	};
+}
+
+/**
  * @param {object} data
  * @param {User} data.user
  * @param {string} data.authToken
@@ -133,7 +163,7 @@ function apiLoginUser(email, password) {
 			password: password,
 		};
 
-		return request(localConfig, 'rest/login/login', 'POST', null, payload)
+		return request(localConfig, 'api/login/login', 'POST', null, payload)
 			.then(result => {
 				const user = _.omit(result, 'authToken');
 
@@ -211,7 +241,7 @@ function apiLoadCurrentUser() {
 		dispatch(actionApiLoadCurrentUserRequest());
 
 		// return request(localConfig, 'rest/user/current', 'GET', null, null)
-		return request(localConfig, 'rest/login/getLoginInfo', 'GET', null, null)
+		return request(localConfig, 'api/login/getLoginInfo', 'GET', null, null)
 			.then(result => {
 				if (result.errors) {
 					//todo how do we return errors here?
@@ -231,29 +261,19 @@ function apiLoadCurrentUser() {
 function apiLogoutUser(ttl) {
 	if (_.isUndefined(ttl)) ttl = TTL;
 	return (dispatch, getState) => {
-		const apiBackendProtocol = Select.app.getLocalConfiguration(
-			getState(),
-			'apiBackendProtocol'
-		);
-		const apiBackendHost = Select.app.getLocalConfiguration(
-			getState(),
-			'apiBackendHost'
-		);
 		dispatch(actionApiLogoutRequest());
 
-		let url =
-			apiBackendProtocol +
-			'://' +
-			path.join(apiBackendHost, 'rest/login/logout');
-
-		return fetch(url, {
-			method: 'POST',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-			},
-		}).then(
+		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+		const payload = null;
+		return request(
+			localConfig,
+			'api/login/logout',
+			'POST',
+			null,
+			payload,
+			undefined,
+			null
+		).then(
 			response => {
 				console.log('#### logout user response', response);
 				if (response.ok) {
@@ -323,26 +343,13 @@ function actionAddGroups(groups) {
 
 function actionApiLogoutRequest() {
 	return {
-		type: ActionTypes.USERS_LOGOUT_REQUEST,
+		type: ActionTypes.USERS.LOGOUT.REQUEST,
 	};
 }
 
 function actionApiLogoutRequestError(error) {
 	return {
-		type: ActionTypes.USERS_LOGOUT_REQUEST_ERROR,
-		error: error,
-	};
-}
-
-function actionApiLoadRequest() {
-	return {
-		type: ActionTypes.USERS_LOAD_REQUEST,
-	};
-}
-
-function actionApiLoadRequestError(error) {
-	return {
-		type: ActionTypes.USERS_LOAD_REQUEST_ERROR,
+		type: ActionTypes.USERS.LOGOUT.REQUEST_ERROR,
 		error: error,
 	};
 }
@@ -384,4 +391,5 @@ export default {
 	useIndexedGroups,
 	useIndexedUsersClear: actionClearUsersUseIndexed,
 	useIndexedGroupsClear: actionClearGroupsUseIndexed,
+	loginViaSso,
 };

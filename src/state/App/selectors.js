@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
 import _ from 'lodash';
+import path from 'path';
 
 import {createObserver as createRecomputeObserver} from '@jvitela/recompute';
 
@@ -21,6 +22,19 @@ const getLocalConfiguration = createSelector(
 	(localConfiguration, path) => _.get(localConfiguration, path, null)
 );
 
+const getBackendUrl = createSelector(
+	[getCompleteLocalConfiguration, (state, path) => path],
+	(localConfiguration, urlPath) =>
+		localConfiguration.apiBackendProtocol +
+		'://' +
+		path.join(
+			localConfiguration.apiBackendHost,
+			localConfiguration.apiBackendPath,
+			'/backend',
+			urlPath
+		)
+);
+
 export default {
 	getKey,
 	getConfiguration,
@@ -28,4 +42,5 @@ export default {
 	getLocalConfiguration,
 	getCompleteLocalConfiguration,
 	getCompleteLocalConfigurationObserver,
+	getBackendUrl,
 };

@@ -51,10 +51,7 @@ const tests = [
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.equal(
 				true,
-				[
-					'http://localhost/backend/rest/login/login',
-					'http://localhost/backend/rest/user/current',
-				].includes(slash(url))
+				['http://localhost/backend/api/login/login'].includes(slash(url))
 			);
 
 			if (

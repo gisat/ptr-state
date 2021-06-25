@@ -69,17 +69,27 @@ export default function request(
 		response => {
 			let contentType = response.headers.get('Content-type');
 			if (
-				response.ok &&
-				contentType &&
-				contentType.indexOf('application/json') !== -1
+				response.status === 200 ||
+				(response.ok &&
+					contentType &&
+					contentType.indexOf('application/json') !== -1)
 			) {
-				return response.json().then(body => {
-					if (dataPath === null || (dataPath && _.get(body, dataPath))) {
-						return body;
+				if (typeof response.json !== 'function') {
+					// if dataPath === null and response is empty (like in logout), then return empty object
+					if (dataPath === null) {
+						return {};
 					} else {
 						throw new Error('no data returned');
 					}
-				});
+				} else {
+					return response.json().then(body => {
+						if (dataPath === null || (dataPath && _.get(body, dataPath))) {
+							return body;
+						} else {
+							throw new Error('no data returned');
+						}
+					});
+				}
 			} else {
 				throw new Error('response error');
 			}

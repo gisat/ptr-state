@@ -41,7 +41,7 @@ const tests = [
 		},
 		setFetch: (dataType, categoryPath) => (url, options) => {
 			assert.strictEqual(
-				'http://localhost/backend/rest/login/getLoginInfo',
+				'http://localhost/backend/api/login/getLoginInfo',
 				slash(url)
 			);
 			assert.deepStrictEqual(options, {
