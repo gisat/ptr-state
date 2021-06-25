@@ -78,10 +78,30 @@ const useIndexedGroups = common.useIndexed(
 	'user'
 );
 
-function onLogin() {
+function authCookie(authToken) {
+	const suffix = process.env.NODE_ENV === 'development' ? '' : ';secure';
+
+	return `authToken=${authToken};path=/;samesite=strict${suffix}`;
+}
+
+/**
+ * @typedef User
+ * @property {string} key
+ * @property {{name: string, email: string, phone: string}} data
+ * @property {Object<string, Object<string, {create: boolean, view: boolean, update: boolean, delete: boolean}>>} data.permissions
+ */
+
+/**
+ * @param {object} data
+ * @param {User} data.user
+ * @param {string} data.authToken
+ */
+function onLogin(data) {
 	return dispatch => {
+		document.cookie = authCookie(data.authToken);
+
 		dispatch(common.actionDataSetOutdated());
-		dispatch(apiLoadCurrentUser());
+		loadedUser(dispatch, data.user);
 
 		dispatch(ScopesAction.refreshUses());
 		dispatch(PlacesAction.refreshUses());
@@ -92,6 +112,7 @@ function onLogin() {
 
 function onLogout() {
 	return dispatch => {
+		document.cookie = 'authToken=;max-age=0';
 		dispatch(actionLogout());
 		dispatch(setActiveKey(null));
 
@@ -107,16 +128,16 @@ function apiLoginUser(email, password) {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		dispatch(actionApiLoginRequest());
 
-		let payload = {
+		const payload = {
 			username: email,
 			password: password,
 		};
 
-		return request(localConfig, 'api/login/login', 'POST', null, payload)
+		return request(localConfig, 'rest/login/login', 'POST', null, payload)
 			.then(result => {
-				if (result.data.status === 'ok') {
-					dispatch(onLogin());
-				}
+				const user = _.omit(result, 'authToken');
+
+				dispatch(onLogin({user: user, authToken: result.authToken}));
 			})
 			.catch(error => {
 				dispatch(common.actionGeneralError(error));
@@ -173,26 +194,31 @@ function apiLoginUser(email, password) {
 // 	};
 // }
 
+/**
+ * @param {User} result
+ */
+function loadedUser(dispatch, result) {
+	const user = {...result, ...{groups: []}};
+
+	dispatch(setActiveKey(user.key));
+	dispatch(add(transformUser(user)));
+	// dispatch(actionAddGroups(transformGroups(user.groups)));
+}
+
 function apiLoadCurrentUser() {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		dispatch(actionApiLoadCurrentUserRequest());
 
-		return request(localConfig, 'rest/user/current', 'GET', null, null)
+		// return request(localConfig, 'rest/user/current', 'GET', null, null)
+		return request(localConfig, 'rest/login/getLoginInfo', 'GET', null, null)
 			.then(result => {
 				if (result.errors) {
 					//todo how do we return errors here?
 					throw new Error(result.errors);
 				} else {
-					if (result.key === 0) {
-						// no logged in user = guest
-						dispatch(actionAddGroups(transformGroups(result.groups)));
-					} else if (result.key) {
-						// logged in user
-						dispatch(setActiveKey(result.key));
-						dispatch(add(transformUser(result)));
-						dispatch(actionAddGroups(transformGroups(result.groups)));
-					}
+					const user = _.omit(result, 'authToken');
+					loadedUser(dispatch, user);
 				}
 			})
 			.catch(error => {
@@ -218,7 +244,7 @@ function apiLogoutUser(ttl) {
 		let url =
 			apiBackendProtocol +
 			'://' +
-			path.join(apiBackendHost, 'api/login/logout');
+			path.join(apiBackendHost, 'rest/login/logout');
 
 		return fetch(url, {
 			method: 'POST',
