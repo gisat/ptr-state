@@ -32,6 +32,72 @@ const setActiveMapKey = (state, mapKey) => {
 };
 
 /**
+ * Add map to store
+ * @param state {Object}
+ * @param map {Object} map state
+ * @return {Object} Updated state
+ */
+const addMap = (state, map) => {
+	if (map?.key) {
+		return {
+			...state,
+			maps: {
+				...state.maps,
+				[map.key]: map,
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Add map set to store
+ * @param state {Object}
+ * @param mapSet {Object} map set state
+ * @return {Object} Updated state
+ */
+const addMapSet = (state, mapSet) => {
+	if (mapSet?.key) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[mapSet.key]: mapSet,
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Add map to map set
+ * @param state {Object}
+ * @param mapKey {string}
+ * @param mapSetKey {string}
+ * @return {Object} Updated state
+ */
+const addMapToSet = (state, mapKey, mapSetKey) => {
+	if (mapKey && mapSetKey && state.sets[mapSetKey]) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[mapSetKey]: {
+					...state.sets[mapSetKey],
+					maps: state.sets[mapSetKey].maps
+						? [...state.sets[mapSetKey].maps, mapKey]
+						: [mapKey],
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
  * Remove map from map set
  * @param state {Object}
  * @param setKey {string}
@@ -60,6 +126,42 @@ const removeMapFromSet = (state, setKey, mapKey) => {
 		} else {
 			return state;
 		}
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Remove map from store
+ * @param state {Object}
+ * @param mapKey {string}
+ * @return {Object} Updated state
+ */
+const removeMap = (state, mapKey) => {
+	if (mapKey && state.maps[mapKey]) {
+		const {[mapKey]: map, ...restMaps} = state.maps;
+		return {
+			...state,
+			maps: restMaps,
+		};
+	} else {
+		return state;
+	}
+};
+
+/**
+ * Remove map set from store
+ * @param state {Object}
+ * @param mapSetKey {string}
+ * @return {Object} Updated state
+ */
+const removeMapSet = (state, mapSetKey) => {
+	if (mapSetKey && state.sets[mapSetKey]) {
+		const {[mapSetKey]: set, ...restSets} = state.sets;
+		return {
+			...state,
+			sets: restSets,
+		};
 	} else {
 		return state;
 	}
@@ -357,6 +459,23 @@ const setSetBackgroundLayer = (state, setKey, backgroundLayer) => {
 	}
 };
 
+const setMapSetSync = (state, mapSetKey, sync) => {
+	if (mapSetKey && state.sets?.[mapSetKey]) {
+		return {
+			...state,
+			sets: {
+				...state.sets,
+				[mapSetKey]: {
+					...state.sets[mapSetKey],
+					sync,
+				},
+			},
+		};
+	} else {
+		return state;
+	}
+};
+
 /**
  * Set map background layer state
  * @param state {Object}
@@ -585,6 +704,8 @@ const mapSetUseRegister = (state, mapSetKey) => {
 
 export default function tasksReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
+		case ActionTypes.MAPS.MAP.ADD:
+			return addMap(state, action.map);
 		case ActionTypes.MAPS.MAP.LAYERS.ADD:
 			return addMapLayers(state, action.mapKey, action.layerStates);
 		case ActionTypes.MAPS.MAP.LAYERS.ADD_TO_INDEX:
@@ -611,6 +732,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.layerKey,
 				action.styleKey
 			);
+		case ActionTypes.MAPS.MAP.REMOVE:
+			return removeMap(state, action.mapKey);
 		case ActionTypes.MAPS.MAP.USE.CLEAR:
 			return mapUseClear(state, action.mapKey);
 		case ActionTypes.MAPS.MAP.USE.REGISTER:
@@ -625,6 +748,12 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.mapKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.ADD:
+			return addMapSet(state, action.mapSet);
+		case ActionTypes.MAPS.SET.ADD_MAP:
+			return addMapToSet(state, action.mapKey, action.mapSetKey);
+		case ActionTypes.MAPS.SET.REMOVE:
+			return removeMapSet(state, action.mapSetKey);
 		case ActionTypes.MAPS.SET.REMOVE_MAP:
 			return removeMapFromSet(state, action.setKey, action.mapKey);
 		case ActionTypes.MAPS.SET.SET_ACTIVE_MAP_KEY:
@@ -635,6 +764,8 @@ export default function tasksReducer(state = INITIAL_STATE, action) {
 				action.setKey,
 				action.backgroundLayer
 			);
+		case ActionTypes.MAPS.SET.SET_SYNC:
+			return setMapSetSync(state, action.mapSetKey, action.sync);
 		case ActionTypes.MAPS.SET.LAYERS.SET:
 			return setSetLayers(state, action.setKey, action.layers);
 		case ActionTypes.MAPS.SET.USE.CLEAR:

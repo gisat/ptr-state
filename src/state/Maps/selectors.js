@@ -34,6 +34,7 @@ const getSubstate = state => state.maps;
 const getAllMapSetsInUse = state => state.maps.inUse.sets;
 const getAllMapsInUse = state => state.maps.inUse.maps;
 const getActiveMapKey = state => state.maps.activeMapKey;
+const getActiveSetKey = state => state.maps.activeSetKey;
 const getMapsAsObject = state => state.maps.maps;
 const getMapSetsAsObject = state => state.maps.sets;
 
@@ -920,6 +921,8 @@ export default {
 
 	getActiveMapKey,
 	getActiveMap,
+
+	getActiveSetKey,
 
 	getAllLayersStateByMapKey,
 	getAllMapSetsMaps,

@@ -9,6 +9,7 @@ export const MapsSelectorsState = {
 	},
 	maps: {
 		activeMapKey: 'map1',
+		activeSetKey: 'set1',
 		maps: {
 			map1: {
 				key: 'map1',
@@ -139,6 +140,7 @@ export const MapsSelectorsState = {
 				},
 			},
 			set2: {
+				key: 'set2',
 				maps: ['map3'],
 			},
 		},
