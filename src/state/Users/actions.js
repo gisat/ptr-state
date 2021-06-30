@@ -1,8 +1,8 @@
 import ActionTypes from '../../constants/ActionTypes';
 import _ from 'lodash';
-import path from 'path';
-import fetch from 'isomorphic-fetch';
+import {isServer} from '@gisatcz/ptr-core';
 
+import cookies from '../../utils/cookies';
 import request from '../_common/request';
 
 import common from '../_common/actions';
@@ -13,6 +13,7 @@ import PlacesAction from '../Places/actions';
 import PeriodsAction from '../Periods/actions';
 
 const TTL = 5;
+const cookieUserToken = 'authToken';
 
 // ============ creators ===========
 
@@ -81,7 +82,7 @@ const useIndexedGroups = common.useIndexed(
 function authCookie(authToken) {
 	const suffix = process.env.NODE_ENV === 'development' ? '' : ';secure';
 
-	return `authToken=${authToken};path=/;samesite=strict${suffix}`;
+	return `${cookieUserToken}=${authToken};path=/;samesite=strict${suffix}`;
 }
 
 /**
@@ -96,28 +97,30 @@ function authCookie(authToken) {
  */
 function loginViaSso(provider) {
 	return function (dispatch, getState) {
-		const backendUrl = Select.app.getBackendUrl(
-			getState(),
-			`/rest/login/sso/${provider}`
-		);
-		const loginWindow = window.open(backendUrl);
-		window.addEventListener('message', function (e) {
-			const message = e.data;
-			if (
-				e.source !== loginWindow ||
-				message == null ||
-				typeof message !== 'object' ||
-				message.type !== 'sso_response'
-			) {
-				return;
-			}
+		if (!isServer) {
+			const backendUrl = Select.app.getBackendUrl(
+				getState(),
+				`/rest/login/sso/${provider}`
+			);
+			const loginWindow = window.open(backendUrl);
+			window.addEventListener('message', function (e) {
+				const message = e.data;
+				if (
+					e.source !== loginWindow ||
+					message == null ||
+					typeof message !== 'object' ||
+					message.type !== 'sso_response'
+				) {
+					return;
+				}
 
-			loginWindow.close();
+				loginWindow.close();
 
-			const result = message.data;
-			const user = _.omit(result, 'authToken');
-			dispatch(onLogin({user: user, authToken: result.authToken}));
-		});
+				const result = message.data;
+				const user = _.omit(result, cookieUserToken);
+				dispatch(onLogin({user: user, authToken: result.authToken}));
+			});
+		}
 	};
 }
 
@@ -128,7 +131,7 @@ function loginViaSso(provider) {
  */
 function onLogin(data) {
 	return dispatch => {
-		document.cookie = authCookie(data.authToken);
+		cookies.setCookie(authCookie(data.authToken));
 
 		dispatch(common.actionDataSetOutdated());
 		loadedUser(dispatch, data.user);
@@ -142,7 +145,9 @@ function onLogin(data) {
 
 function onLogout() {
 	return dispatch => {
-		document.cookie = 'authToken=;max-age=0';
+		cookies.setCookie(
+			`${cookieUserToken}=; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+		);
 		dispatch(actionLogout());
 		dispatch(setActiveKey(null));
 
@@ -165,7 +170,7 @@ function apiLoginUser(email, password) {
 
 		return request(localConfig, 'api/login/login', 'POST', null, payload)
 			.then(result => {
-				const user = _.omit(result, 'authToken');
+				const user = _.omit(result, cookieUserToken);
 
 				dispatch(onLogin({user: user, authToken: result.authToken}));
 			})
@@ -235,19 +240,37 @@ function loadedUser(dispatch, result) {
 	// dispatch(actionAddGroups(transformGroups(user.groups)));
 }
 
+/**
+ * Check if authToken is saved in cookies, if so, load user data.
+ */
+function ensureCurrentUser() {
+	return (dispatch, getState) => {
+		//check if is user active
+		const activeUser = Select.users.getActiveUser(getState());
+		if (!activeUser) {
+			//if not, check if is set authKey in cookies
+			const cookieAuthToken = cookies.getCookie(cookieUserToken);
+			if (cookieAuthToken) {
+				dispatch(apiLoadCurrentUser());
+			}
+		} else {
+			// Do nothing, user is set
+		}
+	};
+}
+
 function apiLoadCurrentUser() {
 	return (dispatch, getState) => {
 		const localConfig = Select.app.getCompleteLocalConfiguration(getState());
 		dispatch(actionApiLoadCurrentUserRequest());
 
-		// return request(localConfig, 'rest/user/current', 'GET', null, null)
 		return request(localConfig, 'api/login/getLoginInfo', 'GET', null, null)
 			.then(result => {
 				if (result.errors) {
 					//todo how do we return errors here?
 					throw new Error(result.errors);
 				} else {
-					const user = _.omit(result, 'authToken');
+					const user = _.omit(result, cookieUserToken);
 					loadedUser(dispatch, user);
 				}
 			})
@@ -276,16 +299,7 @@ function apiLogoutUser(ttl) {
 		).then(
 			response => {
 				console.log('#### logout user response', response);
-				if (response.ok) {
-					// window.location.reload();
-					dispatch(onLogout());
-				} else {
-					dispatch(
-						actionApiLogoutRequestError(
-							'user#action logout Problem with logging out the User, please try later.'
-						)
-					);
-				}
+				dispatch(onLogout());
 			},
 			error => {
 				console.log('#### logout user error', error);
@@ -392,4 +406,5 @@ export default {
 	useIndexedUsersClear: actionClearUsersUseIndexed,
 	useIndexedGroupsClear: actionClearGroupsUseIndexed,
 	loginViaSso,
+	ensureCurrentUser,
 };
