@@ -1,8 +1,10 @@
 import {
+	each as _each,
 	isMatch as _isMatch,
 	isNumber as _isNumber,
 	omitBy as _omitBy,
 	pickBy as _pickBy,
+	includes as _includes,
 	isEmpty as _isEmpty,
 } from 'lodash';
 import {map as mapUtils} from '@gisatcz/ptr-utils';
@@ -23,6 +25,77 @@ import SelectionsAction from '../Selections/actions';
 /* ==================================================
  * CREATORS
  * ================================================== */
+
+/**
+ * Add map to store and dispatch use
+ * @param mapState {Object}
+ */
+const addMap = mapState => {
+	return (dispatch, getState) => {
+		if (!mapState) {
+			dispatch(commonActions.actionGeneralError(`No map state given`));
+		} else if (!mapState.key) {
+			dispatch(
+				commonActions.actionGeneralError(`Undefined mapKey for map ${mapState}`)
+			);
+		} else {
+			dispatch(actionAddMap(mapState));
+			dispatch(use(mapState.key, null, null));
+		}
+	};
+};
+
+/**
+ * If map set exists, add map to map set and dispatch use
+ * @param mapKey {string}
+ * @param mapSetKey {string}
+ */
+const addMapToSet = (mapKey, mapSetKey) => {
+	return (dispatch, getState) => {
+		if (mapKey && mapSetKey) {
+			const state = getState();
+			const mapSet = Select.maps.getMapSetByKey(state, mapSetKey);
+			if (mapSet) {
+				dispatch(actionAddMapToSet(mapKey, mapSetKey));
+				dispatch(use(mapKey, null, null));
+			} else {
+				dispatch(
+					commonActions.actionGeneralError(
+						`No mapSet found for given key ${mapSetKey}`
+					)
+				);
+			}
+		} else {
+			dispatch(
+				commonActions.actionGeneralError(`No mapKey or mapSetKey given`)
+			);
+		}
+	};
+};
+
+/**
+ * Add map set to store and dispatch use for all maps from the map set
+ * @param mapSetState {Object}
+ */
+const addMapSet = mapSetState => {
+	return (dispatch, getState) => {
+		if (!mapSetState) {
+			dispatch(commonActions.actionGeneralError(`No map state given`));
+		} else if (!mapSetState.key) {
+			dispatch(
+				commonActions.actionGeneralError(
+					`Undefined mapKey for map ${mapSetState}`
+				)
+			);
+		} else {
+			dispatch(actionAddMapSet(mapSetState));
+			if (mapSetState.maps?.length) {
+				dispatch(actionMapSetUseRegister(mapSetState.key));
+				mapSetState.maps.forEach(mapKey => dispatch(use(mapKey, null, null)));
+			}
+		}
+	};
+};
 
 /**
  * Add layers at the end of map layers list
@@ -61,6 +134,58 @@ const addMapLayerToIndex = (mapKey, layerState, index) => {
 			dispatch(
 				commonActions.actionGeneralError(`No map exists for mapKey ${mapKey}`)
 			);
+		}
+	};
+};
+
+/**
+ * Remove map from store
+ * @param mapKey {string}
+ */
+const removeMap = mapKey => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const existingMap = Select.maps.getMapByKey(state, mapKey);
+
+		if (existingMap) {
+			const inUse = Select.maps.isMapInUse(state, mapKey);
+			const mapSets = Select.maps.getMapSets(state);
+
+			if (inUse) {
+				dispatch(actionMapUseClear(mapKey));
+			}
+
+			if (mapSets) {
+				_each(mapSets, mapSet => {
+					const mapSetMapKey = _includes(mapSet?.maps, mapKey);
+					if (mapSetMapKey) {
+						dispatch(removeMapFromSet(mapSet.key, mapKey));
+					}
+				});
+			}
+
+			dispatch(actionRemoveMap(mapKey));
+		}
+	};
+};
+
+/**
+ * Remove map set from store
+ * @param setKey {string}
+ */
+const removeMapSet = setKey => {
+	return (dispatch, getState) => {
+		const state = getState();
+		const existingSet = Select.maps.getMapSetByKey(state, setKey);
+
+		if (existingSet) {
+			const inUse = Select.maps.isMapSetInUse(state, setKey);
+
+			if (inUse) {
+				dispatch(actionMapSetUseClear(setKey));
+			}
+
+			dispatch(actionRemoveMapSet(setKey));
 		}
 	};
 };
@@ -522,6 +647,20 @@ function setMapSetLayers(setKey, layers) {
 }
 
 /**
+ * Set sync for map set. It tells which view params are synchronized for all maps in the set.
+ * @param setKey {string}
+ * @param sync {Object} layers definitions
+ */
+function setMapSetSync(setKey, sync) {
+	return (dispatch, getState) => {
+		const set = Select.maps.getMapSetByKey(getState(), setKey);
+		if (set) {
+			dispatch(actionSetMapSetSync(setKey, sync));
+		}
+	};
+}
+
+/**
  * @param setKey {string}
  */
 function refreshMapSetUse(setKey) {
@@ -643,6 +782,28 @@ function setMapViewport(mapKey, width, height) {
  * ACTIONS
  * ================================================== */
 
+const actionAddMap = map => {
+	return {
+		type: ActionTypes.MAPS.MAP.ADD,
+		map,
+	};
+};
+
+const actionAddMapSet = mapSet => {
+	return {
+		type: ActionTypes.MAPS.SET.ADD,
+		mapSet,
+	};
+};
+
+const actionAddMapToSet = (mapKey, mapSetKey) => {
+	return {
+		type: ActionTypes.MAPS.SET.ADD_MAP,
+		mapKey,
+		mapSetKey,
+	};
+};
+
 const actionAddMapLayers = (mapKey, layerStates) => {
 	return {
 		type: ActionTypes.MAPS.MAP.LAYERS.ADD,
@@ -657,6 +818,20 @@ const actionAddMapLayerToIndex = (mapKey, layerState, index) => {
 		mapKey,
 		layerState,
 		index,
+	};
+};
+
+const actionRemoveMap = mapKey => {
+	return {
+		type: ActionTypes.MAPS.MAP.REMOVE,
+		mapKey,
+	};
+};
+
+const actionRemoveMapSet = mapSetKey => {
+	return {
+		type: ActionTypes.MAPS.SET.REMOVE,
+		mapSetKey,
 	};
 };
 
@@ -734,6 +909,14 @@ const actionSetMapSetLayers = (setKey, layers) => {
 	};
 };
 
+const actionSetMapSetSync = (mapSetKey, sync) => {
+	return {
+		type: ActionTypes.MAPS.SET.SET_SYNC,
+		mapSetKey,
+		sync,
+	};
+};
+
 const actionSetMapViewport = (mapKey, width, height) => {
 	return {
 		type: ActionTypes.MAPS.MAP.VIEWPORT.SET,
@@ -796,8 +979,11 @@ const actionMapUseRegister = mapKey => {
 
 // ============ export ===========
 export default {
+	addMap,
 	addMapLayers,
 	addMapLayerToIndex,
+	addMapSet,
+	addMapToSet,
 	ensureWithFilterByActive,
 	layerUse,
 	mapSetUseClear,
@@ -805,8 +991,10 @@ export default {
 	mapUseClear,
 	mapUseRegister,
 	refreshMapSetUse,
+	removeMap,
 	removeMapFromSet,
 	removeMapLayer,
+	removeMapSet,
 	setActiveMapKey: actionSetActiveMapKey,
 	setLayerSelectedFeatureKeys,
 	setMapLayerOption,
@@ -815,6 +1003,7 @@ export default {
 	setMapBackgroundLayer,
 	setMapSetBackgroundLayer,
 	setMapSetLayers,
+	setMapSetSync,
 	setMapViewport,
 	updateMapAndSetView,
 	updateSetView,
