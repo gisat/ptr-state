@@ -1,3 +1,15 @@
+# v1.5.16 (Wed Jul 07 2021)
+
+#### 🐾 Patch
+
+- Update dependencies [#89](https://github.com/gisat-panther/ptr-state/pull/89) ([@vdubr](https://github.com/vdubr))
+
+#### Authors: 1
+
+- Vojtěch Dubrovský ([@vdubr](https://github.com/vdubr))
+
+---
+
 # v1.5.15 (Mon Mar 01 2021)
 
 #### 🐾 Patch
