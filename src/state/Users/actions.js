@@ -3,6 +3,7 @@ import _ from 'lodash';
 import {isServer} from '@gisatcz/ptr-core';
 
 import cookies from '../../utils/cookies';
+import url from '../../utils/url';
 import request from '../_common/request';
 
 import common from '../_common/actions';
@@ -98,8 +99,9 @@ function authCookie(authToken) {
 function loginViaSso(provider) {
 	return function (dispatch, getState) {
 		if (!isServer) {
-			const backendUrl = Select.app.getBackendUrl(
-				getState(),
+			const localConfig = Select.app.getCompleteLocalConfiguration(getState());
+			const backendUrl = url.getBackendUrl(
+				localConfig,
 				`/rest/login/sso/${provider}`
 			);
 			const loginWindow = window.open(backendUrl);

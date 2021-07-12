@@ -40,22 +40,4 @@ describe('state/App/selectors', function () {
 			{p: 'v'}
 		);
 	});
-
-	it('getBackendUrl', function () {
-		assert.strictEqual(
-			selectors.getBackendUrl(
-				{
-					app: {
-						localConfiguration: {
-							apiBackendProtocol: 'http',
-							apiBackendHost: 'localhost',
-							apiBackendPath: 'bp',
-						},
-					},
-				},
-				'/api/login'
-			),
-			'http://localhost/bp/backend/api/login'
-		);
-	});
 });
