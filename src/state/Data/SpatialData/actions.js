@@ -164,6 +164,13 @@ function actionAddIndex(filter, order, index, changedOn) {
 	};
 }
 
+function actionUpdateStore(data) {
+	return {
+		type: actionTypes.UPDATE_STORE,
+		data,
+	};
+}
+
 // ============ export ===========
 
 export default {
@@ -171,4 +178,5 @@ export default {
 	getIndexData,
 	removeIndex: actionRemoveIndex,
 	receiveIndexed,
+	updateStore: actionUpdateStore,
 };

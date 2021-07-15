@@ -1,5 +1,5 @@
 import ActionTypes from '../../../constants/ActionTypes';
-import {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
+import common, {DEFAULT_INITIAL_STATE} from '../../_common/reducers';
 import {forIn as _forIn} from 'lodash';
 import commonHelpers from '../../_common/helpers';
 
@@ -175,6 +175,8 @@ export default (state = INITIAL_STATE, action) => {
 			return addIndex(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA.INDEX.REMOVE:
 			return removeIndex(state, action);
+		case ActionTypes.DATA.SPATIAL_DATA.UPDATE_STORE:
+			return common.updateStore(state, action.data);
 		default:
 			return state;
 	}

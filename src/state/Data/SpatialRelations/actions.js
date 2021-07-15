@@ -38,8 +38,15 @@ function receiveIndexed(
 }
 
 // ============ actions ============
+const actionUpdateStore = data => {
+	return {
+		type: ActionTypes.DATA.SPATIAL_RELATIONS.UPDATE_STORE,
+		data,
+	};
+};
 // ============ export ===========
 
 export default {
 	receiveIndexed,
+	updateStore: actionUpdateStore,
 };
