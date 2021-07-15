@@ -534,9 +534,13 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 
 			const relationsFilter = {};
 			// It converts modifiers from metadataKeys: ["A", "B"] to metadataKey: {in: ["A", "B"]}
-			relationsFilter.modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
+			const modifiers = commonHelpers.convertModifiersToRequestFriendlyFormat(
 				mergedMetadataKeys
 			);
+			// TODO @vdubr test
+			if (modifiers) {
+				relationsFilter.modifiers = modifiers;
+			}
 
 			// add layerTemplate od areaTreeLevelKey
 			if (layer.layerTemplateKey) {
