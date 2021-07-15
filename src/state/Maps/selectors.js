@@ -543,10 +543,15 @@ const getSpatialRelationsFilterFromLayerState = createRecomputeSelector(
 			}
 
 			// add layerTemplate od areaTreeLevelKey
-			if (layer.layerTemplateKey) {
-				relationsFilter.layerTemplateKey = layer.layerTemplateKey;
-			} else if (layer.areaTreeLevelKey) {
-				relationsFilter.areaTreeLevelKey = layer.areaTreeLevelKey;
+			const layerTemplateKey =
+				layer.layerTemplateKey || activeMetadataKeys.layerTemplateKey;
+			const areaTreeLevelKey =
+				layer.areaTreeLevelKey || activeMetadataKeys.areaTreeLevelKey;
+
+			if (layerTemplateKey) {
+				relationsFilter.layerTemplateKey = layerTemplateKey;
+			} else if (areaTreeLevelKey) {
+				relationsFilter.areaTreeLevelKey = areaTreeLevelKey;
 			}
 			return relationsFilter;
 		} else {
