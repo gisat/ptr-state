@@ -38,6 +38,7 @@ function receiveIndexed(
 }
 
 // ============ actions ============
+// TODO @vdubr test
 const actionUpdateStore = data => {
 	return {
 		type: ActionTypes.DATA.SPATIAL_RELATIONS.UPDATE_STORE,

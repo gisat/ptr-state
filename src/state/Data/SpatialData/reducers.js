@@ -175,6 +175,7 @@ export default (state = INITIAL_STATE, action) => {
 			return addIndex(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA.INDEX.REMOVE:
 			return removeIndex(state, action);
+		// TODO @vdubr test
 		case ActionTypes.DATA.SPATIAL_DATA.UPDATE_STORE:
 			return common.updateStore(state, action.data);
 		default:

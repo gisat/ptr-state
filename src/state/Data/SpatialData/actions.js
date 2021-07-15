@@ -164,6 +164,7 @@ function actionAddIndex(filter, order, index, changedOn) {
 	};
 }
 
+// TODO @vdubr test
 function actionUpdateStore(data) {
 	return {
 		type: actionTypes.UPDATE_STORE,
