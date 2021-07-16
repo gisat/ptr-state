@@ -1,5 +1,6 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import common from '../../_common/actions';
+import Select from '../../Select';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA_SOURCES;
 
@@ -39,19 +40,17 @@ function receiveIndexed(
 	};
 }
 
+const updateStore = common.updateStore(
+	Select.data.spatialDataSources.getSubstate,
+	actionTypes
+);
+
 // ============ actions ============
-// TODO @vdubr test
-const actionUpdateStore = data => {
-	return {
-		type: ActionTypes.DATA.SPATIAL_DATA_SOURCES.UPDATE_STORE,
-		data,
-	};
-};
 
 // ============ export ===========
 
 export default {
 	add,
 	receiveIndexed,
-	updateStore: actionUpdateStore,
+	updateStore,
 };

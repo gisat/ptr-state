@@ -11,9 +11,8 @@ export default (state = INITIAL_STATE, action) => {
 			return common.add(state, action);
 		case ActionTypes.DATA.SPATIAL_DATA_SOURCES.INDEX.ADD:
 			return common.addIndex(state, action);
-		// TODO @vdubr test
 		case ActionTypes.DATA.SPATIAL_DATA_SOURCES.UPDATE_STORE:
-			return common.updateStore(state, action.data);
+			return common.updateStore(state, action);
 		default:
 			return state;
 	}

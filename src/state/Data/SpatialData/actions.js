@@ -1,6 +1,8 @@
 import ActionTypes from '../../../constants/ActionTypes';
 import {isEmpty as _isEmpty, forIn as _forIn, reduce as _reduce} from 'lodash';
 import {tileAsString} from '../helpers';
+import common from '../../_common/actions';
+import Select from '../../Select';
 
 const actionTypes = ActionTypes.DATA.SPATIAL_DATA;
 
@@ -164,13 +166,12 @@ function actionAddIndex(filter, order, index, changedOn) {
 	};
 }
 
-// TODO @vdubr test
-function actionUpdateStore(data) {
-	return {
-		type: actionTypes.UPDATE_STORE,
-		data,
-	};
-}
+const updateStore = common.updateStore(
+	Select.data.spatialData.getSubstate,
+	actionTypes
+);
+
+// ============ actions ============
 
 // ============ export ===========
 
@@ -179,5 +180,5 @@ export default {
 	getIndexData,
 	removeIndex: actionRemoveIndex,
 	receiveIndexed,
-	updateStore: actionUpdateStore,
+	updateStore,
 };
